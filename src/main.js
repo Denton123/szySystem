@@ -1,39 +1,16 @@
 import ReactDOM from 'react-dom'
-import React, { Component } from 'react'
-import { Input } from 'antd'
+import React from 'react'
+// import route from './routes/router.js'
+import Index from './components/index.jsx'
+import Sider from './components/sider.jsx'
+// import {Provider} from 'react-redux' //用到redux时使用
 
-class Clock extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            date: new Date()
-        }
-    }
-    componentDidMount() {
-        this.timer = setInterval(() => this.tick(), 1000)
-    }
-    componentWillUnmount() {
-        clearInterval(this.timer)
-    }
-    tick() {
-        this.setState({
-            date: new Date()
-        })
-    }
-    render() {
-        return (
-            <div>
-                <Input placeholder='please write down your ideas.' />
-                <p>where are u kris wu</p>
-                <p>It is {this.state.date.toLocaleTimeString()}</p>
-            </div>
-        )
-    }
-}
+import '../style/css/main.css'
 
 ReactDOM.render(
     <div>
-        <Clock />
+        <Index />,
+        <Sider />
     </div>,
     document.getElementById('app')
 )
