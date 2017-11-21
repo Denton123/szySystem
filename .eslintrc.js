@@ -48,6 +48,7 @@ module.exports = {
         'react/self-closing-comp': ['error', {
             'component': true,
             'html': true
-        }]
+        }],
+        'jsx-quotes': ["error", "prefer-double"]
     }
 }

@@ -49,16 +49,7 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 loader: 'babel-loader',
-                include: [resolve('src'), resolve('test')],
-                query: {
-                    presets: ['react', 'es2015', 'stage-2'],
-                    plugins: [
-                        ['import', {
-                            libraryName: 'antd',
-                            style: 'css'
-                        }]
-                    ]
-                }
+                include: [resolve('src'), resolve('test')]
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
