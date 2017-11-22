@@ -4,5 +4,5 @@
     "transform-runtime",
     "transform-decorators-legacy"
    ],
-  "comments": false
+   "comments": false
 } 
