@@ -2,7 +2,8 @@
   "presets": ["es2015", "react", "stage-2"],
   "plugins": [
     "transform-runtime",
-    "transform-decorators-legacy"
+    "transform-decorators-legacy",
+    ["import", {"libraryName": "antd", "style": true}]
    ],
-  "comments": false
+   "comments": false
 } 

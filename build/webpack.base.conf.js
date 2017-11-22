@@ -1,7 +1,10 @@
 const webpack = require('webpack');
 const path = require('path');
+const fs = require('fs');
 const utils = require('./utils');
 const config = require('../config');
+const lessToJs = require('less-vars-to-js')
+const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './theme.less'), 'utf8'))
 
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
@@ -92,7 +95,8 @@ module.exports = {
                         options: {
                             plugins: _ => [
                                 require('autoprefixer')({ browsers: ['last 20 versions'] })
-                            ]
+                            ],
+                            modifyVars: themeVariables
                         }
                     },
                     'less-loader'
