@@ -15,7 +15,7 @@ module.exports = {
         app: './src/main.js',
         vendor: [
             'axios',
-            'jquery',
+            'jquery'
         ]
     },
     output: {
@@ -37,7 +37,8 @@ module.exports = {
             ROUTES: resolve('src', 'routes'),
             UTILS: resolve('src', 'utils'),
             VIEWS: resolve('src', 'views'),
-            CONFIG: resolve('src', 'config')
+            CONFIG: resolve('src', 'config'),
+            SERVICES: resolve('src', 'services')
         }
     },
     module: {
@@ -128,7 +129,7 @@ module.exports = {
             'window.jQuery': 'jquery',
             'window.$': 'jquery',
             axios: 'axios',
-            'window.axios': 'axios',
+            'window.axios': 'axios'
         })
     ],
 };
