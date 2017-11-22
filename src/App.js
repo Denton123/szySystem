@@ -27,12 +27,12 @@ const routes = [
         path: '/',
         exact: true,
         component: getViews('Home'),
-        children: [
+        routes: [
             {
                 name: '个人事务管理',
                 path: '/personalAffairs',
                 component: CheckWork,
-                children: [
+                routes: [
                     {
                         name: '考勤',
                         path: '/checkWork',
