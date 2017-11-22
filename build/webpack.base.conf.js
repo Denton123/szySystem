@@ -29,13 +29,15 @@ module.exports = {
         ],
         alias: {
             ASSET: resolve('src/assets'),
+            COMMON: resolve('src/common'),
             COMPONENT: resolve('src/components'),
             ACTION: resolve('src/redux/actions'),
             REDUCER: resolve('src/redux/reducers'),
             STORE: resolve('src/redux/store'),
             ROUTE: resolve('src/routes'),
             UTIL: resolve('src/utils'),
-            VIEW: resolve('src/views')
+            VIEW: resolve('src/views'),
+            LAYOUT: resolve('src/layouts')
         }
     },
     module: {
