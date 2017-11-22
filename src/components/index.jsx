@@ -4,9 +4,9 @@ import {Input, Button} from 'antd'
 class Index extends Component {
     render() {
         return (
-            <header className='header'>
+            <header className="header">
                 <Button>index</Button>
-                <Input placeholder='What needs to be done?' />
+                <Input placeholder="What needs to be done?" />
             </header>
         )
     }
