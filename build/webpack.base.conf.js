@@ -12,7 +12,11 @@ function resolve(...dir) {
 
 module.exports = {
     entry: {
-        app: './src/main.js'
+        app: './src/main.js',
+        vendor: [
+            'axios',
+            'jquery',
+        ]
     },
     output: {
         path: config.build.assetsRoot,
@@ -28,14 +32,12 @@ module.exports = {
             resolve('node_modules')
         ],
         alias: {
-            ASSET: resolve('src', 'assets'),
-            COMPONENT: resolve('src', 'components'),
-            ACTION: resolve('src', 'redux', 'actions'),
-            REDUCER: resolve('src', 'redux', 'reducers'),
-            STORE: resolve('src', 'redux', 'store'),
-            ROUTE: resolve('src', 'routes'),
-            UTIL: resolve('src', 'utils'),
-            VIEW: resolve('src', 'views')
+            STYLE: resolve('style'),
+            COMPONENTS: resolve('src', 'components'),
+            ROUTES: resolve('src', 'routes'),
+            UTILS: resolve('src', 'utils'),
+            VIEWS: resolve('src', 'views'),
+            CONFIG: resolve('src', 'config')
         }
     },
     module: {
@@ -118,5 +120,15 @@ module.exports = {
                 ]
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            'window.$': 'jquery',
+            axios: 'axios',
+            'window.axios': 'axios',
+        })
+    ],
 };
