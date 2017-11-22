@@ -1,4 +1,4 @@
-import xhr from './jquery'
+import xhr from 'jquery'
 
 /**
  * XHR 请求接口定义

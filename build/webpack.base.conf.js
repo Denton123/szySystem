@@ -6,13 +6,17 @@ const config = require('../config');
 const lessToJs = require('less-vars-to-js')
 const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './theme.less'), 'utf8'))
 
-function resolve(dir) {
-    return path.join(__dirname, '..', dir);
+function resolve(...dir) {
+    return path.join(__dirname, '..', ...dir);
 }
 
 module.exports = {
     entry: {
-        app: './src/main.js'
+        app: './src/main.js',
+        vendor: [
+            'axios',
+            'jquery'
+        ]
     },
     output: {
         path: config.build.assetsRoot,
@@ -28,16 +32,16 @@ module.exports = {
             resolve('node_modules')
         ],
         alias: {
-            ASSET: resolve('src/assets'),
-            COMMON: resolve('src/common'),
-            COMPONENT: resolve('src/components'),
-            ACTION: resolve('src/redux/actions'),
-            REDUCER: resolve('src/redux/reducers'),
-            STORE: resolve('src/redux/store'),
-            ROUTE: resolve('src/routes'),
-            UTIL: resolve('src/utils'),
-            VIEW: resolve('src/views'),
-            LAYOUT: resolve('src/layouts')
+            STYLE: resolve('style'),
+            COMPONENTS: resolve('src', 'components'),
+            ROUTES: resolve('src', 'routes'),
+            UTILS: resolve('src', 'utils'),
+            VIEWS: resolve('src', 'views'),
+            CONFIG: resolve('src', 'config'),
+            SERVICES: resolve('src', 'services'),
+            LAYOUT: resolve('src', 'layouts'),
+            COMMON: resolve('src', 'common'),
+            ASSET: resolve('src' ,'assets'),
         }
     },
     module: {
@@ -120,5 +124,15 @@ module.exports = {
                 ]
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            'window.$': 'jquery',
+            axios: 'axios',
+            'window.axios': 'axios'
+        })
+    ],
 };

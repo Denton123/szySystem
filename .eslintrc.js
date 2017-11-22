@@ -53,6 +53,7 @@ module.exports = {
         // allow 未使用的变量
         'no-unused-vars': 0,
         // 允许使用未声明的变量，除非在/*global */注释中提及
-        'no-undef': 0
+        'no-undef': 0,
+        'no-tabs': 0
     }
 }
