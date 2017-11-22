@@ -6,8 +6,8 @@ const config = require('../config');
 const lessToJs = require('less-vars-to-js')
 const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './theme.less'), 'utf8'))
 
-function resolve(dir) {
-    return path.join(__dirname, '..', dir);
+function resolve(...dir) {
+    return path.join(__dirname, '..', ...dir);
 }
 
 module.exports = {
@@ -28,14 +28,14 @@ module.exports = {
             resolve('node_modules')
         ],
         alias: {
-            ASSET: resolve('src/assets'),
-            COMPONENT: resolve('src/components'),
-            ACTION: resolve('src/redux/actions'),
-            REDUCER: resolve('src/redux/reducers'),
-            STORE: resolve('src/redux/store'),
-            ROUTE: resolve('src/routes'),
-            UTIL: resolve('src/utils'),
-            VIEW: resolve('src/views')
+            ASSET: resolve('src', 'assets'),
+            COMPONENT: resolve('src', 'components'),
+            ACTION: resolve('src', 'redux', 'actions'),
+            REDUCER: resolve('src', 'redux', 'reducers'),
+            STORE: resolve('src', 'redux', 'store'),
+            ROUTE: resolve('src', 'routes'),
+            UTIL: resolve('src', 'utils'),
+            VIEW: resolve('src', 'views')
         }
     },
     module: {
