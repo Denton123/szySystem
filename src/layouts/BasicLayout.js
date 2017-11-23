@@ -4,127 +4,198 @@
  * @author 吴燕萍
  * @date 2017/11/22
  */
-import {
-    BrowserRouter as Router,
-    Route,
-    Link,
-    Switch
-} from 'react-router-dom'
 import styles from './BasicLayout.less'
 import React from 'react'
-import { Layout, Menu, Icon } from 'antd'
+import { Layout, Menu, Breadcrumb, Icon } from 'antd'
+
+import {
+    Link,
+    Route,
+    Switch,
+    Redirect
+} from 'react-router-dom'
+
+const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
-const { Header, Footer, Sider, Content } = Layout
 
-function getViews(model) {
-    return require(`VIEWS/${model}`).default
-}
-const Check = ({ routes }) => (
-    <div>
-        <ul>
-            <li><Link to="/personalAffairs/checkWork">Bus</Link></li>
-            <li><Link to="/personalAffairs/dayLog">daylog</Link></li>
-        </ul>
-
-        {routes.map((route, i) => (
-            <RouteWithSubRoutes key={i} {...route} />
-        ))}
-    </div>
-)
-const CheckWork = () => <h3>CheckWork</h3>
-const DayLog = () => <h3>DayLog</h3>
-
-const routes = [
-    {
-        path: '/',
-        exact: true,
-        component: getViews('Home'),
-        routes: [
+// 子路由
+function SubRoute({route, idx, match}) {
+    return (
+        <Switch>
             {
-                name: '个人事务管理',
-                path: '/personalAffairs',
-                component: Check,
-                routes: [
-                    {
-                        name: '考勤',
-                        path: '/personalAffairs/checkWork',
-                        component: CheckWork
-                    },
-                    {
-                        name: '每日日志',
-                        path: '/personalAffairs/dayLog',
-                        component: DayLog
-                    }
-                ]
+                route.routes.map((child, sn) => (
+                    <Route
+                        key={`${idx}-${sn}`}
+                        exact={child.exact}
+                        path={`${match.path}${route.path}${child.path}`}
+                        render={props => (
+                            <Content style={{ margin: '0 16px' }}>
+                                <Breadcrumb style={{ margin: '16px 0' }}>
+                                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
+                                    <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
+                                </Breadcrumb>
+                                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                                    <child.component />
+                                </div>
+                            </Content>
+                        )} />
+                ))
             }
-        ]
-    },
-    {
-        path: '/login',
-        component: getViews('Login')
-    },
-    {
-        path: '/register',
-        component: getViews('Register')
-    },
-    {
-        component: getViews('NotMatch')
-    }
-]
-const RouteWithSubRoutes = (route) => (
-    <Route path={route.path} render={props => (
-    // pass the sub-routes down to keep nesting
-        <route.component {...props} routes={route.routes} />
-        )} />
-)
+        </Switch>
+    )
+}
+
 class BasicLayout extends React.Component {
-    // state = {
-    //     collapsed: false
-    // };
-    // toggle = () => {
-    //     this.setState({
-    //         collapsed: !this.state.collapsed
-    //     })
-    // }
-    // onOpenChange = (openKeys) => {
-    //     const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
-    //     if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-    //         this.setState({ openKeys })
-    //     } else {
-    //         this.setState({
-    //             openKeys: latestOpenKey ? [latestOpenKey] : []
-    //         })
-    //     }
-    // }
+    state = {
+        collapsed: false
+    }
+    onCollapse = (collapsed) => {
+        console.log(collapsed)
+        this.setState({ collapsed })
+    }
     render() {
-        // const sider = (
-        //     <Menu
-        //         mode="inline"
-        //         openKeys={this.state.openKeys}
-        //         onOpenChange={this.onOpenChange}
-        //         style={{ width: 200 }}
-        //         >
-        //         <SubMenu key="sub1" title={<span><Icon type="mail" /><span>Navigation One</span></span>}>
-        //             <Menu.Item key="1">Option 1</Menu.Item>
-        //             <Menu.Item key="2">Option 2</Menu.Item>
-        //             <Menu.Item key="3">Option 3</Menu.Item>
-        //         </SubMenu>
-        //     </Menu>
-        // )
-        return (
-            <div className="BasicLayout">
-                <Layout>
-                    <Sider>sider</Sider>
-                    <Layout>
-                        <Header>Header</Header>
-                        <Content>Content</Content>
-                        <Footer>Footer</Footer>
-                        {routes.map((route, i) => (
-                            <RouteWithSubRoutes key={i} {...route} />
-                      ))}
-                    </Layout>
-                </Layout>
+        const routes = this.props.routes
+        const history = this.props.history
+        const location = this.props.location
+        const match = this.props.match
+
+        const dynamicSider = (
+            <div>
+                <div className="logo" />
+                <Menu theme="dark" mode="inline">
+                    {routes.map((route, idx) => {
+                        if (route.routes) {
+                            return (
+                                <SubMenu
+                                    key={idx}
+                                    title={<span><Icon type="user" /><span>{route.name}</span></span>}
+                                >
+                                    {
+                                        route.routes.map((child, sn) => (
+                                            <Menu.Item key={`${idx}-${sn}`}>
+                                                <Link to={`${match.path}${route.path}${child.path}`}>{child.name}</Link>
+                                            </Menu.Item>
+                                        ))
+                                    }
+                                </SubMenu>
+                            )
+                        } else {
+                            return (
+                                <Menu.Item key={idx}>
+                                    <Icon type="pie-chart" />
+                                    <span><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
+                                </Menu.Item>
+                            )
+                        }
+                    })}
+                </Menu>
             </div>
+        )
+
+        const dynamicLayout = (
+            <div>
+                <Header style={{ background: '#fff', padding: 0 }} />
+                <Route exact path={match.path} render={() => (
+                    <Redirect to={`${match.path}/default`} />
+                )} />
+                {
+                    routes.map((route, idx) => {
+                        if (route.routes) {
+                            return (
+                                <SubRoute key={idx} route={route} idx={idx} match={match} />
+                            )
+                        } else {
+                            return (
+                                <Route
+                                    key={idx}
+                                    exact
+                                    path={`${match.path}${route.path}`}
+                                    render={props => (
+                                        <Content style={{ margin: '0 16px' }}>
+                                            <Breadcrumb style={{ margin: '16px 0' }}>
+                                                <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
+                                            </Breadcrumb>
+                                            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                                                <route.component />
+                                            </div>
+                                        </Content>
+                                    )} />
+                            )
+                        }
+                    })
+                }
+                <Footer style={{ textAlign: 'center' }}>
+                    szy公司系统 ©2017 Created by szy
+                </Footer>
+            </div>
+        )
+
+        const sider = (
+            <div>
+                <div className="logo" />
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+                    <Menu.Item key="1">
+                        <Icon type="pie-chart" />
+                        <span>Option 1</span>
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        <Icon type="desktop" />
+                        <span>Option 2</span>
+                    </Menu.Item>
+                    <SubMenu
+                        key="sub1"
+                        title={<span><Icon type="user" /><span>User</span></span>}
+                    >
+                        <Menu.Item key="3">Tom</Menu.Item>
+                        <Menu.Item key="4">Bill</Menu.Item>
+                        <Menu.Item key="5">Alex</Menu.Item>
+                    </SubMenu>
+                    <SubMenu
+                        key="sub2"
+                        title={<span><Icon type="team" /><span>Team</span></span>}
+                    >
+                        <Menu.Item key="6">Team 1</Menu.Item>
+                        <Menu.Item key="8">Team 2</Menu.Item>
+                    </SubMenu>
+                    <Menu.Item key="9">
+                        <Icon type="file" />
+                        <span>File</span>
+                    </Menu.Item>
+                </Menu>
+            </div>
+        )
+
+        const layout = (
+            <div>
+                <Header style={{ background: '#fff', padding: 0 }} />
+                <Content style={{ margin: '0 16px' }}>
+                    <Breadcrumb style={{ margin: '16px 0' }}>
+                        <Breadcrumb.Item>User</Breadcrumb.Item>
+                        <Breadcrumb.Item>Bill</Breadcrumb.Item>
+                    </Breadcrumb>
+                    <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                        Bill is a cat.
+                    </div>
+                </Content>
+                <Footer style={{ textAlign: 'center' }}>
+                    szy公司系统 ©2017 Created by szy
+                </Footer>
+            </div>
+        )
+
+        return (
+            <Layout style={{ minHeight: '100vh' }}>
+                <Sider
+                    collapsible
+                    collapsed={this.state.collapsed}
+                    onCollapse={this.onCollapse}
+                >
+                    {dynamicSider}
+                </Sider>
+                <Layout>
+                    {dynamicLayout}
+                </Layout>
+            </Layout>
         )
     }
 }
