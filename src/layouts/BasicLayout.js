@@ -19,6 +19,7 @@ class BasicLayout extends React.Component {
         this.setState({ collapsed })
     }
     render() {
+        //
         const sider = (
             <div>
                 <div className="logo" />
