@@ -16,8 +16,8 @@ import 'STYLE/css/main.less'
 // VIEWS      src目录下的views
 // CONFIG     src目录下的config
 // SERVICES   src目录下的services
-console.log($)
-console.log(axios)
+// console.log($)
+// console.log(axios)
 
 ReactDOM.render(
     <App />,

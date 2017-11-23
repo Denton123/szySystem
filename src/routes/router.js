@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
-import { Router, Route } from 'dva/router'
+import { Router, Route, Switch } from 'dva/router'
 import { getNavData } from 'COMMON/nav'
 import { Spin } from 'antd'
 import dynamic from 'dva/dynamic'
 import cloneDeep from 'lodash/cloneDeep'
-import { getPlainNode } from 'UTIL/utils'
+import { getPlainNode } from 'UTILS/utils'
 
 dynamic.setDefaultLoadingComponent(() => {
     return <Spin size="large" />
@@ -46,25 +46,27 @@ function RouterConfig({history, app}) {
         }
     }
 
-const login = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('COMPONENT/login').default)
-    }, 'login')
-}
+    const login = (location, cb) => {
+        require.ensure([], require => {
+            cb(null, require('VIEWS/Login').default)
+        }, 'login')
+    }
 
-const register = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('COMPONENT/register').default)
-    }, 'register')
-}
+    const register = (location, cb) => {
+        require.ensure([], require => {
+            cb(null, require('VIEWS/Register').default)
+        }, 'register')
+    }
 
     return (
         <Router history={history}>
-            <Route path="/login" getComponent={login} />
-            <Route path="/register" getComponent={register} />
-            <Route routes={getNavData} />
+            <Switch>
+                <Route path="/login" getComponent={login} />
+                <Route path="/register" getComponent={register} />
+                <Route routes={getNavData} />
+            </Switch>
         </Router>
     )
 }
 
-export default RouteConfig
+export default RouterConfig

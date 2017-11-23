@@ -41,7 +41,7 @@ module.exports = {
             SERVICES: resolve('src', 'services'),
             LAYOUT: resolve('src', 'layouts'),
             COMMON: resolve('src', 'common'),
-            ASSET: resolve('src' ,'assets'),
+            ASSET: resolve('src', 'assets')
         }
     },
     module: {
@@ -134,5 +134,5 @@ module.exports = {
             axios: 'axios',
             'window.axios': 'axios'
         })
-    ],
-};
+    ]
+}
