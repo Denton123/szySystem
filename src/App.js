@@ -10,6 +10,9 @@ import {
 function getViews(model) {
     return require(`VIEWS/${model}`).default
 }
+function getCom(pro, com) {
+    return require(`ROUTES/${pro}/${com}`).default
+}
 
 const routes = [
     {
@@ -32,7 +35,7 @@ const routes = [
                     {
                         name: '考勤',
                         path: '/checkWork',
-                        component: () => <div>checkwork</div>
+                        component: getCom('PersonalAffairs', 'checkWork')
                     },
                     {
                         name: '每日日志',
@@ -80,7 +83,7 @@ const routes = [
             },
             {
                 name: '人事管理',
-                icon: 'solution',
+                icon: 'usergroup-add',
                 path: '/workers',
                 routes: [
                     {
@@ -107,7 +110,7 @@ const routes = [
             },
             {
                 name: '资产管理',
-                icon: 'solution',
+                icon: 'red-envelope',
                 path: '/property',
                 routes: [
                     {
@@ -129,7 +132,7 @@ const routes = [
             },
             {
                 name: '任务管理',
-                icon: 'solution',
+                icon: 'exception',
                 path: '/task',
                 routes: [
                     {
@@ -146,7 +149,7 @@ const routes = [
             },
             {
                 name: '系统设置',
-                icon: 'solution',
+                icon: 'tool',
                 path: '/setting',
                 routes: [
                     {

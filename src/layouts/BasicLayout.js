@@ -80,7 +80,7 @@ class BasicLayout extends React.Component {
                             return (
                                 <SubMenu
                                     key={idx}
-                                    title={<span><Icon type={route.icon} /><span>{route.name}</span></span>}
+                                    title={<span><Icon type={route.icon} style={{fontSize: 16}} /><span style={{fontSize: 14}}>{route.name}</span></span>}
                                 >
                                     {
                                         route.routes.map((child, sn) => (
@@ -94,8 +94,8 @@ class BasicLayout extends React.Component {
                         } else {
                             return (
                                 <Menu.Item key={idx}>
-                                    <Icon type={route.icon} />
-                                    <span><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
+                                    <Icon type={route.icon} style={{fontSize: 16}} />
+                                    <span style={{fontSize: 14}}><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
                                 </Menu.Item>
                             )
                         }
