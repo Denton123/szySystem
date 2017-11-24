@@ -74,7 +74,12 @@ class BasicLayout extends React.Component {
         const dynamicSider = (
             <div>
                 <div className="logo" />
-                <Menu theme="dark" mode="inline" openKeys={this.state.openKeys} onOpenChange={this.onOpenChange}>
+                <Menu
+                    theme="dark"
+                    mode="inline"
+                    openKeys={this.state.openKeys}
+                    onOpenChange={this.onOpenChange}
+                >
                     {routes.map((route, idx) => {
                         if (route.routes) {
                             return (
@@ -143,7 +148,10 @@ class BasicLayout extends React.Component {
         )
 
         return (
-            <Layout style={{ minHeight: '100vh' }}>
+            <Layout
+                style={{ minHeight: '100vh' }}
+                className="BasicLayout"
+            >
                 <Sider
                     collapsible
                     collapsed={this.state.collapsed}
