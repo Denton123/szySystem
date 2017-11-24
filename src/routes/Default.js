@@ -1,6 +1,6 @@
 import styles from './default.less'
 import React from 'react'
-import { Layout, Breadcrumb, Icon } from 'antd'
+import { Layout, Breadcrumb, Icon, Card, Col, Row, List } from 'antd'
 import {
     Link,
     Route,
@@ -8,7 +8,7 @@ import {
     Redirect
 } from 'react-router-dom'
 
-const { Content } = Layout
+const { Content, Header } = Layout
 
 class Default extends React.Component {
     render() {
@@ -17,14 +17,60 @@ class Default extends React.Component {
         const history = this.props.history
         const location = this.props.location
         const match = this.props.match
+        const CardMsg = (
+            <div className="Card">
+                <Row gutter={16}>
+                    <Col span={8}>
+                        <Card title="工作日志" bordered extra={<a href="/home/personalAffairs/dayLog">More</a>}>
+                            <p>Card content</p>
+                            <p>Card content</p>
+                            <p>Card content</p>
+                        </Card>
+                    </Col>
+                    <Col span={8}>
+                        <Card title="个人总结" bordered extra={<a href="/home/personalAffairs/weekSummary">More</a>}>
+                            <p>Card content</p>
+                            <p>Card content</p>
+                            <p>Card content</p>
+                        </Card>
+                    </Col>
+                </Row>
+            </div>
+            )
+
+        const NoticeMsg = (
+            <div className="NoticeMsg">
+                <Card title="最新通知">
+                    <p>Card content</p>
+                    <p>Card content</p>
+                    <p>Card content</p>
+                </Card>
+            </div>
+            )
 
         return (
-            <Content style={{ margin: '0 16px' }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                </Breadcrumb>
-                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    <div>default</div>
+            <Content className="Content">
+                <Header className="IndexHeader">
+                    <Breadcrumb className="Breadcrumb">
+                        <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
+                    </Breadcrumb>
+                    <div className="HeaderMsg">
+                        <span className="avatar">
+                            <img src="https://gw.alipayobjects.com/zos/rmsportal/dRFVcIqZOYPcSNrlJsqQ.png" />
+                        </span>
+                        <div className="Greet">
+                            <h2>下午好，马云，祝你开心每一天！</h2>
+                            <h4>技术部 - 总监</h4>
+                        </div>
+                    </div>
+                </Header>
+                <div className="Main">
+                    <div>
+                        {CardMsg}
+                    </div>
+                    <div>
+                        {NoticeMsg}
+                    </div>
                 </div>
             </Content>
         )

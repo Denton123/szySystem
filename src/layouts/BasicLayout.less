@@ -4,6 +4,7 @@ html, body, #app {
     height:100%;
 }
 @siderBg: rgb(0, 21, 41);
+@whiteColor: #fff;
 .BasicLayout{
     height: 100%;
     .ant-layout-sider{
@@ -18,5 +19,11 @@ html, body, #app {
     		}
     	}
     }
+    .Header{
+    	background: @whiteColor;
+    }
+    .ant-layout-sider{
+        width: 256px !important;
+    }
 }
-  
+ 

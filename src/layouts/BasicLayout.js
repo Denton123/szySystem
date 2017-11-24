@@ -91,8 +91,10 @@ class BasicLayout extends React.Component {
                         } else {
                             return (
                                 <Menu.Item key={idx}>
-                                    <Icon type={route.icon} style={{fontSize: 16}} />
-                                    <span style={{fontSize: 14}}><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
+                                    <Link to={`${match.path}${route.path}`}>
+                                        <Icon type={route.icon} style={{fontSize: 16}} />
+                                        <span style={{fontSize: 14}}>{route.name}</span>
+                                    </Link>
                                 </Menu.Item>
                             )
                         }
@@ -103,7 +105,7 @@ class BasicLayout extends React.Component {
 
         const dynamicLayout = (
             <div>
-                <Header style={{ background: '#fff', padding: 0 }} />
+                <Header className="Header">header</Header>
                 <Route exact path={match.path} render={() => (
                     <Redirect to={`${match.path}/default`} />
                 )} />
@@ -138,6 +140,7 @@ class BasicLayout extends React.Component {
                 className="BasicLayout"
             >
                 <Sider
+                    className="Sider"
                     collapsible
                     collapsed={this.state.collapsed}
                     onCollapse={this.onCollapse}
