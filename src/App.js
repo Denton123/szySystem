@@ -98,25 +98,23 @@ const auth = true
 
 const App = () => (
     <Router>
-        <div>
-            <Switch>
-                <Route exact path="/" render={() => (
-                    auth ? (
-                        <Redirect to="/home" />
-                    ) : (
-                        <Redirect to="/login" />
-                    )
-                )} />
-                {routes.map((com, idx) => (
-                    <Route
-                        key={idx}
-                        path={com.path}
-                        render={props => (
-                            <com.component {...props} routes={com.routes} />
-                        )} />
-                ))}
-            </Switch>
-        </div>
+        <Switch>
+            <Route exact path="/" render={() => (
+                auth ? (
+                    <Redirect to="/home" />
+                ) : (
+                    <Redirect to="/login" />
+                )
+            )} />
+            {routes.map((com, idx) => (
+                <Route
+                    key={idx}
+                    path={com.path}
+                    render={props => (
+                        <com.component {...props} routes={com.routes} />
+                    )} />
+            ))}
+        </Switch>
     </Router>
 )
 
