@@ -29,15 +29,7 @@ function SubRoute({route, idx, match}) {
                         exact={child.exact}
                         path={`${match.path}${route.path}${child.path}`}
                         render={props => (
-                            <Content style={{ margin: '0 16px' }}>
-                                <Breadcrumb style={{ margin: '16px 0' }}>
-                                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                                    <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
-                                </Breadcrumb>
-                                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                                    <child.component />
-                                </div>
-                            </Content>
+                            <child.component {...props} child={child} route={route} />
                         )} />
                 ))
             }
@@ -95,7 +87,7 @@ class BasicLayout extends React.Component {
                             return (
                                 <Menu.Item key={idx}>
                                     <Icon type={route.icon} />
-                                    <span><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
+                                    <Link to={`${match.path}${route.path}`}>{route.name}</Link>
                                 </Menu.Item>
                             )
                         }
@@ -123,14 +115,7 @@ class BasicLayout extends React.Component {
                                     exact
                                     path={`${match.path}${route.path}`}
                                     render={props => (
-                                        <Content style={{ margin: '0 16px' }}>
-                                            <Breadcrumb style={{ margin: '16px 0' }}>
-                                                <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                                            </Breadcrumb>
-                                            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                                                <route.component />
-                                            </div>
-                                        </Content>
+                                        <route.component route={route} {...props} />
                                     )} />
                             )
                         }
