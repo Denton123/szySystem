@@ -80,6 +80,7 @@ const routes = [
             },
             {
                 name: '人事管理',
+                icon: 'solution',
                 path: '/workers',
                 routes: [
                     {
@@ -106,6 +107,7 @@ const routes = [
             },
             {
                 name: '资产管理',
+                icon: 'solution',
                 path: '/property',
                 routes: [
                     {
@@ -127,6 +129,7 @@ const routes = [
             },
             {
                 name: '任务管理',
+                icon: 'solution',
                 path: '/task',
                 routes: [
                     {
@@ -143,6 +146,7 @@ const routes = [
             },
             {
                 name: '系统设置',
+                icon: 'solution',
                 path: '/setting',
                 routes: [
                     {
