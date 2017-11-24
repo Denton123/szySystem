@@ -3,7 +3,20 @@ html, body, #app {
     width: 100%;
     height:100%;
 }
+@siderBg: rgb(0, 21, 41);
 .BasicLayout{
     height: 100%;
+    .ant-layout-sider{
+    	background: @siderBg;
+    	.ant-layout-sider-trigger {
+    		background: @siderBg;
+    	}
+    	.ant-menu {
+    		background: @siderBg;
+    		.ant-menu-sub{
+    			background: @siderBg;
+    		}
+    	}
+    }
 }
   
