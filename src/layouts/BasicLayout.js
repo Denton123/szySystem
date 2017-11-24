@@ -62,7 +62,8 @@ class BasicLayout extends React.Component {
         const dynamicSider = (
             <div>
                 <div className="logo" />
-                <Menu theme="dark" mode="inline">
+                <Menu theme="dark"
+                    mode="inline">
                     {routes.map((route, idx) => {
                         if (route.routes) {
                             return (
