@@ -81,6 +81,7 @@ const routes = [
             },
             {
                 name: '人事管理',
+                icon: 'usergroup-add',
                 path: '/workers',
                 routes: [
                     {
@@ -107,6 +108,7 @@ const routes = [
             },
             {
                 name: '资产管理',
+                icon: 'red-envelope',
                 path: '/property',
                 routes: [
                     {
@@ -128,6 +130,7 @@ const routes = [
             },
             {
                 name: '任务管理',
+                icon: 'exception',
                 path: '/task',
                 routes: [
                     {
@@ -144,6 +147,7 @@ const routes = [
             },
             {
                 name: '系统设置',
+                icon: 'tool',
                 path: '/setting',
                 routes: [
                     {
