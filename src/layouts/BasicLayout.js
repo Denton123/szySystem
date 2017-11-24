@@ -46,12 +46,20 @@ function SubRoute({route, idx, match}) {
 }
 
 class BasicLayout extends React.Component {
+    rootSubmenuKeys = this.props.routes.map((route, idx) => idx.toString())
+
     state = {
-        collapsed: false
+        openKeys: [this.rootSubmenuKeys[0]]
     }
-    onCollapse = (collapsed) => {
-        console.log(collapsed)
-        this.setState({ collapsed })
+    onOpenChange = (openKeys) => {
+        const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
+        if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+            this.setState({ openKeys })
+        } else {
+            this.setState({
+                openKeys: latestOpenKey ? [latestOpenKey] : []
+            })
+        }
     }
     render() {
         const routes = this.props.routes
@@ -62,13 +70,13 @@ class BasicLayout extends React.Component {
         const dynamicSider = (
             <div>
                 <div className="logo" />
-                <Menu theme="dark" mode="inline">
+                <Menu theme="dark" mode="inline" openKeys={this.state.openKeys} onOpenChange={this.onOpenChange}>
                     {routes.map((route, idx) => {
                         if (route.routes) {
                             return (
                                 <SubMenu
                                     key={idx}
-                                    title={<span><Icon type="user" /><span>{route.name}</span></span>}
+                                    title={<span><Icon type={route.icon} /><span>{route.name}</span></span>}
                                 >
                                     {
                                         route.routes.map((child, sn) => (
@@ -82,7 +90,7 @@ class BasicLayout extends React.Component {
                         } else {
                             return (
                                 <Menu.Item key={idx}>
-                                    <Icon type="pie-chart" />
+                                    <Icon type={route.icon} />
                                     <span><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
                                 </Menu.Item>
                             )
@@ -130,65 +138,9 @@ class BasicLayout extends React.Component {
             </div>
         )
 
-        const sider = (
-            <div>
-                <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                    <Menu.Item key="1">
-                        <Icon type="pie-chart" />
-                        <span>Option 1</span>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <Icon type="desktop" />
-                        <span>Option 2</span>
-                    </Menu.Item>
-                    <SubMenu
-                        key="sub1"
-                        title={<span><Icon type="user" /><span>User</span></span>}
-                    >
-                        <Menu.Item key="3">Tom</Menu.Item>
-                        <Menu.Item key="4">Bill</Menu.Item>
-                        <Menu.Item key="5">Alex</Menu.Item>
-                    </SubMenu>
-                    <SubMenu
-                        key="sub2"
-                        title={<span><Icon type="team" /><span>Team</span></span>}
-                    >
-                        <Menu.Item key="6">Team 1</Menu.Item>
-                        <Menu.Item key="8">Team 2</Menu.Item>
-                    </SubMenu>
-                    <Menu.Item key="9">
-                        <Icon type="file" />
-                        <span>File</span>
-                    </Menu.Item>
-                </Menu>
-            </div>
-        )
-
-        const layout = (
-            <div>
-                <Header style={{ background: '#fff', padding: 0 }} />
-                <Content style={{ margin: '0 16px' }}>
-                    <Breadcrumb style={{ margin: '16px 0' }}>
-                        <Breadcrumb.Item>User</Breadcrumb.Item>
-                        <Breadcrumb.Item>Bill</Breadcrumb.Item>
-                    </Breadcrumb>
-                    <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                        Bill is a cat.
-                    </div>
-                </Content>
-                <Footer style={{ textAlign: 'center' }}>
-                    szy公司系统 ©2017 Created by szy
-                </Footer>
-            </div>
-        )
-
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider
-                    collapsible
-                    collapsed={this.state.collapsed}
-                    onCollapse={this.onCollapse}
                 >
                     {dynamicSider}
                 </Sider>

@@ -21,11 +21,13 @@ const routes = [
             {
                 name: '首页',
                 path: '/default',
-                component: () => <div>默认页</div>
+                component: () => <div>默认页</div>,
+                icon: 'home'
             },
             {
                 name: '个人事务管理',
                 path: '/personalAffairs',
+                icon: 'solution',
                 routes: [
                     {
                         name: '考勤',
@@ -42,6 +44,7 @@ const routes = [
             {
                 name: '项目管理',
                 path: '/project',
+                icon: 'switcher',
                 routes: [
                     {
                         name: '项目信息',
@@ -68,12 +71,14 @@ const routes = [
             {
                 name: '测试',
                 path: '/test',
-                component: () => <div>test</div>
+                component: () => <div>test</div>,
+                icon: 'home'
             },
             {
                 name: '测试1',
                 path: '/test1',
-                component: () => <div>test1</div>
+                component: () => <div>test1</div>,
+                icon: 'home'
             }
         ]
     },
