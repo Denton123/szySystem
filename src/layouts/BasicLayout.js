@@ -49,7 +49,8 @@ class BasicLayout extends React.Component {
     rootSubmenuKeys = this.props.routes.map((route, idx) => idx.toString())
 
     state = {
-        openKeys: [this.rootSubmenuKeys[0]]
+        openKeys: [this.rootSubmenuKeys[0]],
+        collapsed: false
     }
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
@@ -60,6 +61,9 @@ class BasicLayout extends React.Component {
                 openKeys: latestOpenKey ? [latestOpenKey] : []
             })
         }
+    }
+    onCollapse = (collapsed) => {
+        this.setState({ collapsed })
     }
     render() {
         const routes = this.props.routes
@@ -141,6 +145,9 @@ class BasicLayout extends React.Component {
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider
+                    collapsible
+                    collapsed={this.state.collapsed}
+                    onCollapse={this.onCollapse}
                 >
                     {dynamicSider}
                 </Sider>
