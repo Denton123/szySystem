@@ -12,13 +12,15 @@ const FormItem = Form.Item
 class DefaultLoginForm extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault()
+        console.log(this.props)
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values)
                 axios.post('/user/login', values)
                     .then(res => {
-                        console.log('res')
                         console.log(res)
+                        this.props.updateUser(res.data)
+                        this.props.history.push('/home')
                     })
                     .catch(err => {
                         console.log(err)
@@ -63,12 +65,22 @@ class DefaultLoginForm extends React.Component {
 
 const LoginForm = Form.create()(DefaultLoginForm)
 
-const Login = ({match, location, history, routes}) => (
-    <div style={styles.login}>
-        <h2>生之园信息内部管理系统</h2>
-        <LoginForm />
-    </div>
-)
+class Login extends React.Component {
+    componentDidMount() {
+        // 判断用户是否登录
+        if (this.props.user !== null) {
+            this.props.history.push('/home')
+        }
+    }
+    render() {
+        return (
+            <div style={styles.login}>
+                <h2>生之园信息内部管理系统</h2>
+                <LoginForm {...this.props} />
+            </div>
+        )
+    }
+}
 
 const styles = {}
 

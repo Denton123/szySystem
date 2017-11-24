@@ -19,7 +19,19 @@ import 'STYLE/css/main.less'
 // console.log($)
 // console.log(axios)
 
-ReactDOM.render(
-    <App />,
-    document.getElementById('app')
-)
+// 判断是否登录
+axios.get('/user/auth')
+    .then(res => {
+        // console.log(res)
+        ReactDOM.render(
+            <App user={res.data} />,
+            document.getElementById('app')
+        )
+    })
+    .catch(err => {
+        console.log(err)
+        ReactDOM.render(
+            <App />,
+            document.getElementById('app')
+        )
+    })

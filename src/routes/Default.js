@@ -11,6 +11,16 @@ import {
 const { Content } = Layout
 
 class Default extends React.Component {
+    testGetData = () => {
+        axios.get('/api/user')
+        .then(res => {
+            console.log(res)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+
     render() {
         console.log(this.props)
         const route = this.props.route
@@ -24,7 +34,7 @@ class Default extends React.Component {
                     <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    <div>default</div>
+                    <div onClick={this.testGetData}>default</div>
                 </div>
             </Content>
         )

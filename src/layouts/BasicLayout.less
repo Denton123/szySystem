@@ -19,4 +19,24 @@ html, body, #app {
     	}
     }
 }
-  
+
+// 头部样式
+@blue1: #ecf6fd;
+.layout-header {
+    background: #fff;
+    padding-right: 30px;
+    .layout-header-avatar {
+        padding: 0 10px;
+    }
+    .layout-header-avatar:hover {
+        cursor: pointer;
+        background-color: @blue1;
+    }
+    .layout-header-bell {
+        height: 64px;
+        i {
+            vertical-align: middle;
+            cursor: pointer;
+        }
+    }
+}

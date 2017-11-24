@@ -6,7 +6,14 @@
  */
 import styles from './BasicLayout.less'
 import React from 'react'
-import { Layout, Menu, Breadcrumb, Icon } from 'antd'
+import {
+    Layout,
+    Menu,
+    Breadcrumb,
+    Icon,
+    Dropdown,
+    Avatar
+} from 'antd'
 
 import {
     Link,
@@ -57,11 +64,38 @@ class BasicLayout extends React.Component {
     onCollapse = (collapsed) => {
         this.setState({ collapsed })
     }
+
+    logout = () => {
+        axios.get('/user/logout')
+        .then(res => {
+            this.props.updateUser(null)
+            this.props.history.push('/login')
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+
     render() {
         const routes = this.props.routes
         const history = this.props.history
         const location = this.props.location
         const match = this.props.match
+
+        const AvatarMenu = (
+            <Menu>
+                <Menu.Item key="0">
+                    <Link to="/home/personalAffairs/personalInfo">个人信息</Link>
+                </Menu.Item>
+                <Menu.Item key="1">
+                    <Link to="/home/personalAffairs/setting">设置</Link>
+                </Menu.Item>
+                <Menu.Divider />
+                <Menu.Item key="3">
+                    <span onClick={this.logout}>退出登录</span>
+                </Menu.Item>
+            </Menu>
+        )
 
         const dynamicSider = (
             <div>
@@ -92,7 +126,7 @@ class BasicLayout extends React.Component {
                             return (
                                 <Menu.Item key={idx}>
                                     <Icon type={route.icon} style={{fontSize: 16}} />
-                                    <span style={{fontSize: 14}}><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
+                                    <Link style={{fontSize: 14}} to={`${match.path}${route.path}`}><span>{route.name}</span></Link>
                                 </Menu.Item>
                             )
                         }
@@ -103,7 +137,19 @@ class BasicLayout extends React.Component {
 
         const dynamicLayout = (
             <div>
-                <Header style={{ background: '#fff', padding: 0 }} />
+                <Header className="layout-header" >
+                    <div className="pull-right layout-header-avatar">
+                        <Dropdown overlay={AvatarMenu}>
+                            <div style={{ lineHeight: '64px' }}>
+                                <Avatar style={{ verticalAlign: 'middle' }} src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                                <span className="ml-10">admin</span>
+                            </div>
+                        </Dropdown>
+                    </div>
+                    <div className="pull-right layout-header-bell mr-10">
+                        <Icon type={'bell'} style={{fontSize: 16}} />
+                    </div>
+                </Header>
                 <Route exact path={match.path} render={() => (
                     <Redirect to={`${match.path}/default`} />
                 )} />
