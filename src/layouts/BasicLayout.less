@@ -4,6 +4,7 @@ html, body, #app {
     height:100%;
 }
 @siderBg: rgb(0, 21, 41);
+@siderBgRgba: rgba(0, 21, 41, .5);
 .BasicLayout{
     height: 100%;
     .ant-layout-sider{
@@ -18,5 +19,16 @@ html, body, #app {
     		}
     	}
     }
+    .trigger {
+	  	font-size: 20px;
+	  	line-height: 64px;
+	  	cursor: pointer;
+	  	transition: all .3s;
+	  	padding: 0 24px;
+	  	&:hover {
+	  	  	background: @siderBgRgba;
+	  	  	color: white;
+	  	}
+	}
 }
   

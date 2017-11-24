@@ -54,8 +54,10 @@ class BasicLayout extends React.Component {
             })
         }
     }
-    onCollapse = (collapsed) => {
-        this.setState({ collapsed })
+    toggle = () => {
+        this.setState({
+            collapsed: !this.state.collapsed
+        })
     }
     render() {
         const routes = this.props.routes
@@ -103,7 +105,14 @@ class BasicLayout extends React.Component {
 
         const dynamicLayout = (
             <div>
-                <Header style={{ background: '#fff', padding: 0 }} />
+                <Header style={{ background: '#fff', padding: 0 }}>
+                    <Icon
+                        className="trigger"
+                        type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                        onClick={this.toggle}
+                    />
+                </Header>
+
                 <Route exact path={match.path} render={() => (
                     <Redirect to={`${match.path}/default`} />
                 )} />
@@ -126,6 +135,7 @@ class BasicLayout extends React.Component {
                         }
                     })
                 }
+
                 <Footer style={{ textAlign: 'center' }}>
                     szy公司系统 ©2017 Created by szy
                 </Footer>
@@ -138,9 +148,7 @@ class BasicLayout extends React.Component {
                 className="BasicLayout"
             >
                 <Sider
-                    collapsible
                     collapsed={this.state.collapsed}
-                    onCollapse={this.onCollapse}
                 >
                     {dynamicSider}
                 </Sider>
