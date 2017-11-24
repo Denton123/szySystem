@@ -29,15 +29,7 @@ function SubRoute({route, idx, match}) {
                         exact={child.exact}
                         path={`${match.path}${route.path}${child.path}`}
                         render={props => (
-                            <Content style={{ margin: '0 16px' }}>
-                                <Breadcrumb style={{ margin: '16px 0' }}>
-                                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                                    <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
-                                </Breadcrumb>
-                                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                                    <child.component />
-                                </div>
-                            </Content>
+                            <child.component {...props} child={child} route={route} />
                         )} />
                 ))
             }
@@ -85,7 +77,7 @@ class BasicLayout extends React.Component {
                             return (
                                 <SubMenu
                                     key={idx}
-                                    title={<span><Icon type={route.icon} /><span>{route.name}</span></span>}
+                                    title={<span><Icon type={route.icon} style={{fontSize: 16}} /><span style={{fontSize: 14}}>{route.name}</span></span>}
                                 >
                                     {
                                         route.routes.map((child, sn) => (
@@ -99,8 +91,8 @@ class BasicLayout extends React.Component {
                         } else {
                             return (
                                 <Menu.Item key={idx}>
-                                    <Icon type={route.icon} />
-                                    <span><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
+                                    <Icon type={route.icon} style={{fontSize: 16}} />
+                                    <span style={{fontSize: 14}}><Link to={`${match.path}${route.path}`}>{route.name}</Link></span>
                                 </Menu.Item>
                             )
                         }
@@ -128,14 +120,7 @@ class BasicLayout extends React.Component {
                                     exact
                                     path={`${match.path}${route.path}`}
                                     render={props => (
-                                        <Content style={{ margin: '0 16px' }}>
-                                            <Breadcrumb style={{ margin: '16px 0' }}>
-                                                <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                                            </Breadcrumb>
-                                            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                                                <route.component />
-                                            </div>
-                                        </Content>
+                                        <route.component route={route} {...props} />
                                     )} />
                             )
                         }
