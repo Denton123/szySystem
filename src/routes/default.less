@@ -1,0 +1,60 @@
+@white: #fff;
+.Content {
+	/*margin: 0 16px;*/
+	.IndexHeader{
+		width: 100%;
+		height: 150px;
+		background: @white;
+		padding-left: 30px;
+		border-bottom: 1px solid #e8e8e8;
+		border-top: 1px solid #e8e8e8;
+		margin-bottom: 20px;
+		.Breadcrumb {
+			font-size: 14px;
+			line-height: 45px;
+		}
+		.HeaderMsg {
+			width: 100%;
+			height: 100px;
+			line-height: 100px;
+			display: flex;
+			.avatar {
+				display: inline-block;
+				border-radius: 50%;
+				width: 80px;
+				height: 80px;
+				overflow: hidden;
+				margin: 9px 0;
+				img{
+					width: 100%;
+				}
+			}
+			.Greet {
+				margin-left: 20px;
+				h2{
+					line-height: 65px;
+				}
+				h4{
+					line-height: 0px;
+				}
+			}
+			
+		}
+	}
+	
+	.Main{
+		width: 97%;
+		margin: 0 auto;
+		.Card {
+			width: 100%;
+			height: 174px;
+			background: @white;
+			padding: 10px 0 10px 10px;
+			margin-bottom: 20px;
+		}
+		.NoticeMsg {
+			width: 100%;
+			background: @white;
+		}
+	}
+}

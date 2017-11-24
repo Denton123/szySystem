@@ -61,8 +61,10 @@ class BasicLayout extends React.Component {
             })
         }
     }
-    onCollapse = (collapsed) => {
-        this.setState({ collapsed })
+    toggle = () => {
+        this.setState({
+            collapsed: !this.state.collapsed
+        })
     }
 
     logout = () => {
@@ -125,8 +127,10 @@ class BasicLayout extends React.Component {
                         } else {
                             return (
                                 <Menu.Item key={idx}>
-                                    <Icon type={route.icon} style={{fontSize: 16}} />
-                                    <Link style={{fontSize: 14}} to={`${match.path}${route.path}`}><span>{route.name}</span></Link>
+                                    <Link to={`${match.path}${route.path}`}>
+                                        <Icon type={route.icon} style={{fontSize: 16}} />
+                                        <span style={{fontSize: 14}}>{route.name}</span>
+                                    </Link>
                                 </Menu.Item>
                             )
                         }
@@ -138,6 +142,11 @@ class BasicLayout extends React.Component {
         const dynamicLayout = (
             <div>
                 <Header className="layout-header" >
+                    <Icon
+                        className="trigger"
+                        type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                        onClick={this.toggle}
+                    />
                     <div className="pull-right layout-header-avatar">
                         <Dropdown overlay={AvatarMenu}>
                             <div style={{ lineHeight: '64px' }}>
@@ -172,6 +181,7 @@ class BasicLayout extends React.Component {
                         }
                     })
                 }
+
                 <Footer style={{ textAlign: 'center' }}>
                     szy公司系统 ©2017 Created by szy
                 </Footer>
@@ -184,9 +194,9 @@ class BasicLayout extends React.Component {
                 className="BasicLayout"
             >
                 <Sider
+                    className="Sider"
                     collapsible
                     collapsed={this.state.collapsed}
-                    onCollapse={this.onCollapse}
                 >
                     {dynamicSider}
                 </Sider>
