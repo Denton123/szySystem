@@ -5,22 +5,39 @@
  * @date 2017/11/23
  */
 import React from 'react'
-import { Form, Icon, Input, Button, Checkbox } from 'antd'
+import {
+    Form,
+    Icon,
+    Input,
+    Button,
+    Checkbox,
+    message
+} from 'antd'
+
+import { isObject } from 'UTILS/utils.js'
 
 const FormItem = Form.Item
 
 class DefaultLoginForm extends React.Component {
+    handleEnter = (e) => {
+        if (e.keyCode === 13) {
+            this.handleSubmit(e)
+        }
+    }
     handleSubmit = (e) => {
         e.preventDefault()
-        console.log(this.props)
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values)
                 axios.post('/user/login', values)
                     .then(res => {
                         console.log(res)
-                        this.props.updateUser(res.data)
-                        this.props.history.push('/home')
+                        if (isObject(res.data)) {
+                            this.props.updateUser(res.data)
+                            this.props.history.push('/home')
+                        } else {
+                            message.error(res.data)
+                        }
                     })
                     .catch(err => {
                         console.log(err)
@@ -43,7 +60,7 @@ class DefaultLoginForm extends React.Component {
                     {getFieldDecorator('password', {
                         rules: [{required: true, message: '请输入密码'}]
                     })(
-                        <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="密码" />
+                        <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="密码" onKeyDown={this.handleEnter} />
                     )}
                 </FormItem>
                 <FormItem>
