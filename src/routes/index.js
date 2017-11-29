@@ -54,7 +54,6 @@ const routes = [
                         name: '我的任务',
                         path: '/my-mission',
                         component: () => <div>my-mission</div>
-                        mission
                     }
                 ]
             },
