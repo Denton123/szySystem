@@ -195,7 +195,6 @@ class BasicLayout extends React.Component {
             >
                 <Sider
                     className="Sider"
-                    collapsible
                     collapsed={this.state.collapsed}
                 >
                     {dynamicSider}
