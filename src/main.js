@@ -7,6 +7,7 @@ import App from './App'
 
 // import {Provider} from 'react-redux' //用到redux时使用
 import 'STYLE/css/main.less'
+import 'react-quill/dist/quill.snow.css'
 
 // 路径别名有
 // STYLE      根目录下的style文件

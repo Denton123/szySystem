@@ -7,6 +7,7 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom'
+import ReactQuill from 'react-quill'
 
 const { Content } = Layout
 
