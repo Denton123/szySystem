@@ -49,6 +49,11 @@ const routes = [
                         name: '个人信息',
                         path: '/personalInfo',
                         component: () => <div>dayLog</div>
+                    },
+                    {
+                        name: '我的任务',
+                        path: '/myTasks',
+                        component: () => <div>我的任务</div>
                     }
                 ]
             },
@@ -61,16 +66,6 @@ const routes = [
                         name: '项目信息',
                         path: '/projectInfo',
                         component: () => <div>projectInfo</div>
-                    },
-                    {
-                        name: '项目申请管理',
-                        path: '/projectApply',
-                        component: () => <div>projectApply</div>
-                    },
-                    {
-                        name: '分配管理',
-                        path: '/projectDistribute',
-                        component: () => <div>projectDistribute</div>
                     },
                     {
                         name: '工作日志',
@@ -139,9 +134,9 @@ const routes = [
                         component: () => <div>projectInfo</div>
                     },
                     {
-                        name: '历史任务',
-                        path: '/historyTask',
-                        component: () => <div>projectApply</div>
+                        name: '问题',
+                        path: '/question',
+                        component: () => <div>question</div>
                     }
                 ]
             },
@@ -151,14 +146,9 @@ const routes = [
                 path: '/setting',
                 routes: [
                     {
-                        name: '主题设置',
-                        path: '/setTheme',
-                        component: () => <div>projectInfo</div>
-                    },
-                    {
-                        name: '修改密码',
-                        path: '/modifyPsw',
-                        component: () => <div>projectApply</div>
+                        name: '设置',
+                        path: '/set',
+                        component: () => <div>set</div>
                     },
                     {
                         name: '权限分配',
@@ -171,18 +161,6 @@ const routes = [
                         component: () => <div>projectDistribute</div>
                     }
                 ]
-            },
-            {
-                name: '测试',
-                path: '/test',
-                component: () => <div>test</div>,
-                icon: 'home'
-            },
-            {
-                name: '测试1',
-                path: '/test1',
-                component: () => <div>test1</div>,
-                icon: 'home'
             }
         ]
     },
