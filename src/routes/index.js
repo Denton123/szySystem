@@ -27,28 +27,34 @@ const routes = [
             },
             {
                 name: '个人事务管理',
-                path: '/personalAffairs',
+                path: '/personal',
                 icon: 'solution',
                 routes: [
                     {
                         name: '考勤',
-                        path: '/checkWork',
+                        path: '/attendance',
                         component: getRoutes(['PersonalAffairs', 'CheckWork'])
                     },
                     {
-                        name: '每日日志',
-                        path: '/dayLog',
-                        component: () => <div>dayLog</div>
+                        name: '工作日志',
+                        path: '/work-log',
+                        component: () => <div>work-log</div>
                     },
                     {
-                        name: '周总结',
-                        path: '/weekSummary',
-                        component: () => <div>checkwork</div>
+                        name: '每周总结',
+                        path: '/summary',
+                        component: () => <div>summary</div>
                     },
                     {
                         name: '个人信息',
-                        path: '/personalInfo',
-                        component: () => <div>dayLog</div>
+                        path: '/info',
+                        component: () => <div>info</div>
+                    },
+                    {
+                        name: '我的任务',
+                        path: '/my-mission',
+                        component: () => <div>my-mission</div>
+                        mission
                     }
                 ]
             },
@@ -59,71 +65,66 @@ const routes = [
                 routes: [
                     {
                         name: '项目信息',
-                        path: '/projectInfo',
-                        component: () => <div>projectInfo</div>
-                    },
-                    {
-                        name: '项目申请管理',
-                        path: '/projectApply',
-                        component: () => <div>projectApply</div>
-                    },
-                    {
-                        name: '分配管理',
-                        path: '/projectDistribute',
-                        component: () => <div>projectDistribute</div>
+                        path: '/info',
+                        component: () => <div>info</div>
                     },
                     {
                         name: '工作日志',
-                        path: '/workLog',
+                        path: '/work-log',
                         component: () => <div>workLog</div>
+                    },
+                    {
+                        name: '项目问题',
+                        path: '/problem',
+                        component: () => <div>problem</div>
                     }
                 ]
             },
             {
                 name: '人事管理',
                 icon: 'usergroup-add',
-                path: '/workers',
+                path: '/personnel',
                 routes: [
                     {
                         name: '人员管理',
-                        path: '/workerAffairs',
-                        component: () => <div>projectInfo</div>
+                        path: '/worker-affairs',
+                        component: () => <div>worker-affairs</div>
                     },
                     {
                         name: '合同管理',
                         path: '/contract',
-                        component: () => <div>projectApply</div>
+                        component: () => <div>contract</div>
                     },
                     {
                         name: '招聘管理',
                         path: '/recruit',
-                        component: () => <div>projectDistribute</div>
+                        component: () => <div>recruit</div>
                     },
                     {
                         name: '考勤管理',
-                        path: '/checkWorkers',
-                        component: () => <div>workLog</div>
+                        path: '/attendance',
+                        component: () => <div>attendance</div>
                     }
                 ]
             },
             {
                 name: '资产管理',
                 icon: 'red-envelope',
-                path: '/property',
+                path: '/asset',
                 routes: [
                     {
                         name: '设备管理',
-                        path: '/workerAffairs',
+                        path: '/equipment',
                         component: () => <div>projectInfo</div>
                     },
                     {
                         name: '办公用品管理',
-                        path: '/contract',
+                        path: '/stationery',
                         component: () => <div>projectApply</div>
                     },
                     {
                         name: '图书管理',
-                        path: '/recruit',
+                        path: '/book',
                         component: () => <div>projectDistribute</div>
                     }
                 ]
@@ -132,57 +133,29 @@ const routes = [
                 name: '任务管理',
                 icon: 'exception',
                 path: '/task',
-                routes: [
-                    {
-                        name: '任务信息',
-                        path: '/taskInfo',
-                        component: () => <div>projectInfo</div>
-                    },
-                    {
-                        name: '历史任务',
-                        path: '/historyTask',
-                        component: () => <div>projectApply</div>
-                    }
-                ]
+                component: () => <div>task</div>,
             },
             {
                 name: '系统设置',
                 icon: 'tool',
-                path: '/setting',
+                path: '/system',
                 routes: [
                     {
-                        name: '主题设置',
-                        path: '/setTheme',
-                        component: () => <div>projectInfo</div>
-                    },
-                    {
-                        name: '修改密码',
-                        path: '/modifyPsw',
-                        component: () => <div>projectApply</div>
+                        name: '设置',
+                        path: '/setting',
+                        component: () => <div>setting</div>
                     },
                     {
                         name: '权限分配',
                         path: '/permission',
-                        component: () => <div>projectDistribute</div>
+                        component: () => <div>permission</div>
                     },
                     {
                         name: '操作日志',
-                        path: '/operateLog',
-                        component: () => <div>projectDistribute</div>
+                        path: '/operate-log',
+                        component: () => <div>operate-log</div>
                     }
                 ]
-            },
-            {
-                name: '测试',
-                path: '/test',
-                component: () => <div>test</div>,
-                icon: 'home'
-            },
-            {
-                name: '测试1',
-                path: '/test1',
-                component: () => <div>test1</div>,
-                icon: 'home'
             }
         ]
     },
