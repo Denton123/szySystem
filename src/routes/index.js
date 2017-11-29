@@ -132,7 +132,7 @@ const routes = [
                 name: '任务管理',
                 icon: 'exception',
                 path: '/task',
-                component: () => <div>task</div>,
+                component: () => <div>task</div>
             },
             {
                 name: '系统设置',
