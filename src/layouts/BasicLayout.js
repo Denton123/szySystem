@@ -36,7 +36,9 @@ function SubRoute({route, idx, match}) {
                         exact={child.exact}
                         path={`${match.path}${route.path}${child.path}`}
                         render={props => (
-                            <child.component {...props} child={child} route={route} />
+                            <ModelContent breadcrumbs={[route.name, child.name]}>
+                                <child.component {...props} child={child} route={route} />
+                            </ModelContent>
                         )} />
                 ))
             }
@@ -44,14 +46,31 @@ function SubRoute({route, idx, match}) {
     )
 }
 
+// 模块的内容
+const ModelContent = ({breadcrumbs, children}) => (
+    <Content style={{ margin: '0 16px' }}>
+        <Breadcrumb style={{ margin: '16px 0' }}>
+            {breadcrumbs.map((breadcrumb, idx) => (
+                <Breadcrumb.Item key={idx}>{breadcrumb}</Breadcrumb.Item>
+            ))}
+        </Breadcrumb>
+        {children}
+    </Content>
+)
+
 class BasicLayout extends React.Component {
+    componentDidMount() {
+        console.log(this.state)
+    }
     rootSubmenuKeys = this.props.routes.map((route, idx) => idx.toString())
 
     state = {
         openKeys: [this.rootSubmenuKeys[0]],
         collapsed: false
     }
+
     onOpenChange = (openKeys) => {
+        console.log(this.state)
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
         if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
             this.setState({ openKeys })
@@ -175,13 +194,14 @@ class BasicLayout extends React.Component {
                                     exact
                                     path={`${match.path}${route.path}`}
                                     render={props => (
-                                        <route.component route={route} {...props} />
+                                        <ModelContent breadcrumbs={[route.name]}>
+                                            <route.component route={route} {...props} />
+                                        </ModelContent>
                                     )} />
                             )
                         }
                     })
                 }
-
                 <Footer style={{ textAlign: 'center' }}>
                     szy公司系统 ©2017 Created by szy
                 </Footer>
