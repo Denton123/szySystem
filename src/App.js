@@ -17,7 +17,6 @@ class App extends React.Component {
             // 设置为true的时候可以进入/home页面
             // 设置为null的时候可以进入/login页面
             user: this.props.user || null
-        }
     }
     /**
      * [description] 更新当前用户信息
