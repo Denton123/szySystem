@@ -29,7 +29,7 @@ class DefaultLoginForm extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values)
-                axios.get('/user/login', values)
+                axios.post('/user/login', values)
                     .then(res => {
                         console.log(res)
                         if (isObject(res.data)) {
