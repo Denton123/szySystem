@@ -20,6 +20,8 @@ class SearchInput extends React.Component {
     }
 
     handleSearch = (value) => {
+        console.log(value)
+        if (value.length <= 0) return
         this.setState({
             dataSource: [
                 value,
