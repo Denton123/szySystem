@@ -16,8 +16,8 @@ class App extends React.Component {
             // 判断用户是否登录
             // 设置为true的时候可以进入/home页面
             // 设置为null的时候可以进入/login页面
-            user: this.props.user || null
-            // user: true
+            // user: this.props.user || null
+            user: true
         }
     }
     /**
