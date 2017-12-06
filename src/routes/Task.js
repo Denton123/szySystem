@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, Breadcrumb, Icon, Card, Col, Row, List } from 'antd'
+import { Form, Input } from 'antd'
 import {
     Link,
     Route,
@@ -7,39 +7,69 @@ import {
     Redirect
 } from 'react-router-dom'
 
-const { Content, Header } = Layout
-
-class Default extends React.Component {
-    testGetData = () => {
-        axios.get('/api/user')
-        .then(res => {
-            console.log(res)
-        })
-        .catch(err => {
-            console.log(err)
+class Task extends React.Component {
+    state = {
+        fields: {
+            realname: {
+                value: 'benjycui',
+            },
+            email: {
+                value: null
+            },
+            phone: {
+                value: null
+            },
+        },
+    }
+    handleFormChange = (changedFields) => {
+        this.setState({
+            fields: { ...this.state.fields, ...changedFields },
         })
     }
-
     render() {
-        console.log(this.props)
         const route = this.props.route
         const history = this.props.history
         const location = this.props.location
         const match = this.props.match
-
+        const fields = this.state.fields
+        const formFields = [
+            {
+                label: '姓名',
+                field: 'realname',
+                valid: {
+                    rules: [{required: true, message: '请输入姓名'}]
+                },
+                component: (<Input placeholder="姓名" />)
+            },
+            {
+                label: '邮箱',
+                field: 'email',
+                valid: {
+                    rules: [{
+                        type: 'email', message: '邮箱格式不对'
+                    }, {
+                        required: true, message: '请输入邮箱'
+                    }]
+                },
+                component: (<Input placeholder="邮箱" />)
+            },
+            {
+                label: '电话',
+                field: 'phone',
+                valid: {
+                    rules: [{
+                        required: true, message: '请输入你的电话'
+                    }]
+                },
+                component: (<Input placeholder="电话" />)
+            },
+        ]
         return (
-            <Content className="Content">
-                <Header className="IndexHeader">
-                    <Breadcrumb className="Breadcrumb">
-                        <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                    </Breadcrumb>
-                </Header>
-                <div className="Main">
-                    task
-                </div>
-            </Content>
+            <div>
+                task
+            </div>
         )
     }
 }
 
-export default Default
+export default Task

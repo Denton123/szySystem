@@ -5,8 +5,8 @@ const { RangePicker } = DatePicker
 class CustomRangePicker extends React.Component {
     render() {
         const props = {}
-        for (let i in this.props.setting) {
-            props[i] = this.props.setting[i]
+        for (let i in this.props) {
+            props[i] = this.props[i]
         }
         let defaultPropsArr = [
             {

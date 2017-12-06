@@ -1,50 +1,37 @@
 import React from 'react'
-import { Input, AutoComplete } from 'antd'
-const Option = AutoComplete.Option
+import { Input, Select } from 'antd'
 
-function onSelect(value) {
-    console.log('onSelect', value)
-}
-
-function renderOption(item, idx, arr) {
-    return (
-        <Option key={item} text={item}>
-            {item}
-        </Option>
-    )
-}
+const InputGroup = Input.Group
+const Option = Select.Option
 
 class SearchInput extends React.Component {
-    state = {
-        dataSource: []
+    handleSearchTypeChange = (value) => {
+        this.props.handleSearchTypeChange(value)
     }
 
-    handleSearch = (value) => {
-        this.setState({
-            dataSource: [
-                value,
-                value + 'a',
-                value + 'b'
-            ]
-        })
+    handleInputChange = (e) => {
+        const {value} = e.target
+        this.props.handleInputChange(value)
     }
 
     render() {
-        const { dataSource } = this.state
+        const props = this.props
         return (
-            <AutoComplete
-                size="large"
-                style={this.props.styles || {width: '300px'}}
-                className={this.props.classNames}
-                dataSource={dataSource.map(renderOption)}
-                onSelect={onSelect}
-                onSearch={this.handleSearch}
-            >
-                <Input.Search
-                    placeholder="请输入"
-                    onSearch={value => console.log(value)}
-                />
-            </AutoComplete>
+            <div className="inline-block" style={{verticalAlign: 'middle'}}>
+                <InputGroup compact>
+                    <Select defaultValue={props.queryField} onChange={this.handleSearchTypeChange}>
+                        <Option value="realname">姓名</Option>
+                        <Option value="email">邮箱</Option>
+                        <Option value="job">职位</Option>
+                    </Select>
+                    <Input
+                        style={{ width: 200 }}
+                        value={props.queryFieldValue}
+                        placeholder="请输入"
+                        onChange={this.handleInputChange}
+                    />
+                </InputGroup>
+            </div>
         )
     }
 }

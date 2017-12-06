@@ -60,17 +60,30 @@ const ModelContent = ({breadcrumbs, children}) => (
 
 class BasicLayout extends React.Component {
     componentDidMount() {
-        console.log(this.state)
+        let currentPath = this.props.location.pathname.split('home')[1]
+        if (currentPath.split('/').length > 2) {
+            this.setState({
+                openKeys: [`/${currentPath.split('/')[1]}`],
+                selectedKeys: [currentPath]
+            })
+        } else {
+            this.setState({
+                selectedKeys: [currentPath]
+            })
+        }
     }
-    rootSubmenuKeys = this.props.routes.map((route, idx) => idx.toString())
+
+    rootSubmenuKeys = this.props.routes.map((route, idx) => {
+        return route.path
+    })
 
     state = {
+        selectedKeys: [this.rootSubmenuKeys[0]],
         openKeys: [this.rootSubmenuKeys[0]],
         collapsed: false
     }
 
     onOpenChange = (openKeys) => {
-        console.log(this.state)
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
         if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
             this.setState({ openKeys })
@@ -80,6 +93,13 @@ class BasicLayout extends React.Component {
             })
         }
     }
+
+    onClick = ({ item, key, selectedKeys }) => {
+        this.setState({
+            selectedKeys: [key]
+        })
+    }
+
     toggle = () => {
         this.setState({
             collapsed: !this.state.collapsed
@@ -124,19 +144,22 @@ class BasicLayout extends React.Component {
                 <Menu
                     theme="dark"
                     mode="inline"
+                    selectedKeys={this.state.selectedKeys}
                     openKeys={this.state.openKeys}
+                    defaultOpenKeys={['sub1']}
                     onOpenChange={this.onOpenChange}
+                    onClick={this.onClick}
                 >
                     {routes.map((route, idx) => {
                         if (route.routes) {
                             return (
                                 <SubMenu
-                                    key={idx}
+                                    key={route.path}
                                     title={<span><Icon type={route.icon} style={{fontSize: 16}} /><span style={{fontSize: 14}}>{route.name}</span></span>}
                                 >
                                     {
                                         route.routes.map((child, sn) => (
-                                            <Menu.Item key={`${idx}-${sn}`}>
+                                            <Menu.Item key={`${route.path}${child.path}`}>
                                                 <Link to={`${match.path}${route.path}${child.path}`}>{child.name}</Link>
                                             </Menu.Item>
                                         ))
@@ -145,7 +168,7 @@ class BasicLayout extends React.Component {
                             )
                         } else {
                             return (
-                                <Menu.Item key={idx}>
+                                <Menu.Item key={route.path}>
                                     <Link to={`${match.path}${route.path}`}>
                                         <Icon type={route.icon} style={{fontSize: 16}} />
                                         <span style={{fontSize: 14}}>{route.name}</span>

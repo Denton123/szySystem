@@ -10,4 +10,5 @@ import xhr from 'jquery'
  * 使用例子 xhr({ method: 'post', url: 'XXX', body: {Object} })
  * 最简单的例子 xhr({ url: '/user' })
  */
+
 export default xhr
