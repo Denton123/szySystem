@@ -13,6 +13,7 @@ const FormItem = Form.Item
  * layout                {string}   表单布局方式             默认'horizontal'    'horizontal'|'vertical'|'inline'
  * formStyle             {object}   表单样式
  * customFormOperation   {string}   表单的提交时的文本
+ * customOperationLayout {object}   表单提交操作行的布局
  * isSubmitting          {boolean}  表单提交按钮loading状态  *
  */
 class CustomForm extends React.Component {
@@ -26,20 +27,41 @@ class CustomForm extends React.Component {
         })
     }
     render() {
+        const defaultLabelCol = {
+            xs: { span: 6, offset: 0 },
+            sm: { span: 6, offset: 0 },
+            md: { span: 6, offset: 0 },
+            lg: { span: 6, offset: 0 },
+            xl: { span: 6, offset: 0 },
+            xxl: { span: 6, offset: 0 }
+        }
+        const defaultWrapperCol = {
+            xs: { span: 16, offset: 1 },
+            sm: { span: 16, offset: 1 },
+            md: { span: 16, offset: 1 },
+            lg: { span: 16, offset: 1 },
+            xl: { span: 16, offset: 1 },
+            xxl: { span: 16, offset: 1 }
+        }
+        const defaultOperationLayout = {
+            xs: { span: 8, offset: 8 },
+            sm: { span: 8, offset: 8 },
+            md: { span: 8, offset: 8 },
+            lg: { span: 8, offset: 8 },
+            xl: { span: 8, offset: 8 },
+            xxl: { span: 8, offset: 8 }
+        }
         const {getFieldDecorator} = this.props.form
         const {formFields} = this.props
         const formItemLayout = this.props.customFormItemLayout
             ? this.props.customFormItemLayout
             : {
-                labelCol: {
-                    xs: { span: 24 },
-                    sm: { span: 8 },
-                },
-                wrapperCol: {
-                    xs: { span: 24 },
-                    sm: { span: 8 },
-                }
+                labelCol: defaultLabelCol,
+                wrapperCol: defaultWrapperCol
             }
+        const operationLayout = this.props.customOperationLayout
+            ? this.props.customOperationLayout
+            : defaultOperationLayout
         const layout = this.props.layout ? this.props.layout : 'horizontal'
         const formStyle = this.props.formStyle ? this.props.formStyle : {width: 300}
         return (
@@ -52,10 +74,7 @@ class CustomForm extends React.Component {
                         }
                     </FormItem>
                 ))}
-                <FormItem wrapperCol={{
-                    xs: { span: 24, offset: 0 },
-                    sm: { span: 16, offset: 8 },
-                }}>
+                <FormItem wrapperCol={operationLayout}>
                     <Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>
                         {this.props.customFormOperation ? this.props.customFormOperation : '保存'}
                     </Button>
@@ -70,7 +89,6 @@ export default Form.create({
     onFieldsChange: function(props, values) {
         props.updateFormFields(values)
     },
-
     // 把父组件的属性映射到表单项上
     mapPropsToFields(props) {
         let obj = {}

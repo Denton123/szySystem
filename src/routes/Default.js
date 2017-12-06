@@ -6,7 +6,7 @@
  */
 import styles from './default.less'
 import React from 'react'
-import { Layout, Breadcrumb, Icon, Card, Col, Row, List } from 'antd'
+import { Layout, Breadcrumb, Icon, Card, Col, Row, List, Input } from 'antd'
 import {
     Link,
     Route,
@@ -20,12 +20,15 @@ class Default extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            time: ''
+            time: '',
+            value: ''
         }
     }
     time() {
         var d = new Date()
-        var str = d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日' + '  ' + d.getHours() + ':' + d.getMinutes()
+        const day = d.getHours() < 10 ? 0 + d.getHours() : d.getHours()
+        const min = d.getMinutes() < 10 ? 0 + d.getMinutes() : d.getMinutes()
+        var str = d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日' + '  ' + day + ':' + min
         this.setState({
             time: str
         })
@@ -112,5 +115,4 @@ class Default extends React.Component {
         )
     }
 }
-
 export default Default

@@ -1,37 +1,52 @@
 import React from 'react'
-import { Input, Select } from 'antd'
+import { Input, AutoComplete } from 'antd'
+const Option = AutoComplete.Option
 
-const InputGroup = Input.Group
-const Option = Select.Option
+function onSelect(value) {
+    console.log('onSelect', value)
+}
+
+function renderOption(item, idx, arr) {
+    return (
+        <Option key={item} text={item}>
+            {item}
+        </Option>
+    )
+}
 
 class SearchInput extends React.Component {
-    handleSearchTypeChange = (value) => {
-        this.props.handleSearchTypeChange(value)
+    state = {
+        dataSource: []
     }
 
-    handleInputChange = (e) => {
-        const {value} = e.target
-        this.props.handleInputChange(value)
+    handleSearch = (value) => {
+        console.log(value)
+        if (value.length <= 0) return
+        this.setState({
+            dataSource: [
+                value,
+                value + 'a',
+                value + 'b'
+            ]
+        })
     }
 
     render() {
-        const props = this.props
+        const { dataSource } = this.state
         return (
-            <div className="inline-block" style={{verticalAlign: 'middle'}}>
-                <InputGroup compact>
-                    <Select defaultValue={props.queryField} onChange={this.handleSearchTypeChange}>
-                        <Option value="realname">姓名</Option>
-                        <Option value="email">邮箱</Option>
-                        <Option value="job">职位</Option>
-                    </Select>
-                    <Input
-                        style={{ width: 200 }}
-                        value={props.queryFieldValue}
-                        placeholder="请输入"
-                        onChange={this.handleInputChange}
-                    />
-                </InputGroup>
-            </div>
+            <AutoComplete
+                size="large"
+                style={this.props.styles || {width: '300px'}}
+                className={this.props.classNames}
+                dataSource={dataSource.map(renderOption)}
+                onSelect={onSelect}
+                onSearch={this.handleSearch}
+            >
+                <Input.Search
+                    placeholder="请输入"
+                    onSearch={value => console.log(value)}
+                />
+            </AutoComplete>
         )
     }
 }

@@ -18,13 +18,11 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom'
-import moment from 'moment'
 
 // 引入工具方法
 import {isObject, isArray, valueToMoment} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
-import BasicCondition from 'COMPONENTS/basic/BasicCondition'
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
 import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
@@ -33,9 +31,6 @@ import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
 const RadioGroup = Radio.Group
-const InputGroup = Input.Group
-const Option = Select.Option
-const { TextArea } = Input
 
 /**
  * [transformValue 表单值转换]
@@ -274,7 +269,6 @@ class WorkerAffairs extends Component {
             onOk: () => {
                 destroy(`user/${id}`)
                     .then(res => {
-                        console.log(res)
                         let { dataSource } = this.state.tableSetting
                         dataSource.splice(
                             dataSource.findIndex(item => item.id === res.data.id),
