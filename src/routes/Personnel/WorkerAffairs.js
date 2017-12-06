@@ -355,20 +355,6 @@ class WorkerAffairs extends Component {
         })
     }
 
-    // 更新表单数据
-    updateFormFields = (changedFields) => {
-        this.setState({
-            formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
-        })
-    }
-
-    // 更新查询表单数据
-    updateQueryFields = (changedFields) => {
-        this.setState({
-            queryFieldValues: {...this.state.queryFieldValues, ...changedFields}
-        })
-    }
-
     // 处理查询
     handleQuery = (e) => {
         let params = {}
@@ -383,19 +369,6 @@ class WorkerAffairs extends Component {
         }
         params['page'] = 1
         this.getData(params, false)
-    }
-
-    handleInputChange = (value) => {
-        this.setState({
-            queryFieldValue: value
-        })
-    }
-
-    handleSearchTypeChange = (value) => {
-        this.setState({
-            queryField: value,
-            queryFieldValue: null
-        })
     }
 
     render() {
@@ -640,7 +613,7 @@ class WorkerAffairs extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={'查询'}
+                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
                     formFields={condition}
                     handleSubmit={this.handleQuery}
                     updateFormFields={this.updateQueryFields}
