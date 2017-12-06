@@ -34,8 +34,14 @@ const utils = {
         if (utils.isArray(value)) {
             let temp = []
             value.forEach(v => {
-                temp.push(moment(v, format))
+                // 在选择日期后，使用清除日期按钮删除选择时间后返回的值是['', '']
+                // 转化成moment会导致日期组件出现NaN
+                // 需要返回null
+                if (v.length > 0) {
+                    temp.push(moment(v, format))
+                }
             })
+            if (temp.length === 0) return null
             return temp
         } else {
             return moment(value, format)
