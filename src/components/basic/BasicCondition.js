@@ -7,7 +7,7 @@ class BasicCondition extends React.Component {
             <div className={this.props.className || ''}>
                 {conditions.map((condition, idx) => (
                     <div key={idx} className="inline-block mr-10">
-                        <span>{condition.name}：</span>
+                        <span className="mr-10">{condition.name}</span>
                         <condition.component />
                     </div>
                 ))}
