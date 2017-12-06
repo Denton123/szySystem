@@ -1,8 +1,12 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
 import {Router, Route, browserHistory, BrowserRouter, hashHistory} from 'react-router-dom'
-// import route from './routes/router.js'
-// import BasicLayout from './layouts/BasicLayout.js'
+
+// antd国际化
+import zhCN from 'antd/lib/locale-provider/zh_CN'
+import { LocaleProvider } from 'antd'
+
+// 根组件
 import App from './App'
 
 // import {Provider} from 'react-redux' //用到redux时使用
@@ -19,19 +23,46 @@ import 'STYLE/css/main.less'
 // console.log($)
 // console.log(axios)
 
+// axios.get('/user/auth')
+//     .then(res => {
+//         // console.log(res)
+//         ReactDOM.render(
+//             <App user={res.data} />,
+//             document.getElementById('app')
+//         )
+//     })
+//     .catch(err => {
+//         console.log(err)
+//         ReactDOM.render(
+//             <App />,
+//             document.getElementById('app')
+//         )
+//     })
+
 // 判断是否登录
-axios.get('/user/auth')
-    .then(res => {
-        // console.log(res)
-        ReactDOM.render(
-            <App user={res.data} />,
-            document.getElementById('app')
-        )
-    })
-    .catch(err => {
-        console.log(err)
-        ReactDOM.render(
-            <App />,
-            document.getElementById('app')
-        )
-    })
+new Promise(resolve => {
+    axios.get('/user/auth')
+        .then(res => {
+            const app = () => (
+                <LocaleProvider locale={zhCN}>
+                    <App user={res.data} />
+                </LocaleProvider>
+            )
+            resolve(app)
+        })
+        .catch(err => {
+            console.log(err)
+            const app = () => (
+                <LocaleProvider locale={zhCN}>
+                    <App />
+                </LocaleProvider>
+            )
+            resolve(app)
+        })
+})
+.then(Root => {
+    ReactDOM.render(
+        <Root />,
+        document.getElementById('app')
+    )
+})

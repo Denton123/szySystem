@@ -1,15 +1,23 @@
 import React from 'react'
-import { Form } from 'antd'
+import { Form, Button } from 'antd'
+import moment from 'moment'
 
 const FormItem = Form.Item
-
+/**
+ * props属性(存在*的属性，在父组件是必须传值)
+ * handleSubmit          {function} 提交表单的方法           *
+ * formFields            {array}    表单字段数组             *
+ * updateFormFields      {function} 更新表单字段时的方法     *
+ * formFieldsValues      {object}   表单全部字段的值         *
+ * customFormItemLayout  {object}   表单行的布局
+ * layout                {string}   表单布局方式             默认'horizontal'    'horizontal'|'vertical'|'inline'
+ * formStyle             {object}   表单样式
+ * customFormOperation   {string}   表单的提交时的文本
+ * isSubmitting          {boolean}  表单提交按钮loading状态  *
+ */
 class CustomForm extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault()
-        // options.first    若为 true，则每一表单域的都会在碰到第一个失败了的校验规则后停止校验    boolean false
-        // options.firstFields  指定表单域会在碰到第一个失败了的校验规则后停止校验   String[]    []
-        // options.force    对已经校验过的表单域，在 validateTrigger 再次被触发时是否再次校验   boolean false
-        // options.scroll   定义 validateFieldsAndScroll 的滚动行为，详细配置见 dom-scroll-into-view config  Object  {}
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values)
@@ -32,13 +40,25 @@ class CustomForm extends React.Component {
                     sm: { span: 16 }
                 }
             }
+        const layout = this.props.layout ? this.props.layout : 'horizontal'
+        const formStyle = this.props.formStyle ? this.props.formStyle : {width: 300}
         return (
-            <Form onSubmit={this.handleSubmit} style={{width: '300px'}}>
+            <Form onSubmit={this.handleSubmit} layout={layout} style={formStyle}>
                 {formFields.map((item, idx) => (
                     <FormItem key={idx} label={item.label} {...formItemLayout}>
-                        {getFieldDecorator(item.field, item.valid)(item.component)}
+                        {getFieldDecorator(item.field, {
+                            rules: item.valid ? item.valid : []
+                        })(item.component)}
                     </FormItem>
                 ))}
+                <FormItem wrapperCol={{
+                    xs: { span: 24, offset: 0 },
+                    sm: { span: 16, offset: 8 },
+                }}>
+                    <Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>
+                        {this.props.customFormOperation ? this.props.customFormOperation : '保存'}
+                    </Button>
+                </FormItem>
             </Form>
         )
     }
@@ -51,10 +71,10 @@ export default Form.create({
     mapPropsToFields(props) {
         let obj = {}
         for (let i in props.formFieldsValues) {
-            obj[i] = {
+            obj[i] = Form.createFormField({
                 ...props.formFieldsValues[i],
                 value: props.formFieldsValues[i].value
-            }
+            })
         }
         return obj
     }

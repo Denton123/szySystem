@@ -23,7 +23,7 @@ class CustomDatePicker extends React.Component {
         let defaultPropsArr = [
             {
                 prop: 'format',
-                value: 'YYYY-MM-DD HH:mm:ss'
+                value: 'YYYY-MM-DD HH:mm'
             },
             {
                 prop: 'placeholder',
