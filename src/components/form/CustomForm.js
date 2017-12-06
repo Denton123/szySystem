@@ -37,7 +37,7 @@ class CustomForm extends React.Component {
                 },
                 wrapperCol: {
                     xs: { span: 24 },
-                    sm: { span: 16 }
+                    sm: { span: 8 }
                 }
             }
         const layout = this.props.layout ? this.props.layout : 'horizontal'
@@ -45,10 +45,13 @@ class CustomForm extends React.Component {
         return (
             <Form onSubmit={this.handleSubmit} layout={layout} style={formStyle}>
                 {formFields.map((item, idx) => (
-                    <FormItem key={idx} label={item.label} {...formItemLayout}>
-                        {getFieldDecorator(item.field, {
-                            rules: item.valid ? item.valid : []
-                        })(item.component)}
+                    <FormItem key={idx} label={item.label ? item.label : ''} {...formItemLayout}>
+                        {item.field
+                            ? getFieldDecorator(item.field, {
+                                rules: item.valid ? item.valid : []
+                            })(item.component)
+                            : item.component
+                        }
                     </FormItem>
                 ))}
                 <FormItem wrapperCol={{
@@ -65,9 +68,12 @@ class CustomForm extends React.Component {
 }
 
 export default Form.create({
+    // 当 Form.Item 子节点的值发生改变时触发
     onFieldsChange: function(props, values) {
         props.updateFormFields(values)
     },
+
+    // 把父组件的属性映射到表单项上
     mapPropsToFields(props) {
         let obj = {}
         for (let i in props.formFieldsValues) {
