@@ -12,9 +12,9 @@ const FormItem = Form.Item
  * customFormItemLayout  {object}   表单行的布局
  * layout                {string}   表单布局方式             默认'horizontal'    'horizontal'|'vertical'|'inline'
  * formStyle             {object}   表单样式
- * customFormOperation   {string}   表单的提交时的文本
+ * customFormOperation   {ReactNode}表单的提交时的按钮
  * customOperationLayout {object}   表单提交操作行的布局
- * isSubmitting          {boolean}  表单提交按钮loading状态  *
+ * isSubmitting          {boolean}  表单提交按钮loading状态  - 当customFormOperation传入后，这值不需要再传
  */
 class CustomForm extends React.Component {
     handleSubmit = (e) => {
@@ -75,9 +75,15 @@ class CustomForm extends React.Component {
                     </FormItem>
                 ))}
                 <FormItem wrapperCol={operationLayout}>
-                    <Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>
-                        {this.props.customFormOperation ? this.props.customFormOperation : '保存'}
-                    </Button>
+                    {
+                        this.props.customFormOperation
+                        ? this.props.customFormOperation
+                        : (
+                            <Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>
+                                保存
+                            </Button>
+                        )
+                    }
                 </FormItem>
             </Form>
         )
