@@ -40,9 +40,10 @@ class checkwork extends Component {
             content: content,
             selectDay: selectDay
         }
+        var note = this.state.note
         console.log(this.state.note)
-        this.state.note.push(saveObj)
-        let saveStr = JSON.stringify(this.state.note)
+        note.push(saveObj)
+        let saveStr = JSON.stringify(note)
         console.log(saveStr)
         localStorage.setItem('localData', saveStr)
     }
@@ -54,6 +55,9 @@ class checkwork extends Component {
     }
 
     onSelect = (value) => {
+        // this.day(value)
+        const test = this.day(value)
+        console.log(test + '==========')
         this.setState({
             show: true,
             day: value.date()
@@ -63,12 +67,21 @@ class checkwork extends Component {
     }
 
     day = (value) => {
+        const localStr = localStorage.getItem('localData')
+        const localArr = JSON.parse(localStr)
+        for (let i in localArr) {
+            console.log(localArr[i].selectDay + '...')
+            return localArr[i].selectDay
+        }
     }
 
     dateCellRender = (value) => {
-        const localStr = localStorage.getItem('localData')
-        const localArr = JSON.parse(localStr)
-        console.log(localArr)
+        const test = value.date()
+        if (test % 2 === 0) {
+            return (
+                <p style={{background: 'yellow'}}>even</p>
+            )
+        }
     }
     render() {
         const { selectedValue, show, log, content } = this.state
@@ -84,16 +97,6 @@ class checkwork extends Component {
                     <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    <ul>
-                        {
-                            this.state.note.map(item => (
-                                <li>
-                                    {item.content}
-                                    <span>{item.selectDay}</span>
-                                </li>
-                            ))
-                        }
-                    </ul>
                     <Calendar
                         onSelect={this.onSelect}
                         dateCellRender={this.dateCellRender} />
