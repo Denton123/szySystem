@@ -33,11 +33,11 @@ class CustomForm extends React.Component {
             : {
                 labelCol: {
                     xs: { span: 24 },
-                    sm: { span: 8 }
+                    sm: { span: 8 },
                 },
                 wrapperCol: {
                     xs: { span: 24 },
-                    sm: { span: 8 }
+                    sm: { span: 8 },
                 }
             }
         const layout = this.props.layout ? this.props.layout : 'horizontal'
@@ -47,9 +47,7 @@ class CustomForm extends React.Component {
                 {formFields.map((item, idx) => (
                     <FormItem key={idx} label={item.label ? item.label : ''} {...formItemLayout}>
                         {item.field
-                            ? getFieldDecorator(item.field, {
-                                rules: item.valid ? item.valid : []
-                            })(item.component)
+                            ? getFieldDecorator(item.field, item.valid ? item.valid : {})(item.component)
                             : item.component
                         }
                     </FormItem>
