@@ -27,7 +27,6 @@ import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 import BasicCondition from 'COMPONENTS/basic/BasicCondition'
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
-import SearchInput from 'COMPONENTS/input/SearchInput'
 import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
@@ -61,12 +60,6 @@ function transformValue(field, value) {
 class WorkerAffairs extends Component {
     state = {
         // 查询
-        query: {
-            entry_date: null,
-            quit_date: null,
-        },
-        queryField: 'realname',
-        queryFieldValue: 'f',
         queryFieldValues: {
             realname: {
                 value: null
@@ -142,10 +135,6 @@ class WorkerAffairs extends Component {
         let page = this.props.location.state ? this.props.location.state.page : 1
         this.getData({page: page}, true)
     }
-
-    // componentWillUnmount() {
-    //     console.log('unmount')
-    // }
 
     getData = (params, first = false) => {
         let data = {
@@ -389,14 +378,6 @@ class WorkerAffairs extends Component {
     // 处理查询
     handleQuery = (e) => {
         let params = {}
-        // for (let i in this.state.query) {
-        //     if (this.state.query[i] !== null) {
-        //         params[i] = this.state.query[i]
-        //     }
-        // }
-        // if (this.state.queryFieldValue !== null) {
-        //     params[this.state.queryField] = this.state.queryFieldValue
-        // }
         for (let i in this.state.queryFieldValues) {
             if (this.state.queryFieldValues[i].value !== null) {
                 params[i] = this.state.queryFieldValues[i].value
@@ -431,7 +412,6 @@ class WorkerAffairs extends Component {
         const match = this.props.match
         const state = this.state
         const entryDate = {
-            // value: valueToMoment(state.query.entry_date),
             format: 'YYYY-MM-DD',
             onChange: this.onEntryDateChange,
             showTime: false,
@@ -441,7 +421,6 @@ class WorkerAffairs extends Component {
         }
 
         const quitDate = {
-            // value: valueToMoment(state.query.quit_date),
             format: 'YYYY-MM-DD',
             onChange: this.onQuitDateChange,
             showTime: false,
@@ -449,32 +428,6 @@ class WorkerAffairs extends Component {
                 width: 220
             }
         }
-
-        // const condition = [
-        //     {
-        //         name: '搜索',
-        //         component: () => (
-        //             <SearchInput
-        //                 queryField={state.queryField}
-        //                 queryFieldValue={state.queryFieldValue}
-        //                 handleSearchTypeChange={this.handleSearchTypeChange}
-        //                 handleInputChange={this.handleInputChange}
-        //             />
-        //         )
-        //     },
-        //     {
-        //         name: '入职时间',
-        //         component: () => <CustomRangePicker {...entryDate} />
-        //     },
-        //     {
-        //         name: '离职时间',
-        //         component: () => <CustomRangePicker {...quitDate} />
-        //     },
-        //     {
-        //         name: '',
-        //         component: () => <Button type="primary" onClick={this.handleQuery}>查询</Button>
-        //     }
-        // ]
         const condition = [
             {
                 label: '姓名',
@@ -612,19 +565,25 @@ class WorkerAffairs extends Component {
             {
                 label: '用户名',
                 field: 'name',
-                valid: [{required: true, message: '请输入用户名'}],
+                valid: {
+                    rules: [{required: true, message: '请输入用户名'}]
+                },
                 component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="用户名" />),
             },
             {
                 label: '姓名',
                 field: 'realname',
-                valid: [{required: true, message: '请输入姓名'}],
+                valid: {
+                    rules: [{required: true, message: '请输入姓名'}]
+                },
                 component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="姓名" />)
             },
             {
                 label: '性别',
                 field: 'gender',
-                valid: [{required: true, message: '请选择性别'}],
+                valid: {
+                    rules: [{required: true, message: '请选择性别'}]
+                },
                 component: (
                     <RadioGroup>
                         <Radio value="male">男</Radio>
@@ -635,35 +594,45 @@ class WorkerAffairs extends Component {
             {
                 label: '邮箱',
                 field: 'email',
-                valid: [{
-                    type: 'email', message: '邮箱格式不对'
-                }, {
-                    required: true, message: '请输入邮箱'
-                }],
+                valid: {
+                    rules: [{
+                        type: 'email', message: '邮箱格式不对'
+                    }, {
+                        required: true, message: '请输入邮箱'
+                    }]
+                },
                 component: (<Input prefix={<Icon type="mail" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="邮箱" />)
             },
             {
                 label: '电话',
                 field: 'phone',
-                valid: [{ required: true, message: '请输入你的电话' }],
+                valid: {
+                    rules: [{ required: true, message: '请输入你的电话' }]
+                },
                 component: (<Input prefix={<Icon type="phone" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="电话" />)
             },
             {
                 label: '出生日期',
                 field: 'birth_date',
-                valid: [{required: true, message: '请选择出生日期'}],
+                valid: {
+                    rules: [{required: true, message: '请选择出生日期'}]
+                },
                 component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
                 label: '职位',
                 field: 'job',
-                valid: [{required: true, message: '请输入职位'}],
+                valid: {
+                    rules: [{required: true, message: '请输入职位'}]
+                },
                 component: (<Input autoComplete="off" placeholder="职位" />)
             },
             {
                 label: '入职日期',
                 field: 'entry_date',
-                valid: [{required: true, message: '请选择入职日期'}],
+                valid: {
+                    rules: [{required: true, message: '请选择入职日期'}]
+                },
                 component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
@@ -672,7 +641,6 @@ class WorkerAffairs extends Component {
                 component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             }
         ]
-        // <BasicCondition conditions={condition} />
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <CustomForm
@@ -689,6 +657,7 @@ class WorkerAffairs extends Component {
                 <Table {...state.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
                 <CustomModal {...state.modalSetting} footer={null} onCancel={this.handleModalCancel}>
                     <CustomForm
+                        formStyle={{width: '100%'}}
                         formFields={formFields}
                         handleSubmit={this.handleFormSubmit}
                         updateFormFields={this.updateFormFields}
