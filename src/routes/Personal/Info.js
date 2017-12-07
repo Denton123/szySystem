@@ -147,7 +147,7 @@ class Info extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入用户名'}]
                 },
-                component: (<Input disabled prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />),
+                component: (<Input disabled={state.formDisabled} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />),
                 value: null
             },
             {
@@ -203,7 +203,7 @@ class Info extends Component {
                 valid: {
                     rules: [{required: true, message: '请选择出生日期'}]
                 },
-                component: <DatePicker disabled={state.formDisabled} />
+                component: <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
             },
             {
                 label: '职位',
@@ -211,10 +211,7 @@ class Info extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入职位'}]
                 },
-                // component: (<Input disabled={state.formDisabled} placeholder="职位" />)
-                component: (
-                    <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
-                )
+                component: (<Input disabled={state.formDisabled} placeholder="职位" />)
             },
             {
                 label: '入职日期',
