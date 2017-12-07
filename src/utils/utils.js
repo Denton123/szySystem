@@ -46,6 +46,22 @@ const utils = {
         } else {
             return moment(value, format)
         }
+    },
+    resetObject: function(objectToHandle) {
+        // 如果当前对象的属性中存在对象，则将属性中的对象的属性变为当前对象的属性
+        let obj = {}
+        for (let i in objectToHandle) {
+            if (objectToHandle[i] === null || objectToHandle[i] === undefined) {
+                obj[i] = objectToHandle[i]
+                continue
+            }
+            if (utils.isObject(objectToHandle[i])) {
+                obj = Object.assign({}, obj, utils.resetObject(objectToHandle[i]))
+            } else {
+                obj[i] = objectToHandle[i]
+            }
+        }
+        return obj
     }
 }
 

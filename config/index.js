@@ -41,7 +41,11 @@ module.exports = {
             //     }
             // }
             '/api/**': proxyTableOptions,
-            '/user/**': proxyTableOptions
+            '/user/**': proxyTableOptions,
+            // 上传文件
+            '/uploadFiles/**': proxyTableOptions,
+            // 上传图片
+            '/uploadImgs/**': proxyTableOptions
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

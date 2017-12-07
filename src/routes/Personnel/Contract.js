@@ -1,6 +1,6 @@
 // 合同管理
 import React, {Component} from 'react'
-import { Icon, Input, Button, Table, Avatar, Select, Upload, Divider } from 'antd'
+import { Icon, Input, Button, Table, Avatar, Select, Upload, Divider, message } from 'antd'
 import {
     Link,
     Route,
@@ -9,17 +9,20 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
 import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
+import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
 const Option = Select.Option
+
+const today = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`
 
 class Contract extends Component {
     state = {
@@ -33,7 +36,6 @@ class Contract extends Component {
         if (this.state.userData.length === 0) {
             ajax('get', '/user/all')
                 .then(res => {
-                    console.log(res)
                     this.setState({
                         userData: res.data
                     })
@@ -47,6 +49,13 @@ class Contract extends Component {
             fileList: []
         })
         this.props.handleModalCancel()
+    }
+
+    handleFormSubmit = (values) => {
+        this.setState({
+            fileList: []
+        })
+        this.props.handleFormSubmit(values)
     }
 
     render() {
@@ -77,9 +86,7 @@ class Contract extends Component {
                 key: 'action',
                 render: (text, record) => (
                     <span>
-                        <a href="javascript:;" data-id={text.id}>合同预览</a>
-                        <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id}>下载</a>
+                        <a href={`/uploadFiles/${text.contract}`} data-id={text.id}>下载</a>
                     </span>
                 )
             }
@@ -93,6 +100,11 @@ class Contract extends Component {
                 })
             },
             beforeUpload: (file) => {
+                console.log(file)
+                if (file.size > 2 * 1024 * 1024) {
+                    message.error('上传文件不能超过2m')
+                    return false
+                }
                 this.setState(() => {
                     let arr = []
                     arr.push(file)
@@ -114,6 +126,7 @@ class Contract extends Component {
                 },
                 component: (
                     <Select>
+                        <Option value={null}>请选择用户</Option>
                         {this.state.userData.map(u => (
                             <Option key={u.id} value={u.id}>{u.realname}</Option>
                         ))}
@@ -122,7 +135,7 @@ class Contract extends Component {
             },
             {
                 label: '合同文件',
-                field: 'path',
+                field: 'contract',
                 valid: {
                     rules: [{required: true, message: '请上传合同文件'}]
                 },
@@ -153,7 +166,7 @@ class Contract extends Component {
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}
-                        handleSubmit={this.props.handleFormSubmit}
+                        handleSubmit={this.handleFormSubmit}
                         updateFormFields={this.props.updateFormFields}
                         formFieldsValues={this.props.formFieldsValues}
                         isSubmitting={this.props.isSubmitting}
@@ -176,11 +189,18 @@ const Ct = withBasicDataModel(Contract, {
         user_id: {
             value: null
         },
-        path: {
+        contract: {
             value: null
-        },
+        }
     },
-    formSubmitHasFile: true
+    formSubmitHasFile: true,
+    handleTableData: (dataSource) => {
+        let arr = []
+        dataSource.forEach(data => {
+            arr.push(resetObject(data))
+        })
+        return arr
+    }
 })
 
 export default Ct

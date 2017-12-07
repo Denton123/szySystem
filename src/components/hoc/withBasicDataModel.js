@@ -39,6 +39,8 @@ function transformValue(field, value) {
  *
  *  不影响state的属性
  * formSubmitHasFile   表单提交时是否有文件         Boolean  默认false
+ * handleTableData     表格数据特殊处理             Function 无默认，部分页面的关联数据需要进行特殊处理，不传入时，表格数据不进行处理
+ *
  */
 /**
  * [withBasicDataModel 混合基本数据处理的状态]
@@ -106,12 +108,13 @@ function withBasicDataModel(PageComponent, Datas) {
                         total: res.data.total,
                         onChange: this.handlePageChange
                     }
+                    let dataSource = Datas.handleTableData ? Datas.handleTableData(res.data.data) : res.data.data
                     this.setState({
                         tableSetting: {
                             ...this.state.tableSetting,
                             loading: false,
                             pagination: pagination,
-                            dataSource: res.data.data
+                            dataSource: dataSource
                         }
                     })
                     this.props.history.push(`${this.props.location.pathname}?page=${params.page}`, {page: params.page})
