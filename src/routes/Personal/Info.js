@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
-import { Layout, Breadcrumb, Icon, Button, Row, Col, Form, Input, Tooltip, Cascader, Select, Checkbox, AutoComplete, Radio, DatePicker, Upload } from 'antd'
+import { Layout, Breadcrumb, Icon, Button, Form, Input, Tooltip, Cascader, Select, Checkbox, AutoComplete, Radio, DatePicker, Upload } from 'antd'
 import {
     Link,
     Route,
@@ -10,15 +10,15 @@ import {
 import ReactQuill from 'react-quill'
 import moment from 'moment'
 
-// 引入操作按钮组件
-import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
 // 引入头像上传组件
 import AvatarUpload from 'COMPONENTS/input/AvatarUpload/AvatarUpload'
-
+import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
+import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 // 引入工具方法
-import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {isObject, isArray, apiUrl, valueToMoment} from 'UTILS/utils'
+import {checkPhone} from 'UTILS/regExp'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 const { Content } = Layout
@@ -29,40 +29,6 @@ const RadioGroup = Radio.Group
 
 class Info extends Component {
     state = {
-        // 表单
-        formFieldsValues: {
-            avatar: {
-                value: null
-            },
-            id: {
-                value: null
-            },
-            name: {
-                value: null
-            },
-            realname: {
-                value: 'tests'
-            },
-            gender: {
-                value: null
-            },
-            email: {
-                value: null
-            },
-            phone: {
-                value: null
-            },
-            birth_date: {
-                value: null
-            },
-            job: {
-                value: null
-            },
-            entry_date: {
-                value: null
-            }
-        },
-
         // 编辑状态（true/不可编辑，false/可编辑）
         formDisabled: true,
 
@@ -70,7 +36,7 @@ class Info extends Component {
     }
 
     componentDidMount() {
-        this.getData()
+        // this.getData()
     }
 
     getData = () => {
@@ -83,7 +49,8 @@ class Info extends Component {
                 let obj = {}
                 for (let i in this.state.formFieldsValues) {
                     obj[i] = {
-                        value: i.indexOf('date') === -1 ? data[i] : moment(data.birth_date, 'YYYY-MM-DD')
+                        // value: i.indexOf('date') === -1 ? data[i] : moment(data.birth_date, 'YYYY-MM-DD')
+                        value: data[i]
                     }
                 }
                 this.setState({
@@ -95,29 +62,42 @@ class Info extends Component {
             })
     }
 
+    // 保存
     handleFormSubmit = (values) => {
         console.log('----------------------------')
         console.log('parent `s :', values)
         // 改为可编辑状态
         this.setState({
-            formDisabled: !this.state.formDisabled
-        }, () => {
+            formDisabled: true
+        }
+        // , () => {
             // 如果是保存状态 提交表单更新数据
-            if (this.state.formDisabled) {
-                update(`user/1`, values, true)
-                    .then(res => {
-                        console.log('handleFormSubmit fn--- ')
-                        console.log(res)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            }
+            // if (this.state.formDisabled) {
+            //     update(`user/1`, values, true)
+            //         .then(res => {
+            //             console.log('handleFormSubmit fn--- ')
+            //             console.log(res)
+            //         })
+            //         .catch(err => {
+            //             console.log(err)
+            //             this.setState({
+            //                 formDisabled: false
+            //             })
+            //         })
+            // }
+        // }
+        )
+    }
+
+    // 编辑
+    editFn = () => {
+        console.log('edit--')
+        this.setState({
+            formDisabled: false
         })
     }
 
     updateFormFields = (changedFields) => {
-        console.log(changedFields)
         this.setState({
             formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
         })
@@ -125,14 +105,11 @@ class Info extends Component {
 
     normFile = (e) => {
         console.log('Upload event:', e)
+        console.log('Upload event:', e.file.response)
         if (Array.isArray(e)) {
             return e
         }
         return e && e.fileList
-    }
-
-    csfn = () => {
-        console.log('this.state.formDisabled: ' + this.state.formDisabled)
     }
 
     render() {
@@ -143,39 +120,27 @@ class Info extends Component {
         const match = this.props.match
         const state = this.state
 
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 6 }
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 14 }
-            }
-        }
-
-        const operationBtn = [
-            () => <Button type="primary" onClick={this.csfn}>编辑</Button>
-        ]
-
          // 表单
         const formFields = [
             {
-                component: (<Button type="primary" htmlType="submit">{state.formDisabled ? '编辑' : '保存'}</Button>)
+                component: (<Button type="primary" disabled={!state.formDisabled} onClick={this.editFn}>编辑</Button>)
             },
             {
-                label: '头像',
-                field: 'avatar',
-                valid: {
-                    rules: [{required: true, message: '请输入头像'}],
-                    valuePropName: 'fileList',
-                    getValueFromEvent: this.normFile
-                },
-                component: (
-                    <AvatarUpload disabled={state.formDisabled} />
-                ),
-                value: null
+                component: (<Button type="primary" htmlType="submit" disabled={state.formDisabled}>保存</Button>)
             },
+            // {
+            //     label: '头像',
+            //     field: 'avatar',
+            //     valid: {
+            //         rules: [{required: true, message: '请输入头像'}],
+            //         valuePropName: 'fileList',
+            //         getValueFromEvent: this.normFile
+            //     },
+            //     component: (
+            //         <AvatarUpload disabled={state.formDisabled} />
+            //     ),
+            //     value: null
+            // },
             {
                 label: '用户名',
                 field: 'name',
@@ -223,7 +188,12 @@ class Info extends Component {
                 label: '电话',
                 field: 'phone',
                 valid: {
-                    rules: [{ required: true, message: '请输入你的电话' }]
+                    rules: [
+                        { required: true, message: '请输入你的电话' },
+                        {
+                            validator: checkPhone
+                        }
+                    ]
                 },
                 component: (<Input disabled={state.formDisabled} prefix={<Icon type="phone" style={{ fontSize: 13 }} />} placeholder="电话" />)
             },
@@ -241,7 +211,10 @@ class Info extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入职位'}]
                 },
-                component: (<Input disabled={state.formDisabled} placeholder="职位" />)
+                // component: (<Input disabled={state.formDisabled} placeholder="职位" />)
+                component: (
+                    <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
+                )
             },
             {
                 label: '入职日期',
@@ -249,27 +222,60 @@ class Info extends Component {
                 valid: {
                     rules: [{required: true, message: '请选择入职日期'}]
                 },
-                component: <DatePicker disabled={state.formDisabled} />
+                component: (
+                    <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
+                )
             }
         ]
 
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <Row>
-                    <Col span={6} offset={18}>
-                        <BasicOperation operationBtns={operationBtn} />
-                    </Col>
-                </Row>
                 <CustomForm
                     formFields={formFields}
-                    handleSubmit={this.handleFormSubmit}
-                    updateFormFields={this.updateFormFields}
-                    formFieldsValues={state.formFieldsValues}
-                    customFormItemLayout={formItemLayout}
+                    handleSubmit={this.props.handleFormSubmit}
+                    updateFormFields={this.props.updateFormFields}
+                    formFieldsValues={this.props.formFieldsValues}
                 />
 
             </div>
         )
     }
 }
-export default Info
+
+const IF = withBasicDataModel(Info, {
+    model: 'user',
+    formFieldsValues: {
+        // avatar: {
+        //     value: null
+        // },
+        id: {
+            value: null
+        },
+        name: {
+            value: null
+        },
+        realname: {
+            value: 'tests'
+        },
+        gender: {
+            value: null
+        },
+        email: {
+            value: null
+        },
+        phone: {
+            value: null
+        },
+        birth_date: {
+            value: null
+        },
+        job: {
+            value: null
+        },
+        entry_date: {
+            value: null
+        }
+    }
+})
+
+export default IF
