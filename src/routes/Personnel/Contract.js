@@ -1,6 +1,6 @@
 // 合同管理
 import React, {Component} from 'react'
-import { Icon, Button, Table, Avatar } from 'antd'
+import { Icon, Input, Button, Table, Avatar, Select, Upload, Divider } from 'antd'
 import {
     Link,
     Route,
@@ -8,176 +8,179 @@ import {
     Redirect
 } from 'react-router-dom'
 
-import BasicCondition from 'COMPONENTS/basic/BasicCondition'
+// 引入工具方法
+import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {ajax} from 'UTILS/ajax'
+
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
-import SearchInput from 'COMPONENTS/input/SearchInput'
-// import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
-import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
+import CustomModal from 'COMPONENTS/modal/CustomModal'
+import CustomForm from 'COMPONENTS/form/CustomForm'
 
-const columns = [
-    {
-        title: '真实姓名',
-        dataIndex: 'name',
-        key: 'name'
-    },
-    {
-        title: '上传日期',
-        dataIndex: 'data',
-        key: 'data'
-    },
-    {
-        title: '操作',
-        key: 'action',
-        render: (text, record) => (
-            <span>
-                <a href="javascript:;">编辑</a>
-            </span>
-        )
-    }
-]
+import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
-    }
-}
+const Option = Select.Option
 
 class Contract extends Component {
     state = {
-        entryDateValue: null,
-        quitDateValue: null,
-        tableSetting: {
-            loading: true,
-            pagination: false,
-            dataSource: []
-        }
+        // 全部用户数据
+        userData: [],
+        // 文件
+        fileList: []
     }
 
-    componentDidMount() {
-        this.getData(1, true)
-    }
-
-    getData = (page, first = false) => {
-        let data = {
-            params: {
-                page: page
-            }
-        }
-        this.setState({
-            tableSetting: {
-                loading: true
-            }
-        })
-        axios.get('/api/user', data)
-            .then(res => {
-                console.log(res)
-                let paginationChange = {
-                    onChange: this.handlePageChange
-                }
-                let pagination = {
-                    defaultCurrent: res.data.currentPage,
-                    pageSize: res.data.pageSize,
-                    total: res.data.total
-                }
-                this.setState({
-                    tableSetting: {
-                        loading: false,
-                        pagination: first ? Object.assign(pagination, paginationChange) : pagination,
-                        dataSource: res.data.data
-                    }
+    add = () => {
+        if (this.state.userData.length === 0) {
+            ajax('get', '/user/all')
+                .then(res => {
+                    console.log(res)
+                    this.setState({
+                        userData: res.data
+                    })
                 })
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        }
+        this.props.handleAdd()
     }
 
-    handlePageChange = (page) => {
-        console.log(page)
-        this.getData(page)
-    }
-
-    onChange = (field, value) => {
+    handleModalCancel = () => {
         this.setState({
-            [field]: value
+            fileList: []
         })
-    }
-
-    onEntryDateChange = (value, valueString) => {
-        this.onChange('entryDateValue', value)
-        console.log('entryDateValue', valueString)
-    }
-
-    onQuitDateChange = (value, valueString) => {
-        this.onChange('quitDateValue', value)
-        console.log('quitDateValue', valueString)
-    }
-
-    onEntryDateOk = (value) => {
-        console.log('onEntryDateOk: ', value)
-    }
-
-    onQuitDateOk = (value) => {
-        console.log('onQuitDateOk: ', value)
+        this.props.handleModalCancel()
     }
 
     render() {
-        const child = this.props.child
-        const route = this.props.route
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
-        const state = this.state
-
-        const entryDate = {
-            value: state.entryDateValue,
-            format: 'YYYY-MM-DD',
-            onChange: this.onEntryDateChange,
-            onOk: this.onEntryDateOk
-        }
-
-        const quitDate = {
-            value: state.quitDateValue,
-            format: 'YYYY-MM-DD',
-            onChange: this.onQuitDateChange,
-            onOk: this.onQuitDateOk
-        }
-
         const condition = [
             {
-                name: '真实姓名',
-                component: () => <SearchInput />
+                label: '姓名',
+                field: 'realname',
+                component: (<Input autoComplete="off" placeholder="姓名" />)
             }
         ]
         const operationBtn = [
-            () => <Button type="primary">搜索</Button>,
-            () => <Button type="danger">新增</Button>
+            () => <Button type="primary" onClick={this.add}>新增</Button>
         ]
-        // const tableSetting = {
-        //     bordered: false,     // Boolean
-        //     loading: false,      // Boolean
-        //     pagination: {
-        //         current: 1,
-        //         pageSize: 10,
-        //         total: 500
-        //     },                   // Boolean || Object
-        //     size: 'default',     // 'default', 'middle', 'small'
-        //     expandedRowRender: record => <p>{record.description}</p>, // react组件函数   不显示时设置为undefined
-        //     title: () => 'Here is title',    // react组件函数    不显示时设置为undefined
-        //     showHeader: true,                // Boolean   表行头
-        //     footer: () => 'Here is footer',  // react组件函数    不显示时设置为undefined
-        //     rowSelection: {},                // checkbox         不显示时设置为undefined
-        //     scroll: { y: 240 }               // 滑动             不显示时设置为undefined
-        // }
+
+        const columns = [
+            {
+                title: '真实姓名',
+                dataIndex: 'realname',
+                key: 'realname',
+            },
+            {
+                title: '上传日期',
+                dataIndex: 'date',
+                key: 'date',
+            },
+            {
+                title: '操作',
+                key: 'action',
+                render: (text, record) => (
+                    <span>
+                        <a href="javascript:;" data-id={text.id}>合同预览</a>
+                        <Divider type="vertical" />
+                        <a href="javascript:;" data-id={text.id}>下载</a>
+                    </span>
+                )
+            }
+        ]
+
+        const uploadProps = {
+            action: '/contract',
+            onRemove: (file) => {
+                this.setState({
+                    fileList: []
+                })
+            },
+            beforeUpload: (file) => {
+                this.setState(() => {
+                    let arr = []
+                    arr.push(file)
+                    return {
+                        fileList: arr
+                    }
+                })
+                return false
+            },
+            fileList: this.state.fileList,
+        }
+        // 表单
+        const formFields = [
+            {
+                label: '用户名',
+                field: 'user_id',
+                valid: {
+                    rules: [{required: true, message: '请选择用户名'}]
+                },
+                component: (
+                    <Select>
+                        {this.state.userData.map(u => (
+                            <Option key={u.id} value={u.id}>{u.realname}</Option>
+                        ))}
+                    </Select>
+                ),
+            },
+            {
+                label: '合同文件',
+                field: 'path',
+                valid: {
+                    rules: [{required: true, message: '请上传合同文件'}]
+                },
+                component: (
+                    <Upload {...uploadProps}>
+                        <Button>
+                            <Icon type="upload" /> 选择文件
+                        </Button>
+                    </Upload>
+                )
+            },
+        ]
+
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <BasicCondition conditions={condition} />
+                <CustomForm
+                    layout="inline"
+                    formStyle={{width: '100%'}}
+                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    formFields={condition}
+                    handleSubmit={this.props.handleQuery}
+                    updateFormFields={this.props.updateQueryFields}
+                    formFieldsValues={this.props.queryFieldValues}
+                />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...state.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
+                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} />
+                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.handleModalCancel}>
+                    <CustomForm
+                        formStyle={{width: '100%'}}
+                        formFields={formFields}
+                        handleSubmit={this.props.handleFormSubmit}
+                        updateFormFields={this.props.updateFormFields}
+                        formFieldsValues={this.props.formFieldsValues}
+                        isSubmitting={this.props.isSubmitting}
+                    />
+                </CustomModal>
             </div>
         )
     }
 }
 
-export default Contract
+const Ct = withBasicDataModel(Contract, {
+    model: 'contract',
+    title: '合同管理',
+    queryFieldValues: {
+        realname: {
+            value: null
+        },
+    },
+    formFieldsValues: {
+        user_id: {
+            value: null
+        },
+        path: {
+            value: null
+        },
+    },
+    formSubmitHasFile: true
+})
+
+export default Ct
