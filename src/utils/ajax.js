@@ -25,6 +25,7 @@ function ajax(type, url, data = {}, hasFile = false) {
             }
             data = params
         }
+        console.log('hasFile: ' + hasFile)
         if (hasFile) {
             config = {
                 headers: {
@@ -64,8 +65,8 @@ const commonApi = {
     show: function(url) {
         return ajax('get', apiUrl(url))
     },
-    update: function(url, data) {
-        return ajax('put', apiUrl(url), data)
+    update: function(url, data, hasFile) {
+        return ajax('put', apiUrl(url), data, hasFile)
     },
     destroy: function(url) {
         return ajax('delete', apiUrl(url))

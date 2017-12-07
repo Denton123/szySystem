@@ -9,11 +9,17 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import moment from 'moment'
+
 // 引入操作按钮组件
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 import CustomForm from 'COMPONENTS/form/CustomForm'
+
 // 引入头像上传组件
 import AvatarUpload from 'COMPONENTS/input/AvatarUpload/AvatarUpload'
+
+// 引入工具方法
+import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 const { Content } = Layout
 const FormItem = Form.Item
@@ -70,9 +76,9 @@ class Info extends Component {
     getData = () => {
         // 获取用户信息,用户id（登录功能还没做完成，所以还不能获取用户信息）
         var id = 1
-        axios.get(`/api/user/${id}`)
+        index(`user/${id}`)
             .then(res => {
-                console.log(res)
+                console.log('getData fn--- ')
                 let data = res.data
                 let obj = {}
                 for (let i in this.state.formFieldsValues) {
@@ -94,7 +100,19 @@ class Info extends Component {
         console.log('parent `s :', values)
         // 改为可编辑状态
         this.setState({
-            formDisabled: false
+            formDisabled: !this.state.formDisabled
+        }, () => {
+            // 如果是保存状态 提交表单更新数据
+            if (this.state.formDisabled) {
+                update(`user/1`, values, true)
+                    .then(res => {
+                        console.log('handleFormSubmit fn--- ')
+                        console.log(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
         })
     }
 
@@ -107,11 +125,14 @@ class Info extends Component {
 
     normFile = (e) => {
         console.log('Upload event:', e)
-        console.log(111111111111111)
         if (Array.isArray(e)) {
             return e
         }
         return e && e.fileList
+    }
+
+    csfn = () => {
+        console.log('this.state.formDisabled: ' + this.state.formDisabled)
     }
 
     render() {
@@ -134,7 +155,7 @@ class Info extends Component {
         }
 
         const operationBtn = [
-            () => <Button type="primary">编辑</Button>
+            () => <Button type="primary" onClick={this.csfn}>编辑</Button>
         ]
 
          // 表单
@@ -151,7 +172,7 @@ class Info extends Component {
                     getValueFromEvent: this.normFile
                 },
                 component: (
-                    <AvatarUpload />
+                    <AvatarUpload disabled={state.formDisabled} />
                 ),
                 value: null
             },
