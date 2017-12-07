@@ -10,7 +10,6 @@ function getBase64(img, callback) {
 
 // 上传文件之前的钩子,参数为上传的文件
 function beforeUpload(file) {
-    console.log('beforeUpload---')
     console.log(file)
     const isJPG = file.type === 'image/jpeg'
     if (!isJPG) {
@@ -30,15 +29,21 @@ class Avatar extends React.Component {
     handleChange = (info) => {
         // 状态有：uploading done error removed
         if (info.file.status === 'done') {
-            console.log('info---')
-            console.log(info)
-          // Get this url from response in real world.
-            getBase64(info.file.originFileObj, imageUrl => this.setState({ imageUrl }))
+            // Get this url from response in real world.
+            getBase64(info.file.originFileObj, imageUrl => {
+                this.setState({
+                    imageUrl: imageUrl,
+                    fileList: info.fileList
+                })
+                this.props.onChange(info)
+            })
         }
     }
 
     render() {
-        const imageUrl = this.state.imageUrl || this.props.imageUrl
+        const imageUrl = this.state.imageUrl || this.props.fileList
+        const disabled = this.props.disabled
+
         return (
             <Upload
                 className="avatar-uploader"
@@ -47,6 +52,7 @@ class Avatar extends React.Component {
                 action="/api/user/uploaderImg"
                 beforeUpload={beforeUpload}
                 onChange={this.handleChange}
+                disabled={disabled}
             >
                 {
                     imageUrl ? <img src={imageUrl} alt="" className="avatar" /> : <Icon type="plus" className="avatar-uploader-trigger" />
