@@ -4,7 +4,7 @@
 //  update     /:model/{model_id}        put     更新对应id的数据
 //  destroy    /:model/{model_id}        delete  删除对应id的数据
 
-import { apiUrl } from 'UTILS/utils'
+import { apiUrl, isObject } from 'UTILS/utils'
 
 /**
  * [ajax 后台请求]
@@ -34,7 +34,20 @@ function ajax(type, url, data = {}, hasFile = false) {
             let fd = new FormData()
             for (let i in data) {
                 if (data[i] === null) continue
-                fd.append(i, data[i])
+                if (data[i] instanceof Blob) { // 如果是文件
+                    fd.append(i, data[i])
+                    continue
+                }
+                if (isObject(data[i])) {
+                    // antd上传组件改变后返回{ file: { /* ... */ }, fileList: [ /* ... */ ], event: { /* ... */ },}
+                    if (data[i].fileList) {
+                        data[i].fileList.forEach(fl => {
+                            fd.append(i, fl)
+                        })
+                    }
+                } else {
+                    fd.append(i, data[i])
+                }
             }
             data = fd
         }
@@ -58,14 +71,14 @@ const commonApi = {
     index: function(url, data) {
         return ajax('get', apiUrl(url), data)
     },
-    store: function(url, data) {
-        return ajax('post', apiUrl(url), data)
+    store: function(url, data, hasFile) {
+        return ajax('post', apiUrl(url), data, hasFile)
     },
     show: function(url) {
         return ajax('get', apiUrl(url))
     },
-    update: function(url, data) {
-        return ajax('put', apiUrl(url), data)
+    update: function(url, data, hasFile) {
+        return ajax('put', apiUrl(url), data, hasFile)
     },
     destroy: function(url) {
         return ajax('delete', apiUrl(url))
