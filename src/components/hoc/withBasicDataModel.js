@@ -31,7 +31,7 @@ function transformValue(field, value) {
  *
  * 影响state的属性
  * model               *后台模块名称                String   如'user'
- * title               *页面名称                    String   如'人员管理'
+ * title               *页面名称(不用对话框可以不传)String   如'人员管理'
  * tableSetting         表格设置                    Object   具体参数请看antd表格设置
  * modalSetting         对话框设置                  Object   具体参数请看antd对话框设置
  * queryFieldValues    *查询字段的值                Object   {name: {value: null}}
@@ -40,7 +40,7 @@ function transformValue(field, value) {
  *  不影响state的属性
  * formSubmitHasFile   表单提交时是否有文件         Boolean  默认false
  * handleTableData     表格数据特殊处理             Function 无默认，部分页面的关联数据需要进行特殊处理，不传入时，表格数据不进行处理
- *
+ * customGetData       自定义获取默认数据           Boolean  默认false
  */
 /**
  * [withBasicDataModel 混合基本数据处理的状态]
@@ -51,11 +51,13 @@ function transformValue(field, value) {
  * @return   {ReactNode}                 [有页面状态的页面]
  */
 function withBasicDataModel(PageComponent, Datas) {
+    const tableSetting = Datas.tableSetting ? Datas.tableSetting : {}
+    const modalSetting = Datas.modalSetting ? Datas.modalSetting : {}
+    const hasFile = Datas.formSubmitHasFile !== undefined ? Datas.formSubmitHasFile : false
+    const customGetData = Datas.customGetData !== undefined ? Datas.customGetData : false
     return class extends React.Component {
         constructor(props) {
             super(props)
-            const tableSetting = Datas.tableSetting ? Datas.tableSetting : {}
-            const modalSetting = Datas.modalSetting ? Datas.modalSetting : {}
             this.state = {
                 model: Datas.model,
                 title: Datas.title,
@@ -85,8 +87,10 @@ function withBasicDataModel(PageComponent, Datas) {
         }
 
         componentDidMount() {
-            let page = this.props.location.state ? this.props.location.state.page : 1
-            this.getData({page: page}, true)
+            if (!customGetData) {
+                let page = this.props.location.state ? this.props.location.state.page : 1
+                this.getData({page: page}, true)
+            }
         }
 
         // 获取列表数据
@@ -170,7 +174,6 @@ function withBasicDataModel(PageComponent, Datas) {
             this.setState({
                 isSubmitting: true
             })
-            let hasFile = Datas.formSubmitHasFile ? Datas.formSubmitHasFile : false
             let submit = this.state.operationType === 'add'
                 ? store(this.state.model, values, hasFile)
                 : update(`${this.state.model}/${this.state.formFieldsValues.id.value}`, values, hasFile)

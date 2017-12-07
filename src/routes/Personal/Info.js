@@ -272,7 +272,8 @@ const IF = withBasicDataModel(Info, {
         entry_date: {
             value: null
         }
-    }
+    },
+    customGetData: true
 })
 
 export default IF
