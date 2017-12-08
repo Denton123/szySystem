@@ -1,133 +1,129 @@
-import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
-import { Layout, Breadcrumb, Icon, Button, Form, Input, Tooltip, Cascader, Select, Checkbox, AutoComplete, Radio, DatePicker, Upload } from 'antd'
+import {
+    Icon,
+    Button,
+    Form,
+    Input,
+    Tooltip,
+    Cascader,
+    Select,
+    Checkbox,
+    AutoComplete,
+    Radio,
+    DatePicker,
+    Upload,
+    message,
+    Avatar
+} from 'antd'
 import {
     Link,
     Route,
     Switch,
     Redirect
 } from 'react-router-dom'
-import ReactQuill from 'react-quill'
-import moment from 'moment'
 
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
 // 引入头像上传组件
-import AvatarUpload from 'COMPONENTS/input/AvatarUpload/AvatarUpload'
+// import AvatarUpload from 'COMPONENTS/input/AvatarUpload/AvatarUpload'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 // 引入工具方法
-import {isObject, isArray, apiUrl, valueToMoment} from 'UTILS/utils'
 import {checkPhone} from 'UTILS/regExp'
-import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
+import {ajax, show} from 'UTILS/ajax'
 
-const { Content } = Layout
-const FormItem = Form.Item
-const Option = Select.Option
-const AutoCompleteOption = AutoComplete.Option
 const RadioGroup = Radio.Group
+
+function getBase64(img, callback) {
+    const reader = new FileReader()
+    reader.addEventListener('load', () => callback(reader.result))
+    reader.readAsDataURL(img)
+}
 
 class Info extends Component {
     state = {
         // 编辑状态（true/不可编辑，false/可编辑）
-        formDisabled: true,
-
-        imageUrl: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=938116244,3259922549&fm=27&gp=0.jpg'
+        formDisabled: false,
+        // imageUrl: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=938116244,3259922549&fm=27&gp=0.jpg'
+        imageUrl: null,
+        fileList: []
     }
 
     componentDidMount() {
-        // this.getData()
+        this.getData()
     }
 
     getData = () => {
-        // 获取用户信息,用户id（登录功能还没做完成，所以还不能获取用户信息）
-        var id = 1
-        index(`user/${id}`)
+        let uid = this.props.user.id
+        show(`user/${uid}`)
             .then(res => {
-                console.log('getData fn--- ')
-                let data = res.data
-                let obj = {}
-                for (let i in this.state.formFieldsValues) {
-                    obj[i] = {
-                        // value: i.indexOf('date') === -1 ? data[i] : moment(data.birth_date, 'YYYY-MM-DD')
-                        value: data[i]
-                    }
-                }
+                // 直接更新内部表单数据
+                this.props.updateEditFormFieldsValues(res.data)
                 this.setState({
-                    formFieldsValues: obj
+                    imageUrl: res.data.avatar ? `/uploadImgs/${res.data.avatar}` : null
                 })
+                console.log(this.state)
             })
             .catch(err => {
                 console.log(err)
             })
     }
 
-    // 保存
-    handleFormSubmit = (values) => {
-        console.log('----------------------------')
-        console.log('parent `s :', values)
-        // 改为可编辑状态
-        this.setState({
-            formDisabled: true
-        }
-        // , () => {
-            // 如果是保存状态 提交表单更新数据
-            // if (this.state.formDisabled) {
-            //     update(`user/1`, values, true)
-            //         .then(res => {
-            //             console.log('handleFormSubmit fn--- ')
-            //             console.log(res)
-            //         })
-            //         .catch(err => {
-            //             console.log(err)
-            //             this.setState({
-            //                 formDisabled: false
-            //             })
-            //         })
-            // }
-        // }
-        )
-    }
-
-    // 编辑
-    editFn = () => {
-        console.log('edit--')
-        this.setState({
-            formDisabled: false
-        })
-    }
-
-    updateFormFields = (changedFields) => {
-        this.setState({
-            formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
-        })
-    }
-
-    normFile = (e) => {
-        console.log('Upload event:', e)
-        console.log('Upload event:', e.file.response)
-        if (Array.isArray(e)) {
-            return e
-        }
-        return e && e.fileList
-    }
-
     render() {
-        const child = this.props.child
-        const route = this.props.route
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
+        const {
+            child,
+            route,
+            history,
+            location,
+            match
+        } = this.props
         const state = this.state
+        const imageUrl = this.state.imageUrl
+
+        const uploadProps = {
+            action: '/user',
+            onRemove: (file) => {
+                this.setState({
+                    fileList: []
+                })
+            },
+            beforeUpload: (file) => {
+                if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+                    message.error('上传的头像只能是图片')
+                    return
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    message.error('上传图片不能超过2m')
+                    return
+                }
+                this.setState({
+                    isImageLoading: true
+                })
+                getBase64(file, imageUrl => this.setState({
+                    isImageLoading: false,
+                    imageUrl,
+                }))
+                this.setState(() => {
+                    let arr = []
+                    arr.push(file)
+                    return {
+                        fileList: arr
+                    }
+                })
+                return false
+            },
+            fileList: this.state.fileList,
+            showUploadList: false
+        }
 
          // 表单
         const formFields = [
-            {
-                component: (<Button type="primary" disabled={!state.formDisabled} onClick={this.editFn}>编辑</Button>)
-            },
-            {
-                component: (<Button type="primary" htmlType="submit" disabled={state.formDisabled}>保存</Button>)
-            },
+            // {
+            //     component: (<Button type="primary" disabled={!state.formDisabled} onClick={this.editFn}>编辑</Button>)
+            // },
+            // {
+            //     component: (<Button type="primary" htmlType="submit" disabled={state.formDisabled}>保存</Button>)
+            // },
             // {
             //     label: '头像',
             //     field: 'avatar',
@@ -141,6 +137,20 @@ class Info extends Component {
             //     ),
             //     value: null
             // },
+            {
+                label: '头像',
+                field: 'avatar',
+                component: (
+                    <Upload {...uploadProps}>
+                        <Avatar
+                            size="large"
+                            src={imageUrl}
+                            icon="user"
+                        />
+                    </Upload>
+                ),
+                value: null
+            },
             {
                 label: '用户名',
                 field: 'name',
@@ -213,16 +223,16 @@ class Info extends Component {
                 },
                 component: (<Input disabled={state.formDisabled} placeholder="职位" />)
             },
-            {
-                label: '入职日期',
-                field: 'entry_date',
-                valid: {
-                    rules: [{required: true, message: '请选择入职日期'}]
-                },
-                component: (
-                    <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
-                )
-            }
+            // {
+            //     label: '入职日期',
+            //     field: 'entry_date',
+            //     valid: {
+            //         rules: [{required: true, message: '请选择入职日期'}]
+            //     },
+            //     component: (
+            //         <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
+            //     )
+            // }
         ]
 
         return (
@@ -232,8 +242,8 @@ class Info extends Component {
                     handleSubmit={this.props.handleFormSubmit}
                     updateFormFields={this.props.updateFormFields}
                     formFieldsValues={this.props.formFieldsValues}
+                    customFormOperation={<Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>保存</Button>}
                 />
-
             </div>
         )
     }
@@ -242,9 +252,9 @@ class Info extends Component {
 const IF = withBasicDataModel(Info, {
     model: 'user',
     formFieldsValues: {
-        // avatar: {
-        //     value: null
-        // },
+        avatar: {
+            value: null
+        },
         id: {
             value: null
         },
@@ -252,7 +262,7 @@ const IF = withBasicDataModel(Info, {
             value: null
         },
         realname: {
-            value: 'tests'
+            value: null
         },
         gender: {
             value: null
@@ -269,11 +279,13 @@ const IF = withBasicDataModel(Info, {
         job: {
             value: null
         },
-        entry_date: {
-            value: null
-        }
+        // entry_date: {
+        //     value: null
+        // }
     },
-    customGetData: true
+    customGetData: true,
+    clearFormValues: false,
+    formSubmitHasFile: true,
 })
 
 export default IF

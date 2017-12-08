@@ -38,9 +38,10 @@ function transformValue(field, value) {
  * formFieldsValues    *表单字段的值                Object   {name: {value: null}, realname: {value: null}}
  *
  *  不影响state的属性
- * formSubmitHasFile   表单提交时是否有文件         Boolean  默认false
+ * formSubmitHasFile   表单提交时是否有文件         Boolean  默认false(无文件)
  * handleTableData     表格数据特殊处理             Function 无默认，部分页面的关联数据需要进行特殊处理，不传入时，表格数据不进行处理
- * customGetData       自定义获取默认数据           Boolean  默认false
+ * customGetData       自定义获取默认数据           Boolean  默认false()
+ * clearFormValues     清空表单默认值               Boolean  默认true(清空)  用于在表单提交后是否清空表单默认值
  */
 /**
  * [withBasicDataModel 混合基本数据处理的状态]
@@ -55,6 +56,7 @@ function withBasicDataModel(PageComponent, Datas) {
     const modalSetting = Datas.modalSetting ? Datas.modalSetting : {}
     const hasFile = Datas.formSubmitHasFile !== undefined ? Datas.formSubmitHasFile : false
     const customGetData = Datas.customGetData !== undefined ? Datas.customGetData : false
+    const clearFormValues = Datas.clearFormValues !== undefined ? Datas.clearFormValues : true
     return class extends React.Component {
         constructor(props) {
             super(props)
@@ -151,22 +153,31 @@ function withBasicDataModel(PageComponent, Datas) {
             show(`/${this.state.model}/${id}`)
                 .then(res => {
                     this.setState((prevState, props) => {
-                        let obj = {}
-                        Object.keys(prevState.formFieldsValues).forEach(field => {
-                            obj[field] = {
-                                value: transformValue(field, res.data[field])
-                            }
-                        })
                         return {
                             modalSetting: {
                                 ...prevState.modalSetting,
                                 visible: true,
                                 title: `${prevState.title}-编辑`
                             },
-                            formFieldsValues: obj
                         }
                     })
+                    this.updateEditFormFieldsValues(res.data)
                 })
+        }
+
+        // 编辑数据时更新表单数据
+        updateEditFormFieldsValues = (data) => {
+            this.setState((prevState, props) => {
+                let obj = {}
+                Object.keys(prevState.formFieldsValues).forEach(field => {
+                    obj[field] = {
+                        value: transformValue(field, data[field])
+                    }
+                })
+                return {
+                    formFieldsValues: obj
+                }
+            })
         }
 
         // 表单提交回调 存在新增和编辑两种情况
@@ -223,21 +234,25 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 表单对话框取消回调
         handleModalCancel = (e) => {
-            this.setState((prevState, props) => {
-                let obj = {}
-                for (let i in prevState.formFieldsValues) {
-                    obj[i] = {
-                        value: null
+            if (clearFormValues) {
+                this.setState((prevState, props) => {
+                    let obj = {}
+                    for (let i in prevState.formFieldsValues) {
+                        obj[i] = {
+                            value: null
+                        }
                     }
-                }
-                return {
-                    modalSetting: {
-                        ...this.state.modalSetting,
-                        visible: false
-                    },
-                    formFieldsValues: obj,
-                    isSubmitting: false
-                }
+                    return {
+                        formFieldsValues: obj,
+                    }
+                })
+            }
+            this.setState({
+                modalSetting: {
+                    ...this.state.modalSetting,
+                    visible: false
+                },
+                isSubmitting: false
             })
         }
 
@@ -337,6 +352,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     handlePageChange={this.handlePageChange}
                     handleAdd={this.handleAdd}
                     handleEdit={this.handleEdit}
+                    updateEditFormFieldsValues={this.updateEditFormFieldsValues}
                     handleFormSubmit={this.handleFormSubmit}
                     handleModalCancel={this.handleModalCancel}
                     handleDelete={this.handleDelete}

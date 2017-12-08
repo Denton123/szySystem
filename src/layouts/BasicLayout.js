@@ -118,10 +118,13 @@ class BasicLayout extends React.Component {
     }
 
     render() {
-        const routes = this.props.routes
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
+        const {
+            routes,
+            history,
+            location,
+            match,
+            user
+        } = this.props
 
         const AvatarMenu = (
             <Menu>

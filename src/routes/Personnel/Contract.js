@@ -100,7 +100,6 @@ class Contract extends Component {
                 })
             },
             beforeUpload: (file) => {
-                console.log(file)
                 if (file.size > 2 * 1024 * 1024) {
                     message.error('上传文件不能超过2m')
                     return false
@@ -116,6 +115,7 @@ class Contract extends Component {
             },
             fileList: this.state.fileList,
         }
+
         // 表单
         const formFields = [
             {
