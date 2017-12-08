@@ -43,7 +43,14 @@ const routes = [
                     {
                         name: '每周总结',
                         path: '/summary',
-                        component: getRoutes(['Personal', 'Summary'])
+                        component: getRoutes(['Personal', 'Summary']),
+                        routes: [
+                            {
+                                name: '发表总结',
+                                path: '/detail',
+                                component: getRoutes(['Personal', 'Detail', 'Summary'])
+                            },
+                        ]
                     },
                     {
                         name: '个人信息',

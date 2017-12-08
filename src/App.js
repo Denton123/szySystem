@@ -16,7 +16,6 @@ class App extends React.Component {
             // 判断用户是否登录
             // 设置为true的时候可以进入/home页面
             // 设置为null的时候可以进入/login页面
-            // user: true
             user: this.props.user || null
         }
     }
@@ -26,7 +25,7 @@ class App extends React.Component {
      * @DateTime 2017-11-24
      * @param    {Object}   user [当前最新的用户信息]
      */
-    updateUser = (user) => {
+    globalUpdateUser = (user) => {
         this.setState({
             user: user
         })
@@ -47,7 +46,7 @@ class App extends React.Component {
                             key={idx}
                             path={com.path}
                             render={props => (
-                                <com.component {...props} routes={com.routes} user={this.state.user} updateUser={this.updateUser} />
+                                <com.component {...props} routes={com.routes} user={this.state.user} globalUpdateUser={this.globalUpdateUser} />
                             )} />
                     ))}
                 </Switch>

@@ -44,7 +44,6 @@ class Info extends Component {
     state = {
         // 编辑状态（true/不可编辑，false/可编辑）
         formDisabled: false,
-        // imageUrl: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=938116244,3259922549&fm=27&gp=0.jpg'
         imageUrl: null,
         fileList: []
     }
@@ -54,6 +53,9 @@ class Info extends Component {
     }
 
     getData = () => {
+        if (!this.props.user) {
+            this.props.history.push('/login')
+        }
         let uid = this.props.user.id
         show(`user/${uid}`)
             .then(res => {
@@ -62,11 +64,16 @@ class Info extends Component {
                 this.setState({
                     imageUrl: res.data.avatar ? `/uploadImgs/${res.data.avatar}` : null
                 })
-                console.log(this.state)
             })
             .catch(err => {
                 console.log(err)
             })
+    }
+
+    handleFormSubmit = (values) => {
+        this.props.handleFormSubmit(values, (res) => {
+            this.props.globalUpdateUser(res.data)
+        })
     }
 
     render() {
@@ -118,25 +125,6 @@ class Info extends Component {
 
          // 表单
         const formFields = [
-            // {
-            //     component: (<Button type="primary" disabled={!state.formDisabled} onClick={this.editFn}>编辑</Button>)
-            // },
-            // {
-            //     component: (<Button type="primary" htmlType="submit" disabled={state.formDisabled}>保存</Button>)
-            // },
-            // {
-            //     label: '头像',
-            //     field: 'avatar',
-            //     valid: {
-            //         rules: [{required: true, message: '请输入头像'}],
-            //         valuePropName: 'fileList',
-            //         getValueFromEvent: this.normFile
-            //     },
-            //     component: (
-            //         <AvatarUpload disabled={state.formDisabled} />
-            //     ),
-            //     value: null
-            // },
             {
                 label: '头像',
                 field: 'avatar',
@@ -223,23 +211,13 @@ class Info extends Component {
                 },
                 component: (<Input disabled={state.formDisabled} placeholder="职位" />)
             },
-            // {
-            //     label: '入职日期',
-            //     field: 'entry_date',
-            //     valid: {
-            //         rules: [{required: true, message: '请选择入职日期'}]
-            //     },
-            //     component: (
-            //         <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
-            //     )
-            // }
         ]
 
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <CustomForm
                     formFields={formFields}
-                    handleSubmit={this.props.handleFormSubmit}
+                    handleSubmit={this.handleFormSubmit}
                     updateFormFields={this.props.updateFormFields}
                     formFieldsValues={this.props.formFieldsValues}
                     customFormOperation={<Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>保存</Button>}
@@ -279,9 +257,6 @@ const IF = withBasicDataModel(Info, {
         job: {
             value: null
         },
-        // entry_date: {
-        //     value: null
-        // }
     },
     customGetData: true,
     clearFormValues: false,

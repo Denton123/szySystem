@@ -181,7 +181,8 @@ function withBasicDataModel(PageComponent, Datas) {
         }
 
         // 表单提交回调 存在新增和编辑两种情况
-        handleFormSubmit = (values) => {
+        // 新增回调函数
+        handleFormSubmit = (values, cb) => {
             this.setState({
                 isSubmitting: true
             })
@@ -222,6 +223,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                     this.handleModalCancel()
                     message.success('保存成功')
+                    cb && cb(res)
                 }
             })
             .catch(err => {

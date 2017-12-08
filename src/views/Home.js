@@ -14,11 +14,8 @@ class Home extends React.Component {
             this.props.history.push('/login')
         }
     }
+
     render() {
-        const match = this.props.match
-        const history = this.props.history
-        const location = this.props.location
-        const routes = this.props.routes
         return (
             <BasicLayout {...this.props} />
         )
