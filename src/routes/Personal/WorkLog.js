@@ -53,10 +53,12 @@ class checkwork extends Component {
                 message.success('新增日志成功')
                 console.log('success')
             }).catch(err => {
+                console.log(err)
                 message.error('新增日志失败')
             }) : update(`/worklog/${saveObj.index}`, saveObj).then(res => {
                 message.success('编辑日志成功')
             }).catch(err => {
+                console.log(err)
                 message.error('编辑日志失败')
             })
         }

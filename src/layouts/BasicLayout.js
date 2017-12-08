@@ -26,7 +26,7 @@ const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
 
 // 子路由
-function SubRoute({route, idx, match}) {
+function SubRoute({route, idx, match, user}) {
     return (
         <Switch>
             {
@@ -37,7 +37,7 @@ function SubRoute({route, idx, match}) {
                         path={`${match.path}${route.path}${child.path}`}
                         render={props => (
                             <ModelContent breadcrumbs={[route.name, child.name]}>
-                                <child.component {...props} child={child} route={route} />
+                                <child.component {...props} child={child} route={route} user={user} />
                             </ModelContent>
                         )} />
                 ))
@@ -118,10 +118,13 @@ class BasicLayout extends React.Component {
     }
 
     render() {
-        const routes = this.props.routes
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
+        const {
+            routes,
+            history,
+            location,
+            match,
+            user
+        } = this.props
 
         const AvatarMenu = (
             <Menu>
@@ -208,7 +211,7 @@ class BasicLayout extends React.Component {
                     routes.map((route, idx) => {
                         if (route.routes) {
                             return (
-                                <SubRoute key={idx} route={route} idx={idx} match={match} />
+                                <SubRoute key={idx} route={route} idx={idx} match={match} user={this.props.user} />
                             )
                         } else {
                             return (
@@ -218,7 +221,7 @@ class BasicLayout extends React.Component {
                                     path={`${match.path}${route.path}`}
                                     render={props => (
                                         <ModelContent breadcrumbs={[route.name]}>
-                                            <route.component route={route} {...props} />
+                                            <route.component route={route} {...props} user={this.props.user} />
                                         </ModelContent>
                                     )} />
                             )
