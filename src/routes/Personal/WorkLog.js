@@ -1,6 +1,9 @@
+/**
+ * 每日日志
+ */
 import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
-import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, message } from 'antd'
+import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, message, Modal } from 'antd'
 import {
     Link,
     Route,
@@ -16,7 +19,7 @@ import {isObject, isArray, valueToMoment} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 moment.locale('zh-cn')
 const { Content } = Layout
-
+const confirm = Modal.confirm
 class checkwork extends Component {
     state = {
         show: false,
@@ -26,73 +29,129 @@ class checkwork extends Component {
         id: 0,
         content: '',
         title: '',
-        checkFlag: ''
+        checkFlag: '',
+        showTip: false,
+        logcont: '',
+        showDelete: false,
+        deleteId: ''
     }
 
+    componentDidMount() {
+        this.getLogData()
+    }
+
+    getLogData = () => {
+        index('/worklog').then(res => {
+            console.log(res)
+            this.setState({
+                note: res.data
+            })
+        })
+    }
     handleok = (content) => {
         if (content === '') {
             this.setState({
-                show: true
+                show: true,
+                showTip: true
             })
         } else {
             this.setState({
-                show: false
+                show: false,
+                showTip: false
             })
             localStorage.setItem('logcont', content)
             var selectDay = localStorage.getItem('recordDay')
             var saveObj = {
                 index: this.state.id++,
+                id: this.props.user.id,
                 content: content,
                 selectDay: selectDay
             }
             var note = this.state.note
-            note.push(saveObj)
-            let saveStr = JSON.stringify(note)
-            localStorage.setItem('localData', saveStr)
-            this.state.checkFlag === 'add' ? store('/worklog', saveObj).then(res => {
-                message.success('新增日志成功')
-                console.log('success')
-            }).catch(err => {
-                console.log(err)
-                message.error('新增日志失败')
-            }) : update(`/worklog/${saveObj.index}`, saveObj).then(res => {
-                message.success('编辑日志成功')
-            }).catch(err => {
-                console.log(err)
-                message.error('编辑日志失败')
-            })
+            if (this.state.checkFlag === 'add') {
+                store('/worklog', saveObj).then(res => {
+                    console.log(res)
+                    if (res.status === 200) {
+                        this.getLogData()
+                        message.success('新增日志成功')
+                    } else {
+                        message.error('新增日志失败')
+                    }
+                })
+            } else {
+                var i, time, editId
+                var okArr = []
+                for (i in note) {
+                    time = note[i].time.substr(0, 10)
+                    if (selectDay === time) {
+                        editId = note[i].id
+                    }
+                }
+                update(`/worklog/${editId}`, saveObj).then(res => {
+                    if (res.status === 200) {
+                        this.getLogData()
+                        message.success('编辑日志成功')
+                    } else {
+                        message.error('编辑日志失败')
+                    }
+                })
+            }
         }
         console.log(this.state.checkFlag)
     }
 
     onCancel = (e) => {
         this.setState({
-            show: false
+            show: false,
+            showTip: false
         })
     }
 
     onSelect = (value) => {
         const onSelectDay = moment(value).format('YYYY-MM-DD')
-        console.log(onSelectDay)
-        const localData = localStorage.getItem('localData')
-        const localArr = JSON.parse(localData)
-        var id
+        const localArr = this.state.note
+        var id, time, ol, checkFlag, i
         var arr = []
         if (localArr !== null) {
             for (id in localArr) {
-                arr.push(localArr[id].selectDay)
+                if (localArr[id].time !== null) {
+                    time = localArr[id].time.substr(0, 10)
+                    arr.push(time)
+                }
             }
-            console.log(arr)
-            const checkFlag = arr.indexOf(onSelectDay) // -1不存在，0存在
+            checkFlag = arr.indexOf(onSelectDay) // -1不存在，0存在
             if (checkFlag === -1) {
                 this.setState({
-                    title: '添加日志',
-                    checkFlag: 'add'
+                    title: '新增日志',
+                    checkFlag: 'add',
+                    logcont: '',
+                    showDelete: false
                 })
             } else {
+                var testarr = []
+                var editContent, atTime
+                for (ol in localArr) {
+                    if (localArr[ol].time !== null) {
+                        var timearr = localArr[ol].time.substr(0, 10)
+                        testarr.push(timearr)
+                        var Flag = timearr.indexOf(onSelectDay)
+                        if (Flag === 0) {
+                            editContent = localArr[ol].content
+                        }
+                    }
+                }
+                for (i in localArr) {
+                    atTime = localArr[i].time.substr(0, 10)
+                    if (onSelectDay === atTime) {
+                        var editId = localArr[i].id
+                    }
+                }
                 this.setState({
                     title: '编辑日志',
-                    checkFlag: 'edit'
+                    checkFlag: 'edit',
+                    logcont: editContent,
+                    showDelete: true,
+                    deleteId: editId
                 })
             }
         }
@@ -103,19 +162,43 @@ class checkwork extends Component {
         const da = localStorage.getItem('recordDay')
     }
 
+    delete = (e) => {
+        var deleteID = this.state.deleteId
+        confirm({
+            title: '确定要删除日志吗?',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                console.log(deleteID)
+                destroy(`/worklog/${deleteID}`).then(res => {
+                    this.setState({
+                        show: false
+                    })
+                })
+            },
+            onCancel() {
+                console.log('Cancel')
+            }
+        })
+    }
+
     dateCellRender = (value) => {
         const cellDate = moment(value).format('YYYY-MM-DD')
-        const localStr = localStorage.getItem('localData')
-        const localArr = JSON.parse(localStr)
+        const localArr = this.state.note
+        var time
         if (localArr !== null) {
             for (let i in localArr) {
-                if (cellDate === localArr[i].selectDay) {
-                    localStorage.setItem('hasContent', true)
-                    var hasContent = localStorage.getItem('hasContent')
+                if (localArr[i].time !== null) {
+                    time = localArr[i].time.substr(0, 10)
+                }
+                if (cellDate === time) {
                     return (
                         <div>
                             <p>{localArr[i].content}</p>
-                            <Icon type="delete" />
+                            <span className="deleteWrap" onClick={e => this.delete(e)}>
+                                <Icon type="delete" className="delete" />
+                            </span>
                         </div>
                     )
                 }
@@ -123,7 +206,7 @@ class checkwork extends Component {
         }
     }
     render() {
-        const { selectedValue, show, title } = this.state
+        const { selectedValue, show, title, showTip, checkFlag, logcont, showDelete } = this.state
         const child = this.props.child
         const route = this.props.route
         const history = this.props.history
@@ -139,7 +222,16 @@ class checkwork extends Component {
                     <Calendar
                         onSelect={this.onSelect}
                         dateCellRender={this.dateCellRender} />
-                    <PopModal show={show} handleok={this.handleok} onCancel={this.onCancel} title={title} />
+                    <PopModal
+                        show={show}
+                        handleok={this.handleok}
+                        onCancel={this.onCancel}
+                        title={title}
+                        showTip={showTip}
+                        delete={this.delete}
+                        showDelete={showDelete}
+                        checkFlag={checkFlag}
+                        logcont={logcont} />
                 </div>
             </Content>
         )
