@@ -40,6 +40,11 @@ const routes = [
                         path: '/work-log',
                         component: getRoutes(['Personal', 'WorkLog'])
                     },
+                    // {
+                    //     name: '发表总结',
+                    //     path: '/summary/detail',
+                    //     component: getRoutes(['Personal', 'Detail', 'Summary']),
+                    // },
                     {
                         name: '每周总结',
                         path: '/summary',
