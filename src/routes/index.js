@@ -40,11 +40,6 @@ const routes = [
                         path: '/work-log',
                         component: getRoutes(['Personal', 'WorkLog'])
                     },
-                    // {
-                    //     name: '发表总结',
-                    //     path: '/summary/detail',
-                    //     component: getRoutes(['Personal', 'Detail', 'Summary']),
-                    // },
                     {
                         name: '每周总结',
                         path: '/summary',
@@ -52,8 +47,13 @@ const routes = [
                         routes: [
                             {
                                 name: '发表总结',
-                                path: '/detail',
-                                component: getRoutes(['Personal', 'Detail', 'Summary'])
+                                path: '/add',
+                                component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
+                            },
+                            {
+                                name: '编辑总结',
+                                path: '/:id',
+                                component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
                             },
                         ]
                     },

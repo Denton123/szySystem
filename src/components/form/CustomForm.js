@@ -15,6 +15,7 @@ const FormItem = Form.Item
  * customFormOperation   {ReactNode}表单的提交时的按钮
  * customOperationLayout {object}   表单提交操作行的布局
  * isSubmitting          {boolean}  表单提交按钮loading状态  - 当customFormOperation传入后，这值不需要再传
+ * formItemStyle         {object}   表单域的样式             默认 {}
  */
 class CustomForm extends React.Component {
     handleSubmit = (e) => {
@@ -67,7 +68,7 @@ class CustomForm extends React.Component {
         return (
             <Form onSubmit={this.handleSubmit} layout={layout} style={formStyle}>
                 {formFields.map((item, idx) => (
-                    <FormItem key={idx} label={item.label ? item.label : ''} {...formItemLayout}>
+                    <FormItem key={idx} label={item.label ? item.label : ''} {...formItemLayout} style={item.formItemStyle ? item.formItemStyle : {}}>
                         {item.field
                             ? getFieldDecorator(item.field, item.valid ? item.valid : {})(item.component)
                             : item.component
