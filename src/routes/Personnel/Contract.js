@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -21,8 +21,6 @@ import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
 const Option = Select.Option
-
-const today = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`
 
 class Contract extends Component {
     state = {
@@ -55,7 +53,13 @@ class Contract extends Component {
         this.setState({
             fileList: []
         })
-        this.props.handleFormSubmit(values)
+        let params = {
+            date: formatDate()
+        }
+        for (let i in values) {
+            params[i] = values[i]
+        }
+        this.props.handleFormSubmit(params)
     }
 
     render() {

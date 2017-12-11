@@ -3,7 +3,7 @@
  */
 import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
-import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, message, Modal } from 'antd'
+import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, message, Modal, Spin, Avatar } from 'antd'
 import {
     Link,
     Route,
@@ -41,8 +41,8 @@ class checkwork extends Component {
     }
 
     getLogData = () => {
-        index('/worklog').then(res => {
-            console.log(res)
+        const id = this.props.user.id
+        show(`/worklog/${id}`).then(res => {
             this.setState({
                 note: res.data
             })
@@ -70,7 +70,6 @@ class checkwork extends Component {
             var note = this.state.note
             if (this.state.checkFlag === 'add') {
                 store('/worklog', saveObj).then(res => {
-                    console.log(res)
                     if (res.status === 200) {
                         this.getLogData()
                         message.success('新增日志成功')
@@ -97,7 +96,6 @@ class checkwork extends Component {
                 })
             }
         }
-        console.log(this.state.checkFlag)
     }
 
     onCancel = (e) => {
@@ -119,10 +117,10 @@ class checkwork extends Component {
                     arr.push(time)
                 }
             }
-            checkFlag = arr.indexOf(onSelectDay) // -1不存在，0存在
+            checkFlag = arr.indexOf(onSelectDay)
             if (checkFlag === -1) {
                 this.setState({
-                    title: '新增日志',
+                    title: '新增',
                     checkFlag: 'add',
                     logcont: '',
                     showDelete: false
@@ -147,7 +145,7 @@ class checkwork extends Component {
                     }
                 }
                 this.setState({
-                    title: '编辑日志',
+                    title: '编辑',
                     checkFlag: 'edit',
                     logcont: editContent,
                     showDelete: true,
@@ -169,15 +167,15 @@ class checkwork extends Component {
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
-            onOk() {
-                console.log(deleteID)
-                destroy(`/worklog/${deleteID}`).then(res => {
+            onOk: () => {
+                destroy(`/worklog/${this.state.deleteId}`).then(res => {
                     this.setState({
                         show: false
                     })
+                    this.getLogData()
                 })
             },
-            onCancel() {
+            onCancel: () => {
                 console.log('Cancel')
             }
         })
@@ -187,18 +185,15 @@ class checkwork extends Component {
         const cellDate = moment(value).format('YYYY-MM-DD')
         const localArr = this.state.note
         var time
-        if (localArr !== null) {
+        if (localArr !== '') {
             for (let i in localArr) {
-                if (localArr[i].time !== null) {
+                if (localArr[i].time !== '') {
                     time = localArr[i].time.substr(0, 10)
                 }
                 if (cellDate === time) {
                     return (
                         <div>
-                            <p>{localArr[i].content}</p>
-                            <span className="deleteWrap" onClick={e => this.delete(e)}>
-                                <Icon type="delete" className="delete" />
-                            </span>
+                            <Badge status="success" text={localArr[i].content} />
                         </div>
                     )
                 }
@@ -206,7 +201,7 @@ class checkwork extends Component {
         }
     }
     render() {
-        const { selectedValue, show, title, showTip, checkFlag, logcont, showDelete } = this.state
+        const { selectedValue, show, title, showTip, logcont, showDelete } = this.state
         const child = this.props.child
         const route = this.props.route
         const history = this.props.history
@@ -230,7 +225,6 @@ class checkwork extends Component {
                         showTip={showTip}
                         delete={this.delete}
                         showDelete={showDelete}
-                        checkFlag={checkFlag}
                         logcont={logcont} />
                 </div>
             </Content>

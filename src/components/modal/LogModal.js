@@ -9,7 +9,6 @@ import 'ROUTES/Personal/WorkLog.less'
 const { TextArea } = Input
 class PopModal extends Component {
     state = {
-        text: '请输入',
         showTip: false,
         textContent: ''
     }
@@ -23,7 +22,12 @@ class PopModal extends Component {
     onSubmit = (e) => {
         this.props.handleok(this.state.textContent)
     }
-
+    componentWillReceiveProps(nextProps) {
+        const logcontent = nextProps.logcont.trim()
+        this.setState({
+            textContent: logcontent
+        })
+    }
     render() {
         const menu = (
             <Menu>
@@ -37,22 +41,24 @@ class PopModal extends Component {
         return (
             <div>
                 <Modal
-                    title={title}
+                    title={`${title}日志`}
                     visible={show}
                     onOk={this.onSubmit}
                     onCancel={onCancel}>
                     {showTip === true ? <p style={{color: 'red'}}>请输入日志！</p> : null}
-                    <TextArea
-                        value={textContent}
-                        onChange={this.onChange}
-                        onPressEnter={this.onSubmit}
-                        placeholder="请输入日志内容"
-                        rows={4}
-                        className="inline" />
-                    {showDelete === true ? <Dropdown overlay={menu} className="inline">
-                        <Icon type="down" />
-                    </Dropdown> : null
-                    }
+                    <div className="wrap">
+                        <TextArea
+                            value={textContent}
+                            onChange={this.onChange}
+                            onPressEnter={this.onSubmit}
+                            placeholder="请输入日志内容"
+                            rows={4}
+                            className="text" />
+                        {showDelete === true ? <Dropdown overlay={menu}>
+                            <Icon type="down-circle-o" className="icon" />
+                        </Dropdown> : null
+                        }
+                    </div>
                 </Modal>
             </div>
         )

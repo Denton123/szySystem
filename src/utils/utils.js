@@ -47,6 +47,32 @@ const utils = {
             return moment(value, format)
         }
     },
+    /**
+     * [momentToValue moment对象转为格式化字符串]
+     * @Author   szh
+     * @DateTime 2017-12-11
+     * @param    {Obj||Arr}   moment [moment对象或者包含moment对象的数组]
+     * @param    {String}     format [格式化]
+     * @return   {Str||Arr}          [根据moment传入的类型返回]
+     */
+    momentToValue: function(moment, format = 'YYYY-MM-DD') {
+        if (utils.isArray(moment)) {
+            let temp = []
+            moment.forEach(m => {
+                temp.push(m.format(format))
+            })
+            return temp
+        } else {
+            return moment.format(format)
+        }
+    },
+    /**
+     * [resetObject 处理后台返回存在对象的表格数据]
+     * @Author   szh
+     * @DateTime 2017-12-11
+     * @param    {Object}   objectToHandle [后台返回的存在关联模型查询数据]
+     * @return   {Obejct}                  [把关联模型的数据整合到当前对象的数据]
+     */
     resetObject: function(objectToHandle) {
         // 如果当前对象的属性中存在对象，则将属性中的对象的属性变为当前对象的属性
         let obj = {}
@@ -62,6 +88,21 @@ const utils = {
             }
         }
         return obj
+    },
+    /**
+     * [formatDate 返回当前日期时间]
+     * @Author   szh
+     * @DateTime 2017-12-11
+     * @param    {Boolean}  hasTime [是否显示时间，默认不显示]
+     * @return   {String}           [格式化后的时间]
+     */
+    formatDate: function(hasTime = false) {
+        let now = new Date()
+        let dateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+        if (hasTime) {
+            dateStr += ` ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+        }
+        return dateStr
     }
 }
 

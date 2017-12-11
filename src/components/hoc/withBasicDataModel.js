@@ -5,7 +5,7 @@ import {message} from 'antd'
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 
 // 引入工具方法
-import {valueToMoment} from 'UTILS/utils'
+import {valueToMoment, momentToValue} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 /**
  * [transformValue 表单值转换]
@@ -132,23 +132,28 @@ function withBasicDataModel(PageComponent, Datas) {
             this.getData({page: page})
         }
 
+        // 设置当前操作类型
+        handleOperationType = (type) => {
+            this.setState({
+                operationType: type
+            })
+        }
+
         // 新增
         handleAdd = (e) => {
+            this.handleOperationType('add')
             this.setState({
                 modalSetting: {
                     ...this.state.modalSetting,
                     visible: true,
                     title: `${this.state.title}-新增`
                 },
-                operationType: 'add'
             })
         }
 
         // 表格行编辑数据获取
         handleEdit = (e) => {
-            this.setState({
-                operationType: 'edit'
-            })
+            this.handleOperationType('edit')
             let id = e.target.dataset['id']
             show(`/${this.state.model}/${id}`)
                 .then(res => {
@@ -228,6 +233,7 @@ function withBasicDataModel(PageComponent, Datas) {
             })
             .catch(err => {
                 console.log(err)
+                message.success('保存失败')
                 this.setState({
                     isSubmitting: false
                 })
@@ -319,12 +325,18 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 处理查询
         handleQuery = (e) => {
+            console.log(this.state.queryFieldValues)
             let params = {}
             for (let i in this.state.queryFieldValues) {
                 if (this.state.queryFieldValues[i].value !== null) {
-                    params[i] = this.state.queryFieldValues[i].value
+                    if (i.indexOf('date') > -1) {
+                        params[i] = momentToValue(this.state.queryFieldValues[i].value)
+                    } else {
+                        params[i] = this.state.queryFieldValues[i].value
+                    }
                 }
             }
+            console.log(params)
             if (Object.keys(params).length === 0) {
                 message.warning('请增加查询条件')
                 return
@@ -352,6 +364,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 <PageComponent
                     getData={this.getData}
                     handlePageChange={this.handlePageChange}
+                    handleOperationType={this.handleOperationType}
                     handleAdd={this.handleAdd}
                     handleEdit={this.handleEdit}
                     updateEditFormFieldsValues={this.updateEditFormFieldsValues}

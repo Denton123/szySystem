@@ -12,7 +12,6 @@ import {
     Redirect
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
-
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
@@ -21,11 +20,28 @@ import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
 import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
-import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
+import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
+/**
+ * [escape 过滤script标签]
+ * @DateTime 2017-12-11
+ * @param    {string}   str [html标签字符串]
+ * @return   {string}       [过滤后的html标签字符串]
+ */
+function escape(str) {
+    return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
+}
+
 class Summary extends Component {
+    componentDidMount() {
+        let page = this.props.location.state ? this.props.location.state.page : 1
+        this.props.getData({
+            page: 1,
+            user_id: this.props.user.id
+        })
+    }
     render() {
         const {
             child,
@@ -33,6 +49,7 @@ class Summary extends Component {
             history,
             location,
             match,
+            user
         } = this.props
 
         const condition = [
@@ -49,12 +66,12 @@ class Summary extends Component {
             {
                 label: '发表日期',
                 field: 'date',
-                component: (<CustomDatePicker />)
+                component: (<CustomRangePicker showTime={false} format={'YYYY-MM-DD'} />)
             }
         ]
         const operationBtn = [
             () => (
-                <Link to={`${match.url}/detail`}>
+                <Link to={`${match.url}/add`}>
                     <Button type="primary">
                         发表总结
                     </Button>
@@ -75,27 +92,35 @@ class Summary extends Component {
                 width: 350,
             },
             {
-                title: '上传日期',
+                title: '发表时间',
                 dataIndex: 'date',
                 key: 'date',
             },
             {
                 title: '操作',
                 key: 'action',
-                render: (text, record) => (
-                    <span>
-                        <a href="javascript:;" data-id={text.id}>编辑</a>
-                        <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id}>删除</a>
-                    </span>
-                )
+                render: (text, record) => {
+                    if (text.user_id === user.id) {
+                        return (
+                            <span>
+                                <Link to={`${match.path}/${text.id}`}>编辑</Link>
+                                <Divider type="vertical" />
+                                <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
+                            </span>
+                        )
+                    } else {
+                        return (
+                            <span />
+                        )
+                    }
+                }
             }
         ]
 
         const tableExpandedRowRender = (record) => {
-            console.log(record)
+            let content = escape(record.content)
             return (
-                <p>a</p>
+                <div dangerouslySetInnerHTML={{__html: content}} />
             )
         }
 
@@ -123,14 +148,21 @@ const Sy = withBasicDataModel(Summary, {
         realname: {
             value: null
         },
+        keyword: {
+            value: null
+        },
+        date: {
+            value: null
+        }
     },
-    // handleTableData: (dataSource) => {
-    //     let arr = []
-    //     dataSource.forEach(data => {
-    //         arr.push(resetObject(data))
-    //     })
-    //     return arr
-    // }
+    handleTableData: (dataSource) => {
+        let arr = []
+        dataSource.forEach(data => {
+            arr.push(resetObject(data))
+        })
+        return arr
+    },
+    customGetData: true
 })
 
 export default Sy
