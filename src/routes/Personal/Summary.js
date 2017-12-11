@@ -32,7 +32,7 @@ class Summary extends Component {
             route,
             history,
             location,
-            match
+            match,
         } = this.props
 
         const condition = [

@@ -39,8 +39,31 @@ function SubRoute({route, idx, match, user, globalUpdateUser}) {
                             <ModelContent breadcrumbs={[route.name, child.name]}>
                                 <child.component {...props} child={child} route={route} user={user} globalUpdateUser={globalUpdateUser} />
                             </ModelContent>
-                        )} />
+                        )}
+                    />
                 ))
+            }
+            {
+                route.routes.map((child, sn) => {
+                    if (child.routes) {
+                        return (
+                            <Switch key={sn}>
+                                {child.routes.map((ch, i) => (
+                                    <Route
+                                        key={`${idx}-${sn}-${i}`}
+                                        exact={ch.exact}
+                                        path={`${match.path}${route.path}${child.path}${ch.path}`}
+                                        render={props => (
+                                            <ModelContent breadcrumbs={[route.name, child.name, ch.name]}>
+                                                <child.component {...props} route={route} user={user} globalUpdateUser={globalUpdateUser} />
+                                            </ModelContent>
+                                        )}
+                                    />
+                                ))}
+                            </Switch>
+                        )
+                    }
+                })
             }
         </Switch>
     )
@@ -56,44 +79,6 @@ const ModelContent = ({breadcrumbs, children}) => (
         </Breadcrumb>
         {children}
     </Content>
-)
-
-function recursiveRouteSetting(routes) {
-    let ss = routes.map((route, i) => {
-        if (route.routes) {
-            let temp = recursiveRouteSetting(route.routes)
-            for (let j = 0; j < temp.length - 1; j++) {
-                return {
-                    key: `${i}-${temp[j].key}`,
-                    exact: temp[j].exact,
-                    path: `${routes[i].path}${temp[j].path}`,
-                    breadcrumbs: `${routes[i].name},${temp[j].name}`,
-                    component: temp[j].component
-                }
-            }
-        } else {
-            return {
-                key: i,
-                exact: routes[i].exact,
-                path: routes[i].path,
-                breadcrumbs: routes[i].name,
-                component: routes[i].component,
-            }
-        }
-    })
-    return ss
-}
-
-const RecursiveRoute = ({key, exact, path, breadcrumbs, component, user, globalUpdateUser}) => (
-    <Route
-        key={key}
-        exact={exact}
-        path={path}
-        render={props => (
-            <ModelContent breadcrumbs={breadcrumbs.split(',')}>
-                <component {...props} user={user} globalUpdateUser={globalUpdateUser} />
-            </ModelContent>
-        )} />
 )
 
 class BasicLayout extends React.Component {
@@ -187,7 +172,6 @@ class BasicLayout extends React.Component {
                     mode="inline"
                     selectedKeys={this.state.selectedKeys}
                     openKeys={this.state.openKeys}
-                    defaultOpenKeys={['sub1']}
                     onOpenChange={this.onOpenChange}
                     onClick={this.onClick}
                 >
@@ -200,7 +184,7 @@ class BasicLayout extends React.Component {
                                 >
                                     {
                                         route.routes.map((child, sn) => (
-                                            <Menu.Item key={`${route.path}${child.path}`}>
+                                            <Menu.Item key={`${route.path}${child.path}`} className={child.path.indexOf('detail') > -1 ? 'hide' : ''} >
                                                 <Link to={`${match.path}${route.path}${child.path}`}>{child.name}</Link>
                                             </Menu.Item>
                                         ))
@@ -266,37 +250,6 @@ class BasicLayout extends React.Component {
                         }
                     })
                 }
-                <Footer style={{ textAlign: 'center' }}>
-                    szy公司系统 ©2017 Created by szy
-                </Footer>
-            </div>
-        )
-
-        console.log(recursiveRouteSetting(routes))
-
-        const dynamicLayoutTest = (
-            <div>
-                <Header className="layout-header" >
-                    <Icon
-                        className="trigger"
-                        type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                        onClick={this.toggle}
-                    />
-                    <div className="pull-right layout-header-avatar">
-                        <Dropdown overlay={AvatarMenu}>
-                            <div style={{ lineHeight: '64px' }}>
-                                <Avatar style={{ verticalAlign: 'middle' }} src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} icon="user" />
-                                <span className="ml-10">{user && user.realname ? user.realname : '请先登录'}</span>
-                            </div>
-                        </Dropdown>
-                    </div>
-                    <div className="pull-right layout-header-bell mr-10">
-                        <Icon type={'bell'} style={{fontSize: 16}} />
-                    </div>
-                </Header>
-                <Route exact path={match.path} render={() => (
-                    <Redirect to={`${match.path}/default`} />
-                )} />
                 <Footer style={{ textAlign: 'center' }}>
                     szy公司系统 ©2017 Created by szy
                 </Footer>
