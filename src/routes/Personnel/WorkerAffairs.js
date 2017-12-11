@@ -44,8 +44,6 @@ class WorkerAffairs extends Component {
             match
         } = this.props
 
-        console.log(this.props)
-
         const entryDate = {
             format: 'YYYY-MM-DD',
             showTime: false,
@@ -88,7 +86,7 @@ class WorkerAffairs extends Component {
             }
         ]
         const operationBtn = [
-            () => <Button type="primary" onClick={this.props.handleAdd}>新增</Button>,
+            () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>,
             () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>
         ]
 

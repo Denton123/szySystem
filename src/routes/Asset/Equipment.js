@@ -1,36 +1,304 @@
-import ReactDOM from 'react-dom'
+// 设备管理
 import React, {Component} from 'react'
-import { Layout, Breadcrumb, Icon, Button } from 'antd'
+import {
+    Icon,
+    Button,
+    Table,
+    Avatar,
+    DatePicker,
+    Input,
+    Radio,
+    message,
+    Divider,
+    Select
+} from 'antd'
 import {
     Link,
     Route,
     Switch,
     Redirect
 } from 'react-router-dom'
-import ReactQuill from 'react-quill'
 
-const { Content } = Layout
+// 引入工具方法
+import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
-class checkwork extends Component {
+import BasicOperation from 'COMPONENTS/basic/BasicOperation'
+import InputRange from 'COMPONENTS/input/InputRange'
+
+import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
+import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
+import CustomModal from 'COMPONENTS/modal/CustomModal'
+import CustomForm from 'COMPONENTS/form/CustomForm'
+
+import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
+
+const RadioGroup = Radio.Group
+
+class Equipment extends Component {
     render() {
-        console.log(this.props)
-        const child = this.props.child
-        const route = this.props.route
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
+        const {
+            child,
+            route,
+            history,
+            location,
+            match
+        } = this.props
+
+        const entryDate = {
+            format: 'YYYY-MM-DD',
+            showTime: false,
+            style: {
+                width: 220
+            }
+        }
+        const quitDate = {
+            format: 'YYYY-MM-DD',
+            showTime: false,
+            style: {
+                width: 220
+            }
+        }
+
+        // 条件
+        const condition = [
+            {
+                label: '名称',
+                field: 'name',
+                component: (<Input autoComplete="off" placeholder="姓名" />)
+            },
+            {
+                label: '单价',
+                field: 'price',
+                component: (<InputRange autoComplete="off" placeholder="单价" />)
+            },
+            {
+                label: '购买日期',
+                field: 'date',
+                component: <CustomRangePicker {...entryDate} />,
+            }
+        ]
+
+        // 操作
+        const operationBtn = [
+            () => <Button type="primary" onClick={this.props.handleAdd}>新增</Button>,
+            () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>
+        ]
+
+        // 表格
+        const columns = [
+            {
+                title: 'rifd',
+                dataIndex: 'rfid',
+                key: 'rfid',
+                width: 70
+            },
+            {
+                title: '名称',
+                dataIndex: 'name',
+                key: 'name',
+                width: 70
+            },
+            {
+                title: '单价',
+                dataIndex: 'price',
+                key: 'price',
+                width: 70
+            },
+            {
+                title: '数量',
+                dataIndex: 'number',
+                key: 'number',
+                width: 70
+            },
+            {
+                title: '购买日期',
+                dataIndex: 'date',
+                key: 'date'
+            },
+            {
+                title: '购买人',
+                dataIndex: 'purchase',
+                key: 'purchase'
+            },
+            {
+                title: '类型',
+                dataIndex: 'type',
+                key: 'type'
+            },
+            {
+                title: '备注',
+                dataIndex: 'memo',
+                key: 'memo'
+            },
+            {
+                title: '操作',
+                key: 'action',
+                width: 200,
+                render: (text, record) => (
+                    <span>
+                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleEdit}>编辑</a>
+                        <Divider type="vertical" />
+                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
+                    </span>
+                )
+            }
+        ]
+        const rowSelection = {
+            onChange: this.props.handleTableRowChange
+        }
+
+        // 表单
+        const formFields = [
+            {
+                label: '名称',
+                field: 'name',
+                valid: {
+                    rules: [{required: true, message: '请输入名称'}]
+                },
+                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="名称" />)
+            },
+            {
+                label: 'rfid',
+                field: 'rfid',
+                valid: {
+                    rules: [{required: true, message: '请输入rfid'}]
+                },
+                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="rfid" />)
+            },
+            {
+                label: '单价',
+                field: 'price',
+                valid: {
+                    rules: [{
+                        type: 'float', message: '请输入数字类型'
+                    },
+                    {
+                        required: true, message: '请输入单价'
+                    }]
+                },
+                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="单价" />)
+            },
+            {
+                label: '数量',
+                field: 'number',
+                valid: {
+                    rules: [{
+                        type: 'number', message: '请输入数字类型'
+                    }, {
+                        required: true, message: '请输入数量'
+                    }]
+                },
+                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="数量" />)
+            },
+            {
+                label: '购买日期',
+                field: 'date',
+                valid: {
+                    rules: [{required: true, message: '请选择购买日期'}]
+                },
+                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
+            },
+            {
+                label: '购买人',
+                field: 'purchase',
+                valid: {
+                    rules: [{required: true, message: '请输入购买人'}]
+                },
+                component: (<Input autoComplete="off" placeholder="购买人" />)
+            },
+            {
+                label: '类型',
+                field: 'type',
+                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
+            },
+            {
+                label: '备注',
+                field: 'memo',
+                component: (<Input autoComplete="off" placeholder="备注" />)
+            }
+        ]
 
         return (
-            <Content style={{ margin: '0 16px' }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
-                </Breadcrumb>
-                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    info
-                </div>
-            </Content>
+            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                <CustomForm
+                    layout="inline"
+                    formStyle={{width: '100%'}}
+                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    formFields={condition}
+                    handleSubmit={this.props.handleQuery}
+                    updateFormFields={this.props.updateQueryFields}
+                    formFieldsValues={this.props.queryFieldValues}
+                />
+                <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
+                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
+                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
+                    <CustomForm
+                        formStyle={{width: '100%'}}
+                        formFields={formFields}
+                        handleSubmit={this.props.handleFormSubmit}
+                        updateFormFields={this.props.updateFormFields}
+                        formFieldsValues={this.props.formFieldsValues}
+                        isSubmitting={this.props.isSubmitting}
+                    />
+                </CustomModal>
+            </div>
         )
     }
 }
-export default checkwork
+
+const Eq = withBasicDataModel(Equipment, {
+    model: 'asset',
+    title: '设备管理',
+    tableSetting: {},
+    modalSetting: {
+        title: '设备管理'
+    },
+    // 查询的
+    queryFieldValues: {
+        name: {
+            value: null
+        },
+        price: {
+            value: null
+        },
+        date: {
+            value: null
+        }
+    },
+    // 表单的
+    formFieldsValues: {
+        id: {
+            value: null
+        },
+        name: {
+            value: null
+        },
+        realname: {
+            value: null
+        },
+        gender: {
+            value: null
+        },
+        email: {
+            value: null
+        },
+        phone: {
+            value: null
+        },
+        birth_date: {
+            value: null
+        },
+        job: {
+            value: null
+        },
+        entry_date: {
+            value: null
+        },
+        quit_date: {
+            value: null
+        }
+    },
+})
+
+export default Eq

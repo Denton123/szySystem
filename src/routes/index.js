@@ -47,8 +47,13 @@ const routes = [
                         routes: [
                             {
                                 name: '发表总结',
-                                path: '/detail',
-                                component: getRoutes(['Personal', 'Detail', 'Summary'])
+                                path: '/add',
+                                component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
+                            },
+                            {
+                                name: '编辑总结',
+                                path: '/:id',
+                                component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
                             },
                         ]
                     },

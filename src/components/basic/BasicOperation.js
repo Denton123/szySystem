@@ -6,9 +6,7 @@ class BasicOperation extends React.Component {
         return (
             <div className={this.props.className || ''}>
                 {operationBtns.map((Btn, idx) => (
-                    <span key={idx} className="inline-block mr-10">
-                        <Btn />
-                    </span>
+                    <Btn key={idx} />
                 ))}
             </div>
         )
