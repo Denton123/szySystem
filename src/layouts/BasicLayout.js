@@ -33,7 +33,7 @@ function SubRoute({route, idx, match, user, globalUpdateUser}) {
                 route.routes.map((child, sn) => (
                     <Route
                         key={`${idx}-${sn}`}
-                        exact={child.exact}
+                        exact
                         path={`${match.path}${route.path}${child.path}`}
                         render={props => (
                             <ModelContent breadcrumbs={[route.name, child.name]}>
@@ -55,7 +55,7 @@ function SubRoute({route, idx, match, user, globalUpdateUser}) {
                                         path={`${match.path}${route.path}${child.path}${ch.path}`}
                                         render={props => (
                                             <ModelContent breadcrumbs={[route.name, child.name, ch.name]}>
-                                                <child.component {...props} route={route} user={user} globalUpdateUser={globalUpdateUser} />
+                                                <ch.component {...props} route={route} user={user} globalUpdateUser={globalUpdateUser} />
                                             </ModelContent>
                                         )}
                                     />
