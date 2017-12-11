@@ -145,7 +145,7 @@ class Info extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入用户名'}]
                 },
-                component: (<Input disabled={state.formDisabled} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />),
+                component: (<Input disabled prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />),
                 value: null
             },
             {
