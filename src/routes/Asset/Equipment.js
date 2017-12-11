@@ -10,7 +10,8 @@ import {
     Radio,
     message,
     Divider,
-    Select
+    Select,
+    InputNumber
 } from 'antd'
 import {
     Link,
@@ -52,6 +53,7 @@ class Equipment extends Component {
                 width: 220
             }
         }
+
         const quitDate = {
             format: 'YYYY-MM-DD',
             showTime: false,
@@ -144,6 +146,7 @@ class Equipment extends Component {
                 )
             }
         ]
+
         const rowSelection = {
             onChange: this.props.handleTableRowChange
         }
@@ -156,7 +159,7 @@ class Equipment extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入名称'}]
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="名称" />)
+                component: (<Input autoComplete="off" placeholder="名称" />)
             },
             {
                 label: 'rfid',
@@ -164,32 +167,37 @@ class Equipment extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入rfid'}]
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="rfid" />)
+                component: (<Input autoComplete="off" placeholder="rfid" />)
             },
             {
                 label: '单价',
                 field: 'price',
                 valid: {
-                    rules: [{
-                        type: 'float', message: '请输入数字类型'
-                    },
-                    {
-                        required: true, message: '请输入单价'
-                    }]
+                    rules: [
+                        {
+                            type: 'number', message: '请输入数字类型'
+                        },
+                        {
+                            required: true, message: '请输入单价'
+                        }
+                    ]
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="单价" />)
+                component: (<InputNumber autoComplete="off" placeholder="单价" min={0} />)
             },
             {
                 label: '数量',
                 field: 'number',
                 valid: {
-                    rules: [{
-                        type: 'number', message: '请输入数字类型'
-                    }, {
-                        required: true, message: '请输入数量'
-                    }]
+                    rules: [
+                        {
+                            type: 'number', message: '请输入数字类型'
+                        },
+                        {
+                            required: true, message: '请输入数量'
+                        }
+                    ]
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="数量" />)
+                component: (<InputNumber autoComplete="off" placeholder="数量" min={0} />)
             },
             {
                 label: '购买日期',
@@ -210,7 +218,23 @@ class Equipment extends Component {
             {
                 label: '类型',
                 field: 'type',
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
+                component: (
+                    <RadioGroup>
+                        <Radio value="公司">公司</Radio>
+                        <Radio value="学校">学校</Radio>
+                    </RadioGroup>
+                )
+            },
+            {
+                label: '属于',
+                field: 'belong',
+                component: (
+                    <RadioGroup disabled>
+                        <Radio value="equipment">设备</Radio>
+                        <Radio value="stationery">办公用品</Radio>
+                        <Radio value="book">图书</Radio>
+                    </RadioGroup>
+                )
             },
             {
                 label: '备注',
@@ -297,6 +321,9 @@ const Eq = withBasicDataModel(Equipment, {
         },
         quit_date: {
             value: null
+        },
+        belong: {
+            value: 'equipment'
         }
     },
 })
