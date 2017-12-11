@@ -44,6 +44,8 @@ class WorkerAffairs extends Component {
             match
         } = this.props
 
+        console.log(this.props)
+
         const entryDate = {
             format: 'YYYY-MM-DD',
             showTime: false,

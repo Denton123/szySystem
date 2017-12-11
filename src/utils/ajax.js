@@ -25,7 +25,6 @@ function ajax(type, url, data = {}, hasFile = false) {
             }
             data = params
         }
-        console.log('hasFile: ' + hasFile)
         if (hasFile) {
             config = {
                 headers: {

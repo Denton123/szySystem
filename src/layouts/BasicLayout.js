@@ -26,7 +26,7 @@ const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
 
 // 子路由
-function SubRoute({route, idx, match, user}) {
+function SubRoute({route, idx, match, user, globalUpdateUser}) {
     return (
         <Switch>
             {
@@ -37,7 +37,7 @@ function SubRoute({route, idx, match, user}) {
                         path={`${match.path}${route.path}${child.path}`}
                         render={props => (
                             <ModelContent breadcrumbs={[route.name, child.name]}>
-                                <child.component {...props} child={child} route={route} user={user} />
+                                <child.component {...props} child={child} route={route} user={user} globalUpdateUser={globalUpdateUser} />
                             </ModelContent>
                         )} />
                 ))
@@ -56,6 +56,44 @@ const ModelContent = ({breadcrumbs, children}) => (
         </Breadcrumb>
         {children}
     </Content>
+)
+
+function recursiveRouteSetting(routes) {
+    let ss = routes.map((route, i) => {
+        if (route.routes) {
+            let temp = recursiveRouteSetting(route.routes)
+            for (let j = 0; j < temp.length - 1; j++) {
+                return {
+                    key: `${i}-${temp[j].key}`,
+                    exact: temp[j].exact,
+                    path: `${routes[i].path}${temp[j].path}`,
+                    breadcrumbs: `${routes[i].name},${temp[j].name}`,
+                    component: temp[j].component
+                }
+            }
+        } else {
+            return {
+                key: i,
+                exact: routes[i].exact,
+                path: routes[i].path,
+                breadcrumbs: routes[i].name,
+                component: routes[i].component,
+            }
+        }
+    })
+    return ss
+}
+
+const RecursiveRoute = ({key, exact, path, breadcrumbs, component, user, globalUpdateUser}) => (
+    <Route
+        key={key}
+        exact={exact}
+        path={path}
+        render={props => (
+            <ModelContent breadcrumbs={breadcrumbs.split(',')}>
+                <component {...props} user={user} globalUpdateUser={globalUpdateUser} />
+            </ModelContent>
+        )} />
 )
 
 class BasicLayout extends React.Component {
@@ -109,7 +147,7 @@ class BasicLayout extends React.Component {
     logout = () => {
         axios.get('/user/logout')
         .then(res => {
-            this.props.updateUser(null)
+            this.props.globalUpdateUser(null)
             this.props.history.push('/login')
         })
         .catch(err => {
@@ -195,8 +233,8 @@ class BasicLayout extends React.Component {
                     <div className="pull-right layout-header-avatar">
                         <Dropdown overlay={AvatarMenu}>
                             <div style={{ lineHeight: '64px' }}>
-                                <Avatar style={{ verticalAlign: 'middle' }} src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                                <span className="ml-10">admin</span>
+                                <Avatar style={{ verticalAlign: 'middle' }} src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} icon="user" />
+                                <span className="ml-10">{user && user.realname ? user.realname : '请先登录'}</span>
                             </div>
                         </Dropdown>
                     </div>
@@ -211,7 +249,7 @@ class BasicLayout extends React.Component {
                     routes.map((route, idx) => {
                         if (route.routes) {
                             return (
-                                <SubRoute key={idx} route={route} idx={idx} match={match} user={this.props.user} />
+                                <SubRoute key={idx} route={route} idx={idx} match={match} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
                             )
                         } else {
                             return (
@@ -221,13 +259,44 @@ class BasicLayout extends React.Component {
                                     path={`${match.path}${route.path}`}
                                     render={props => (
                                         <ModelContent breadcrumbs={[route.name]}>
-                                            <route.component route={route} {...props} user={this.props.user} />
+                                            <route.component route={route} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
                                         </ModelContent>
                                     )} />
                             )
                         }
                     })
                 }
+                <Footer style={{ textAlign: 'center' }}>
+                    szy公司系统 ©2017 Created by szy
+                </Footer>
+            </div>
+        )
+
+        console.log(recursiveRouteSetting(routes))
+
+        const dynamicLayoutTest = (
+            <div>
+                <Header className="layout-header" >
+                    <Icon
+                        className="trigger"
+                        type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                        onClick={this.toggle}
+                    />
+                    <div className="pull-right layout-header-avatar">
+                        <Dropdown overlay={AvatarMenu}>
+                            <div style={{ lineHeight: '64px' }}>
+                                <Avatar style={{ verticalAlign: 'middle' }} src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} icon="user" />
+                                <span className="ml-10">{user && user.realname ? user.realname : '请先登录'}</span>
+                            </div>
+                        </Dropdown>
+                    </div>
+                    <div className="pull-right layout-header-bell mr-10">
+                        <Icon type={'bell'} style={{fontSize: 16}} />
+                    </div>
+                </Header>
+                <Route exact path={match.path} render={() => (
+                    <Redirect to={`${match.path}/default`} />
+                )} />
                 <Footer style={{ textAlign: 'center' }}>
                     szy公司系统 ©2017 Created by szy
                 </Footer>

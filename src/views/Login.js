@@ -33,7 +33,7 @@ class DefaultLoginForm extends React.Component {
                     .then(res => {
                         console.log(res)
                         if (isObject(res.data)) {
-                            this.props.updateUser(res.data)
+                            this.props.globalUpdateUser(res.data)
                             this.props.history.push('/home')
                         } else {
                             message.error(res.data)
