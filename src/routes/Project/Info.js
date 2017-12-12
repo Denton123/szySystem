@@ -20,7 +20,7 @@ import {
 import './Info.less'
 
 // 引入工具方法
-import {getBase64} from 'UTILS/utils'
+import {getBase64, resetObject} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -30,10 +30,6 @@ import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
-
-import moment from 'moment'
-console.log(moment('2017-11-11', 'YYYY-MM-DD'))
-console.log(moment('2017-12-12T03:17:32.000Z').format())
 
 const {Meta} = Card
 const {Option} = Select
@@ -58,6 +54,21 @@ class ProjectInfo extends Component {
         }
         this.props.handleAdd()
     }
+    edit = (e) => {
+        if (this.state.userData.length === 0) {
+            ajax('get', '/user/all')
+                .then(res => {
+                    this.setState({
+                        userData: res.data
+                    })
+                })
+        }
+        let img = e.target.dataset['img']
+        this.setState({
+            imageUrl: `/uploadImgs/${img}`
+        })
+        this.props.handleEdit(e)
+    }
     render() {
         const {
             child,
@@ -73,6 +84,10 @@ class ProjectInfo extends Component {
                 field: 'name',
                 component: (<Input autoComplete="off" placeholder="项目名称" />)
             },
+        ]
+
+        const operationBtn = [
+            () => <Button type="primary" onClick={this.add}>新增</Button>
         ]
 
         const uploadProps = {
@@ -190,51 +205,39 @@ class ProjectInfo extends Component {
                     updateFormFields={this.props.updateQueryFields}
                     formFieldsValues={this.props.queryFieldValues}
                 />
-                <div className="mt-10">
-                    <List
-                        grid={{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 4 }}
-                        dataSource={this.props.tableSetting.dataSource}
-                        renderItem={item => (
-                            <List.Item>
-                                {
-                                    item.type
-                                    ? (
-                                        <Card
-                                            hoverable="true"
-                                            className="projectInfo-card"
-                                            onClick={this.add}
-                                        >
-                                            <div className="projectInfo-card-add txt-c">
-                                                <Icon type="plus" className="mr-10" />新增项目
-                                            </div>
-                                        </Card>
-                                    ) : (
-                                        <Card
-                                            cover={<img src={`/uploadImgs/${item.img}`} />}
-                                            actions={[<Icon type="ellipsis" />, <Icon type="edit" />, <Icon type="delete" />]}
-                                        >
-                                            <Meta
-                                                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                                title={
-                                                    <div>
-                                                        <h2>
-                                                            item.name
-                                                        </h2>
-                                                        <p>{`项目计划开始时间：${item.plan_start_date}  项目计划结束时间：${item.plan_end_date}`}</p>
-                                                    </div>
-                                                }
-                                                description={
-                                                    <p>item.introduce</p>
-                                                }
-                                            />
-                                        </Card>
-                                    )
+                <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
+                <List
+                    itemLayout="vertical"
+                    {...this.props.tableSetting}
+                    renderItem={item => (
+                        <List.Item
+                            key={item.id}
+                            actions={[
+                                <Icon type="edit" className="projectInfo-listItem-actions" data-id={item.id} data-img={item.img} onClick={this.edit} />,
+                                <Icon type="delete" className="projectInfo-listItem-actions" data-id={item.id} onClick={this.props.handleDelete} />
+                            ]}
+                            extra={<img width={272} height={155} alt="logo" src={`/uploadImgs/${item.img}`} />}
+                        >
+                            <List.Item.Meta
+                                title={
+                                    <div className="projectInfo-listItem-metaTitle">
+                                        <h2>
+                                            <Link to={`${match.path}/${item.id}`}>{item.name}</Link>
+                                        </h2>
+                                        <ul className="clearfix">
+                                            <li className="pull-left">{`负责人：${item.realname}`}</li>
+                                            <li className="pull-left">{`项目计划开始时间：${item.plan_start_date}`}</li>
+                                            <li className="pull-left">{`项目计划结束时间：${item.plan_end_date}`}</li>
+                                        </ul>
+                                    </div>
                                 }
-                            </List.Item>
-                        )}
-                    />
-                    <Pagination className="pull-right" {...this.props.tableSetting.pagination} />
-                </div>
+                                description={
+                                    <div className="projectInfo-listItem-metaDesc">{item.introduce}</div>
+                                }
+                            />
+                        </List.Item>
+                    )}
+                />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -250,6 +253,55 @@ class ProjectInfo extends Component {
     }
 }
 
+/*
+<div className="mt-10">
+    <List
+        grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }}
+        {...this.props.tableSetting}
+        renderItem={item => (
+            <List.Item
+                bordered="false"
+            >
+                {
+                    item.type
+                    ? (
+                        <Card
+                            hoverable="true"
+                            className="projectInfo-card"
+                            onClick={this.add}
+                        >
+                            <div className="projectInfo-card-add txt-c">
+                                <Icon type="plus" className="mr-10" />新增项目
+                            </div>
+                        </Card>
+                    ) : (
+                        <Card
+                            hoverable="true"
+                            className="projectInfo-card"
+                            cover={<img className="block w100 projectInfo-card-cover" src={`/uploadImgs/${item.img}`} />}
+                            actions={[<Icon type="ellipsis" />, <Icon type="edit" />, <Icon type="delete" />]}
+                        >
+                            <Meta
+                                title={
+                                    <div className="projectInfo-card-meta-title">
+                                        <h2>{item.name}</h2>
+                                        <p>{`项目计划开始时间：${item.plan_start_date}`}</p>
+                                        <p>{`项目计划结束时间：${item.plan_end_date}`}</p>
+                                    </div>
+                                }
+                                description={
+                                    <p className="wrap-3" style={{height: 62}}>{item.introduce}</p>
+                                }
+                            />
+                        </Card>
+                    )
+                }
+            </List.Item>
+        )}
+    />
+</div>
+*/
+
 const PI = withBasicDataModel(ProjectInfo, {
     model: 'project',
     title: '项目管理',
@@ -262,6 +314,9 @@ const PI = withBasicDataModel(ProjectInfo, {
         },
     },
     formFieldsValues: {
+        id: {
+            value: null
+        },
         user_id: {
             value: null
         },
@@ -281,11 +336,12 @@ const PI = withBasicDataModel(ProjectInfo, {
             value: null
         },
     },
-    handleTableData: (res) => {
-        res.unshift({
-            type: 'add'
+    handleTableData: (dataSource) => {
+        let arr = []
+        dataSource.forEach(data => {
+            arr.push(resetObject(data))
         })
-        return res
+        return arr
     },
     formSubmitHasFile: true
 })

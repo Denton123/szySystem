@@ -77,7 +77,14 @@ const routes = [
                     {
                         name: '项目信息',
                         path: '/info',
-                        component: getRoutes(['Project', 'Info'])
+                        component: getRoutes(['Project', 'Info']),
+                        routes: [
+                            {
+                                name: '项目详情',
+                                path: '/:id',
+                                component: getRoutes(['Project', 'Detail', 'ProjectDetail'])
+                            },
+                        ]
                     },
                     {
                         name: '工作日志',

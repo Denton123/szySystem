@@ -130,6 +130,7 @@ class Info extends Component {
                             src={imageUrl}
                             icon="user"
                         />
+                        <div>点击头像上传新图片</div>
                     </Upload>
                 ),
                 value: null

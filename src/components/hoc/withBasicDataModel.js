@@ -5,7 +5,7 @@ import {message} from 'antd'
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 
 // 引入工具方法
-import {valueToMoment, momentToValue} from 'UTILS/utils'
+import {valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 /**
  * [transformValue 表单值转换]
@@ -39,9 +39,10 @@ function transformValue(field, value) {
  *
  *  不影响state的属性
  * formSubmitHasFile   表单提交时是否有文件         Boolean  默认false(无文件)
- * handleTableData     表格数据特殊处理             Function 无默认，部分页面的关联数据需要进行特殊处理，不传入时，表格数据不进行处理
+ * handleTableData     表格数据特殊处理             Function 无默认，部分页面的关联数据需要进行特殊处理(主要在index方法获取数据后)，不传入时，表格数据不进行处理
  * customGetData       自定义获取默认数据           Boolean  默认false()
  * clearFormValues     清空表单默认值               Boolean  默认true(清空)  用于在表单提交后是否清空表单默认值
+ * locationSearch      是否设置浏览器地址的search   Boolean  默认不设置      设置后，在浏览器获取index方法的数据后，浏览器地址会出现?page=n
  */
 /**
  * [withBasicDataModel 混合基本数据处理的状态]
@@ -57,6 +58,7 @@ function withBasicDataModel(PageComponent, Datas) {
     const hasFile = Datas.formSubmitHasFile !== undefined ? Datas.formSubmitHasFile : false
     const customGetData = Datas.customGetData !== undefined ? Datas.customGetData : false
     const clearFormValues = Datas.clearFormValues !== undefined ? Datas.clearFormValues : true
+    const locationSearch = Datas.locationSearch !== undefined ? Datas.locationSearch : false
     return class extends React.Component {
         constructor(props) {
             super(props)
@@ -123,7 +125,9 @@ function withBasicDataModel(PageComponent, Datas) {
                             dataSource: dataSource
                         }
                     })
-                    this.props.history.push(`${this.props.location.pathname}?page=${params.page}`, {page: params.page})
+                    if (locationSearch) {
+                        this.props.history.push(`${this.props.location.pathname}?page=${params.page}`, {page: params.page})
+                    }
                 })
         }
 
@@ -166,7 +170,7 @@ function withBasicDataModel(PageComponent, Datas) {
                             },
                         }
                     })
-                    this.updateEditFormFieldsValues(res.data)
+                    this.updateEditFormFieldsValues(resetObject(res.data))
                 })
         }
 
@@ -213,7 +217,7 @@ function withBasicDataModel(PageComponent, Datas) {
                             let newDataSource = []
                             prevState.tableSetting.dataSource.forEach(data => {
                                 if (data.id === prevState.formFieldsValues.id.value) {
-                                    newDataSource.push(res.data)
+                                    newDataSource.push(resetObject(res.data))
                                 } else {
                                     newDataSource.push(data)
                                 }

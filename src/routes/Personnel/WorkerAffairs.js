@@ -43,7 +43,7 @@ class WorkerAffairs extends Component {
             location,
             match
         } = this.props
-
+        console.log(this.props)
         const entryDate = {
             format: 'YYYY-MM-DD',
             showTime: false,
