@@ -103,7 +103,19 @@ const utils = {
             dateStr += ` ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
         }
         return dateStr
-    }
+    },
+    /**
+     * [getBase64 获取图片的base64]
+     * @Author   szh
+     * @DateTime 2017-12-12
+     * @param    {Object}   img      [file文件对象]
+     * @param    {Function} callback [回调]
+     */
+    getBase64: function(img, callback) {
+        const reader = new FileReader()
+        reader.addEventListener('load', () => callback(reader.result))
+        reader.readAsDataURL(img)
+    },
 }
 
 module.exports = utils

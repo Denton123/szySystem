@@ -4,7 +4,7 @@
 //  update     /:model/{model_id}        put     更新对应id的数据
 //  destroy    /:model/{model_id}        delete  删除对应id的数据
 
-import { apiUrl, isObject } from 'UTILS/utils'
+import { apiUrl, isObject, valueToMoment } from 'UTILS/utils'
 
 /**
  * [ajax 后台请求]
@@ -34,6 +34,10 @@ function ajax(type, url, data = {}, hasFile = false) {
             let fd = new FormData()
             for (let i in data) {
                 if (data[i] === null) continue
+                if (i.indexOf('date') > -1) {
+                    fd.append(i, valueToMoment(data[i]))
+                    continue
+                }
                 if (data[i] instanceof Blob) { // 如果是文件
                     fd.append(i, data[i])
                     continue

@@ -2,6 +2,9 @@ import ReactDOM from 'react-dom'
 import React from 'react'
 import {Router, Route, browserHistory, BrowserRouter, hashHistory} from 'react-router-dom'
 
+// 初始化axios配置
+import 'config/axiosConfig.js'
+
 // antd国际化
 import zhCN from 'antd/lib/locale-provider/zh_CN'
 import { LocaleProvider } from 'antd'

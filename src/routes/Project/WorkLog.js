@@ -15,7 +15,6 @@ import ReactQuill from 'react-quill'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 import 'moment/locale/zh-cn'
 
-
 moment.locale('zh-cn')
 
 const { Content } = Layout
