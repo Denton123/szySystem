@@ -37,6 +37,18 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 const RadioGroup = Radio.Group
 
 class Equipment extends Component {
+    checkNumber = (rule, value, callback) => {
+        if (!value || (value.number1 === undefined && value.number2 === undefined)) {
+            callback()
+            return
+        }
+        if (value.number1 <= value.number2) {
+            callback()
+            return
+        }
+        callback('两个都必选填，单价1小于单价2!')
+    }
+
     render() {
         const {
             child,
@@ -72,6 +84,10 @@ class Equipment extends Component {
             {
                 label: '单价',
                 field: 'price',
+                valid: {
+                    initialValue: { number1: 0, number2: 0 },
+                    rules: [{ validator: this.checkNumber }]
+                },
                 component: (<InputRange autoComplete="off" placeholder="单价" />)
             },
             {
@@ -298,34 +314,63 @@ const Eq = withBasicDataModel(Equipment, {
         name: {
             value: null
         },
-        realname: {
+        rfid: {
             value: null
         },
-        gender: {
+        price: {
             value: null
         },
-        email: {
+        number: {
             value: null
         },
-        phone: {
+        date: {
             value: null
         },
-        birth_date: {
+        purchase: {
             value: null
         },
-        job: {
+        type: {
             value: null
         },
-        entry_date: {
-            value: null
-        },
-        quit_date: {
+        memo: {
             value: null
         },
         belong: {
             value: 'equipment'
         }
     },
+    clearFormValues: {
+        id: {
+            value: null
+        },
+        name: {
+            value: null
+        },
+        rfid: {
+            value: null
+        },
+        price: {
+            value: null
+        },
+        number: {
+            value: null
+        },
+        date: {
+            value: null
+        },
+        purchase: {
+            value: null
+        },
+        type: {
+            value: null
+        },
+        memo: {
+            value: null
+        },
+        belong: {
+            value: 'equipment'
+        }
+    }
 })
 
 export default Eq
