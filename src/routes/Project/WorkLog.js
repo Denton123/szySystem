@@ -15,16 +15,15 @@ import ReactQuill from 'react-quill'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 import 'moment/locale/zh-cn'
 
-
 moment.locale('zh-cn')
 
 const { Content } = Layout
 
 class checkwork extends Component {
     state = {
-        userData: [],
         log: [],
-        avatar: null
+        avatar: null,
+        subcontent: []
     }
 
     componentWillMount() {
@@ -32,12 +31,7 @@ class checkwork extends Component {
     }
 
     getLogData = () => {
-        // 获取全部的user
         ajax('get', '/user/all').then(res => {
-            console.log(res.data)
-            this.setState({
-                userData: res.data
-            })
         })
         // 获取全部的log
         index('/worklog').then(res => {
@@ -48,31 +42,73 @@ class checkwork extends Component {
         })
     }
     showLog = () => {
-        console.log('wawaw')
+        var newarr = []
+        for (var i = 0; i < newarr.length; i++) {
+            var temp = newarr[i]
+            var count = 0
+            for (var j = 0; j < newarr.length; j++) {
+                if (newarr[j] == temp) {
+                    count++
+                }
+            }
+        }
     }
     dateCellRender = (value) => {
         const cellDate = moment(value).format('YYYY-MM-DD')
         const logData = this.state.log
-        if (logData !== null) {
-            for (let i in logData) {
-                var time = logData[i].time.substr(0, 10)
-                if (cellDate === time) {
-                    console.log(logData[i].content)
-                }
+        var popcontent, content, avatar, realname, testname, testTime, test
+        var avatarArr = []
+        var testArr = []
+        var Arr = []
+        for (var i = 0; i < logData.length; i++) {
+            var time = logData[i].time.substr(0, 10)
+            // var count = 0 
+            // for (var j = 0; j < logData.length; j++) {
+            //     if (logData[j].time == time) {
+            //         count++
+            //     }
+            // }
+            // console.log(count);
+            Arr.push(time)
+            if (time)
+            var saveObj = {
+                time: time,
+                cont: [],
+                name: [],
+                avatar: []
+            }
+            testArr.push(saveObj)
+            if (cellDate === time) {
+                content = (
+                    <p>{logData[i].content}</p>
+                )
+                return (
+                    <Popover content={content} title={logData[i].User.realname} trigger="click">
+                        <Avatar src={`/uploadImgs/${logData[i].User.avatar}`} />
+                    </Popover>
+                )
             }
         }
-        const content = (
-            <p>圣诞快乐</p>
-        )
-        const userData = this.state.userData
-        // if (value.date() === 5) {
-        //     return (
-        //         userData.map(item => (
-        //             <Popover content={content} title="舒丹彤" trigger="click" key={item.id}>
-        //                 <Avatar src={`/uploadImgs/${item.avatar}`} />
-        //             </Popover>
-        //         ))
-        //     )
+        // for (let y in testArr) {
+        //     if (cellDate === testArr[y].time) {
+        //         return (
+        //             testArr[y].cont.map(id => (
+        //                 <p>{id.content}</p>
+        //             ))
+        //         )
+        //     }
+        // }
+        // var testTime
+        // console.log(testArr)
+        // for (var u = 0; u < testArr.length; u++) {
+        //     var test = testArr[u + 1]
+        //     if (test !== undefined) {
+        //         testTime = test.time
+        //     }
+        //     if (testArr[u].time === testTime) {
+        //         console.log(testTime)
+        //         Arr.push(testArr[u].cont)
+        //     }
         // }
     }
     render() {
@@ -89,7 +125,9 @@ class checkwork extends Component {
                     <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
                 </Breadcrumb>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    <Calendar dateCellRender={this.dateCellRender} />
+                    <Calendar
+                        dateCellRender={this.dateCellRender}
+                        onSelect={this.showLog} />
                 </div>
             </Content>
         )
