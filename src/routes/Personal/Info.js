@@ -31,14 +31,9 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 // 引入工具方法
 import {checkPhone} from 'UTILS/regExp'
 import {ajax, show} from 'UTILS/ajax'
+import {getBase64} from 'UTILS/utils'
 
 const RadioGroup = Radio.Group
-
-function getBase64(img, callback) {
-    const reader = new FileReader()
-    reader.addEventListener('load', () => callback(reader.result))
-    reader.readAsDataURL(img)
-}
 
 class Info extends Component {
     state = {
