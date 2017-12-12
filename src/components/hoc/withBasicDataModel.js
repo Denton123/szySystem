@@ -99,9 +99,13 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 获取列表数据
         getData = (params, first = false) => {
+            console.log('params ----- ')
+            console.log(params)
             let data = {
                 params: params
             }
+            console.log('data ----- ')
+            console.log(data)
             this.setState({
                 tableSetting: {
                     ...this.state.tableSetting,
@@ -128,6 +132,8 @@ function withBasicDataModel(PageComponent, Datas) {
                     if (locationSearch) {
                         this.props.history.push(`${this.props.location.pathname}?page=${params.page}`, {page: params.page})
                     }
+                    console.log('this.props.location ----- ')
+                    console.log(this.props.location)
                 })
         }
 
@@ -249,9 +255,17 @@ function withBasicDataModel(PageComponent, Datas) {
             if (clearFormValues) {
                 this.setState((prevState, props) => {
                     let obj = {}
-                    for (let i in prevState.formFieldsValues) {
-                        obj[i] = {
-                            value: null
+                    if (!Object.keys(clearFormValues).length) {
+                        for (let i in prevState.formFieldsValues) {
+                            obj[i] = {
+                                value: null
+                            }
+                        }
+                    } else {
+                        for (let i in clearFormValues) {
+                            obj[i] = {
+                                value: clearFormValues[i].value
+                            }
                         }
                     }
                     return {
@@ -329,18 +343,25 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 处理查询
         handleQuery = (e) => {
-            console.log(this.state.queryFieldValues)
             let params = {}
             for (let i in this.state.queryFieldValues) {
                 if (this.state.queryFieldValues[i].value !== null) {
                     if (i.indexOf('date') > -1) {
                         params[i] = momentToValue(this.state.queryFieldValues[i].value)
+                    } else if (i.indexOf('price') > -1) {
+                        let arr = []
+                        Object.keys(this.state.queryFieldValues[i].value).forEach((key) => {
+                            // params[key] = this.state.queryFieldValues[i].value[key]
+                            if (this.state.queryFieldValues[i].value[key]) {
+                                arr.push(this.state.queryFieldValues[i].value[key])
+                            }
+                        })
+                        params[i] = arr
                     } else {
                         params[i] = this.state.queryFieldValues[i].value
                     }
                 }
             }
-            console.log(params)
             if (Object.keys(params).length === 0) {
                 message.warning('请增加查询条件')
                 return
