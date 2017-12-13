@@ -42,16 +42,6 @@ class checkwork extends Component {
         })
     }
     showLog = () => {
-        var newarr = []
-        for (var i = 0; i < newarr.length; i++) {
-            var temp = newarr[i]
-            var count = 0
-            for (var j = 0; j < newarr.length; j++) {
-                if (newarr[j] == temp) {
-                    count++
-                }
-            }
-        }
     }
     dateCellRender = (value) => {
         const cellDate = moment(value).format('YYYY-MM-DD')
@@ -62,15 +52,16 @@ class checkwork extends Component {
         var Arr = []
         for (var i = 0; i < logData.length; i++) {
             var time = logData[i].time.substr(0, 10)
-            // var count = 0 
-            // for (var j = 0; j < logData.length; j++) {
-            //     if (logData[j].time == time) {
-            //         count++
-            //     }
-            // }
-            // console.log(count);
-            Arr.push(time)
-            if (time)
+            var count = 0
+            for (var j = 0; j < logData.length; j++) {
+                if (logData[j].time === logData[i].time) {
+                    count++
+                    if (count > 1) {
+                        Arr.push(logData[j])
+                        console.log(Arr)
+                    }
+                }
+            }
             var saveObj = {
                 time: time,
                 cont: [],
