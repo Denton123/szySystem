@@ -54,7 +54,8 @@ class ProjectDetail extends Component {
             route,
             history,
             location,
-            match
+            match,
+            user
         } = this.props
         const {projectData, loading} = this.state
         return (
@@ -83,7 +84,7 @@ class ProjectDetail extends Component {
                         }
                     />
                 </Card>
-                <Stage id={projectData.id} />
+                <Stage id={match.params.id} user={user} />
             </div>
         )
     }
@@ -92,27 +93,6 @@ class ProjectDetail extends Component {
 const PD = withBasicDataModel(ProjectDetail, {
     model: 'project',
     formFieldsValues: {
-        id: {
-            value: null
-        },
-        user_id: {
-            value: null
-        },
-        name: {
-            value: null
-        },
-        img: {
-            value: null
-        },
-        introduce: {
-            value: null
-        },
-        plan_start_date: {
-            value: null
-        },
-        plan_end_date: {
-            value: null
-        },
     },
     handleTableData: (dataSource) => {
         let arr = []

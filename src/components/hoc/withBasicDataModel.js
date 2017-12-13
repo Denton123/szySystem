@@ -86,7 +86,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 // 表单字段的值
                 formFieldsValues: Datas.formFieldsValues,
                 // 表单提交
-                isSubmitting: false
+                isSubmitting: false,
             }
         }
 
@@ -99,13 +99,9 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 获取列表数据
         getData = (params, first = false) => {
-            console.log('params ----- ')
-            console.log(params)
             let data = {
                 params: params
             }
-            console.log('data ----- ')
-            console.log(data)
             this.setState({
                 tableSetting: {
                     ...this.state.tableSetting,
@@ -132,8 +128,6 @@ function withBasicDataModel(PageComponent, Datas) {
                     if (locationSearch) {
                         this.props.history.push(`${this.props.location.pathname}?page=${params.page}`, {page: params.page})
                     }
-                    console.log('this.props.location ----- ')
-                    console.log(this.props.location)
                 })
         }
 
@@ -149,16 +143,21 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
-        // 新增
-        handleAdd = (e) => {
-            this.handleOperationType('add')
+        // 设置对话框状态
+        handleModalSetting = (visible, title) => {
             this.setState({
                 modalSetting: {
                     ...this.state.modalSetting,
-                    visible: true,
-                    title: `${this.state.title}-新增`
+                    visible: visible,
+                    title: title
                 },
             })
+        }
+
+        // 新增
+        handleAdd = (e) => {
+            this.handleOperationType('add')
+            this.handleModalSetting(true, `${this.state.title}-新增`)
         }
 
         // 表格行编辑数据获取
@@ -167,15 +166,7 @@ function withBasicDataModel(PageComponent, Datas) {
             let id = e.target.dataset['id']
             show(`/${this.state.model}/${id}`)
                 .then(res => {
-                    this.setState((prevState, props) => {
-                        return {
-                            modalSetting: {
-                                ...prevState.modalSetting,
-                                visible: true,
-                                title: `${prevState.title}-编辑`
-                            },
-                        }
-                    })
+                    this.handleModalSetting(true, `${this.state.title}-编辑`)
                     this.updateEditFormFieldsValues(resetObject(res.data))
                 })
         }
@@ -195,20 +186,23 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
+        // 设置表单提交状态
+        handleSubmitStatus = (status) => {
+            this.setState({
+                isSubmitting: status
+            })
+        }
+
         // 表单提交回调 存在新增和编辑两种情况
         // 新增回调函数
         handleFormSubmit = (values, cb) => {
-            this.setState({
-                isSubmitting: true
-            })
+            this.handleSubmitStatus(true)
             let submit = this.state.operationType === 'add'
                 ? store(this.state.model, values, hasFile)
                 : update(`${this.state.model}/${this.state.formFieldsValues.id.value}`, values, hasFile)
             submit
             .then(res => {
-                this.setState({
-                    isSubmitting: false
-                })
+                this.handleSubmitStatus(false)
                 if (res.data.errors) {
                     res.data.errors.forEach(err => {
                         message.error(err.message)
@@ -244,9 +238,7 @@ function withBasicDataModel(PageComponent, Datas) {
             .catch(err => {
                 console.log(err)
                 message.success('保存失败')
-                this.setState({
-                    isSubmitting: false
-                })
+                this.handleSubmitStatus(false)
             })
         }
 
@@ -273,13 +265,8 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 })
             }
-            this.setState({
-                modalSetting: {
-                    ...this.state.modalSetting,
-                    visible: false
-                },
-                isSubmitting: false
-            })
+            this.handleSubmitStatus(false)
+            this.handleModalSetting(false, `${this.state.title}`)
         }
 
         // 表格行删除
@@ -308,6 +295,7 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
+        // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
             this.setState({
                 tableRowSelection: selectedRowKeys
@@ -393,8 +381,10 @@ function withBasicDataModel(PageComponent, Datas) {
                     handleAdd={this.handleAdd}
                     handleEdit={this.handleEdit}
                     updateEditFormFieldsValues={this.updateEditFormFieldsValues}
+                    handleSubmitStatus={this.handleSubmitStatus}
                     handleFormSubmit={this.handleFormSubmit}
                     handleModalCancel={this.handleModalCancel}
+                    handleModalSetting={this.handleModalSetting}
                     handleDelete={this.handleDelete}
                     handleTableRowChange={this.handleTableRowChange}
                     handleBatchDelete={this.handleBatchDelete}

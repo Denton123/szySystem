@@ -1,6 +1,5 @@
 import React from 'react'
 import { Form, Button } from 'antd'
-import moment from 'moment'
 
 const FormItem = Form.Item
 /**
