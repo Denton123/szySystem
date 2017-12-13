@@ -31,9 +31,6 @@ class checkwork extends Component {
     }
 
     getLogData = () => {
-        ajax('get', '/user/all').then(res => {
-        })
-        // 获取全部的log
         index('/worklog').then(res => {
             console.log(res)
             this.setState({
@@ -41,66 +38,47 @@ class checkwork extends Component {
             })
         })
     }
-    showLog = () => {
-    }
     dateCellRender = (value) => {
         const cellDate = moment(value).format('YYYY-MM-DD')
         const logData = this.state.log
-        var popcontent, content, avatar, realname, testname, testTime, test
-        var avatarArr = []
-        var testArr = []
         var Arr = []
-        for (var i = 0; i < logData.length; i++) {
-            var time = logData[i].time.substr(0, 10)
-            var count = 0
-            for (var j = 0; j < logData.length; j++) {
-                if (logData[j].time === logData[i].time) {
-                    count++
-                    if (count > 1) {
-                        Arr.push(logData[j])
-                        console.log(Arr)
+        var timeArr = []
+        var i = 0
+        if (logData !== null) {
+            for (i in logData) {
+                var time = logData[i].time.substr(0, 10)
+                if (timeArr.indexOf(time) === -1) {
+                    timeArr.push(time)
+                    var saveObj = {
+                        onlytime: time,
+                        big: []
+                    }
+                    Arr.push(saveObj)
+                }
+                for (let j in Arr) {
+                    if (logData[i].time.substr(0, 10) === Arr[j].onlytime) {
+                        Arr[j].big.push({
+                            cont: logData[i].content,
+                            avatar: logData[i].User.avatar,
+                            name: logData[i].User.realname
+                        })
                     }
                 }
             }
-            var saveObj = {
-                time: time,
-                cont: [],
-                name: [],
-                avatar: []
-            }
-            testArr.push(saveObj)
-            if (cellDate === time) {
-                content = (
-                    <p>{logData[i].content}</p>
-                )
+        }
+        for (let id in Arr) {
+            if (cellDate === Arr[id].onlytime) {
                 return (
-                    <Popover content={content} title={logData[i].User.realname} trigger="click">
-                        <Avatar src={`/uploadImgs/${logData[i].User.avatar}`} />
-                    </Popover>
+                    Arr[id].big.map(item => (
+                        <Popover content={item.cont} title={item.name} key={item.cont}>
+                            <span style={{marginRight: '10px'}}>
+                                <Avatar src={`/uploadImgs/${item.avatar}`} icon="user" />
+                            </span>
+                        </Popover>
+                    ))
                 )
             }
         }
-        // for (let y in testArr) {
-        //     if (cellDate === testArr[y].time) {
-        //         return (
-        //             testArr[y].cont.map(id => (
-        //                 <p>{id.content}</p>
-        //             ))
-        //         )
-        //     }
-        // }
-        // var testTime
-        // console.log(testArr)
-        // for (var u = 0; u < testArr.length; u++) {
-        //     var test = testArr[u + 1]
-        //     if (test !== undefined) {
-        //         testTime = test.time
-        //     }
-        //     if (testArr[u].time === testTime) {
-        //         console.log(testTime)
-        //         Arr.push(testArr[u].cont)
-        //     }
-        // }
     }
     render() {
         const child = this.props.child
@@ -117,8 +95,7 @@ class checkwork extends Component {
                 </Breadcrumb>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                     <Calendar
-                        dateCellRender={this.dateCellRender}
-                        onSelect={this.showLog} />
+                        dateCellRender={this.dateCellRender} />
                 </div>
             </Content>
         )

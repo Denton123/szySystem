@@ -289,6 +289,7 @@ class Equipment extends Component {
 
 const Eq = withBasicDataModel(Equipment, {
     model: 'asset',
+    subModel: 'equipment',
     title: '设备管理',
     tableSetting: {},
     modalSetting: {
