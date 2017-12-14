@@ -377,6 +377,14 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
+        // 人事管理的评论
+        handleComment = (e) => {
+            this.handleOperationType('commit')
+            let id = e.target.dataset['id']
+            console.log('id: ' + id)
+            this.handleModalSetting(true, `${this.state.title}-评论`)
+        }
+
         render() {
             return (
                 <PageComponent
@@ -385,6 +393,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     handleOperationType={this.handleOperationType}
                     handleAdd={this.handleAdd}
                     handleEdit={this.handleEdit}
+                    handleComment={this.handleComment}
                     updateEditFormFieldsValues={this.updateEditFormFieldsValues}
                     handleSubmitStatus={this.handleSubmitStatus}
                     handleFormSubmit={this.handleFormSubmit}
