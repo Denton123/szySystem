@@ -10,7 +10,8 @@ import {
     Radio,
     message,
     Divider,
-    Select
+    Select,
+    Upload
 } from 'antd'
 import {
     Link,
@@ -33,8 +34,14 @@ import CustomForm from 'COMPONENTS/form/CustomForm'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
 const RadioGroup = Radio.Group
+const { TextArea } = Input
 
 class Recruit extends Component {
+    state = {
+        // 文件
+        fileList: []
+    }
+
     render() {
         const {
             child,
@@ -57,6 +64,30 @@ class Recruit extends Component {
             style: {
                 width: 220
             }
+        }
+
+        const uploadProps = {
+            action: '/recruit',
+            onRemove: (file) => {
+                this.setState({
+                    fileList: []
+                })
+            },
+            beforeUpload: (file) => {
+                if (file.size > 2 * 1024 * 1024) {
+                    message.error('上传文件不能超过2m')
+                    return false
+                }
+                this.setState(() => {
+                    let arr = []
+                    arr.push(file)
+                    return {
+                        fileList: arr
+                    }
+                })
+                return false
+            },
+            fileList: this.state.fileList,
         }
 
         // 条件
@@ -147,7 +178,7 @@ class Recruit extends Component {
             },
             {
                 label: '面试职位',
-                field: 'jop',
+                field: 'job',
                 valid: {
                     rules: [{required: true, message: '请输入职位'}]
                 },
@@ -167,9 +198,26 @@ class Recruit extends Component {
                 label: '简历',
                 field: 'recruit',
                 valid: {
-                    rules: [{ required: true, message: '请上传简历' }]
+                    rules: [{required: true, message: '请上传简历文件'}]
                 },
-                component: (<Input prefix={<Icon type="phone" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="recruit" />)
+                component: (
+                    <Upload {...uploadProps}>
+                        <Button>
+                            <Icon type="upload" /> 选择文件
+                        </Button>
+                    </Upload>
+                )
+            }
+        ]
+
+        const commentFields = [
+            {
+                label: '评论',
+                field: 'comment',
+                valid: {
+                    rules: [{required: true, message: '请输入评论'}]
+                },
+                component: (<TextArea rows={4} placeholder="面试官" />)
             }
         ]
 
@@ -202,7 +250,7 @@ class Recruit extends Component {
 }
 
 const R = withBasicDataModel(Recruit, {
-    model: 'user',
+    model: 'recruit',
     title: '招聘管理',
     tableSetting: {
         rowSelection: {fixed: false}
@@ -219,6 +267,7 @@ const R = withBasicDataModel(Recruit, {
             value: null
         },
     },
+    formSubmitHasFile: true,
     // 表单的
     formFieldsValues: {
         interviewer: {
@@ -227,13 +276,19 @@ const R = withBasicDataModel(Recruit, {
         interviewee: {
             value: null
         },
-        jop: {
+        job: {
             value: null
         },
         date: {
             value: null
         },
         recruit: {
+            value: null
+        }
+    },
+    // 评论
+    commentFieldsValues: {
+        comment: {
             value: null
         }
     }

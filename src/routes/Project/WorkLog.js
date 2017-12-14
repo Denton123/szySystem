@@ -21,9 +21,7 @@ const { Content } = Layout
 
 class checkwork extends Component {
     state = {
-        log: [],
-        avatar: null,
-        subcontent: []
+        log: []
     }
 
     componentWillMount() {
@@ -32,7 +30,7 @@ class checkwork extends Component {
 
     getLogData = () => {
         index('/worklog').then(res => {
-            console.log(res)
+            // console.log(res)
             this.setState({
                 log: res.data
             })
@@ -51,13 +49,13 @@ class checkwork extends Component {
                     timeArr.push(time)
                     var saveObj = {
                         onlytime: time,
-                        big: []
+                        subContent: []
                     }
                     Arr.push(saveObj)
                 }
                 for (let j in Arr) {
                     if (logData[i].time.substr(0, 10) === Arr[j].onlytime) {
-                        Arr[j].big.push({
+                        Arr[j].subContent.push({
                             cont: logData[i].content,
                             avatar: logData[i].User.avatar,
                             name: logData[i].User.realname
@@ -69,7 +67,7 @@ class checkwork extends Component {
         for (let id in Arr) {
             if (cellDate === Arr[id].onlytime) {
                 return (
-                    Arr[id].big.map(item => (
+                    Arr[id].subContent.map(item => (
                         <Popover content={item.cont} title={item.name} key={item.cont}>
                             <span style={{marginRight: '10px'}}>
                                 <Avatar src={`/uploadImgs/${item.avatar}`} icon="user" />

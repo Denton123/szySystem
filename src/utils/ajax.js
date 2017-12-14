@@ -54,6 +54,8 @@ function ajax(type, url, data = {}, hasFile = false) {
                 }
             }
             data = fd
+            console.log('form-data  -------- ')
+            console.log(data)
         }
         axios[type](url, data, config)
             .then(res => {

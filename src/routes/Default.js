@@ -6,7 +6,7 @@
  */
 import styles from './default.less'
 import React from 'react'
-import { Layout, Breadcrumb, Icon, Card, Col, Row, List, Input } from 'antd'
+import { Layout, Breadcrumb, Icon, Card, Col, Row, List, Input, Avatar } from 'antd'
 import {
     Link,
     Route,
@@ -55,7 +55,7 @@ class Default extends React.Component {
         const history = this.props.history
         const location = this.props.location
         const match = this.props.match
-
+        const user = this.props.user
         const CardMsg = (
             <div className="Card">
                 <Row gutter={16}>
@@ -92,10 +92,10 @@ class Default extends React.Component {
                 <Header className="IndexHeader">
                     <div className="HeaderMsg">
                         <span className="avatar">
-                            <img src="https://gw.alipayobjects.com/zos/rmsportal/dRFVcIqZOYPcSNrlJsqQ.png" />
+                            <Avatar icon="user" src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} style={{fontSize: 41}} />
                         </span>
                         <div className="Greet">
-                            <h2>下午好，马云，祝你开心每一天！</h2>
+                            <h2>下午好，{user.realname}，祝你开心每一天！</h2>
                             <h4>技术部 - 总监</h4>
                         </div>
                     </div>
