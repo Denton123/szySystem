@@ -77,7 +77,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 // 记录表格被选择的行
                 tableRowSelection: [],
                 // 操作类型 add 和 edit
-                tableOperationType: '',
+                operationType: '',
                 // 对话框设置
                 modalSetting: {
                     ...modalSetting,
@@ -89,6 +89,8 @@ function withBasicDataModel(PageComponent, Datas) {
                 formFieldsValues: Datas.formFieldsValues,
                 // 表单提交
                 isSubmitting: false,
+                // 加载中
+                loading: false,
             }
         }
 
@@ -385,6 +387,20 @@ function withBasicDataModel(PageComponent, Datas) {
             this.handleModalSetting(true, `${this.state.title}-评论`)
         }
 
+        // 设置formFieldsValues的状态
+        handleFormFieldsValues = (obj) => {
+            this.setState({
+                formFieldsValues: obj
+            })
+        }
+
+        // 设置loading状态
+        handleLoading = (loadingState) => {
+            this.setState({
+                loading: loadingState
+            })
+        }
+
         render() {
             return (
                 <PageComponent
@@ -405,6 +421,8 @@ function withBasicDataModel(PageComponent, Datas) {
                     handleQuery={this.handleQuery}
                     updateFormFields={this.updateFormFields}
                     updateQueryFields={this.updateQueryFields}
+                    handleFormFieldsValues={this.handleFormFieldsValues}
+                    handleLoading={this.handleLoading}
                     {...this.state}
                     {...this.props}
                 />

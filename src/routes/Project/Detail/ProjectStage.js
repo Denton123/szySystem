@@ -23,33 +23,31 @@ import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
+import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 import CustomForm from 'COMPONENTS/form/CustomForm'
 import CustomDynamicForm from 'COMPONENTS/form/CustomDynamicForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
-const {Meta} = Card
+import ProjectStageDatas from './ProjectStageDatas.js'
 
 class ProjectStage extends Component {
     state = {
-        // 页面加载
-        loading: true,
         // 动态表单key值
         dynamicKeys: [],
         key: 0,
         // 阶段tab
         stageTabs: [],
         currentStageTabs: '',
-
-        formFieldsValues: {}
+        // 记录
+        allStageData: []
     }
 
     componentDidMount() {
+        this.props.handleLoading(true)
         this.getStage()
             .then(res => {
-                this.setState({
-                    loading: false,
-                })
+                this.props.handleLoading(false)
                 this.handleStageTabs(res.data)
             })
     }
@@ -62,51 +60,51 @@ class ProjectStage extends Component {
     }
 
     handleSubmit = (values) => {
-        console.log(values)
         this.props.handleSubmitStatus(true)
         let data = []
-        if (this.props.operationType === 'add') {
-            let key = `t${Date.now()}-u${this.props.user.id}-i`
-            values.keys.forEach((k, i, arr) => {
-                let obj = {
-                    project_id: parseInt(this.props.id),
-                    name: values[`name-${k}`],
-                    key: `${key}${i}`,
-                    prev_key: i === 0 ? 0 : `${key}${i - 1}`,
-                    next_key: i === arr.length - 1 ? 0 : `${key}${i + 1}`
+        let key = `t${Date.now()}-u${this.props.user.id}-i`
+        let formFieldsValues = this.props.formFieldsValues
+        values.keys.forEach((k, i, arr) => {
+            let obj = {
+                project_id: parseInt(this.props.id),
+                name: values[`name-${k}`],
+                key: `${key}${i}`,
+                prev_key: i === 0 ? 0 : `${key}${i - 1}`,
+                next_key: i === arr.length - 1 ? 0 : `${key}${i + 1}`
+            }
+            if (Object.keys(formFieldsValues).includes(`id-${k}`)) {
+                // 存在的时候
+                obj['id'] = formFieldsValues[`id-${k}`].value
+            }
+            data.push(obj)
+        })
+        let submit = this.props.operationType === 'add'
+                ? store('stage', data, false)
+                : update(`stage/${this.props.id}`, data, false)
+        submit
+            .then(res => {
+                this.props.handleSubmitStatus(false)
+                if (res.data.errors) {
+                    res.data.errors.forEach(err => {
+                        message.error(err.message)
+                    })
+                } else {
+                    if (this.props.operationType === 'add') {
+                    // 新增后的处理
+                        this.handleStageTabs(res.data)
+                    } else {
+                    // 编辑后的处理
+                        this.handleStageTabs(res.data)
+                    }
+                    this.props.handleModalCancel()
+                    message.success('保存成功')
                 }
-                data.push(obj)
             })
-        } else {
-            console.log(this.state.formFieldsValues)
-        }
-        console.log(data)
-        // let submit = this.props.operationType === 'add'
-        //         ? store('stage', data, false)
-        //         : update(`stage/${this.props.id}`, data, false)
-        // submit
-        //     .then(res => {
-        //         this.props.handleSubmitStatus(false)
-        //         if (res.data.errors) {
-        //             res.data.errors.forEach(err => {
-        //                 message.error(err.message)
-        //             })
-        //         } else {
-        //             if (this.state.operationType === 'add') {
-        //             // 新增后的处理
-        //                 this.handleStageTabs(res.data)
-        //             } else {
-        //             // 编辑后的处理
-        //             }
-        //             // this.props.handleModalCancel()
-        //             message.success('保存成功')
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.log(err)
-        //         message.success('保存失败')
-        //         this.handleSubmitStatus(false)
-        //     })
+            .catch(err => {
+                console.log(err)
+                message.success('保存失败')
+                this.props.handleSubmitStatus(false)
+            })
     }
 
     handleModalCancel = () => {
@@ -131,6 +129,7 @@ class ProjectStage extends Component {
         this.setState({
             stageTabs: arr,
             currentStageTabs: currentStageTabs,
+            allStageData: data
         })
     }
 
@@ -139,7 +138,6 @@ class ProjectStage extends Component {
         this.props.handleOperationType('edit')
         this.getStage()
             .then(res => {
-                console.log(res)
                 let arr = []
                 let obj = {}
                 res.data.forEach((d, i) => {
@@ -152,9 +150,7 @@ class ProjectStage extends Component {
                 })
                 this.setDynamicKeys(arr.length, arr)
                 this.props.handleModalSetting(true, '项目阶段-编辑')
-                this.setState({
-                    formFieldsValues: obj
-                })
+                this.props.handleFormFieldsValues(obj)
             })
             .catch(err => {
                 console.log(err)
@@ -186,8 +182,27 @@ class ProjectStage extends Component {
         if (dynamicKeys.length === 1) {
             return
         }
-        this.setState({
-            dynamicKeys: dynamicKeys.filter(key => key !== k),
+        new Promise(resolve => {
+            if (this.props.operationType === 'edit') {
+                // ajax
+                // 询问
+                // ajax('get', 'task/allByStage', {params: {id: dynamicKeys.find(key => key === k).id}})
+                CustomPrompt({
+                    type: 'confirm',
+                    content: <div>该阶段已经存在任务,是否要删除这个阶段</div>,
+                    okType: 'warning',
+                    onOk: () => {
+                        resolve()
+                    }
+                })
+            } else {
+                resolve()
+            }
+        })
+        .then(() => {
+            this.setState({
+                dynamicKeys: dynamicKeys.filter(key => key !== k),
+            })
         })
     }
 
@@ -210,9 +225,16 @@ class ProjectStage extends Component {
         })
     }
 
-    updateFormFields = (changedFields) => {
-        this.setState({
-            formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
+    setAllStageData = (id, data) => {
+        this.setState((prevState, props) => {
+            prevState.allStageData.forEach(stage => {
+                if (stage.id === id) {
+                    stage.data = data
+                }
+            })
+            return {
+                allStageData: prevState.allStageData
+            }
         })
     }
 
@@ -223,7 +245,6 @@ class ProjectStage extends Component {
             location,
             match
         } = this.props
-
         const state = this.state
 
         // 动态表单设置对象
@@ -241,7 +262,7 @@ class ProjectStage extends Component {
         ]
 
         return (
-            <Spin spinning={state.loading} tip="正在加载项目信息...">
+            <Spin spinning={this.props.loading} tip="正在加载项目信息...">
                 <div className="w100 mt-10">
                     {state.stageTabs.length > 0 ? (
                         <Card
@@ -251,7 +272,10 @@ class ProjectStage extends Component {
                             tabList={state.stageTabs}
                             onTabChange={(key) => { this.onTabChange(key) }}
                         >
-                            <div>a</div>
+                            <ProjectStageDatas
+                                stage={state.allStageData.find(item => item.name === state.currentStageTabs)}
+                                setAllStageData={this.setAllStageData}
+                            />
                         </Card>
                     ) : (
                         <Card
@@ -266,8 +290,8 @@ class ProjectStage extends Component {
                         <CustomDynamicForm
                             handleSubmit={this.handleSubmit}
                             formFields={formFields}
-                            formFieldsValues={state.formFieldsValues}
-                            updateFormFields={this.updateFormFields}
+                            formFieldsValues={this.props.formFieldsValues}
+                            updateFormFields={this.props.updateFormFields}
                             isSubmitting={this.props.isSubmitting}
                             dynamicKeys={state.dynamicKeys}
                             dynamicAdd={this.dynamicAdd}
@@ -283,6 +307,7 @@ class ProjectStage extends Component {
 const PS = withBasicDataModel(ProjectStage, {
     model: 'stage',
     title: '项目阶段',
+    formFieldsValues: {},
     customGetData: true
 })
 
