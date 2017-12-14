@@ -1,7 +1,10 @@
 import moment from 'moment'
 const utils = {
-    isObject: function(objectToCheck) {
-        return Object.prototype.toString.call(objectToCheck) === '[object Object]'
+    isString: function(StringToCheck) {
+        return Object.prototype.toString.call(StringToCheck) === '[object String]'
+    },
+    isObject: function(ObjectToCheck) {
+        return Object.prototype.toString.call(ObjectToCheck) === '[object Object]'
     },
     isArray: function(ArrayToCheck) {
         return Object.prototype.toString.call(ArrayToCheck) === '[object Array]'

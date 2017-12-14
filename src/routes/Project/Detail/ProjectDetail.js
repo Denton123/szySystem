@@ -84,7 +84,7 @@ class ProjectDetail extends Component {
                         }
                     />
                 </Card>
-                <Stage id={match.params.id} user={user} />
+                <Stage id={match.params.id} user={user} route={route} history={history} location={location} match={match} />
             </div>
         )
     }

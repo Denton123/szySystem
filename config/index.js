@@ -42,6 +42,7 @@ module.exports = {
             // }
             '/api/**': proxyTableOptions,
             '/user/**': proxyTableOptions,
+            '/stage/**': proxyTableOptions,
             // 上传文件
             '/uploadFiles/**': proxyTableOptions,
             // 上传图片
