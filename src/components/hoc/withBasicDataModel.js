@@ -161,6 +161,7 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 新增
         handleAdd = (e) => {
+            console.log(e)
             this.handleOperationType('add')
             this.handleModalSetting(true, `${this.state.title}-新增`)
         }
