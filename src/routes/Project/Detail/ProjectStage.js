@@ -184,17 +184,22 @@ class ProjectStage extends Component {
         }
         new Promise(resolve => {
             if (this.props.operationType === 'edit') {
-                // ajax
-                // 询问
-                // ajax('get', 'task/allByStage', {params: {id: dynamicKeys.find(key => key === k).id}})
-                CustomPrompt({
-                    type: 'confirm',
-                    content: <div>该阶段已经存在任务,是否要删除这个阶段</div>,
-                    okType: 'warning',
-                    onOk: () => {
-                        resolve()
-                    }
-                })
+                let stageId = this.props.formFieldsValues[`id-${dynamicKeys.find(key => key === k)}`].value
+                ajax('get', `/task/${stageId}/count`)
+                    .then(res => {
+                        if (res.data.count > 0) {
+                            CustomPrompt({
+                                type: 'confirm',
+                                content: <div>该阶段已经存在任务,是否要删除这个阶段</div>,
+                                okType: 'warning',
+                                onOk: () => {
+                                    resolve()
+                                }
+                            })
+                        } else {
+                            resolve()
+                        }
+                    })
             } else {
                 resolve()
             }
