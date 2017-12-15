@@ -111,7 +111,6 @@ class ProjectStageDatas extends Component {
         ajax('post', `/stage/set-data/${this.props.stage.id}`, {data: data})
             .then(res => {
                 this.props.handleSubmitStatus(false)
-                console.log(res.data.data)
                 this.props.setAllStageData(this.props.stage.id, res.data.data)
                 this.props.handleModalCancel()
                 message.success('保存成功')
