@@ -30,20 +30,20 @@ function transformValue(field, value) {
  * Datas传值说明
  *
  * 影响state的属性
- * model               *后台模块名称                String   如'user'
- * subModel             子模块名                    String   如asset下面的'equipment'设备、'stationery'办公用品、'book'图书'
- * title               *页面名称(不用对话框可以不传)String   如'人员管理'
- * tableSetting         表格设置                    Object   具体参数请看antd表格设置
- * modalSetting         对话框设置                  Object   具体参数请看antd对话框设置
- * queryFieldValues    *查询字段的值                Object   {name: {value: null}}
- * formFieldsValues    *表单字段的值                Object   {name: {value: null}, realname: {value: null}}
+ * model               *后台模块名称                String    如'user'
+ * subModel             子模块名                    String    如asset下面的'equipment'设备、'stationery'办公用品、'book'图书'
+ * title               *页面名称(不用对话框可以不传)String    如'人员管理'
+ * tableSetting         表格设置                    Object    具体参数请看antd表格设置
+ * modalSetting         对话框设置                  Object    具体参数请看antd对话框设置
+ * queryFieldValues    *查询字段的值                Object    {name: {value: null}}
+ * formFieldsValues    *表单字段的值                Object    {name: {value: null}, realname: {value: null}}
  *
  *  不影响state的属性
- * formSubmitHasFile   表单提交时是否有文件         Boolean  默认false(无文件)
- * handleTableData     表格数据特殊处理             Function 无默认，部分页面的关联数据需要进行特殊处理(主要在index方法获取数据后)，不传入时，表格数据不进行处理
- * customGetData       自定义获取默认数据           Boolean  默认false()
- * clearFormValues     清空表单默认值               Boolean  默认true(清空)  用于在表单提交后是否清空表单默认值
- * locationSearch      是否设置浏览器地址的search   Boolean  默认不设置      设置后，在浏览器获取index方法的数据后，浏览器地址会出现?page=n
+ * formSubmitHasFile   表单提交时是否有文件         Boolean   默认false(无文件)
+ * handleTableData     表格数据特殊处理             Function  无默认，部分页面的关联数据需要进行特殊处理(主要在index方法获取数据后)，不传入时，表格数据不进行处理
+ * customGetData       自定义获取默认数据           Boolean   默认false()
+ * clearFormValues     清空表单默认值               Bool||Obj 默认true(清空)  用于在表单提交后是否清空表单默认值，如果传入对象，则表单默认改变为传入对象
+ * locationSearch      是否设置浏览器地址的search   Boolean   默认不设置      设置后，在浏览器获取index方法的数据后，浏览器地址会出现?page=n
  */
 /**
  * [withBasicDataModel 混合基本数据处理的状态]

@@ -84,15 +84,12 @@ class CustomDynamicForm extends React.Component {
                     {formFields.map((item, idx) => (
                         <FormItem
                             {...formItemLayout}
-                            style={formFieldsLength > 1 ? {marginBottom: 8} : {marginBottom: 0}}
                             label={item.label}
+                            style={formFieldsLength > 1 ? {marginBottom: 8} : {marginBottom: 0}}
                             required={false}
                             key={idx}
                         >
-                            {getFieldDecorator(`${item.field}-${k}`, {
-                                validateTrigger: item.validateTrigger,
-                                rules: item.rules
-                            })(item.component)}
+                            {getFieldDecorator(`${item.field}-${k}`, item.valid)(item.component)}
                         </FormItem>
                     ))}
                     {keys.length > 1 ? (
@@ -106,8 +103,6 @@ class CustomDynamicForm extends React.Component {
                 </FormItem>
             )
         })
-        // onClick={() => this.remove(k)}
-        // onClick={this.add}
         return (
             <Form onSubmit={this.handleSubmit}>
                 {formItems}
@@ -125,19 +120,19 @@ class CustomDynamicForm extends React.Component {
 }
 
 export default Form.create({
-    // 当 Form.Item 子节点的值发生改变时触发
-    onFieldsChange: function(props, values) {
-        props.updateFormFields(values)
-    },
-    // 把父组件的属性映射到表单项上
-    mapPropsToFields(props) {
-        let obj = {}
-        for (let i in props.formFieldsValues) {
-            obj[i] = Form.createFormField({
-                ...props.formFieldsValues[i],
-                value: props.formFieldsValues[i].value
-            })
-        }
-        return obj
-    }
+    // // 当 Form.Item 子节点的值发生改变时触发
+    // onFieldsChange: function(props, values) {
+    //     props.updateFormFields(values)
+    // },
+    // // 把父组件的属性映射到表单项上
+    // mapPropsToFields(props) {
+    //     let obj = {}
+    //     for (let i in props.formFieldsValues) {
+    //         obj[i] = Form.createFormField({
+    //             ...props.formFieldsValues[i],
+    //             value: props.formFieldsValues[i].value
+    //         })
+    //     }
+    //     return obj
+    // }
 })(CustomDynamicForm)
