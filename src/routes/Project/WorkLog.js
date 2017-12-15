@@ -79,12 +79,13 @@ class checkwork extends Component {
         }
     }
     render() {
-        const child = this.props.child
-        const route = this.props.route
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
-
+        const {
+            child,
+            route,
+            history,
+            location,
+            match
+        } = this.props
         return (
             <Content style={{ margin: '0 16px' }}>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>

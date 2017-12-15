@@ -35,11 +35,19 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
 const RadioGroup = Radio.Group
 const { TextArea } = Input
+const Option = Select.Option
 
 class Recruit extends Component {
     state = {
         // 文件
         fileList: []
+    }
+
+    handlePass = (e) => {
+        console.log('id: -- ' + e.target.dataset['id'])
+        this.setState({
+            intervieweeId: e.target.dataset['id']
+        })
     }
 
     render() {
@@ -144,11 +152,12 @@ class Recruit extends Component {
                     <span>
                         <a href="javascript:;" data-id={text.id} onClick={this.props.handleComment}>评价</a>
                         <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handlePass}>是否通过</a>
+                        <Select defaultValue={text.pass} size="small" style={{ width: 80 }} onChange={this.props.handlePass(text.id)}>
+                            <Option value="1">通过</Option>
+                            <Option value="0">不通过</Option>
+                        </Select>
                         <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handlePreview}>预览</a>
-                        <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleDownload}>下载</a>
+                        <a href={`/uploadFiles/${text.recruit}`} data-id={text.id}>下载</a>
                     </span>
                 )
             }
@@ -217,7 +226,7 @@ class Recruit extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入评论'}]
                 },
-                component: (<TextArea rows={4} placeholder="面试官" />)
+                component: (<TextArea rows={4} placeholder="对评论者的评价" />)
             }
         ]
 
@@ -235,14 +244,23 @@ class Recruit extends Component {
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
                 <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
-                    <CustomForm
-                        formStyle={{width: '100%'}}
-                        formFields={formFields}
-                        handleSubmit={this.props.handleFormSubmit}
-                        updateFormFields={this.props.updateFormFields}
-                        formFieldsValues={this.props.formFieldsValues}
-                        isSubmitting={this.props.isSubmitting}
-                    />
+                    {
+                        this.props.operationType === 'add' || this.props.operationType === 'edit' ? (<CustomForm
+                            formStyle={{width: '100%'}}
+                            formFields={formFields}
+                            handleSubmit={this.props.handleFormSubmit}
+                            updateFormFields={this.props.updateFormFields}
+                            formFieldsValues={this.props.formFieldsValues}
+                            isSubmitting={this.props.isSubmitting}
+                        />) : (<CustomForm
+                            formStyle={{width: '100%'}}
+                            formFields={commentFields}
+                            handleSubmit={this.props.handleFormSubmit}
+                            updateFormFields={this.props.updateFormFields}
+                            formFieldsValues={this.props.formFieldsValues}
+                            isSubmitting={this.props.isSubmitting}
+                        />)
+                    }
                 </CustomModal>
             </div>
         )
@@ -270,6 +288,9 @@ const R = withBasicDataModel(Recruit, {
     formSubmitHasFile: true,
     // 表单的
     formFieldsValues: {
+        id: {
+            value: null
+        },
         interviewer: {
             value: null
         },
@@ -284,11 +305,11 @@ const R = withBasicDataModel(Recruit, {
         },
         recruit: {
             value: null
-        }
-    },
-    // 评论
-    commentFieldsValues: {
+        },
         comment: {
+            value: null
+        },
+        pass: {
             value: null
         }
     }
