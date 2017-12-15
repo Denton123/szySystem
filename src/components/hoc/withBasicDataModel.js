@@ -188,6 +188,8 @@ function withBasicDataModel(PageComponent, Datas) {
                         value: transformValue(field, data[field])
                     }
                 })
+                console.log('oupdateEditFormFieldsValues ---- ')
+                console.log(obj)
                 return {
                     formFieldsValues: obj
                 }
@@ -205,6 +207,8 @@ function withBasicDataModel(PageComponent, Datas) {
         // 新增回调函数
         handleFormSubmit = (values, cb) => {
             this.handleSubmitStatus(true)
+            console.log('handleFormSubmit ------ ')
+            console.log(values)
             let submit = this.state.operationType === 'add'
                 ? store(this.state.model, values, hasFile)
                 : update(`${this.state.model}/${this.state.formFieldsValues.id.value}`, values, hasFile)
@@ -239,13 +243,13 @@ function withBasicDataModel(PageComponent, Datas) {
                         })
                     }
                     this.handleModalCancel()
-                    message.success('保存成功')
+                    message.success(this.state.operationType === 'comment' ? '评论成功！' : '保存成功！')
                     cb && cb(res)
                 }
             })
             .catch(err => {
                 console.log(err)
-                message.success('保存失败')
+                message.success('保存失败！')
                 this.handleSubmitStatus(false)
             })
         }
@@ -380,14 +384,6 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
-        // 人事管理的评论
-        handleComment = (e) => {
-            this.handleOperationType('commit')
-            let id = e.target.dataset['id']
-            console.log('id: ' + id)
-            this.handleModalSetting(true, `${this.state.title}-评论`)
-        }
-
         // 设置formFieldsValues的状态
         handleFormFieldsValues = (obj) => {
             this.setState({
@@ -402,6 +398,59 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
+        // 人事管理的评论
+        handleComment = (e) => {
+            this.handleOperationType('comment')
+            let id = e.target.dataset['id']
+            show(`/${this.state.model}/${id}`)
+                .then(res => {
+                    this.handleModalSetting(true, `${this.state.title}-评论`)
+                    this.updateEditFormFieldsValues(resetObject(res.data))
+                })
+        }
+
+        // 人事管理的通过
+        handlePass = (id, cb) => {
+            return (text) => {
+                let values = {
+                    pass: Number(text)
+                }
+                update(`${this.state.model}/${id}`, values, hasFile).then(res => {
+                    this.handleSubmitStatus(false)
+                    if (res.data.errors) {
+                        res.data.errors.forEach(err => {
+                            message.error(err.message)
+                        })
+                    } else {
+                        // 编辑后的处理
+                        this.setState((prevState, props) => {
+                            let newDataSource = []
+                            prevState.tableSetting.dataSource.forEach(data => {
+                                if (data.id === id) {
+                                    newDataSource.push(resetObject(res.data))
+                                } else {
+                                    newDataSource.push(data)
+                                }
+                            })
+                            return {
+                                tableSetting: {
+                                    ...prevState.tableSetting,
+                                    dataSource: newDataSource
+                                }
+                            }
+                        })
+                        message.success(this.state.operationType === 'comment' ? '评论成功！' : '保存成功！')
+                        cb && cb(res)
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    message.success('保存失败！')
+                    this.handleSubmitStatus(false)
+                })
+            }
+        }
+
         render() {
             return (
                 <PageComponent
@@ -411,6 +460,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     handleAdd={this.handleAdd}
                     handleEdit={this.handleEdit}
                     handleComment={this.handleComment}
+                    handlePass={this.handlePass}
                     updateEditFormFieldsValues={this.updateEditFormFieldsValues}
                     handleSubmitStatus={this.handleSubmitStatus}
                     handleFormSubmit={this.handleFormSubmit}
