@@ -170,6 +170,7 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 表格行编辑数据获取
         handleEdit = (e) => {
+            console.log(e.target.dataset)
             this.handleOperationType('edit')
             let id = e.target.dataset['id']
             show(`/${this.state.model}/${id}`)
