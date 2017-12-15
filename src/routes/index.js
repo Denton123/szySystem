@@ -94,7 +94,14 @@ const routes = [
                     {
                         name: '项目问题',
                         path: '/problem',
-                        component: getRoutes(['Project', 'Problem'])
+                        component: getRoutes(['Project', 'Problem']),
+                        routes: [
+                            {
+                                name: '问题详情',
+                                path: '/:id',
+                                component: getRoutes(['Project', 'Detail', 'ProblemDetail'])
+                            }
+                        ]
                     }
                 ]
             },

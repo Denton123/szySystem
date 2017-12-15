@@ -95,7 +95,7 @@ class Default extends React.Component {
                             <Avatar icon="user" src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} style={{fontSize: 41}} />
                         </span>
                         <div className="Greet">
-                            <h2>下午好，{user.realname}，祝你开心每一天！</h2>
+                            <h2>下午好，{user && user.realname}，祝你开心每一天！</h2>
                             <h4>技术部 - 总监</h4>
                         </div>
                     </div>

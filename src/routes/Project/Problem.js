@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -23,15 +23,37 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 const { Content } = Layout
 const {TextArea} = Input
 
+function escape(str) {
+    return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
+}
+
 class Problem extends Component {
+    componentDidMount() {
+        let page = this.props.location.state ? this.props.location.state.page : 1
+        this.props.getData({
+            page: 1
+        })
+    }
+    handleFormSubmit = (values) => {
+        let params = {
+            user_id: this.props.user.id
+        }
+        if (!this.props.match.params.id) {
+            params['date'] = formatDate(true)
+        }
+        for (let i in values) {
+            params[i] = values[i]
+        }
+        this.props.handleFormSubmit(params)
+    }
     render() {
-        console.log(this.props)
         const {
             child,
             route,
             history,
             location,
-            match
+            match,
+            user
         } = this.props
 
         // 时间
@@ -52,68 +74,65 @@ class Problem extends Component {
             },
             {
                 label: '关键字',
-                field: 'content',
+                field: 'keyword',
                 component: (<Input autoComplete="off" placeholder="关键字" />)
             },
             {
                 label: '发布日期',
                 field: 'date',
-                component: <CustomRangePicker {...issueDate} />
+                component: <CustomRangePicker showTime={false} format={'YYYY-MM-DD'} />
             }
         ]
 
         // 操作
         const operationBtn = [
-            () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>,
-            () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>
+            () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>
         ]
 
         const columns = [
             {
                 title: '发布者',
                 dataIndex: 'realname',
-                key: 'realname',
-                width: 70
+                key: 'realname'
             },
             {
                 title: '标题',
                 dataIndex: 'title',
-                key: 'title',
-                width: 70
-            },
-            {
-                title: '问题内容',
-                dataIndex: 'problem',
-                key: 'problem',
-                width: 70
+                key: 'title'
             },
             {
                 title: '是否解决',
                 dataIndex: 'resolution',
                 key: 'resolution',
-                width: 70,
-                render: text => <span>{text === '0' ? '未解决' : '已解决'}</span>
+                render: text => <span>{text === null ? '未解决' : '已解决'}</span>
             },
             {
                 title: '发表日期',
                 dataIndex: 'date',
-                key: 'date',
-                width: 70
+                key: 'date'
             },
             {
                 title: '操作',
                 key: 'action',
-                width: 100,
-                render: (text, record) => (
-                    <span>
-                        <a href="javascript:;" data-id={text.id}>查看</a>
-                        <Divider type="vertical" />
-                        <a href="javascript:;" data-id={this.props.handleDelete}>删除</a>
-                    </span>
+                render: (text, record) => {
+                    return (
+                        <span>
+                            <Link to={`${match.url}/${text.id}`}>查看</Link>
+                            {
+                                user && text.user_id === user.id
+                                ? <span>
+                                    <Divider type="vertical" />
+                                    <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
+                                </span>
+                                : null
+                            }
+                        </span>
                     )
+                }
             }
         ]
 
+        console.log(this.props.match)
         // checkbox
         const rowSelection = {
             onChange: this.props.handleTableRowChange
@@ -131,55 +150,51 @@ class Problem extends Component {
             {
                 label: '内容',
                 field: 'problem',
-                valid: {
-                    rules: [{required: true, message: '请输入内容'}]
-                },
                 formItemStyle: {
                     height: 350
                 },
-                component: (<TextArea placeholder="内容" style={{height: 250}} />)
+                component: (<ReactQuill placeholder="内容" style={{height: 250}} />)
             }
         ]
 
+        const tableExpandedRowRender = (record) => {
+            let content = escape(record.problem)
+            return (
+                <div dangerouslySetInnerHTML={{__html: content}} />
+            )
+        }
+
         return (
-            <Content style={{ margin: '0 16px' }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
-                </Breadcrumb>
-                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                <CustomForm
+                    layout="inline"
+                    formStyle={{width: '100%'}}
+                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    formFields={condition}
+                    handleSubmit={this.props.handleQuery}
+                    updateFormFields={this.props.updateQueryFields}
+                    formFieldsValues={this.props.queryFieldValues}
+                />
+                <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
+                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
+                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
-                        layout="inline"
                         formStyle={{width: '100%'}}
-                        customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
-                        formFields={condition}
-                        handleSubmit={this.props.handleQuery}
-                        updateFormFields={this.props.updateQueryFields}
-                        formFieldsValues={this.props.queryFieldValues}
+                        formFields={formFields}
+                        handleSubmit={this.handleFormSubmit}
+                        updateFormFields={this.props.updateFormFields}
+                        formFieldsValues={this.props.formFieldsValues}
+                        isSubmitting={this.props.isSubmitting}
                     />
-                    <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                    <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
-                    <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
-                        <CustomForm
-                            formStyle={{width: '100%'}}
-                            formFields={formFields}
-                            handleSubmit={this.props.handleFormSubmit}
-                            updateFormFields={this.props.updateFormFields}
-                            formFieldsValues={this.props.formFieldsValues}
-                            isSubmitting={this.props.isSubmitting}
-                        />
-                    </CustomModal>
-                </div>
-            </Content>
+                </CustomModal>
+            </div>
         )
     }
 }
 
-const issue = withBasicDataModel(Problem, {
+const Pr = withBasicDataModel(Problem, {
     model: 'problem',
     title: '问题',
-    tableSetting: {},
-    modalSetting: '项目问题',
     queryFieldValues: {
         realname: {
             value: null
@@ -214,4 +229,4 @@ const issue = withBasicDataModel(Problem, {
     },
     customGetData: true
 })
-export default issue
+export default Pr

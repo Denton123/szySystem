@@ -312,6 +312,7 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 批量删除
         handleBatchDelete = (e) => {
+            console.log('=========')
             if (this.state.tableRowSelection.length === 0) {
                 message.warning('至少要选择一条数据')
                 return
@@ -358,6 +359,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 }
             }
+            console.log(params)
             if (Object.keys(params).length === 0) {
                 message.warning('请增加查询条件')
                 return
