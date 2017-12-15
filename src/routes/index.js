@@ -97,15 +97,12 @@ const routes = [
                         //         component: getRoutes(['Project', 'Detail', 'ProjectDetail'])
                         //     },
                         // ]
-<<<<<<< Updated upstream
                     },
                     {
                         name: '项目详情',
                         path: '/info/:id',
                         disable: true,
                         component: getRoutes(['Project', 'Detail', 'ProjectDetail'])
-=======
->>>>>>> Stashed changes
                     },
                     {
                         name: '工作日志',
