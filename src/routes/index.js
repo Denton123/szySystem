@@ -44,18 +44,30 @@ const routes = [
                         name: '每周总结',
                         path: '/summary',
                         component: getRoutes(['Personal', 'Summary']),
-                        routes: [
-                            {
-                                name: '发表总结',
-                                path: '/add',
-                                component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
-                            },
-                            {
-                                name: '编辑总结',
-                                path: '/:id',
-                                component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
-                            },
-                        ]
+                        // routes: [
+                        //     {
+                        //         name: '发表总结',
+                        //         path: '/add',
+                        //         component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
+                        //     },
+                        //     {
+                        //         name: '编辑总结',
+                        //         path: '/:id',
+                        //         component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
+                        //     },
+                        // ]
+                    },
+                    {
+                        name: '发表每周总结',
+                        path: '/summary/add',
+                        disable: true,
+                        component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
+                    },
+                    {
+                        name: '编辑每周总结',
+                        path: '/summary/:id',
+                        disable: true,
+                        component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
                     },
                     {
                         name: '个人信息',
@@ -78,13 +90,22 @@ const routes = [
                         name: '项目信息',
                         path: '/info',
                         component: getRoutes(['Project', 'Info']),
-                        routes: [
-                            {
-                                name: '项目详情',
-                                path: '/:id',
-                                component: getRoutes(['Project', 'Detail', 'ProjectDetail'])
-                            },
-                        ]
+                        // routes: [
+                        //     {
+                        //         name: '项目详情',
+                        //         path: '/:id',
+                        //         component: getRoutes(['Project', 'Detail', 'ProjectDetail'])
+                        //     },
+                        // ]
+<<<<<<< Updated upstream
+                    },
+                    {
+                        name: '项目详情',
+                        path: '/info/:id',
+                        disable: true,
+                        component: getRoutes(['Project', 'Detail', 'ProjectDetail'])
+=======
+>>>>>>> Stashed changes
                     },
                     {
                         name: '工作日志',
@@ -94,7 +115,20 @@ const routes = [
                     {
                         name: '项目问题',
                         path: '/problem',
-                        component: getRoutes(['Project', 'Problem'])
+                        component: getRoutes(['Project', 'Problem']),
+                        // routes: [
+                        //     {
+                        //         name: '问题详情',
+                        //         path: '/:id',
+                        //         component: getRoutes(['Project', 'Detail', 'ProblemDetail'])
+                        //     }
+                        // ]
+                    },
+                    {
+                        name: '问题详情',
+                        path: '/problem/:id',
+                        disable: true,
+                        component: getRoutes(['Project', 'Detail', 'ProblemDetail'])
                     }
                 ]
             },

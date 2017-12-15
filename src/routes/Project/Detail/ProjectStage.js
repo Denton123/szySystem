@@ -60,6 +60,10 @@ class ProjectStage extends Component {
     }
 
     handleSubmit = (values) => {
+        if (values.keys.length === 0) {
+            message.warning('至少要填写一组信息')
+            return false
+        }
         this.props.handleSubmitStatus(true)
         let data = []
         let key = `t${Date.now()}-u${this.props.user.id}-i`
@@ -257,11 +261,13 @@ class ProjectStage extends Component {
             {
                 label: '阶段名称',
                 field: 'name',
-                validateTrigger: ['onChange', 'onBlur'],
-                rules: [
-                    {required: true, message: '请输入阶段名称'},
-                    {max: 6, min: 2, message: '阶段名称长度为2~6个字符'}
-                ],
+                valid: {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [
+                        {required: true, message: '请输入阶段名称'},
+                        {max: 6, min: 2, message: '阶段名称长度为2~6个字符'}
+                    ],
+                },
                 component: (<Input style={{width: '80%'}} autoComplete="off" placeholder="阶段名称" />),
             },
         ]

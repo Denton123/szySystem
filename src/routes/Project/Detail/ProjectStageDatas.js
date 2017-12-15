@@ -102,6 +102,10 @@ class ProjectStageDatas extends Component {
     }
 
     handleSubmit = (values) => {
+        if (values.keys.length === 0) {
+            message.warning('请添加项目阶段')
+            return false
+        }
         this.props.handleSubmitStatus(true)
         let data = {}
         values.keys.forEach(k => {
@@ -207,19 +211,23 @@ class ProjectStageDatas extends Component {
             {
                 label: '名称',
                 field: 'name',
-                validateTrigger: ['onChange', 'onBlur'],
-                rules: [
-                    {required: true, message: '请输入名称，如“阶段负责人”'},
-                ],
+                valid: {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [
+                        {required: true, message: '请输入名称，如“阶段负责人”'},
+                    ],
+                },
                 component: (<Input style={{width: '80%'}} autoComplete="off" placeholder="名称" />),
             },
             {
                 label: '具体信息',
                 field: 'info',
-                validateTrigger: ['onChange', 'onBlur'],
-                rules: [
-                    {required: true, message: '请输入具体信息，如“张三、李四”'},
-                ],
+                valid: {
+                    validateTrigger: ['onChange', 'onBlur'],
+                    rules: [
+                        {required: true, message: '请输入具体信息，如“张三、李四”'},
+                    ],
+                },
                 component: (<Input style={{width: '80%'}} autoComplete="off" placeholder="具体信息" />),
             },
         ]
@@ -232,7 +240,7 @@ class ProjectStageDatas extends Component {
                     loading={state.loading}
                     extra={<Button type="primary" className="pull-right" onClick={this.handleEdit} >设置详细信息</Button>}
                 >
-                    {Object.keys(state.stageData).length > 0 ? (
+                    {isObject(state.stageData) && Object.keys(state.stageData).length > 0 ? (
                         <ul className="clearfix data">
                             {Object.keys(state.stageData).map((name, i) => (
                                 <li className="pull-left" key={i}>
