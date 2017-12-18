@@ -375,6 +375,7 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 更新表单数据
         updateFormFields = (changedFields) => {
+            console.log(this.state.formFieldsValues)
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })

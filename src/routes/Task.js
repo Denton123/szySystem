@@ -16,7 +16,7 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment, momentToValue} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -61,14 +61,14 @@ class Task extends React.Component {
     }
 
     handleFormSubmit = (values) => {
-        let data = {
+        let params = {
             status: '0'// 表示任务未完成(等待中)
         }
         for (let i in values) {
-            data[i] = values[i]
+            params[i] = values[i]
         }
-        console.log(data)
-        this.props.handleFormSubmit(data)
+        console.log(params)
+        this.props.handleFormSubmit(params)
     }
 
     handleStatusChange = (e) => {
@@ -212,7 +212,6 @@ class Task extends React.Component {
                 label: '任务计划开始时间',
                 field: 'plan_start_date',
                 valid: {
-                    validateTrigger: ['onChange', 'onBlur'],
                     rules: [{required: true, message: '请选择计划开始时间'}]
                 },
                 component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
@@ -221,7 +220,6 @@ class Task extends React.Component {
                 label: '任务计划结束时间',
                 field: 'plan_end_date',
                 valid: {
-                    validateTrigger: ['onChange', 'onBlur'],
                     rules: [{required: true, message: '请选择计划结束时间'}]
                 },
                 component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
@@ -236,7 +234,7 @@ class Task extends React.Component {
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}
-                        handleSubmit={this.props.handleFormSubmit}
+                        handleSubmit={this.handleFormSubmit}
                         updateFormFields={this.props.updateFormFields}
                         formFieldsValues={this.props.formFieldsValues}
                         isSubmitting={this.props.isSubmitting}
@@ -283,6 +281,14 @@ const Ts = withBasicDataModel(Task, {
         plan_end_date: {
             value: null
         }
+    },
+    handleTableData: (data) => {
+        let dataSource = []
+        data.forEach(d => {
+            dataSource = resetObject(d)
+        })
+        console.log(dataSource)
+        return dataSource
     }
 })
 
