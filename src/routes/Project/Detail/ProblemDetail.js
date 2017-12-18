@@ -173,9 +173,7 @@ class ProblemDetail extends Component {
                 cancelText="取消"
                 onConfirm={this.onConfirm}
                 onCancel={this.onCancel}>
-                {/*<label htmlFor="set">采纳</label>*/}
                 <Checkbox onChange={this.acceptAnswer}>采纳</Checkbox>
-                {/*<input type="checkbox" onClick={this.acceptAnswer} id="set" data-id={id} className="ant-checkbox" />*/}
             </Popconfirm>
         )
         return (
