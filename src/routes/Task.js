@@ -6,7 +6,10 @@ import {
     Progress,
     Divider,
     Select,
-    Input
+    Input,
+    Popover,
+    Avatar,
+    Card
 } from 'antd'
 import {
     Link,
@@ -14,6 +17,8 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom'
+
+import './Task.less'
 
 // 引入工具方法
 import {isObject, isArray, valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
@@ -39,25 +44,47 @@ class Task extends React.Component {
         // 全部用户信息
         userData: [],
         // 全部父级任务
-        taskData: []
+        taskData: [],
+        // 选择父级是否可用
+        taskDataDisabled: false
     }
 
-    add = (e) => {
-        if (this.state.userData.length === 0) {
-            ajax('get', '/user/all')
-                .then(res => {
-                    this.setState({
-                        userData: res.data
-                    })
+    getAllUser = () => {
+        ajax('get', '/user/all')
+            .then(res => {
+                this.setState({
+                    userData: res.data
                 })
-        }
+            })
+    }
+
+    getAllParentsTask = () => {
         ajax('get', '/task/all-parents')
             .then(res => {
                 this.setState({
                     taskData: res.data
                 })
             })
+    }
+
+    add = (e) => {
+        if (this.state.userData.length === 0) {
+            this.getAllUser()
+        }
+        if (this.state.taskData.length === 0) {
+            this.getAllParentsTask()
+        }
         this.props.handleAdd(e)
+    }
+
+    edit = (e) => {
+        if (this.state.userData.length === 0) {
+            this.getAllUser()
+        }
+        if (this.state.taskData.length === 0) {
+            this.getAllParentsTask()
+        }
+        this.props.handleEdit(e)
     }
 
     handleFormSubmit = (values) => {
@@ -69,6 +96,8 @@ class Task extends React.Component {
         }
         console.log(params)
         this.props.handleFormSubmit(params)
+        // 创建任务
+        // 获取单个任务数据
     }
 
     handleStatusChange = (e) => {
@@ -103,12 +132,24 @@ class Task extends React.Component {
                 title: '任务内容',
                 dataIndex: 'content',
                 key: 'content',
-                render: text => <div className="ellipsis">超出10个字就隐藏掉sssss</div>
+                render: (text) => (
+                    <Popover content={text}>
+                        <div className="ellipsis" style={{width: 70}}>{text}</div>
+                    </Popover>
+                )
             },
             {
                 title: '状态',
                 dataIndex: 'status',
                 key: 'status',
+                render: (text) => {
+                    let status = {
+                        '0': '等待中',
+                        '1': '进行中',
+                        '2': '已完成'
+                    }
+                    return <span>{status[text]}</span>
+                }
             },
             {
                 title: '任务计划开始时间',
@@ -120,21 +161,43 @@ class Task extends React.Component {
                 dataIndex: 'plan_end_date',
                 key: 'plan_end_date'
             },
-            {
-                title: '实际开始时间',
-                dataIndex: 'start_date',
-                key: 'start_date'
-            },
-            {
-                title: '实际结束时间',
-                dataIndex: 'end_date',
-                key: 'end_date'
-            },
+            // {
+            //     title: '实际开始时间',
+            //     dataIndex: 'start_date',
+            //     key: 'start_date'
+            // },
+            // {
+            //     title: '实际结束时间',
+            //     dataIndex: 'end_date',
+            //     key: 'end_date'
+            // },
             {
                 title: '执行者',
-                dataIndex: 'users',
-                key: 'users',
-                render: text => (<p>{text}</p>)
+                dataIndex: 'realname',
+                key: 'realname',
+                render: (text, record) => {
+                    let users = ''
+                    record.Users.forEach((user, i, arr) => {
+                        users += `${user.realname}${i === (arr.length - 1) ? '' : '、'}`
+                    })
+                    const Content = () => (
+                        <Card>
+                            {record.Users.map((user, idx) => (
+                                <div className="task-popover" key={idx}>
+                                    <Avatar src={user.avatar} />
+                                    <span className="ml-10 mr-10">{user.realname}</span>
+                                    <span className="mr-10">开始时间：{user.start_date ? user.start_date : '暂无' }</span>
+                                    <span className="mr-10">结束时间：{user.start_date ? user.start_date : '暂无' }</span>
+                                </div>
+                            ))}
+                        </Card>
+                    )
+                    return (
+                        <Popover content={<Content />}>
+                            <div className="ellipsis" style={{width: 70}}>{users}</div>
+                        </Popover>
+                    )
+                }
             },
             {
                 title: '进度',
@@ -148,22 +211,28 @@ class Task extends React.Component {
                 width: 200,
                 render: (text, record) => (
                     <span>
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleEdit}>编辑</a>
+                        <a href="javascript:;" data-id={text.id} onClick={this.edit}>编辑</a>
                         <Divider type="vertical" />
                         <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
                     </span>
                 )
             }
         ]
+        const expandedRowRender = (record, text) => {
+            if (record.children) {
+                return (
+                    <Table
+                        columns={columns}
+                        dataSource={record.children}
+                        pagination={false}
+                    />
+                )
+            } else {
+                return null
+            }
+        }
         const rowSelection = {
             onChange: this.props.handleTableRowChange
-        }
-        const tableExpandedRowRender = (record) => {
-            return (
-                <div>
-                    {这里应该不单单显示}
-                </div>
-            )
         }
 
         const formFields = [
@@ -182,6 +251,7 @@ class Task extends React.Component {
                 component: (
                     <Select
                         placeholder="请选择执行者"
+                        disabled={state.taskDataDisabled}
                     >
                         {state.taskData.map(t => (
                             <Option key={t.id} value={t.id} className="ellipsis">{t.content}</Option>
@@ -229,7 +299,7 @@ class Task extends React.Component {
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={tableExpandedRowRender} />
+                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -249,6 +319,9 @@ const Ts = withBasicDataModel(Task, {
     model: 'task',
     title: '任务管理',
     formFieldsValues: {
+        id: {
+            value: null
+        },
         content: {
             value: null
         },
@@ -266,6 +339,9 @@ const Ts = withBasicDataModel(Task, {
         }
     },
     clearFormValues: {
+        id: {
+            value: null
+        },
         content: {
             value: null
         },
@@ -282,14 +358,6 @@ const Ts = withBasicDataModel(Task, {
             value: null
         }
     },
-    handleTableData: (data) => {
-        let dataSource = []
-        data.forEach(d => {
-            dataSource = resetObject(d)
-        })
-        console.log(dataSource)
-        return dataSource
-    }
 })
 
 export default Ts

@@ -83,8 +83,8 @@ class ProblemDetail extends Component {
                     extra={<Button type="primary" onClick={this.goBack}>返回</Button>}
                 >
                     <p className="Problem">{DetailData.problem}</p>
-                    {user && user.id === DetailData.user_id ?
-                        <Button type="primary" data-id={DetailData.id} onClick={this.props.handleEdit}>编辑</Button> 
+                    {user && user.id === DetailData.user_id
+                        ? <Button type="primary" data-id={DetailData.id} onClick={this.props.handleEdit}>编辑</Button>
                         : null}
                     <div className="msg">
                         <span>{`提问者：${DetailData.realname}`}</span>
@@ -99,7 +99,7 @@ class ProblemDetail extends Component {
                             formFieldsValues={this.props.formFieldsValues}
                             isSubmitting={this.props.isSubmitting}
                         />
-                </CustomModal>
+                    </CustomModal>
                 </Card>
             </div>
         )
