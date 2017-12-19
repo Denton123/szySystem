@@ -271,7 +271,7 @@ const R = withBasicDataModel(Recruit, {
     model: 'recruit',
     title: '招聘管理',
     tableSetting: {
-        rowSelection: {fixed: false}
+        // rowSelection: {fixed: false}
     },
     modalSetting: {
         title: '招聘管理'

@@ -289,7 +289,7 @@ class Book extends Component {
 
 const B = withBasicDataModel(Book, {
     model: 'asset',
-    subModel: 'book',
+    subModel: {belong: 'book'},
     title: '设备管理',
     tableSetting: {},
     modalSetting: {

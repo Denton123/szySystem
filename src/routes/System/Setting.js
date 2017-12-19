@@ -27,39 +27,34 @@ import CustomForm from 'COMPONENTS/form/CustomForm'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 // 引入工具方法
-import {checkPhone} from 'UTILS/regExp'
-import {ajax, show} from 'UTILS/ajax'
+import {show, update} from 'UTILS/ajax'
 import {getBase64} from 'UTILS/utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
 
+function transformValue(field, value) {
+    if (value === null || value === undefined) return null
+    let v
+    if (field.indexOf('date') > -1) {
+        // 日期组件的value必须使用moment
+        v = valueToMoment(value)
+    } else {
+        v = value
+    }
+    return v
+}
+
 class SetForm extends React.Component {
     state = {
-        confirmDirty: false,
-        formFieldsValues: {
-            id: {
-                value: null
-            },
-            skin: {
-                value: null
-            },
-            fontsize: {
-                value: null
-            },
-            password: {
-                value: null
-            },
-            confirm: {
-                value: null
-            }
-        }
+        confirmDirty: false
     }
     handleSubmit = (e) => {
         e.preventDefault()
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values)
+                this.props.handleSubmitForm(values)
             }
         })
     }
@@ -70,7 +65,7 @@ class SetForm extends React.Component {
     checkPassword = (rule, value, callback) => {
         const form = this.props.form
         if (value && value !== form.getFieldValue('password')) {
-            callback('Two passwords that you enter is inconsistent!')
+            callback('两个密码输入不一致!')
         } else {
             callback()
         }
@@ -89,19 +84,19 @@ class SetForm extends React.Component {
                 <FormItem label="皮肤">
                     {getFieldDecorator('skin')(
                         <RadioGroup>
-                            <Radio value="blue">清新时尚蓝</Radio>
-                            <Radio value="green">环保绽放绿</Radio>
-                            <Radio value="purple">高贵丁香紫</Radio>
-                            <Radio value="yellow">狂热活泼黄</Radio>
+                            <Radio value="blue">清新时尚蓝<span style={{display: 'inline-block', width: 50, height: 15, background: '#009acb', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
+                            <Radio value="green">环保绽放绿<span style={{display: 'inline-block', width: 50, height: 15, background: '#55bba6', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
+                            <Radio value="purple">高贵丁香紫<span style={{display: 'inline-block', width: 50, height: 15, background: '#895e9b', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
+                            <Radio value="yellow">狂热活泼黄<span style={{display: 'inline-block', width: 50, height: 15, background: '#deb355', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
                         </RadioGroup>
                     )}
                 </FormItem>
                 <FormItem label="字体">
-                    {getFieldDecorator('fontsize')(
+                    {getFieldDecorator('font_size')(
                         <RadioGroup>
-                            <Radio value="small">小号</Radio>
-                            <Radio value="middle">中号</Radio>
-                            <Radio value="big">大号</Radio>
+                            <Radio value="small">小号<Button style={{fontSize: 12, 'marginLeft': 6}} disabled size="small">生之园</Button></Radio>
+                            <Radio value="middle">中号<Button style={{fontSize: 14, 'marginLeft': 6}} disabled size="small">生之园</Button></Radio>
+                            <Radio value="big">大号<Button style={{fontSize: 16, 'marginLeft': 6}} disabled size="small">生之园</Button></Radio>
                         </RadioGroup>
                     )}
                 </FormItem>
@@ -124,7 +119,7 @@ class SetForm extends React.Component {
                             validator: this.checkPassword
                         }],
                     })(
-                        <Input type="password" placeholder="密码" onBlur={this.handleConfirmBlur} />
+                        <Input type="password" onBlur={this.handleConfirmBlur} />
                     )}
                 </FormItem>
                 <FormItem>
@@ -135,11 +130,41 @@ class SetForm extends React.Component {
     }
 }
 
-const WrappedSetForm = Form.create()(SetForm)
+const WrappedSetForm = Form.create({
+    onFieldsChange(props, changedFields) {
+        props.updateFormFields(changedFields)
+    },
+    mapPropsToFields(props) {
+        let obj = {}
+        for (let i in props.formFieldsValues) {
+            obj[i] = Form.createFormField({
+                ...props.formFieldsValues[i],
+                value: props.formFieldsValues[i].value
+            })
+        }
+        return obj
+    }
+})(SetForm)
 
 class Setting extends Component {
+    state = {
+        formFieldsValues: {
+            skin: {
+                value: null
+            },
+            font_size: {
+                value: null
+            },
+            password: {
+                value: null
+            },
+            confirm: {
+                value: null
+            }
+        }
+    }
     componentDidMount() {
-        // this.getData()
+        this.getData()
     }
 
     getData = () => {
@@ -150,7 +175,45 @@ class Setting extends Component {
         show(`user/${uid}`)
             .then(res => {
                 // 直接更新内部表单数据
-                this.props.updateEditFormFieldsValues(res.data)
+                this.updateEditFormFieldsValues(res.data)
+                console.log(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    // 编辑数据时更新表单数据
+    updateEditFormFieldsValues = (data) => {
+        this.setState((prevState, props) => {
+            let obj = {}
+            Object.keys(prevState.formFieldsValues).forEach(field => {
+                obj[field] = {
+                    value: transformValue(field, data[field])
+                }
+            })
+            return {
+                formFieldsValues: obj
+            }
+        })
+    }
+
+    updateFormFields = (changedFields) => {
+        this.setState({
+            formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
+        })
+    }
+
+    // 提交表格到后台
+    handleSubmitForm = (values) => {
+        console.log('handleSubmitForm ----- ')
+        console.log(values)
+        let uid = this.props.user.id
+        update(`user/${uid}`, values, false)
+            .then(res => {
+                // 直接更新内部表单数据
+                // this.props.updateEditFormFieldsValues(res.data)
+                console.log(res)
             })
             .catch(err => {
                 console.log(err)
@@ -167,9 +230,15 @@ class Setting extends Component {
         } = this.props
         const state = this.state
 
+        const props = {
+            formFieldsValues: this.state.formFieldsValues,
+            updateFormFields: this.updateFormFields,
+            handleSubmitForm: this.handleSubmitForm
+        }
+
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <WrappedSetForm />
+                <WrappedSetForm {...props} />
             </div>
         )
     }

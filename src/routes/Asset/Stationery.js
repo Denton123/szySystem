@@ -289,7 +289,7 @@ class Stationery extends Component {
 
 const St = withBasicDataModel(Stationery, {
     model: 'asset',
-    subModel: 'stationery',
+    subModel: {belong: 'stationery'},
     title: '设备管理',
     tableSetting: {},
     modalSetting: {
