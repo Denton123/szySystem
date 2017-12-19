@@ -114,9 +114,16 @@ class Contract extends Component {
 
     componentDidMount() {
         this.getData(1, true)
-        let access_token = '7aa76e6b75323f12b041b3120be49348'
+        let accessToken = '7aa76e6b75323f12b041b3120be49348'
         // https://oapi.dingtalk.com/user/batchdelete?access_token=ACCESS_TOKEN
-        // axios.put(`https://oapi.dingtalk.com/user/batchdelete?access_token=${access_token}`,)
+        // axios.get(`/user/simplelist?access_token=${accessToken}&department_id=1`)
+        //     .then(res => {
+        //         console.log('access_token ---- ')
+        //         console.log(res)
+        //     })
+        //     .catch(err => {
+        //         console.log(err)
+        //     })
     }
 
     getData = (page, first = false) => {
