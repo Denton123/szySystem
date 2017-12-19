@@ -271,7 +271,7 @@ class Equipment extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -289,9 +289,9 @@ class Equipment extends Component {
 
 const Eq = withBasicDataModel(Equipment, {
     model: 'asset',
-    subModel: 'equipment',
+    subModel: {belong: 'equipment'},
     title: '设备管理',
-    tableSetting: {},
+    dataSetting: {},
     modalSetting: {
         title: '设备管理'
     },

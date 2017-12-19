@@ -138,7 +138,7 @@ class Summary extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
             </div>
         )
     }
@@ -157,7 +157,7 @@ const Sy = withBasicDataModel(Summary, {
             value: null
         }
     },
-    handleTableData: (dataSource) => {
+    handleData: (dataSource) => {
         let arr = []
         dataSource.forEach(data => {
             arr.push(resetObject(data))

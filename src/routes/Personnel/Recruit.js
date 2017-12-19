@@ -21,7 +21,7 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -43,11 +43,49 @@ class Recruit extends Component {
         fileList: []
     }
 
-    handlePass = (e) => {
-        console.log('id: -- ' + e.target.dataset['id'])
-        this.setState({
-            intervieweeId: e.target.dataset['id']
-        })
+    // handlePass = (e) => {
+    //     console.log('id: -- ' + e.target.dataset['id'])
+    //     this.setState({
+    //         intervieweeId: e.target.dataset['id']
+    //     })
+    // }
+
+    /**
+     * [是否通过]
+     * @Author   szh
+     * @DateTime 2017-12-19
+     * @param    {Number}   id   [当前表格行的id]
+     * @param    {String}   pass [选择是否pass]
+     */
+    handlePass = (id, pass) => {
+        console.log(id)
+        console.log(pass)
+        let values = {
+            pass: pass
+        }
+        this.props.ajaxUpdate(id, values)
+    }
+
+    handleComment = (e) => {
+        this.props.handleSetState('operationType', 'comment')
+        // return this.props.handleEdit(e, (res) => {
+        //     this.props.handleSetState('modalSetting', {
+        //         ...this.props.modalSetting,
+        //         visible: true,
+        //         title: `${this.props.title}-评论`
+        //     })
+        //     this.props.updateEditFormFieldsValues(resetObject(res.data))
+        // })
+        let id = e.target.dataset['id']
+        show(`/${this.props.model}/${id}`)
+            .then(res => {
+                this.props.handleSetState('modalSetting', {
+                    ...this.props.modalSetting,
+                    visible: true,
+                    title: `${this.props.title}-评论`
+                })
+                this.props.updateEditFormFieldsValues(resetObject(res.data))
+            })
     }
 
     render() {
@@ -150,9 +188,9 @@ class Recruit extends Component {
                 width: 250,
                 render: (text, record) => (
                     <span>
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleComment}>评价</a>
+                        <a href="javascript:;" data-id={text.id} onClick={this.handleComment}>评价</a>
                         <Divider type="vertical" />
-                        <Select defaultValue={text.pass} size="small" style={{ width: 80 }} onChange={this.props.handlePass(text.id)}>
+                        <Select defaultValue={text.pass} size="small" style={{ width: 80 }} onChange={(pass) => this.handlePass(text.id, pass)}>
                             <Option value="1">通过</Option>
                             <Option value="0">不通过</Option>
                         </Select>
@@ -242,7 +280,7 @@ class Recruit extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     {
                         this.props.operationType === 'add' || this.props.operationType === 'edit' ? (<CustomForm
@@ -270,9 +308,6 @@ class Recruit extends Component {
 const R = withBasicDataModel(Recruit, {
     model: 'recruit',
     title: '招聘管理',
-    tableSetting: {
-        rowSelection: {fixed: false}
-    },
     modalSetting: {
         title: '招聘管理'
     },

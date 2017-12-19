@@ -88,20 +88,35 @@ class Task extends React.Component {
     }
 
     handleFormSubmit = (values) => {
+        console.log('task submit values', values)
+        console.log('formFieldsValues', this.props.formFieldsValues)
         let params = {
-            status: '0'// 表示任务未完成(等待中)
+            status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value// 表示任务未完成(等待中)
         }
         for (let i in values) {
             params[i] = values[i]
         }
-        console.log(params)
-        this.props.handleFormSubmit(params)
+        if (this.props.operationType === 'edit' && this.props.formFieldsValues.pid.value !== null) {
+            // 更新子类保存
+        } else {
+            this.props.handleFormSubmit(params)
+        }
     }
 
     handleStatusChange = (e) => {
+        let val = e.target.value
         this.setState({
-            status: e.target.value
+            status: val
         })
+        if (val === 'all') {
+            this.props.getData({page: 1})
+        } else {
+            let params = {
+                page: 1,
+                status: val
+            }
+            this.props.getData(params)
+        }
     }
 
     render() {
@@ -298,7 +313,7 @@ class Task extends React.Component {
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -335,6 +350,9 @@ const Ts = withBasicDataModel(Task, {
         },
         plan_end_date: {
             value: null
+        },
+        status: {
+            value: null
         }
     },
     clearFormValues: {
@@ -354,6 +372,9 @@ const Ts = withBasicDataModel(Task, {
             value: null
         },
         plan_end_date: {
+            value: null
+        },
+        status: {
             value: null
         }
     },

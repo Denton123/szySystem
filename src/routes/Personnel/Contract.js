@@ -42,11 +42,11 @@ class Contract extends Component {
         this.props.handleAdd()
     }
 
-    handleModalCancel = () => {
+    handleModalCancel = (e) => {
         this.setState({
             fileList: []
         })
-        this.props.handleModalCancel()
+        this.props.handleModalCancel(e)
     }
 
     handleFormSubmit = (values) => {
@@ -165,7 +165,7 @@ class Contract extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -198,7 +198,7 @@ const Ct = withBasicDataModel(Contract, {
         }
     },
     formSubmitHasFile: true,
-    handleTableData: (dataSource) => {
+    handleData: (dataSource) => {
         let arr = []
         dataSource.forEach(data => {
             arr.push(resetObject(data))

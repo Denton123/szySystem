@@ -3,7 +3,8 @@ import {
     Input,
     Button,
     Table,
-    Divider
+    Divider,
+    message
 } from 'antd'
 import {
     Link,
@@ -35,7 +36,7 @@ class SummaryDetail extends Component {
             this.getData()
         } else {
         // 新增
-            this.props.handleOperationType('add')
+            this.props.handleSetState('operationType', 'add')
         }
     }
     getData = () => {
@@ -64,8 +65,13 @@ class SummaryDetail extends Component {
         for (let i in values) {
             params[i] = values[i]
         }
-        this.props.handleFormSubmit(params, () => {
-            this.props.history.push('/home/personal/summary')
+        this.props.handleFormSubmit(params, (res) => {
+            if (res.status === 200) {
+                message.success('保存成功')
+                setTimeout(() => {
+                    this.props.history.push('/home/personal/summary')
+                }, 200)
+            }
         })
     }
     render() {
