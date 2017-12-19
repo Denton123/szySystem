@@ -39,6 +39,8 @@ compiler.plugin('compilation', function (compilation) {
     });
 });
 
+// console.log('dev-server.js ----- ')
+// console.log(proxyTable)
 // proxy api requests
 Object.keys(proxyTable).forEach(function (context) {
     let options = proxyTable[context];
