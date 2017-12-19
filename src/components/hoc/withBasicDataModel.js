@@ -134,7 +134,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         }
                     })
                     if (locationSearch) {
-                        this.props.history.push(`${this.props.location.pathname}?page=${params.page}`, {page: params.page})
+                        this.props.history.push(`${this.props.location.pathname}?page=${params.page}`, params)
                     }
                 })
         }
@@ -245,8 +245,11 @@ function withBasicDataModel(PageComponent, Datas) {
                         })
                     }
                     this.handleModalCancel()
-                    message.success(this.state.operationType === 'comment' ? '评论成功！' : '保存成功！')
-                    cb && cb(res)
+                    if (cb) {
+                        cb(res)
+                    } else {
+                        message.success('保存成功！')
+                    }
                 }
             })
             .catch(err => {
