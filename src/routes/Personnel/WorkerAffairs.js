@@ -20,8 +20,8 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment} from 'UTILS/utils'
-import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
+// import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+// import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -43,7 +43,6 @@ class WorkerAffairs extends Component {
             location,
             match
         } = this.props
-        console.log(this.props)
         const entryDate = {
             format: 'YYYY-MM-DD',
             showTime: false,
@@ -264,7 +263,7 @@ class WorkerAffairs extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -283,10 +282,6 @@ class WorkerAffairs extends Component {
 const WA = withBasicDataModel(WorkerAffairs, {
     model: 'user',
     title: '人员管理',
-    tableSetting: {},
-    modalSetting: {
-        title: '人员管理'
-    },
     queryFieldValues: {
         realname: {
             value: null

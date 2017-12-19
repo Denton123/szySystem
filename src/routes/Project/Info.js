@@ -8,7 +8,8 @@ import {
     List,
     Pagination,
     Select,
-    Upload
+    Upload,
+    message
 } from 'antd'
 import {
     Link,
@@ -208,7 +209,7 @@ class ProjectInfo extends Component {
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
                 <List
                     itemLayout="vertical"
-                    {...this.props.tableSetting}
+                    {...this.props.dataSetting}
                     renderItem={item => (
                         <List.Item
                             key={item.id}
@@ -257,7 +258,7 @@ class ProjectInfo extends Component {
 <div className="mt-10">
     <List
         grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }}
-        {...this.props.tableSetting}
+        {...this.props.dataSetting}
         renderItem={item => (
             <List.Item
                 bordered="false"
@@ -336,7 +337,7 @@ const PI = withBasicDataModel(ProjectInfo, {
             value: null
         },
     },
-    handleTableData: (dataSource) => {
+    handleData: (dataSource) => {
         let arr = []
         dataSource.forEach(data => {
             arr.push(resetObject(data))

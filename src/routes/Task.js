@@ -96,8 +96,11 @@ class Task extends React.Component {
         for (let i in values) {
             params[i] = values[i]
         }
-        console.log(params)
-        this.props.handleFormSubmit(params)
+        if (this.props.operationType === 'edit' && this.props.formFieldsValues.pid.value !== null) {
+            // 更新子类保存
+        } else {
+            this.props.handleFormSubmit(params)
+        }
     }
 
     handleStatusChange = (e) => {
@@ -310,7 +313,7 @@ class Task extends React.Component {
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660}>
                     <CustomForm
                         formStyle={{width: '100%'}}

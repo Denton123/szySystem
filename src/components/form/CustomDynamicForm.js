@@ -120,19 +120,19 @@ class CustomDynamicForm extends React.Component {
 }
 
 export default Form.create({
-    // // 当 Form.Item 子节点的值发生改变时触发
-    // onFieldsChange: function(props, values) {
-    //     props.updateFormFields(values)
-    // },
-    // // 把父组件的属性映射到表单项上
-    // mapPropsToFields(props) {
-    //     let obj = {}
-    //     for (let i in props.formFieldsValues) {
-    //         obj[i] = Form.createFormField({
-    //             ...props.formFieldsValues[i],
-    //             value: props.formFieldsValues[i].value
-    //         })
-    //     }
-    //     return obj
-    // }
+    // 当 Form.Item 子节点的值发生改变时触发
+    onFieldsChange: function(props, values) {
+        props.updateFormFields(values)
+    },
+    // 把父组件的属性映射到表单项上
+    mapPropsToFields(props) {
+        let obj = {}
+        for (let i in props.formFieldsValues) {
+            obj[i] = Form.createFormField({
+                ...props.formFieldsValues[i],
+                value: props.formFieldsValues[i].value
+            })
+        }
+        return obj
+    }
 })(CustomDynamicForm)

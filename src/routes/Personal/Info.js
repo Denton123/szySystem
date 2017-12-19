@@ -68,6 +68,7 @@ class Info extends Component {
     handleFormSubmit = (values) => {
         this.props.handleFormSubmit(values, (res) => {
             this.props.globalUpdateUser(res.data)
+            message.success('保存成功')
         })
     }
 
