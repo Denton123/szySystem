@@ -96,8 +96,6 @@ class Task extends React.Component {
         }
         console.log(params)
         this.props.handleFormSubmit(params)
-        // 创建任务
-        // 获取单个任务数据
     }
 
     handleStatusChange = (e) => {
@@ -219,11 +217,12 @@ class Task extends React.Component {
             }
         ]
         const expandedRowRender = (record, text) => {
-            if (record.children) {
+            if (record.child) {
                 return (
                     <Table
                         columns={columns}
-                        dataSource={record.children}
+                        dataSource={record.child}
+                        rowKey={record => record.id}
                         pagination={false}
                     />
                 )

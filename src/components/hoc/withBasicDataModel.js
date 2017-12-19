@@ -31,7 +31,7 @@ function transformValue(field, value) {
  *
  * 影响state的属性
  * model               *后台模块名称                String    如'user'
- * subModel             子模块名                    String    如asset下面的'equipment'设备、'stationery'办公用品、'book'图书'
+ * subModel             index获取数据时的额外参数   Object    如asset下面的设备{belong: 'equipment'}、办公用品{belong: 'stationery'}、图书{belong: 'book'}
  * title               *页面名称(不用对话框可以不传)String    如'人员管理'
  * tableSetting         表格设置                    Object    具体参数请看antd表格设置
  * modalSetting         对话框设置                  Object    具体参数请看antd对话框设置
@@ -60,7 +60,7 @@ function withBasicDataModel(PageComponent, Datas) {
     const customGetData = Datas.customGetData !== undefined ? Datas.customGetData : false
     const clearFormValues = Datas.clearFormValues !== undefined ? Datas.clearFormValues : true
     const locationSearch = Datas.locationSearch !== undefined ? Datas.locationSearch : false
-    const subModel = Datas.subModel !== undefined ? Datas.subModel : ''
+    const subModel = Datas.subModel !== undefined ? Datas.subModel : {}
     return class extends React.Component {
         constructor(props) {
             super(props)
@@ -103,8 +103,8 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 获取列表数据
         getData = (params, first = false) => {
-            if (subModel) {
-                Object.assign(params, {belong: subModel})
+            if (Object.keys(subModel).length > 0) {
+                Object.assign(params, subModel)
             }
             let data = {
                 params: params
@@ -124,6 +124,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         onChange: this.handlePageChange
                     }
                     let dataSource = Datas.handleTableData ? Datas.handleTableData(res.data.data) : res.data.data
+                    console.log('dataSource', dataSource)
                     this.setState({
                         tableSetting: {
                             ...this.state.tableSetting,
