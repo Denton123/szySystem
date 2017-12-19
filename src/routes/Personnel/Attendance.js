@@ -15,6 +15,10 @@ import SearchInput from 'COMPONENTS/input/SearchInput'
 // import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 
+// 引入工具方法
+import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import { ajax } from 'UTILS/ajax'
+
 const columns = [
     {
         title: '用户名',
@@ -110,6 +114,9 @@ class Contract extends Component {
 
     componentDidMount() {
         this.getData(1, true)
+        let access_token = '7aa76e6b75323f12b041b3120be49348'
+        // https://oapi.dingtalk.com/user/batchdelete?access_token=ACCESS_TOKEN
+        // axios.put(`https://oapi.dingtalk.com/user/batchdelete?access_token=${access_token}`,)
     }
 
     getData = (page, first = false) => {
