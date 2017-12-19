@@ -104,7 +104,7 @@ class Problem extends Component {
                 title: '是否解决',
                 dataIndex: 'resolution',
                 key: 'resolution',
-                render: text => <span>{text === null ? '未解决' : '已解决'}</span>
+                render: text => <span>{text === null || 0 ? '未解决' : '已解决'}</span>
             },
             {
                 title: '发表日期',
