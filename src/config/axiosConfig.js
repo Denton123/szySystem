@@ -23,8 +23,23 @@ function formatDate(dataObject) {
                 dataObject[i] = moment(dataObject[i]).format('YYYY-MM-DD')
             }
         }
+        if (isArray(dataObject[i])) {
+            handleArr(dataObject[i])
+        }
     }
     return dataObject
+}
+
+/**
+ * [handleArr 遍历数组]
+ * @Author   szh
+ * @DateTime 2017-12-19
+ * @param    {array}   arr [数组]
+ */
+function handleArr(arr) {
+    arr.forEach(a => {
+        a = formatDate(a)
+    })
 }
 
 // Add a request interceptor
@@ -42,14 +57,10 @@ axios.interceptors.response.use(function(response) {
         response.data = formatDate(response.data)
     }
     if (isArray(response.data)) {
-        response.data.forEach(d => {
-            d = formatDate(d)
-        })
+        handleArr(response.data)
     }
     if (response.data.data && isArray(response.data.data)) {
-        response.data.data.forEach(d => {
-            d = formatDate(d)
-        })
+        handleArr(response.data.data)
     }
     // Do something with response data
     return response

@@ -88,8 +88,10 @@ class Task extends React.Component {
     }
 
     handleFormSubmit = (values) => {
+        console.log('task submit values', values)
+        console.log('formFieldsValues', this.props.formFieldsValues)
         let params = {
-            status: '0'// 表示任务未完成(等待中)
+            status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value// 表示任务未完成(等待中)
         }
         for (let i in values) {
             params[i] = values[i]
@@ -99,9 +101,19 @@ class Task extends React.Component {
     }
 
     handleStatusChange = (e) => {
+        let val = e.target.value
         this.setState({
-            status: e.target.value
+            status: val
         })
+        if (val === 'all') {
+            this.props.getData({page: 1})
+        } else {
+            let params = {
+                page: 1,
+                status: val
+            }
+            this.props.getData(params)
+        }
     }
 
     render() {
@@ -335,6 +347,9 @@ const Ts = withBasicDataModel(Task, {
         },
         plan_end_date: {
             value: null
+        },
+        status: {
+            value: null
         }
     },
     clearFormValues: {
@@ -354,6 +369,9 @@ const Ts = withBasicDataModel(Task, {
             value: null
         },
         plan_end_date: {
+            value: null
+        },
+        status: {
             value: null
         }
     },
