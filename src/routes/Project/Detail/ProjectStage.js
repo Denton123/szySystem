@@ -30,6 +30,7 @@ import CustomDynamicForm from 'COMPONENTS/form/CustomDynamicForm'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
 import ProjectStageDatas from './ProjectStageDatas.js'
+import ProjectStageTasks from './ProjectStageTasks.js'
 
 class ProjectStage extends Component {
     state = {
@@ -288,6 +289,13 @@ class ProjectStage extends Component {
                             onTabChange={(key) => { this.onTabChange(key) }}
                         >
                             <ProjectStageDatas
+                                stage={state.allStageData.find(item => item.name === state.currentStageTabs)}
+                                setAllStageData={this.setAllStageData}
+                            />
+                            <ProjectStageTasks
+                                location={this.props.location}
+                                history={this.props.history}
+                                match={this.props.match}
                                 stage={state.allStageData.find(item => item.name === state.currentStageTabs)}
                                 setAllStageData={this.setAllStageData}
                             />

@@ -9,7 +9,8 @@ import {
     Input,
     Popover,
     Avatar,
-    Card
+    Card,
+    message
 } from 'antd'
 import {
     Link,
@@ -88,8 +89,6 @@ class Task extends React.Component {
     }
 
     handleFormSubmit = (values) => {
-        console.log('task submit values', values)
-        console.log('formFieldsValues', this.props.formFieldsValues)
         let params = {
             status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value// 表示任务未完成(等待中)
         }
@@ -97,7 +96,30 @@ class Task extends React.Component {
             params[i] = values[i]
         }
         if (this.props.operationType === 'edit' && this.props.formFieldsValues.pid.value !== null) {
-            // 更新子类保存
+            // 更新子类保存需要特殊处理
+            this.props.ajaxUpdate(this.props.formFieldsValues.id.value, params, (res) => {
+                let dataSource = []
+                this.props.dataSetting.dataSource.forEach(d => {
+                    if (d.id === res.data.pid) {
+                        let child = []
+                        d['child'].forEach(c => {
+                            if (c.id === res.data.id) {
+                                child.push(res.data)
+                            } else {
+                                child.push(c)
+                            }
+                        })
+                        d['child'] = child
+                    }
+                    dataSource.push(d)
+                })
+                this.props.handleSetState('dataSetting', {
+                    ...this.props.dataSetting,
+                    dataSource: dataSource
+                })
+                this.props.handleModalCancel()
+                message.success('保存成功')
+            })
         } else {
             this.props.handleFormSubmit(params)
         }
@@ -130,7 +152,7 @@ class Task extends React.Component {
 
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>,
-            () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>,
+            () => <Button type="danger">删除</Button>,
             () => (
                 <Radio.Group className="pull-right" value={state.status} onChange={this.handleStatusChange}>
                     <Radio.Button value="all">全部</Radio.Button>
@@ -139,6 +161,29 @@ class Task extends React.Component {
                     <Radio.Button value="2">已完成</Radio.Button>
                 </Radio.Group>
             )
+        ]
+        const popoverTableCol = [
+            {
+                title: '头像',
+                dataIndex: 'avatar',
+                key: 'avatar',
+                render: (text) => <Avatar src={text ? `/uploadImgs/${text}` : ''} type="user" />
+            },
+            {
+                title: '姓名',
+                dataIndex: 'realname',
+                key: 'realname',
+            },
+            {
+                title: '实际开始时间',
+                dataIndex: 'start_date',
+                key: 'start_date',
+            },
+            {
+                title: '实际结束时间',
+                dataIndex: 'end_date',
+                key: 'end_date',
+            },
         ]
         const columns = [
             {
@@ -193,17 +238,18 @@ class Task extends React.Component {
                     record.Users.forEach((user, i, arr) => {
                         users += `${user.realname}${i === (arr.length - 1) ? '' : '、'}`
                     })
+                    let popoverTableData = []
+                    record.Users.forEach((user, idx) => {
+                        popoverTableData.push({
+                            key: idx,
+                            avatar: user.avatar,
+                            realname: user.realname,
+                            start_date: user.start_date ? user.start_date : '暂无',
+                            end_date: user.end_date ? user.end_date : '暂无'
+                        })
+                    })
                     const Content = () => (
-                        <Card>
-                            {record.Users.map((user, idx) => (
-                                <div className="task-popover" key={idx}>
-                                    <Avatar src={user.avatar} />
-                                    <span className="ml-10 mr-10">{user.realname}</span>
-                                    <span className="mr-10">开始时间：{user.start_date ? user.start_date : '暂无' }</span>
-                                    <span className="mr-10">结束时间：{user.start_date ? user.start_date : '暂无' }</span>
-                                </div>
-                            ))}
-                        </Card>
+                        <Table dataSource={popoverTableData} columns={popoverTableCol} pagination={false} size="small" />
                     )
                     return (
                         <Popover content={<Content />}>
@@ -231,6 +277,7 @@ class Task extends React.Component {
                 )
             }
         ]
+
         const expandedRowRender = (record, text) => {
             if (record.child) {
                 return (
