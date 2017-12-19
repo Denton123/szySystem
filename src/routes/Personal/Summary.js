@@ -118,7 +118,9 @@ class Summary extends Component {
         ]
 
         const tableExpandedRowRender = (record) => {
+            console.log(record.content)
             let content = escape(record.content)
+            console.log(content)
             return (
                 <div dangerouslySetInnerHTML={{__html: content}} />
             )
