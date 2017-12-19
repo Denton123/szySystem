@@ -41,10 +41,6 @@ module.exports = {
             //     }
             // }
             '/api/**': proxyTableOptions,
-            // '/user/simplelist/**': {
-            //     target: `https://oapi.dingtalk.com`,
-            //     changeOrigin: true
-            // },
             '/user/**': proxyTableOptions,
             '/stage/**': proxyTableOptions,
             '/task/**': proxyTableOptions,

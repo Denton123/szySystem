@@ -43,6 +43,17 @@ class Recruit extends Component {
         fileList: []
     }
 
+    componentDidMount() {
+        let accessToken = '7aa76e6b75323f12b041b3120be49348'
+        axios.get('/api/user/cs')
+            .then(res => {
+                console.log('access_token ---- ')
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
     // handlePass = (e) => {
     //     console.log('id: -- ' + e.target.dataset['id'])
     //     this.setState({
@@ -68,13 +79,6 @@ class Recruit extends Component {
 
     handleComment = (e) => {
         this.props.handleSetState('operationType', 'comment')
-        // return this.props.handleEdit(e, (res) => {
-        //     this.props.handleSetState('modalSetting', {
-        //         ...this.props.modalSetting,
-        //         visible: true,
-        //         title: `${this.props.title}-评论`
-        //     })
-        //     this.props.updateEditFormFieldsValues(resetObject(res.data))
         // })
         let id = e.target.dataset['id']
         show(`/${this.props.model}/${id}`)

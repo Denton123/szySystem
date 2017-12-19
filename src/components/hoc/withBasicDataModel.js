@@ -485,59 +485,6 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
-        // // 人事管理的评论
-        // handleComment = (e) => {
-        //     this.handleOperationType('comment')
-        //     let id = e.target.dataset['id']
-        //     show(`/${this.state.model}/${id}`)
-        //         .then(res => {
-        //             this.handleModalSetting(true, `${this.state.title}-评论`)
-        //             this.updateEditFormFieldsValues(resetObject(res.data))
-        //         })
-        // }
-
-        // // 人事管理的通过
-        // handlePass = (id, cb) => {
-        //     return (text) => {
-        //         let values = {
-        //             pass: Number(text)
-        //         }
-        //         update(`${this.state.model}/${id}`, values, hasFile).then(res => {
-        //             this.handleSubmitStatus(false)
-        //             if (res.data.errors) {
-        //                 res.data.errors.forEach(err => {
-        //                     message.error(err.message)
-        //                 })
-        //             } else {
-        //                 // 编辑后的处理
-        //                 this.setState((prevState, props) => {
-        //                     let newDataSource = []
-        //                     prevState.dataSetting.dataSource.forEach(data => {
-        //                         if (data.id === id) {
-        //                             newDataSource.push(resetObject(res.data))
-        //                         } else {
-        //                             newDataSource.push(data)
-        //                         }
-        //                     })
-        //                     return {
-        //                         dataSetting: {
-        //                             ...prevState.dataSetting,
-        //                             dataSource: newDataSource
-        //                         }
-        //                     }
-        //                 })
-        //                 message.success(this.state.operationType === 'comment' ? '评论成功！' : '保存成功！')
-        //                 cb && cb(res)
-        //             }
-        //         })
-        //         .catch(err => {
-        //             console.log(err)
-        //             message.success('保存失败！')
-        //             this.handleSubmitStatus(false)
-        //         })
-        //     }
-        // }
-
         render() {
             return (
                 <PageComponent
