@@ -86,6 +86,9 @@ const commonApi = {
     },
     destroy: function(url) {
         return ajax('delete', apiUrl(url))
+    },
+    answerUpdate: function(url, data) {
+        return ajax('put', apiUrl(url), data)
     }
 }
 

@@ -22,7 +22,7 @@ import ReactQuill from 'react-quill'
 
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
-import {ajax, show, answerStore, store, index, update} from 'UTILS/ajax'
+import {ajax, show, answerUpdate, store, index, update} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -107,25 +107,26 @@ class ProblemDetail extends Component {
         })
     }
     acceptAnswer = (e) => {
-        console.log(e.target.checked)
-        // this.setState({
-        //     flag: e.target.dataset.id
-        // })
-        // console.log(this.state.flag)
+        const id = e.target.dataset.id
+        localStorage.setItem('changeId', id)
     }
     onConfirm = (e) => {
         const id = this.state.DetailData.id
         update(`/answer/${id}`, 1).then(res => {
-            console.log(res)
             console.log(this.state.DetailData)
         })
-        this.setState({
-            chooseAccept: false
+        const changeId = localStorage.getItem('changeId')
+        answerUpdate(`/answer/${changeId}`, 1).then(res => {
+            if (res.status === 200) {
+                this.setState({
+                    chooseAccept: false
+                })
+            }
         })
-        console.log(this.state.flag + '会是个好')
+        console.log(this.state.answerList)
     }
     onCancel = (e) => {
-        console.log(e)
+        // console.log(e)
     }
     render() {
         const {DetailData, answer, answerList, showLoadingMore, loading, loadingMore, chooseAccept} = this.state
@@ -168,13 +169,17 @@ class ProblemDetail extends Component {
             </span>
             )
         const Accept = ({id}) => (
-            <Popconfirm title="确定采纳此答案吗？"
-                okText="确认"
-                cancelText="取消"
-                onConfirm={this.onConfirm}
-                onCancel={this.onCancel}>
-                <Checkbox onChange={this.acceptAnswer}>采纳</Checkbox>
-            </Popconfirm>
+            chooseAccept ? (
+                <Popconfirm title="确定采纳此答案吗？"
+                    okText="确认"
+                    cancelText="取消"
+                    onConfirm={this.onConfirm}
+                    onCancel={this.onCancel}>
+                    <Checkbox onClick={this.acceptAnswer} data-id={id}>采纳</Checkbox>
+                </Popconfirm>
+            ) : (
+                <span><Icon type="check-circle" />已采纳</span>
+            )
         )
         return (
             <div style={{padding: 24, background: '#fff', height: '100%'}}>
