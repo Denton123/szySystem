@@ -38,9 +38,7 @@ const {Meta} = Card
 function escape(str) {
     return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
 }
-function stripscript(s) {
-    return s.replace(/<script.*?>.*?<\/script>/ig, '')
-}
+
 class ProblemDetail extends Component {
     state = {
         DetailData: [],
@@ -49,8 +47,8 @@ class ProblemDetail extends Component {
         loading: true,
         loadingMore: false,
         showLoadingMore: true,
-        chooseAccept: true,
-        flag: ''
+        flag: '',
+        showCheckbox: false
     }
     componentDidMount() {
         this.getData()
@@ -65,7 +63,6 @@ class ProblemDetail extends Component {
                 loading: false,
                 DetailData: resetObject(res.data)
             })
-            console.log(this.state.DetailData)
         }).then(() => {
             let showId = this.state.DetailData.id
             show(`/answer/${showId}`).then(res => {
@@ -75,7 +72,22 @@ class ProblemDetail extends Component {
                 this.setState({
                     answerList: res.data
                 })
-                console.log(this.state.answerList)
+                const answerArr = this.state.answerList
+                const detailArr = this.state.DetailData
+                const userid = this.props.user.id
+                var arr = []
+                for (let i in answerArr) {
+                    arr.push(answerArr[i].used)
+                }
+                if (arr.indexOf('1') === -1 && userid === detailArr.user_id) {
+                    this.setState({
+                        showCheckbox: true
+                    })
+                } else if (arr.indexOf('1') !== -1 && userid === detailArr.user_id) {
+                    this.setState({
+                        showCheckbox: false
+                    })
+                }
             })
         })
     }
@@ -95,7 +107,8 @@ class ProblemDetail extends Component {
             answer: this.state.answer,
             user_id: this.props.user.id,
             problem_id: Data.id,
-            date: new Date()
+            date: new Date(),
+            used: '0'
         }
         store('/answer', answerObj).then(res => {
             res.status === 200 ? message.success('保存成功') : message.success('保存失败')
@@ -112,24 +125,22 @@ class ProblemDetail extends Component {
     }
     onConfirm = (e) => {
         const id = this.state.DetailData.id
-        update(`/answer/${id}`, 1).then(res => {
-            console.log(this.state.DetailData)
+        update(`/answer/${id}`, '1').then(res => {
+            const changeId = localStorage.getItem('changeId')
         })
         const changeId = localStorage.getItem('changeId')
-        answerUpdate(`/answer/${changeId}`, 1).then(res => {
-            if (res.status === 200) {
-                this.setState({
-                    chooseAccept: false
-                })
-            }
+        ajax('post', `/answer/${changeId}/answerupdate`).then(res => {
+            this.getData()
         })
-        console.log(this.state.answerList)
     }
     onCancel = (e) => {
-        // console.log(e)
+    }
+    handleFormSubmit = (values) => {
+        this.props.handleFormSubmit(values)
+        this.getData()
     }
     render() {
-        const {DetailData, answer, answerList, showLoadingMore, loading, loadingMore, chooseAccept} = this.state
+        const {DetailData, answer, answerList, showLoadingMore, loading, loadingMore, showCheckbox} = this.state
         const {
             child,
             route,
@@ -168,8 +179,8 @@ class ProblemDetail extends Component {
                 <Avatar src={avatar} icon="user" className="answerAvatar" />
             </span>
             )
-        const Accept = ({id}) => (
-            chooseAccept ? (
+        const Accept = ({id, used}) => (
+            showCheckbox ? (
                 <Popconfirm title="确定采纳此答案吗？"
                     okText="确认"
                     cancelText="取消"
@@ -177,10 +188,11 @@ class ProblemDetail extends Component {
                     onCancel={this.onCancel}>
                     <Checkbox onClick={this.acceptAnswer} data-id={id}>采纳</Checkbox>
                 </Popconfirm>
-            ) : (
-                <span><Icon type="check-circle" />已采纳</span>
-            )
+                ) : null
         )
+        const Answer = ({answer}) => (
+            <div dangerouslySetInnerHTML={{__html: answer}} />
+            )
         return (
             <div style={{padding: 24, background: '#fff', height: '100%'}}>
                 <div style={{width: '80%', margin: '0 auto'}}>
@@ -188,7 +200,7 @@ class ProblemDetail extends Component {
                         title={DetailData.title}
                         extra={<Button type="primary" onClick={this.goBack}>返回</Button>}
                     >
-                        <p className="Problem">{DetailData.problem}</p>
+                        <p className="Problem" dangerouslySetInnerHTML={{__html: DetailData.problem}} />
                         {user && user.id === DetailData.user_id
                             ? <Button type="primary" data-id={DetailData.id} onClick={this.props.handleEdit}>编辑</Button>
                             : null}
@@ -200,13 +212,15 @@ class ProblemDetail extends Component {
                             <CustomForm
                                 formStyle={{width: '100%'}}
                                 formFields={formFields}
-                                handleSubmit={this.props.handleFormSubmit}
+                                handleSubmit={this.handleFormSubmit}
                                 updateFormFields={this.props.updateFormFields}
                                 formFieldsValues={this.props.formFieldsValues}
                                 isSubmitting={this.props.isSubmitting}
                             />
                         </CustomModal>
                     </Card>
+                    <Divider />
+                    <h3>{`${answerList.length}个回答`}</h3>
                     <Divider />
                     <List
                         itemLayout="vertical"
@@ -218,18 +232,21 @@ class ProblemDetail extends Component {
                             <List.Item
                                 key={item.id}
                                 className="List"
-                                extra={<Accept id={item.id} />}
+                                extra={item.used === '1' ? (
+                                    <span><Icon type="check-circle" />已采纳</span>
+                                    ) : (<Accept id={item.id} used={item.used} />)}
                                 actions={[<Bottom
                                     time={item.date}
                                     text={item.User.realname}
                                     avatar={`/uploadImgs/${item.User.avatar}`}
                                         />]}>
                                 <List.Item.Meta
-                                    description={item.answer} />
+                                    description={<Answer answer={item.answer} />}
+                                />
                             </List.Item>
                             )} />
                     <Divider />
-                    <h4>撰写答案</h4>
+                    <h3>撰写答案</h3>
                     <ReactQuill placeholder="撰写答案" style={{height: 110}} value={answer} onChange={this.answerChange} />
                     <Button type="primary" style={{float: 'right', marginTop: 50}} onClick={this.answerSubmit}>提交</Button>
                 </div>

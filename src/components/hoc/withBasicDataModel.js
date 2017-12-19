@@ -124,7 +124,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         onChange: this.handlePageChange
                     }
                     let dataSource = Datas.handleTableData ? Datas.handleTableData(res.data.data) : res.data.data
-                    console.log('dataSource', dataSource)
+                    // console.log('dataSource', dataSource)
                     this.setState({
                         tableSetting: {
                             ...this.state.tableSetting,
