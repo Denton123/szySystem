@@ -51,7 +51,11 @@ class ProjectStageDatas extends Component {
     }
 
     componentDidMount() {
-        this.props.handleModalSetting(false, `${this.props.stage.name}`)
+        this.props.handleSetState('modalSetting', {
+            ...this.props.modalSetting,
+            visible: false,
+            title: `${this.props.stage.name}`
+        })
         if (this.props.stage.data !== null) {
             this.setStageData(ObjOrStrTransfrom(this.props.stage.data))
         }
@@ -106,7 +110,7 @@ class ProjectStageDatas extends Component {
             message.warning('请添加项目阶段')
             return false
         }
-        this.props.handleSubmitStatus(true)
+        this.props.handleSetState('isSubmitting', true)
         let data = {}
         values.keys.forEach(k => {
             data[values[`name-${k}`]] = values[`info-${k}`]
@@ -114,13 +118,13 @@ class ProjectStageDatas extends Component {
         data = ObjOrStrTransfrom(data)
         ajax('post', `/stage/set-data/${this.props.stage.id}`, {data: data})
             .then(res => {
-                this.props.handleSubmitStatus(false)
+                this.props.handleSetState('isSubmitting', false)
                 this.props.setAllStageData(this.props.stage.id, res.data.data)
                 this.props.handleModalCancel()
                 message.success('保存成功')
             })
             .catch(err => {
-                this.props.handleSubmitStatus(false)
+                this.props.handleSetState('isSubmitting', false)
                 message.success('保存失败')
                 console.log(err)
             })
@@ -132,7 +136,7 @@ class ProjectStageDatas extends Component {
     }
 
     handleEdit = (e) => {
-        this.props.handleOperationType('edit')
+        this.props.handleSetState('operationType', 'edit')
         this.getStageData(this.props.stage.id)
             .then(res => {
                 let data = ObjOrStrTransfrom(res.data.data)
@@ -150,8 +154,12 @@ class ProjectStageDatas extends Component {
                     j++
                 }
                 this.setDynamicKeys(arr.length, arr)
-                this.props.handleFormFieldsValues(obj)
-                this.props.handleModalSetting(true, `设置${this.props.stage.name}详细信息`)
+                this.props.handleSetState('formFieldsValues', obj)
+                this.props.handleSetState('modalSetting', {
+                    ...this.props.modalSetting,
+                    visible: true,
+                    title: `设置${this.props.stage.name}详细信息`
+                })
             })
             .catch(err => {
                 console.log(err)

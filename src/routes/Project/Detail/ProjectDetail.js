@@ -31,18 +31,18 @@ const {Meta} = Card
 class ProjectDetail extends Component {
     state = {
         projectData: {},
-        loading: true
     }
     componentDidMount() {
         this.getData()
     }
     getData = () => {
         let id = this.props.match.params.id
+        this.props.handleSetState('loading', true)
         show(`project/${id}`)
             .then(res => {
+                this.props.handleSetState('loading', false)
                 this.setState({
                     projectData: resetObject(res.data),
-                    loading: false
                 })
             })
     }
@@ -94,7 +94,7 @@ const PD = withBasicDataModel(ProjectDetail, {
     model: 'project',
     formFieldsValues: {
     },
-    handleTableData: (dataSource) => {
+    handleData: (dataSource) => {
         let arr = []
         dataSource.forEach(data => {
             arr.push(resetObject(data))

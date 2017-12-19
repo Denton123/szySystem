@@ -44,10 +44,10 @@ class ProjectStage extends Component {
     }
 
     componentDidMount() {
-        this.props.handleLoading(true)
+        this.props.handleSetState('loading', true)
         this.getStage()
             .then(res => {
-                this.props.handleLoading(false)
+                this.props.handleSetState('loading', false)
                 this.handleStageTabs(res.data)
             })
     }
@@ -64,7 +64,7 @@ class ProjectStage extends Component {
             message.warning('至少要填写一组信息')
             return false
         }
-        this.props.handleSubmitStatus(true)
+        this.props.handleSetState('isSubmitting', true)
         let data = []
         let key = `t${Date.now()}-u${this.props.user.id}-i`
         let formFieldsValues = this.props.formFieldsValues
@@ -87,7 +87,7 @@ class ProjectStage extends Component {
                 : update(`stage/${this.props.id}`, data, false)
         submit
             .then(res => {
-                this.props.handleSubmitStatus(false)
+                this.props.handleSetState('isSubmitting', false)
                 if (res.data.errors) {
                     res.data.errors.forEach(err => {
                         message.error(err.message)
@@ -107,7 +107,7 @@ class ProjectStage extends Component {
             .catch(err => {
                 console.log(err)
                 message.success('保存失败')
-                this.props.handleSubmitStatus(false)
+                this.props.handleSetState('isSubmitting', false)
             })
     }
 
@@ -139,7 +139,7 @@ class ProjectStage extends Component {
 
     // 项目阶段编辑
     handleEdit = (e) => {
-        this.props.handleOperationType('edit')
+        this.props.handleSetState('operationType', 'edit')
         this.getStage()
             .then(res => {
                 let arr = []
@@ -153,8 +153,12 @@ class ProjectStage extends Component {
                     }
                 })
                 this.setDynamicKeys(arr.length, arr)
-                this.props.handleModalSetting(true, '项目阶段-编辑')
-                this.props.handleFormFieldsValues(obj)
+                this.props.handleSetState('modalSetting', {
+                    ...this.props.modalSetting,
+                    visible: true,
+                    title: `${this.props.title}-编辑`
+                })
+                this.props.handleSetState('formFieldsValues', obj)
             })
             .catch(err => {
                 console.log(err)
