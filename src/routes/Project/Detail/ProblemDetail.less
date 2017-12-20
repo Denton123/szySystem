@@ -1,23 +1,40 @@
-.Problem{
-	min-height: 200px;
-}
-.msg{
-	float: right;
-	display: flex;
-	flex-direction: column;
-	span{
-		padding-top: 5px;
+.ProblemDetail {
+	padding: 24px;
+	background: #fff;
+	height: 100%;
+	h3{
+		font-weight: 500;
 	}
-}
-.answerAvatar{
-	display: inline-block;
-	vertical-align: middle;
-	margin-left: 10px;
-}
-.List{
-	.ant-list-item-extra{
-		-webkit-box-flex: none;
-		-webkit-flex: none;
-		flex: none;
+	.Problem{
+		min-height: 200px;
+	}
+	.msg{
+		float: right;
+		display: flex;
+		flex-direction: column;
+		span{
+			padding-top: 5px;
+		}
+	}
+	.answerAvatar{
+		display: inline-block;
+		vertical-align: middle;
+		margin-left: 10px;
+	}
+	.List{
+		.ant-list-item-extra{
+			-webkit-box-flex: none;
+			-webkit-flex: none;
+			flex: none;
+		}
+	}
+	.divider{
+		margin-top: 45px;
+		.ant-divider-horizontal{
+			height: 3px;
+		}
+		.ant-divider{
+			background: #bfbfbf;
+		}
 	}
 }

@@ -19,6 +19,7 @@ import {
     Redirect
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
+import moment from 'moment'
 
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
@@ -46,15 +47,16 @@ class ProblemDetail extends Component {
         answerList: [],
         loading: true,
         loadingMore: false,
-        showLoadingMore: true,
-        flag: '',
-        showCheckbox: false
+        showLoadingMore: false,
+        showCheckbox: false,
+        flag: 1,
+        allData: []
     }
     componentDidMount() {
         this.getData()
     }
-    goBack = (e) => {
-        this.props.history.goBack()
+    goBack = () => {
+        this.props.history.push('/home/project/problem')
     }
     getData = (callback) => {
         let id = this.props.match.params.id
@@ -64,31 +66,55 @@ class ProblemDetail extends Component {
                 DetailData: resetObject(res.data)
             })
         }).then(() => {
-            let showId = this.state.DetailData.id
-            show(`/answer/${showId}`).then(res => {
-                res.data.forEach((t) => {
-                    t.date = t.date.substr(0, 10)
-                })
+            let showallId = this.state.DetailData.id
+            var usedAll = []
+            ajax('get', `/answer/${showallId}/showIdData`).then(res => {
+                console.log(res.data)
                 this.setState({
-                    answerList: res.data
+                    allData: res.data
                 })
-                const answerArr = this.state.answerList
+                const allData = this.state.allData
+                for (let u in allData) {
+                    usedAll.push(allData[u].used)
+                }
+            })
+            this.getAnswerData(1, res => {
+                this.setState({
+                    answerList: res.data.data,
+                    flag: res.data.currentPage
+                })
+                if (res.data.total > res.data.pageSize) {
+                    this.setState({
+                        showLoadingMore: true
+                    })
+                }
+                console.log(usedAll)
                 const detailArr = this.state.DetailData
                 const userid = this.props.user.id
-                var arr = []
-                for (let i in answerArr) {
-                    arr.push(answerArr[i].used)
-                }
-                if (arr.indexOf('1') === -1 && userid === detailArr.user_id) {
+                if (usedAll.indexOf('1') === -1 && userid === detailArr.user_id) {
                     this.setState({
                         showCheckbox: true
                     })
-                } else if (arr.indexOf('1') !== -1 && userid === detailArr.user_id) {
+                } else {
                     this.setState({
                         showCheckbox: false
                     })
                 }
             })
+        })
+    }
+    getAnswerData = (page, callback) => {
+        let showId = this.state.DetailData.id
+        show(`/answer/${showId}?page=${page}`).then(res => {
+            res.data.data.forEach((t) => {
+                t.date = moment(t.date).startOf('hour').fromNow()
+            })
+            if (res.data.currentPage === res.data.totalPage) {
+                this.setState({
+                    showLoadingMore: false
+                })
+            }
+            callback(res)
         })
     }
     answerChange = (value) => {
@@ -100,24 +126,53 @@ class ProblemDetail extends Component {
         this.setState({
             loadingMore: true
         })
+        const totalPage = this.state.flag + 1
+        this.getAnswerData(totalPage, res => {
+            const answerList = this.state.answerList.concat(res.data.data)
+            this.setState({
+                answerList,
+                loadingMore: false,
+                flag: res.data.currentPage
+            })
+            const answerArr = this.state.answerList
+            const detailArr = this.state.DetailData
+            const userid = this.props.user.id
+            var arr = []
+            for (let i in answerArr) {
+                arr.push(answerArr[i].used)
+            }
+            if (arr.indexOf('1') === -1 && userid === detailArr.user_id) {
+                this.setState({
+                    showCheckbox: true
+                })
+            } else if (arr.indexOf('1') !== -1 && userid === detailArr.user_id) {
+                this.setState({
+                    showCheckbox: false
+                })
+            }
+        })
     }
     answerSubmit = () => {
-        const Data = this.state.DetailData
-        const answerObj = {
-            answer: this.state.answer,
-            user_id: this.props.user.id,
-            problem_id: Data.id,
-            date: new Date(),
-            used: '0'
-        }
-        store('/answer', answerObj).then(res => {
-            res.status === 200 ? message.success('保存成功') : message.success('保存失败')
-            this.setState({
-                answer: ''
+        if (this.state.answer !== '') {
+            const Data = this.state.DetailData
+            const answerObj = {
+                answer: this.state.answer,
+                user_id: this.props.user.id,
+                problem_id: Data.id,
+                date: new Date(),
+                used: '0'
+            }
+            store('/answer', answerObj).then(res => {
+                res.status === 200 ? message.success('保存成功') : message.success('保存失败')
+                this.setState({
+                    answer: ''
+                })
+            }).then(() => {
+                this.getData()
             })
-        }).then(() => {
-            this.getData()
-        })
+        } else {
+            message.info('请输入答案再提交')
+        }
     }
     acceptAnswer = (e) => {
         const id = e.target.dataset.id
@@ -149,7 +204,6 @@ class ProblemDetail extends Component {
             match,
             user
         } = this.props
-
         const formFields = [
             {
                 label: '标题',
@@ -168,7 +222,7 @@ class ProblemDetail extends Component {
         const loadMore = showLoadingMore ? (
             <div style={{textAlign: 'center', marginTop: 12, height: 32, lineHeight: '32px'}}>
                 {loadingMore && <Spin />}
-                {!loadingMore && <Button onClick={this.onLoadMore}>loading more</Button>}
+                {!loadingMore && <Button onClick={this.onLoadMore}>查看更多回答</Button>}
             </div>
             ) : null
 
@@ -191,13 +245,21 @@ class ProblemDetail extends Component {
                 ) : null
         )
         const Answer = ({answer}) => (
-            <div dangerouslySetInnerHTML={{__html: answer}} />
+            <div
+                style={{color: '#000'}}
+                dangerouslySetInnerHTML={{__html: answer}} />
+            )
+        const Question = ({question}) => (
+            <span>
+                <Icon type="question-circle-o" style={{color: '#1890ff', marginRight: 10}} />
+                {question}
+            </span>
             )
         return (
-            <div style={{padding: 24, background: '#fff', height: '100%'}}>
+            <div className="ProblemDetail">
                 <div style={{width: '80%', margin: '0 auto'}}>
                     <Card
-                        title={DetailData.title}
+                        title={<Question question={DetailData.title} />}
                         extra={<Button type="primary" onClick={this.goBack}>返回</Button>}
                     >
                         <p className="Problem" dangerouslySetInnerHTML={{__html: DetailData.problem}} />
@@ -206,7 +268,7 @@ class ProblemDetail extends Component {
                             : null}
                         <div className="msg">
                             <span>{`提问者：${DetailData.realname}`}</span>
-                            <span>{`提问时间：${DetailData.createdAt}`}</span>
+                            <span>{`提问时间：${moment(DetailData.createdAt).format('LLL')}`}</span>
                         </div>
                         <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                             <CustomForm
@@ -219,9 +281,10 @@ class ProblemDetail extends Component {
                             />
                         </CustomModal>
                     </Card>
-                    <Divider />
-                    <h3>{`${answerList.length}个回答`}</h3>
-                    <Divider />
+                    <div className="divider">
+                        <h3>{`${answerList.length}个回答`}</h3>
+                        <Divider />
+                    </div>
                     <List
                         itemLayout="vertical"
                         className="demo-loadmore-list"
@@ -233,22 +296,26 @@ class ProblemDetail extends Component {
                                 key={item.id}
                                 className="List"
                                 extra={item.used === '1' ? (
-                                    <span><Icon type="check-circle" />已采纳</span>
+                                    <span style={{color: '#40a9ff'}}>
+                                        <Icon type="check-circle" style={{marginRight: 8, fontSize: 18}} />
+                                        已采纳
+                                    </span>
                                     ) : (<Accept id={item.id} used={item.used} />)}
                                 actions={[<Bottom
                                     time={item.date}
                                     text={item.User.realname}
-                                    avatar={`/uploadImgs/${item.User.avatar}`}
+                                    avatar={answerList && item.User.avatar ? `/uploadImgs/${item.User.avatar}` : null}
                                         />]}>
                                 <List.Item.Meta
                                     description={<Answer answer={item.answer} />}
                                 />
                             </List.Item>
                             )} />
-                    <Divider />
-                    <h3>撰写答案</h3>
-                    <ReactQuill placeholder="撰写答案" style={{height: 110}} value={answer} onChange={this.answerChange} />
-                    <Button type="primary" style={{float: 'right', marginTop: 50}} onClick={this.answerSubmit}>提交</Button>
+                    <div style={{height: 300, marginTop: 30}}>
+                        <h3>撰写答案</h3>
+                        <ReactQuill placeholder="撰写答案" style={{height: 150}} value={answer} onChange={this.answerChange} />
+                        <Button type="primary" style={{float: 'right', marginTop: 50}} onClick={this.answerSubmit}>提交</Button>
+                    </div>
                 </div>
             </div>
         )
