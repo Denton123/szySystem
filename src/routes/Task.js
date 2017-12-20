@@ -19,8 +19,6 @@ import {
     Redirect
 } from 'react-router-dom'
 
-import './Task.less'
-
 // 引入工具方法
 import {isObject, isArray, valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
@@ -35,7 +33,7 @@ import CustomDynamicForm from 'COMPONENTS/form/CustomDynamicForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
-const { TextArea } = Input
+const {TextArea} = Input
 const {Option} = Select
 
 class Task extends React.Component {
@@ -130,15 +128,14 @@ class Task extends React.Component {
         this.setState({
             status: val
         })
-        if (val === 'all') {
-            this.props.getData({page: 1})
-        } else {
-            let params = {
-                page: 1,
-                status: val
-            }
-            this.props.getData(params)
+        let params = {
+            page: 1,
+            stage_id: this.props.stage.id
         }
+        if (val !== 'all') {
+            params['status'] = val
+        }
+        this.props.getData(params)
     }
 
     render() {
@@ -219,16 +216,6 @@ class Task extends React.Component {
                 dataIndex: 'plan_end_date',
                 key: 'plan_end_date'
             },
-            // {
-            //     title: '实际开始时间',
-            //     dataIndex: 'start_date',
-            //     key: 'start_date'
-            // },
-            // {
-            //     title: '实际结束时间',
-            //     dataIndex: 'end_date',
-            //     key: 'end_date'
-            // },
             {
                 title: '执行者',
                 dataIndex: 'realname',

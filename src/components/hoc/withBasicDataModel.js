@@ -5,7 +5,7 @@ import {message} from 'antd'
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 
 // 引入工具方法
-import {valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
+import {isFunction, valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 /**
  * [transformValue 表单值转换]
@@ -122,9 +122,10 @@ function withBasicDataModel(PageComponent, Datas) {
          * [默认获取列表数据]
          * @Author   szh
          * @DateTime 2017-12-19
-         * @param    {Object}   params [index的参数]
+         * @param    {Object}   params     [index的参数]
+         * @param    {Object}   customAjax []
          */
-        getData = (params) => {
+        getData = (params, customAjax) => {
             if (Object.keys(subModel).length > 0) {
                 Object.assign(params, subModel)
             }
@@ -135,7 +136,8 @@ function withBasicDataModel(PageComponent, Datas) {
                 ...this.state.dataSetting,
                 loading: true
             })
-            index(this.state.model, data)
+            let getList = isFunction(customAjax) ? customAjax(data) : index(this.state.model, data)
+            getList
                 .then(res => {
                     let pagination = {
                         current: res.data.currentPage,
@@ -145,7 +147,6 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                     // 数据特殊处理
                     let dataSource = Datas.handleData ? Datas.handleData(res.data.data) : res.data.data
-                    console.log('dataSource', dataSource)
                     this.handleSetState('dataSetting', {
                         ...this.state.dataSetting,
                         loading: false,
@@ -281,7 +282,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         cb(res)
                     } else {
                         // 新增后的默认处理
-                        this.getData({page: 1})
+                        this.getData(this.props.location.state)
                         this.handleModalCancel()
                         message.success('保存成功')
                     }

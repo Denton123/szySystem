@@ -87,7 +87,6 @@ class ProjectStageDatas extends Component {
     // }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps)
         if (nextProps.stage.data !== null) {
             this.setStageData(ObjOrStrTransfrom(nextProps.stage.data))
         } else {
