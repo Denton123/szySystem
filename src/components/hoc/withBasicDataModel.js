@@ -123,7 +123,7 @@ function withBasicDataModel(PageComponent, Datas) {
          * @Author   szh
          * @DateTime 2017-12-19
          * @param    {Object}   params     [index的参数]
-         * @param    {Object}   customAjax []
+         * @param    {Object}   customAjax [ajax请求的Promise对象]
          */
         getData = (params, customAjax) => {
             if (Object.keys(subModel).length > 0) {

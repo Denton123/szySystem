@@ -40,6 +40,11 @@ class MyMission extends Component {
     state = {
         // 默认显示全部任务
         status: 'all',
+        myTask: {
+            wait: 0,
+            doing: 0,
+            done: 0
+        }
     }
 
     componentDidMount() {
@@ -48,6 +53,18 @@ class MyMission extends Component {
             {page: page},
             (params) => ajax('get', `/task/${this.props.user.id}/all`, params)
         )
+        this.getMyTaskStatus()
+    }
+
+    getMyTaskStatus = () => {
+        ajax('get', `/task/${this.props.user.id}/personal-status`)
+            .then(res => {
+                this.setState({
+                    myTask: {
+                        ...res.data
+                    }
+                })
+            })
     }
 
     handleStatusChange = (e) => {
@@ -70,9 +87,9 @@ class MyMission extends Component {
     handleTaskStatus = (e) => {
         let tid = e.target.dataset['tid']
         let status = e.target.dataset['status']
+        this.props.handleSetState('isSubmitting', true)
         ajax('put', `/task/${tid}/user/${this.props.user.id}/status`, {status: status})
             .then(res => {
-                console.log(res)
                 if (res.data.errors) {
                     message.error(res.data.errors.message)
                 } else {
@@ -88,8 +105,15 @@ class MyMission extends Component {
                         ...this.props.dataSetting,
                         dataSource: dataSource
                     })
+                    this.props.handleSetState('isSubmitting', false)
                     message.success('保存成功')
+                    this.getMyTaskStatus()
                 }
+            })
+            .catch(err => {
+                console.log(err)
+                this.props.handleSetState('isSubmitting', false)
+                message.error('保存失败')
             })
     }
 
@@ -162,12 +186,12 @@ class MyMission extends Component {
                     <span>{record['Users'][0]['end_date']}</span>
                 )
             },
-            {
-                title: '进度',
-                dataIndex: 'progress',
-                key: 'progress',
-                render: text => <Progress percent={50} size="small" status="active" />
-            },
+            // {
+            //     title: '进度',
+            //     dataIndex: 'progress',
+            //     key: 'progress',
+            //     render: text => <Progress percent={50} size="small" status="active" />
+            // },
             {
                 title: '操作',
                 key: 'action',
@@ -176,8 +200,8 @@ class MyMission extends Component {
                         return '点击左侧查看子任务'
                     }
                     let status = record['Users'][0]['status']
-                    const Start = () => <Button type="primary" data-tid={record.id} data-status="1" onClick={this.handleTaskStatus}>开始任务</Button>
-                    const Waiting = () => <Button type="primary" data-tid={record.id} data-status="2" onClick={this.handleTaskStatus}>完成任务</Button>
+                    const Start = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="1" onClick={this.handleTaskStatus}>开始任务</Button>
+                    const Waiting = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="2" onClick={this.handleTaskStatus}>完成任务</Button>
                     return (
                         <span>
                             {
@@ -211,9 +235,18 @@ class MyMission extends Component {
         return (
             <div>
                 <Card bordered={false}>
-                    <Card.Grid>待办任务</Card.Grid>
-                    <Card.Grid>正在进行任务</Card.Grid>
-                    <Card.Grid>已完成任务</Card.Grid>
+                    <Card.Grid>
+                        待办任务
+                        <span className="pull-right">{state.myTask.wait}</span>
+                    </Card.Grid>
+                    <Card.Grid>
+                        正在进行任务
+                        <span className="pull-right">{state.myTask.doing}</span>
+                    </Card.Grid>
+                    <Card.Grid>
+                        已完成任务
+                        <span className="pull-right">{state.myTask.done}</span>
+                    </Card.Grid>
                 </Card>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                     <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />

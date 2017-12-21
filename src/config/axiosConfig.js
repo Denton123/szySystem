@@ -19,8 +19,6 @@ function formatDate(dataObject) {
             if (dataObject[i] === null) continue
             if (dataObject[i].indexOf('T') > -1) {
                 dataObject[i] = moment(dataObject[i]).format('YYYY-MM-DD HH:mm:ss')
-            } else {
-                dataObject[i] = moment(dataObject[i]).format('YYYY-MM-DD')
             }
         }
         if (isArray(dataObject[i])) {

@@ -185,6 +185,12 @@ const routes = [
                 component: getRoutes(['Task'])
             },
             {
+                name: '总结概况',
+                icon: 'profile',
+                path: '/summary',
+                component: getRoutes(['Summary'])
+            },
+            {
                 name: '系统设置',
                 icon: 'tool',
                 path: '/system',

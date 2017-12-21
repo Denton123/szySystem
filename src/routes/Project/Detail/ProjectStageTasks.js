@@ -35,6 +35,20 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 const {TextArea} = Input
 const {Option} = Select
 
+// 获取进度的百分比
+function getPercent(arr) {
+    let percent = 0
+    arr.forEach(c => {
+        if (c.status === '1') {
+            percent++
+        } else if (c.status === '2') {
+            percent += 2
+        }
+    })
+    percent = ((percent / (arr.length * 2)) * 100).toFixed(0)
+    return percent
+}
+
 class ProjectStageTasks extends React.Component {
     state = {
         // 默认显示全部任务
@@ -77,6 +91,15 @@ class ProjectStageTasks extends React.Component {
             })
     }
 
+    getAllUserByTaskId = (pid) => {
+        ajax('get', `/task/${pid}/all-user`)
+            .then(res => {
+                this.setState({
+                    userData: res.data
+                })
+            })
+    }
+
     getAllParentsTask = () => {
         ajax('get', '/task/all-parents', {params: {stage_id: this.props.stage.id}})
             .then(res => {
@@ -87,17 +110,19 @@ class ProjectStageTasks extends React.Component {
     }
 
     add = (e) => {
-        if (this.state.userData.length === 0) {
-            this.getAllUser()
-        }
+        this.setState({
+            taskDataDisabled: false
+        })
+        this.getAllUser()
         this.getAllParentsTask()
         this.props.handleAdd(e)
     }
 
     edit = (e) => {
-        if (this.state.userData.length === 0) {
-            this.getAllUser()
-        }
+        this.setState({
+            taskDataDisabled: true
+        })
+        this.getAllUser()
         this.getAllParentsTask()
         this.props.handleEdit(e)
     }
@@ -153,6 +178,20 @@ class ProjectStageTasks extends React.Component {
             params['status'] = val
         }
         this.props.getData(params)
+    }
+
+    handlePidChange = (pid) => {
+        this.props.handleSetState('formFieldsValues', {
+            ...this.props.formFieldsValues,
+            user_id: {
+                value: []
+            }
+        })
+        if (pid) {
+            this.getAllUserByTaskId(pid)
+        } else {
+            this.getAllUser()
+        }
     }
 
     render() {
@@ -254,9 +293,13 @@ class ProjectStageTasks extends React.Component {
                             end_date: user.end_date ? user.end_date : '暂无'
                         })
                     })
-                    const Content = () => (
-                        <Table dataSource={popoverTableData} columns={popoverTableCol} pagination={false} size="small" />
-                    )
+                    const Content = () => {
+                        if (record.child) {
+                            return <p>{users}</p>
+                        } else {
+                            return <Table dataSource={popoverTableData} columns={popoverTableCol} pagination={false} size="small" />
+                        }
+                    }
                     return (
                         <Popover content={<Content />}>
                             <div className="ellipsis" style={{width: 70}}>{users}</div>
@@ -268,7 +311,15 @@ class ProjectStageTasks extends React.Component {
                 title: '进度',
                 dataIndex: 'progress',
                 key: 'progress',
-                render: text => <Progress percent={50} size="small" status="active" />
+                render: (text, record) => {
+                    let percent = 0
+                    if (record['child']) {
+                        percent = getPercent(record['child'])
+                    } else {
+                        percent = getPercent(record['Users'])
+                    }
+                    return <Progress percent={parseInt(percent)} type="circle" size="small" status="active" />
+                }
             },
             {
                 title: '操作',
@@ -317,8 +368,10 @@ class ProjectStageTasks extends React.Component {
                 field: 'pid',
                 component: (
                     <Select
-                        placeholder="请选择执行者"
+                        placeholder="选择从属后变为子级任务"
+                        allowClear
                         disabled={state.taskDataDisabled}
+                        onChange={this.handlePidChange}
                     >
                         {state.taskData.map(t => (
                             <Option key={t.id} value={t.id} className="ellipsis">{t.content}</Option>
@@ -337,7 +390,6 @@ class ProjectStageTasks extends React.Component {
                     <Select
                         mode="multiple"
                         placeholder="请选择执行者"
-                        onChange={this.handleChange}
                     >
                         {state.userData.map(u => (
                             <Option key={u.id} value={u.id}>{u.realname}</Option>
