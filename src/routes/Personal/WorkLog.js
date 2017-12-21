@@ -104,7 +104,6 @@ class checkwork extends Component {
             showTip: false
         })
     }
-
     onSelect = (value) => {
         const onSelectDay = moment(value).format('YYYY-MM-DD')
         const localArr = this.state.note

@@ -20,7 +20,7 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import moment from 'moment'
-
+import 'react-quill/dist/quill.snow.css'
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
 import {ajax, show, answerUpdate, store, index, update} from 'UTILS/ajax'
@@ -35,10 +35,6 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
 import './ProblemDetail.less'
 const {Meta} = Card
-
-function escape(str) {
-    return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
-}
 
 class ProblemDetail extends Component {
     state = {
@@ -59,6 +55,9 @@ class ProblemDetail extends Component {
         this.props.history.push('/home/project/problem')
     }
     getData = (callback) => {
+        ajax('get', 'https://free-api.heweather.com/v5/now?city=CN101280101&key=576d7427ad2142eca98a21e9d4d5a997').then(res => {
+            console.log(res)
+        })
         let id = this.props.match.params.id
         show(`problem/${id}`).then(res => {
             this.setState({
@@ -88,7 +87,6 @@ class ProblemDetail extends Component {
                         showLoadingMore: true
                     })
                 }
-                console.log(usedAll)
                 const detailArr = this.state.DetailData
                 const userid = this.props.user.id
                 if (usedAll.indexOf('1') === -1 && userid === detailArr.user_id) {
@@ -145,7 +143,7 @@ class ProblemDetail extends Component {
                 this.setState({
                     showCheckbox: true
                 })
-            } else if (arr.indexOf('1') !== -1 && userid === detailArr.user_id) {
+            } else {
                 this.setState({
                     showCheckbox: false
                 })
@@ -313,7 +311,13 @@ class ProblemDetail extends Component {
                             )} />
                     <div style={{height: 300, marginTop: 30}}>
                         <h3>撰写答案</h3>
-                        <ReactQuill placeholder="撰写答案" style={{height: 150}} value={answer} onChange={this.answerChange} />
+                        <ReactQuill
+                            placeholder="撰写答案"
+                            style={{height: 150}}
+                            value={answer}
+                            onChange={this.answerChange}
+                            theme="snow"
+                        />
                         <Button type="primary" style={{float: 'right', marginTop: 50}} onClick={this.answerSubmit}>提交</Button>
                     </div>
                 </div>
