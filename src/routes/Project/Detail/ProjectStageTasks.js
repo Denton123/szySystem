@@ -181,12 +181,6 @@ class ProjectStageTasks extends React.Component {
     }
 
     handlePidChange = (pid) => {
-        this.props.handleSetState('formFieldsValues', {
-            ...this.props.formFieldsValues,
-            user_id: {
-                value: []
-            }
-        })
         if (pid) {
             this.getAllUserByTaskId(pid)
         } else {

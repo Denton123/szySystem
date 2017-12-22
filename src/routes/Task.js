@@ -159,13 +159,6 @@ class Task extends React.Component {
     }
 
     handlePidChange = (pid) => {
-        console.log(1)
-        this.props.handleSetState('formFieldsValues', {
-            ...this.props.formFieldsValues,
-            user_id: {
-                value: []
-            }
-        })
         if (pid) {
             this.getAllUserByTaskId(pid)
         } else {
@@ -460,6 +453,9 @@ const Ts = withBasicDataModel(Task, {
             value: null
         }
     },
+    formFieldsRelation: (changedFields) => {
+        console.log(changedFields)
+    }
 })
 
 export default Ts

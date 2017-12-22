@@ -473,10 +473,11 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 更新表单数据
         updateFormFields = (changedFields) => {
-            console.log(this.state.formFieldsValues)
+            // console.log(this.state.formFieldsValues)
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })
+            Datas.formFieldsRelation && Datas.formFieldsRelation(changedFields)
         }
 
         // 更新查询表单数据
