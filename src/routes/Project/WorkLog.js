@@ -30,7 +30,6 @@ class checkwork extends Component {
 
     getLogData = () => {
         index('/worklog').then(res => {
-            // console.log(res)
             this.setState({
                 log: res.data
             })
@@ -38,30 +37,30 @@ class checkwork extends Component {
     }
     dateCellRender = (value) => {
         const cellDate = moment(value).format('YYYY-MM-DD')
-        console.log(cellDate)
         const logData = this.state.log
         var Arr = []
         var timeArr = []
         var i = 0
         if (logData !== null) {
             for (i in logData) {
-                var time = moment(logData[i].time).format('YYYY-MM-DD')
-                console.log(time)
-                if (timeArr.indexOf(time) === -1) {
-                    timeArr.push(time)
-                    var saveObj = {
-                        onlytime: time,
-                        subContent: []
+                if (logData[i].time !== null) {
+                    var time = moment(logData[i].time).format('YYYY-MM-DD')
+                    if (timeArr.indexOf(time) === -1) {
+                        timeArr.push(time)
+                        var saveObj = {
+                            onlytime: time,
+                            subContent: []
+                        }
+                        Arr.push(saveObj)
                     }
-                    Arr.push(saveObj)
-                }
-                for (let j in Arr) {
-                    if (logData[i].time.substr(0, 10) === Arr[j].onlytime) {
-                        Arr[j].subContent.push({
-                            cont: logData[i].content,
-                            avatar: logData[i].User.avatar,
-                            name: logData[i].User.realname
-                        })
+                    for (let j in Arr) {
+                        if (logData[i].time.substr(0, 10) === Arr[j].onlytime) {
+                            Arr[j].subContent.push({
+                                cont: logData[i].content,
+                                avatar: logData[i].User.avatar,
+                                name: logData[i].User.realname
+                            })
+                        }
                     }
                 }
             }

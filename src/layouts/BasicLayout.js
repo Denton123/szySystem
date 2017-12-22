@@ -5,7 +5,9 @@
  * @date 2017/11/22
  */
 import styles from './BasicLayout.less'
+import 'STYLE/css/theme.less'
 import React from 'react'
+import cs from 'classnames'
 import {
     Layout,
     Menu,
@@ -23,10 +25,10 @@ import {
 } from 'react-router-dom'
 
 import {isArray} from 'UTILS/utils'
+import {show, update} from 'UTILS/ajax'
 
 const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
-
 // 子路由
 // function SubRoute({route, idx, match, user, globalUpdateUser}) {
 //     return (
@@ -162,6 +164,10 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
+        this.setState({
+            theme: localStorage.getItem('theme')
+        })
+        this.getData()
     }
 
     rootSubmenuKeys = this.props.routes.map((route, idx) => {
@@ -171,9 +177,21 @@ class BasicLayout extends React.Component {
     state = {
         selectedKeys: [this.rootSubmenuKeys[0]],
         openKeys: [this.rootSubmenuKeys[0]],
-        collapsed: false
+        skin: '',
+        fontSize: ''
     }
-
+    getData = () => {
+        let uid = this.props.user.id
+        show(`user/${uid}`)
+            .then(res => {
+                console.log(res)
+                this.setState({
+                    skin: res.data.skin,
+                    fontSize: res.data.font_size
+                })
+                console.log(this.state.skin)
+            })
+    }
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
         if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -214,9 +232,11 @@ class BasicLayout extends React.Component {
             history,
             location,
             match,
-            user
+            user,
+            collapsed
         } = this.props
-
+        const {skin} = this.state
+        const {fontSize} = this.state
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
@@ -323,11 +343,15 @@ class BasicLayout extends React.Component {
                 </Footer>
             </div>
         )
-
+        const Class = cs({
+            [`${skin}`]: true,
+            [`${fontSize}`]: true,
+            BasicLayout: true
+        })
         return (
             <Layout
                 style={{ minHeight: '100vh' }}
-                className="BasicLayout"
+                className={Class}
             >
                 <Sider
                     className="Sider"

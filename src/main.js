@@ -11,7 +11,7 @@ import { LocaleProvider } from 'antd'
 
 // 根组件
 import App from './App'
-
+import 'animate.css/animate.css'
 // import {Provider} from 'react-redux' //用到redux时使用
 import 'STYLE/css/main.less'
 

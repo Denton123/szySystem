@@ -1,3 +1,49 @@
-@primary-color: #000;
-@link-color: #000;
-@body-background:#000;
+// 主题颜色
+@blue_color: #1890ff;
+@green_color: #0aa679;
+@purple_color: #7546c9;
+@yellow_color: #fbd437;
+//字体大小
+@font_small: 12px;
+@font_middle: 14px;
+@font_big: 16px;
+// 主题
+.theme(@bg) {
+	.ant-btn-primary, .layout-header, .ant-radio-inner:after{
+		background: @bg;
+		border: @bg;
+	}
+	.ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
+		background: @bg;
+	}
+	.ant-radio-checked .ant-radio-inner{
+		border-color: @bg;
+	}
+}
+.fontSize(@fontSize) {
+	.ant-btn-primary{
+		font-size: @fontSize;
+	}
+}
+// 蓝色主题
+.blue{
+    .theme(@blue_color)
+}
+.green{
+    .theme(@green_color)
+}
+.purple{
+    .theme(@purple_color)
+}
+.yellow{
+    .theme(@yellow_color)
+}
+.small{
+	.fontSize(@font_small)
+}
+.middle{
+	.fontSize(@font_middle)
+}
+.big{
+	.fontSize(@font_big)
+}

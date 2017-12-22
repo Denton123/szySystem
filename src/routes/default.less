@@ -16,7 +16,8 @@
 		.HeaderMsg {
 			width: 100%;
 			height: 100px;
-			display: flex;
+			overflow: hidden;
+			/*display: flex;*/
 			.avatar {
 				display: inline-block;
 				border-radius: 50%;
@@ -24,6 +25,7 @@
 				height: 80px;
 				overflow: hidden;
 				margin: 9px 0;
+				float: left;
 				.ant-avatar.ant-avatar-icon{
 					width: 100%;
 					height: 100%;
@@ -34,6 +36,7 @@
 
 			}
 			.Greet {
+				float: left;
 				margin-left: 20px;
 				h2{
 					line-height: 65px;
@@ -45,7 +48,12 @@
 					float: right;
 				}
 			}
-			
+			.Time {
+				height: inherit;
+				float: right;
+				line-height: 7;
+				font-size: 20px;
+			}
 		}
 	}
 	
@@ -60,8 +68,11 @@
 				margin-bottom: 20px;
 				float: left;
 			}
-			.time {
+			.Weather {
 				float: right;
+				li{
+					list-style: none;
+				}
 			}
 		}
 		

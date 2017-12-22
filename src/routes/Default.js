@@ -82,9 +82,10 @@ class Default extends React.Component {
                 longitude = position.coords.longitude.toString().substr(0, 7)
                 latitude = position.coords.latitude.toString().substr(0, 6)
                 var location = longitude + ',' + latitude
-                var cid
+                var cid, test
                 ajax('get', `https://free-api.heweather.com/s6/search?location=${location}&key=${onkey}`).then(res => {
                     cid = res.data.HeWeather6[0].basic.cid
+                    test = res.data.HeWeather6[0].basic.parent_city
                     this.setState({
                         locationArr: res.data.HeWeather6[0].basic
                     })
@@ -178,7 +179,7 @@ class Default extends React.Component {
             )
         const DetailWeather = (
             <div>
-                <span style={{color: '#1890ff'}}>
+                <span style={{color: '#1890ff', marginRight: 30}}>
                     <span style={{fontSize: 35}}>{`${weatherArr.tmp}°`}</span>
                     <span>{weatherArr.txt}</span>
                 </span>
@@ -213,14 +214,14 @@ class Default extends React.Component {
                             <h2>下午好，{user && user.realname}，祝你开心每一天！</h2>
                             <h4>技术部 - 总监</h4>
                         </div>
+                        <p className="Time tada animated">{moment().format('L a h:mm:ss')}</p>
                     </div>
                 </Header>
                 <div className="Main">
                     <div className="CardWrap">
                         {CardMsg}
-                        <div className="time">
+                        <div className="Weather">
                             {Weather}
-                            <p>{moment().format('L,a h:mm:ss')}</p>
                         </div>
                     </div>
                     <div>

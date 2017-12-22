@@ -22,6 +22,8 @@ import {
     Redirect
 } from 'react-router-dom'
 
+import './Setting.less'
+
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
@@ -83,20 +85,41 @@ class SetForm extends React.Component {
             <Form onSubmit={this.handleSubmit}>
                 <FormItem label="皮肤">
                     {getFieldDecorator('skin')(
-                        <RadioGroup>
-                            <Radio value="blue">清新时尚蓝<span style={{display: 'inline-block', width: 50, height: 15, background: '#009acb', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
-                            <Radio value="green">环保绽放绿<span style={{display: 'inline-block', width: 50, height: 15, background: '#55bba6', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
-                            <Radio value="purple">高贵丁香紫<span style={{display: 'inline-block', width: 50, height: 15, background: '#895e9b', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
-                            <Radio value="yellow">狂热活泼黄<span style={{display: 'inline-block', width: 50, height: 15, background: '#deb355', 'verticalAlign': 'middle', 'marginLeft': 6}} /></Radio>
+                        <RadioGroup onChange={this.props.onChange}>
+                            <Radio value="blue">
+                                清新时尚蓝
+                                <span className="RadioBlock" style={{background: '#1890ff'}} />
+                            </Radio>
+                            <Radio value="green">
+                                环保绽放绿
+                                <span className="RadioBlock" style={{background: '#0aa679'}} />
+                            </Radio>
+                            <Radio value="purple">
+                                高贵丁香紫
+                                <span className="RadioBlock" style={{background: '#7546c9'}} />
+                            </Radio>
+                            <Radio value="yellow">
+                                狂热活泼黄
+                                <span className="RadioBlock" style={{background: '#fbd437'}} />
+                            </Radio>
                         </RadioGroup>
                     )}
                 </FormItem>
                 <FormItem label="字体">
                     {getFieldDecorator('font_size')(
                         <RadioGroup>
-                            <Radio value="small">小号<Button style={{fontSize: 12, 'marginLeft': 6}} disabled size="small">生之园</Button></Radio>
-                            <Radio value="middle">中号<Button style={{fontSize: 14, 'marginLeft': 6}} disabled size="small">生之园</Button></Radio>
-                            <Radio value="big">大号<Button style={{fontSize: 16, 'marginLeft': 6}} disabled size="small">生之园</Button></Radio>
+                            <Radio value="small">
+                                小号
+                                <Button style={{fontSize: 12, 'marginLeft': 6}} disabled size="small">生之园</Button>
+                            </Radio>
+                            <Radio value="middle">
+                                中号
+                                <Button style={{fontSize: 14, 'marginLeft': 6}} disabled size="small">生之园</Button>
+                            </Radio>
+                            <Radio value="big">
+                                大号
+                                <Button style={{fontSize: 16, 'marginLeft': 6}} disabled size="small">生之园</Button>
+                            </Radio>
                         </RadioGroup>
                     )}
                 </FormItem>
@@ -174,15 +197,19 @@ class Setting extends Component {
         let uid = this.props.user.id
         show(`user/${uid}`)
             .then(res => {
+                console.log(res)
                 // 直接更新内部表单数据
                 this.updateEditFormFieldsValues(res.data)
-                console.log(res.data)
             })
             .catch(err => {
                 console.log(err)
             })
     }
 
+    onChange = (e) => {
+        console.log(e.target.value)
+        const value = e.target.value
+    }
     // 编辑数据时更新表单数据
     updateEditFormFieldsValues = (data) => {
         this.setState((prevState, props) => {
@@ -233,7 +260,8 @@ class Setting extends Component {
         const props = {
             formFieldsValues: this.state.formFieldsValues,
             updateFormFields: this.updateFormFields,
-            handleSubmitForm: this.handleSubmitForm
+            handleSubmitForm: this.handleSubmitForm,
+            onChange: this.onChange
         }
 
         return (
