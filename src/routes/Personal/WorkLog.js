@@ -81,10 +81,14 @@ class checkwork extends Component {
                 var i, time, editId
                 var okArr = []
                 for (i in note) {
-                    time = note[i].time.substr(0, 10)
-                    if (selectDay === time) {
-                        editId = note[i].id
+                    console.log(note)
+                    if (note[i].time !== null) {
+                        time = note[i].time.substr(0, 10)
+                        if (selectDay === time) {
+                            editId = note[i].id
+                        }
                     }
+                    console.log(note[i].time)
                 }
                 update(`/worklog/${editId}`, saveObj).then(res => {
                     if (res.status === 200) {
@@ -188,7 +192,6 @@ class checkwork extends Component {
             for (let i in localArr) {
                 if (localArr[i].time !== '') {
                     time = moment(localArr[i].time).format('YYYY-MM-DD')
-                    console.log(time)
                 }
                 if (cellDate === time) {
                     return (
