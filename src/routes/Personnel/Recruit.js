@@ -44,22 +44,7 @@ class Recruit extends Component {
     }
 
     componentDidMount() {
-        let accessToken = '7aa76e6b75323f12b041b3120be49348'
-        axios.get('/api/user/cs')
-            .then(res => {
-                console.log('access_token ---- ')
-                console.log(res)
-            })
-            .catch(err => {
-                console.log(err)
-            })
     }
-    // handlePass = (e) => {
-    //     console.log('id: -- ' + e.target.dataset['id'])
-    //     this.setState({
-    //         intervieweeId: e.target.dataset['id']
-    //     })
-    // }
 
     /**
      * [是否通过]
