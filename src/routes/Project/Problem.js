@@ -174,7 +174,7 @@ class Problem extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.tableSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -218,7 +218,7 @@ const Pr = withBasicDataModel(Problem, {
             value: null
         }
     },
-    handleTableData: (dataSource) => {
+    handleData: (dataSource) => {
         let arr = []
         dataSource.forEach(data => {
             arr.push(resetObject(data))

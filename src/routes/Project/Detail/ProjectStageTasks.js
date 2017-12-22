@@ -29,7 +29,6 @@ import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
-import CustomDynamicForm from 'COMPONENTS/form/CustomDynamicForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
@@ -50,7 +49,7 @@ function getPercent(arr) {
     return percent
 }
 
-class Task extends React.Component {
+class ProjectStageTasks extends React.Component {
     state = {
         // 默认显示全部任务
         status: 'all',
@@ -58,8 +57,29 @@ class Task extends React.Component {
         userData: [],
         // 全部父级任务
         taskData: [],
-        // 选择父级是否禁用
-        taskDataDisabled: true
+        // 选择父级是否可用
+        taskDataDisabled: false,
+    }
+
+    componentDidMount() {
+        let page = this.props.location.state ? this.props.location.state.page : 1
+        let sid = this.props.stage.id
+        this.props.getData({
+            page: page,
+            stage_id: sid
+        })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.stage.id !== this.props.stage.id) {
+            this.setState({
+                status: 'all'
+            })
+            this.props.getData({
+                page: 1,
+                stage_id: nextProps.stage.id
+            })
+        }
     }
 
     getAllUser = () => {
@@ -81,7 +101,7 @@ class Task extends React.Component {
     }
 
     getAllParentsTask = () => {
-        ajax('get', '/task/all-parents')
+        ajax('get', '/task/all-parents', {params: {stage_id: this.props.stage.id}})
             .then(res => {
                 this.setState({
                     taskData: res.data
@@ -109,7 +129,8 @@ class Task extends React.Component {
 
     handleFormSubmit = (values) => {
         let params = {
-            status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value// 表示任务未完成(等待中)
+            status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value, // 表示任务未完成(等待中)
+            stage_id: this.props.stage.id
         }
         for (let i in values) {
             params[i] = values[i]
@@ -151,6 +172,7 @@ class Task extends React.Component {
         })
         let params = {
             page: 1,
+            stage_id: this.props.stage.id
         }
         if (val !== 'all') {
             params['status'] = val
@@ -159,7 +181,6 @@ class Task extends React.Component {
     }
 
     handlePidChange = (pid) => {
-        console.log(1)
         this.props.handleSetState('formFieldsValues', {
             ...this.props.formFieldsValues,
             user_id: {
@@ -175,13 +196,15 @@ class Task extends React.Component {
 
     render() {
         const {
-            route,
-            history,
+            match,
             location,
-            match
+            history,
+            stage
         } = this.props
-        const state = this.state
 
+        console.log(this.props.location)
+
+        const state = this.state
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>,
             () => <Button type="danger">删除</Button>,
@@ -391,27 +414,31 @@ class Task extends React.Component {
                 component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
         ]
-
         return (
-            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
-                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660}>
-                    <CustomForm
-                        formStyle={{width: '100%'}}
-                        formFields={formFields}
-                        handleSubmit={this.handleFormSubmit}
-                        updateFormFields={this.props.updateFormFields}
-                        formFieldsValues={this.props.formFieldsValues}
-                        isSubmitting={this.props.isSubmitting}
-                    />
-                </CustomModal>
+            <div className="w100 mt-10">
+                <Card
+                    style={{ width: '100%' }}
+                    title={`${stage.name}-任务`}
+                >
+                    <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
+                    <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
+                    <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660}>
+                        <CustomForm
+                            formStyle={{width: '100%'}}
+                            formFields={formFields}
+                            handleSubmit={this.handleFormSubmit}
+                            updateFormFields={this.props.updateFormFields}
+                            formFieldsValues={this.props.formFieldsValues}
+                            isSubmitting={this.props.isSubmitting}
+                        />
+                    </CustomModal>
+                </Card>
             </div>
         )
     }
 }
 
-const Ts = withBasicDataModel(Task, {
+const PST = withBasicDataModel(ProjectStageTasks, {
     model: 'task',
     title: '任务管理',
     formFieldsValues: {
@@ -422,7 +449,7 @@ const Ts = withBasicDataModel(Task, {
             value: null
         },
         pid: {
-            value: undefined
+            value: null
         },
         user_id: {
             value: []
@@ -445,7 +472,7 @@ const Ts = withBasicDataModel(Task, {
             value: null
         },
         pid: {
-            value: undefined
+            value: null
         },
         user_id: {
             value: []
@@ -460,6 +487,7 @@ const Ts = withBasicDataModel(Task, {
             value: null
         }
     },
+    customGetData: true,
 })
 
-export default Ts
+export default PST

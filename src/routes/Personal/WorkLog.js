@@ -104,7 +104,6 @@ class checkwork extends Component {
             showTip: false
         })
     }
-
     onSelect = (value) => {
         const onSelectDay = moment(value).format('YYYY-MM-DD')
         const localArr = this.state.note
@@ -113,7 +112,7 @@ class checkwork extends Component {
         if (localArr !== null) {
             for (id in localArr) {
                 if (localArr[id].time !== null) {
-                    time = localArr[id].time.substr(0, 10)
+                    time = moment(localArr[id].time).format('YYYY-MM-DD')
                     arr.push(time)
                 }
             }
@@ -130,7 +129,7 @@ class checkwork extends Component {
                 var editContent, atTime
                 for (ol in localArr) {
                     if (localArr[ol].time !== null) {
-                        var timearr = localArr[ol].time.substr(0, 10)
+                        var timearr = moment(localArr[ol].time).format('YYYY-MM-DD')
                         testarr.push(timearr)
                         var Flag = timearr.indexOf(onSelectDay)
                         if (Flag === 0) {
@@ -139,7 +138,7 @@ class checkwork extends Component {
                     }
                 }
                 for (i in localArr) {
-                    atTime = localArr[i].time.substr(0, 10)
+                    atTime = moment(localArr[i].time).format('YYYY-MM-DD')
                     if (onSelectDay === atTime) {
                         var editId = localArr[i].id
                     }
@@ -188,7 +187,8 @@ class checkwork extends Component {
         if (localArr !== '') {
             for (let i in localArr) {
                 if (localArr[i].time !== '') {
-                    time = localArr[i].time.substr(0, 10)
+                    time = moment(localArr[i].time).format('YYYY-MM-DD')
+                    console.log(time)
                 }
                 if (cellDate === time) {
                     return (

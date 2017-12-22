@@ -6,13 +6,17 @@
  */
 import styles from './default.less'
 import React from 'react'
-import { Layout, Breadcrumb, Icon, Card, Col, Row, List, Input, Avatar } from 'antd'
+import moment from 'moment'
+import { Layout, Breadcrumb, Icon, Card, Col, Row, Input, Avatar, List, Tooltip } from 'antd'
 import {
     Link,
     Route,
     Switch,
     Redirect
 } from 'react-router-dom'
+// 引入工具方法
+import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
+import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 const { Content, Header } = Layout
 
@@ -21,25 +25,21 @@ class Default extends React.Component {
         super(props)
         this.state = {
             time: '',
-            value: ''
+            value: '',
+            workLog: [],
+            summaryData: [],
+            weatherArr: [],
+            locationArr: [],
+            weatherTime: []
         }
     }
-    time() {
-        var d = new Date()
-        const day = d.getHours() < 10 ? 0 + d.getHours() : d.getHours()
-        const min = d.getMinutes() < 10 ? 0 + d.getMinutes() : d.getMinutes()
-        var str = d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日' + '  ' + day + ':' + min
-        this.setState({
-            time: str
-        })
-    }
     componentDidMount() {
-        this.timer = setInterval(() => this.time(), 1000)
+        this.getData()
+        this.timer = setInterval(() => this.getTime(), 1000)
     }
     componentWillUnmount() {
         clearInterval(this.timer)
     }
-
     testGetData = () => {
         axios.get('/api/user')
         .then(res => {
@@ -49,6 +49,60 @@ class Default extends React.Component {
             console.log(err)
         })
     }
+    getTime = () => {
+        var dt = new Date()
+        var h = dt.getHours()
+        var m = dt.getMinutes()
+        var s = dt.getSeconds()
+        var date = h + '时' + m + '分' + s + '秒'
+        this.setState({
+            time: date
+        })
+    }
+    getData = () => {
+        if (this.props.user) {
+            const id = this.props.user.id
+            show(`/worklog/${id}`).then(res => {
+                this.setState({
+                    workLog: res.data
+                })
+                console.log(this.state.workLog)
+            })
+            show(`/summary/?page=1&user_id=${id}`).then(res => {
+                console.log(res)
+                this.setState({
+                    summaryData: res.data.data
+                })
+            })
+        }
+        var longitude, latitude
+        const onkey = '576d7427ad2142eca98a21e9d4d5a997'
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                longitude = position.coords.longitude.toString().substr(0, 7)
+                latitude = position.coords.latitude.toString().substr(0, 6)
+                var location = longitude + ',' + latitude
+                var cid
+                ajax('get', `https://free-api.heweather.com/s6/search?location=${location}&key=${onkey}`).then(res => {
+                    cid = res.data.HeWeather6[0].basic.cid
+                    this.setState({
+                        locationArr: res.data.HeWeather6[0].basic
+                    })
+                    console.log(this.state.locationArr)
+                }).then(() => {
+                    ajax('get', `https://free-api.heweather.com/v5/now?city=${cid}&key=${onkey}`).then(res => {
+                        this.setState({
+                            weatherArr: resetObject(res.data.HeWeather5[0].now)
+                        })
+                        this.setState({
+                            weatherTime: res.data.HeWeather5[0].basic.update
+                        })
+                        console.log(this.state.weatherTime)
+                    })
+                })
+            })
+        }
+    }
 
     render() {
         const route = this.props.route
@@ -56,21 +110,51 @@ class Default extends React.Component {
         const location = this.props.location
         const match = this.props.match
         const user = this.props.user
+        const {workLog, summaryData, weatherArr, locationArr, weatherTime} = this.state
+        const LogContent = ({content}) => (
+            <p className="LogContent" dangerouslySetInnerHTML={{__html: content}} />
+            )
         const CardMsg = (
             <div className="Card">
                 <Row gutter={16}>
                     <Col span={12}>
-                        <Card title="工作日志" bordered extra={<a href="/home/personalAffairs/dayLog">More</a>}>
-                            <p>Card content</p>
-                            <p>Card content</p>
-                            <p>Card content</p>
+                        <Card title="工作日志"
+                            bordered
+                            extra={<a href="/home/personal/work-log">更多</a>}>
+                            <List
+                                itemLayout="horizontal"
+                                dataSource={workLog}
+                                renderItem={item => (
+                                    <List.Item
+                                        key={item.id}
+                                        actions={[<span>{moment(item.date).format('LL')}</span>]}>
+                                        <Tooltip title={item.content} placement="top">
+                                            <List.Item.Meta
+                                                description={<LogContent content={item.content} />} />
+                                        </Tooltip>
+                                    </List.Item>
+                                    )}
+                                />
                         </Card>
                     </Col>
                     <Col span={12}>
-                        <Card title="个人总结" bordered extra={<a href="/home/personalAffairs/weekSummary">More</a>}>
-                            <p>Card content</p>
-                            <p>Card content</p>
-                            <p>Card content</p>
+                        <Card title="个人总结"
+                            bordered
+                            extra={<a href="/home/personal/summary">更多</a>}>
+                            <List
+                                itemLayout="horizontal"
+                                dataSource={summaryData}
+                                renderItem={item => (
+                                    <List.Item
+                                        key={item.id}
+                                        actions={[<span>{moment(item.date).format('LL')}</span>]}>
+                                        <Tooltip title={<LogContent content={item.content} />} placement="top">
+                                            <List.Item.Meta
+                                                description={<LogContent content={item.content} />} />
+                                        </Tooltip>
+                                    </List.Item>
+                                    )}
+                                />
                         </Card>
                     </Col>
                 </Row>
@@ -86,7 +170,38 @@ class Default extends React.Component {
                 </Card>
             </div>
             )
-
+        const Location = ({area, city, location}) => (
+            <div style={{marginRight: 30}}>
+                <Icon type="environment" className="mr-10" />
+                {area}-{city}-{location}
+            </div>
+            )
+        const DetailWeather = (
+            <div>
+                <span style={{color: '#1890ff'}}>
+                    <span style={{fontSize: 35}}>{`${weatherArr.tmp}°`}</span>
+                    <span>{weatherArr.txt}</span>
+                </span>
+                <ul style={{display: 'inline-block'}}>
+                    <li>{weatherArr.dir}-{weatherArr.sc}</li>
+                    <li>{`体感温度  ${weatherArr.fl}℃`}</li>
+                    <li>{`能见度  ${weatherArr.vis}%`}</li>
+                    <li>{`气压  ${weatherArr.pres}hpa`}</li>
+                    <li>{`降水量  ${weatherArr.pcpn}mm`}</li>
+                    <li>{`相对湿度  ${weatherArr.hum}%`}</li>
+                </ul>
+            </div>
+            )
+        const updateTime = moment(weatherTime.loc).startOf('hour').fromNow()
+        const Weather = (
+            <Card title={<Location
+                area={locationArr.admin_area}
+                city={locationArr.parent_city}
+                location={locationArr.location} />}
+                extra={`${updateTime}更新`}>
+                {DetailWeather}
+            </Card>
+            )
         return (
             <Content className="Content">
                 <Header className="IndexHeader">
@@ -104,7 +219,8 @@ class Default extends React.Component {
                     <div className="CardWrap">
                         {CardMsg}
                         <div className="time">
-                            <p>{this.state.time}</p>
+                            {Weather}
+                            <p>{moment().format('L,a h:mm:ss')}</p>
                         </div>
                     </div>
                     <div>

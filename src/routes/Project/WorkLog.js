@@ -38,13 +38,15 @@ class checkwork extends Component {
     }
     dateCellRender = (value) => {
         const cellDate = moment(value).format('YYYY-MM-DD')
+        console.log(cellDate)
         const logData = this.state.log
         var Arr = []
         var timeArr = []
         var i = 0
         if (logData !== null) {
             for (i in logData) {
-                var time = logData[i].time.substr(0, 10)
+                var time = moment(logData[i].time).format('YYYY-MM-DD')
+                console.log(time)
                 if (timeArr.indexOf(time) === -1) {
                     timeArr.push(time)
                     var saveObj = {

@@ -3,6 +3,9 @@ const utils = {
     isString: function(StringToCheck) {
         return Object.prototype.toString.call(StringToCheck) === '[object String]'
     },
+    isNumber: function(NumberToCheck) {
+        return Object.prototype.toString.call(NumberToCheck) === '[object Number]'
+    },
     isObject: function(ObjectToCheck) {
         return Object.prototype.toString.call(ObjectToCheck) === '[object Object]'
     },
