@@ -19,7 +19,7 @@ moment.locale('zh-cn')
 
 const { Content } = Layout
 
-class checkwork extends Component {
+class WorkLog extends Component {
     state = {
         log: []
     }
@@ -97,4 +97,4 @@ class checkwork extends Component {
         )
     }
 }
-export default checkwork
+export default WorkLog

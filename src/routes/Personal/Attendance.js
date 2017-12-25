@@ -7,11 +7,10 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom'
-import ReactQuill from 'react-quill'
 
 const { Content } = Layout
 
-class checkwork extends Component {
+class Attendance extends Component {
     render() {
         console.log(this.props)
         const child = this.props.child
@@ -21,16 +20,10 @@ class checkwork extends Component {
         const match = this.props.match
 
         return (
-            <Content style={{ margin: '0 16px' }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
-                </Breadcrumb>
-                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    <Button type="primary">考勤</Button>
-                </div>
-            </Content>
+            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                <Button type="primary">考勤</Button>
+            </div>
         )
     }
 }
-export default checkwork
+export default Attendance

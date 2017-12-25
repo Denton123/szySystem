@@ -14,7 +14,7 @@ import ReactQuill from 'react-quill'
 const { Content } = Layout
 moment.locale('zh-cn')
 
-class checkwork extends Component {
+class Attendance extends Component {
     state = {
         attendanceData: [],
         calendarTime: null,
@@ -163,4 +163,4 @@ class checkwork extends Component {
         )
     }
 }
-export default checkwork
+export default Attendance

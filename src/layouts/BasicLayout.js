@@ -29,114 +29,43 @@ import {show, update} from 'UTILS/ajax'
 
 const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
-// 子路由
-// function SubRoute({route, idx, match, user, globalUpdateUser}) {
-//     return (
-//         <Switch>
-//             {
-//                 route.routes.map((child, sn) => (
-//                     <Route
-//                         key={`${idx}-${sn}`}
-//                         exact
-//                         path={`${match.path}${route.path}${child.path}`}
-//                         render={props => (
-//                             <ModelContent breadcrumbs={[route.name, child.name]}>
-//                                 <child.component {...props} child={child} route={route} user={user} globalUpdateUser={globalUpdateUser} />
-//                             </ModelContent>
-//                         )}
-//                     />
-//                 ))
-//             }
-//             {
-//                 route.routes.map((child, sn) => {
-//                     if (child.routes) {
-//                         return (
-//                             <Switch key={sn}>
-//                                 {child.routes.map((ch, i) => (
-//                                     <Route
-//                                         key={`${idx}-${sn}-${i}`}
-//                                         exact={ch.exact}
-//                                         path={`${match.path}${route.path}${child.path}${ch.path}`}
-//                                         render={props => (
-//                                             <ModelContent breadcrumbs={[route.name, child.name, ch.name]}>
-//                                                 <ch.component {...props} route={route} user={user} globalUpdateUser={globalUpdateUser} />
-//                                             </ModelContent>
-//                                         )}
-//                                     />
-//                                 ))}
-//                             </Switch>
-//                         )
-//                     }
-//                 })
-//             }
-//         </Switch>
-//     )
-// }
 
-// function SubRoute({route, idx, mpath, bdcbs, user, globalUpdateUser}) {
-//     let breadcrumbs = [].concat(bdcbs)
-//     return (
-//         <Switch>
-//             {
-//                 route.routes.map((child, sn) => (
-//                     <Route
-//                         key={`${idx}-${sn}`}
-//                         exact
-//                         path={`${mpath}${route.path}${child.path}`}
-//                         render={props => (
-//                             <ModelContent breadcrumbs={(() => {
-//                                 breadcrumbs.push(child.name)
-//                                 return breadcrumbs
-//                             })()}>
-//                                 <child.component {...props} child={child} route={route} user={user} globalUpdateUser={globalUpdateUser} />
-//                             </ModelContent>
-//                         )}
-//                     />
-//                 ))
-//             }
-//             {
-//                 route.routes && route.routes.map((child, sn) => (
-//                     <SubRoute
-//                         key={sn}
-//                         route={child}
-//                         idx={`${idx}-${sn}`}
-//                         mpath={`${mpath}${route.path}`}
-//                         bdcbs={(() => {
-//                             breadcrumbs.push(child.name)
-//                             return breadcrumbs
-//                         })()}
-//                         user={user}
-//                         globalUpdateUser={globalUpdateUser}
-//                     />
-//                 ))
-//             }
-//         </Switch>
-//     )
-// }
-
-function SubRoute({route, idx, mpath, bdcbs, user, globalUpdateUser}) {
-    let breadcrumbs = [].concat(bdcbs)
-    return (
-        <Switch>
-            {
-                route.routes.map((child, sn) => (
-                    <Route
-                        key={`${idx}-${sn}`}
-                        exact
-                        path={`${mpath}${route.path}${child.path}`}
-                        render={props => (
-                            <ModelContent breadcrumbs={(() => {
-                                breadcrumbs.push(child.name)
-                                return breadcrumbs
-                            })()}>
-                                <child.component {...props} child={child} route={route} user={user} globalUpdateUser={globalUpdateUser} />
-                            </ModelContent>
-                        )}
-                    />
-                ))
+// 重整路由结构
+function resetRoute(routes) {
+    let arr = []
+    routes.forEach(r => {
+        let obj = {}
+        if (r.routes) {
+            r.routes.forEach(rc => {
+                if (rc.routes) {
+                    let children = []
+                    rc.routes.forEach(rcc => {
+                        obj = {
+                            component: rcc.component,
+                            name: `${r.name},${rc.name},${rcc.name}`,
+                            path: `${r.path}${rc.path}${rcc.path}`
+                        }
+                        children.push(obj)
+                    })
+                    arr.push(children)
+                }
+                obj = {
+                    component: rc.component,
+                    name: `${r.name},${rc.name}`,
+                    path: `${r.path}${rc.path}`
+                }
+                arr.push(obj)
+            })
+        } else {
+            obj = {
+                component: r.component,
+                name: r.name,
+                path: r.path
             }
-        </Switch>
-    )
+            arr.push(obj)
+        }
+    })
+    return arr
 }
 
 // 模块的内容
@@ -234,6 +163,7 @@ class BasicLayout extends React.Component {
         } = this.props
         const {skin} = this.state
         const {fontSize} = this.state
+        const newRoute = resetRoute(routes)
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
@@ -269,7 +199,7 @@ class BasicLayout extends React.Component {
                                 >
                                     {
                                         route.routes.map((child, sn) => (
-                                            <Menu.Item key={`${route.path}${child.path}`} className={child.disable ? 'hide' : ''} >
+                                            <Menu.Item key={`${route.path}${child.path}`}>
                                                 <Link to={`${match.path}${route.path}${child.path}`}>{child.name}</Link>
                                             </Menu.Item>
                                         ))
@@ -315,10 +245,24 @@ class BasicLayout extends React.Component {
                     <Redirect to={`${match.path}/default`} />
                 )} />
                 {
-                    routes.map((route, idx) => {
-                        if (route.routes) {
+                    newRoute.map((route, idx) => {
+                        if (isArray(route)) {
                             return (
-                                <SubRoute key={idx} route={route} idx={idx} bdcbs={[route.name]} mpath={match.path} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
+                                <Switch key={idx}>
+                                    {
+                                        route.map((rc, sn) => (
+                                            <Route
+                                                key={sn}
+                                                exact
+                                                path={`${match.path}${rc.path}`}
+                                                render={props => (
+                                                    <ModelContent breadcrumbs={rc.name.split(',')}>
+                                                        <rc.component route={rc} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
+                                                    </ModelContent>
+                                                )} />
+                                        ))
+                                    }
+                                </Switch>
                             )
                         } else {
                             return (
@@ -327,7 +271,7 @@ class BasicLayout extends React.Component {
                                     exact
                                     path={`${match.path}${route.path}`}
                                     render={props => (
-                                        <ModelContent breadcrumbs={[route.name]}>
+                                        <ModelContent breadcrumbs={route.name.split(',')}>
                                             <route.component route={route} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
                                         </ModelContent>
                                     )} />
