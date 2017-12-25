@@ -186,12 +186,6 @@ class MyMission extends Component {
                     <span>{record['Users'][0]['end_date']}</span>
                 )
             },
-            // {
-            //     title: '进度',
-            //     dataIndex: 'progress',
-            //     key: 'progress',
-            //     render: text => <Progress percent={50} size="small" status="active" />
-            // },
             {
                 title: '操作',
                 key: 'action',

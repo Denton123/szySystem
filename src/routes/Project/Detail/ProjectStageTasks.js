@@ -196,8 +196,6 @@ class ProjectStageTasks extends React.Component {
             stage
         } = this.props
 
-        console.log(this.props.location)
-
         const state = this.state
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>,

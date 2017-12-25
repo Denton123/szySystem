@@ -113,7 +113,7 @@ class PermissionRole extends Component {
                 label: '权限选择',
                 field: 'permission_ids',
                 valid: {
-                    rules: [{required: true, message: '请选择角色权限'}]
+                    // rules: [{required: true, message: '请选择角色权限'}]
                 },
                 component: (<Input autoComplete="off" placeholder="邮箱" />)
             },
@@ -168,6 +168,7 @@ const PR = withBasicDataModel(PermissionRole, {
             value: null
         },
     },
+    locationSearch: false,
 })
 
 export default PR
