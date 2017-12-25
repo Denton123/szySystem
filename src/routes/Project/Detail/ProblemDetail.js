@@ -55,9 +55,6 @@ class ProblemDetail extends Component {
         this.props.history.push('/home/project/problem')
     }
     getData = (callback) => {
-        ajax('get', 'https://free-api.heweather.com/v5/now?city=CN101280101&key=576d7427ad2142eca98a21e9d4d5a997').then(res => {
-            console.log(res)
-        })
         let id = this.props.match.params.id
         show(`problem/${id}`).then(res => {
             this.setState({

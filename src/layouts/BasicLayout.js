@@ -93,9 +93,6 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
-        this.setState({
-            theme: localStorage.getItem('theme')
-        })
         this.getData()
     }
 
@@ -110,16 +107,18 @@ class BasicLayout extends React.Component {
         fontSize: ''
     }
     getData = () => {
-        let uid = this.props.user.id
-        show(`user/${uid}`)
-            .then(res => {
-                console.log(res)
-                this.setState({
-                    skin: res.data.skin,
-                    fontSize: res.data.font_size
+        if (this.props.user) {
+            let uid = this.props.user.id
+            show(`user/${uid}`)
+                .then(res => {
+                    console.log(res)
+                    this.setState({
+                        skin: res.data.skin,
+                        fontSize: res.data.font_size
+                    })
+                    console.log(this.state.skin)
                 })
-                console.log(this.state.skin)
-            })
+        }
     }
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
