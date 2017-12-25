@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
-import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, Spin } from 'antd'
+import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, Spin, Select, message } from 'antd'
 import {
     Link,
     Route,
@@ -11,21 +11,27 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 
+// 引入工具方法
+import { ajax } from 'UTILS/ajax'
+
 const { Content } = Layout
+const Option = Select.Option
 moment.locale('zh-cn')
 
 class checkwork extends Component {
     state = {
         attendanceData: [],
         calendarTime: null,
-        loading: false
+        loading: false,
+        selectData: [],
+        selectedValue: ''
     }
     componentDidMount() {
         this.setState({
             calendarTime: moment().format('YYYY-MM-DD'),
             loading: true
         }, () => {
-            this.requestData()
+            this.getSelectData()
         })
     }
     getListData = (value) => {
@@ -108,50 +114,96 @@ class checkwork extends Component {
             calendarTime: moment(value).format('YYYY-MM-DD'),
             loading: true
         }, () => {
-            this.requestData()
+            this.getAttendanceData(this.state.selectedValue)
         })
     }
 
     onSelect = (value) => {
         this.setState({
-            calendarTime: moment(value).format('YYYY-MM-DD'),
-            loading: true
-        }, () => {
-            this.requestData()
+            calendarTime: moment(value).format('YYYY-MM-DD')
         })
+        if (!(moment(moment(value).format('YYYY-MM')).isSame(moment(this.state.calendarTime).format('YYYY-MM')))) {
+            this.setState({
+                loading: true
+            }, () => {
+                this.getAttendanceData(this.state.selectedValue)
+            })
+        }
     }
 
-    requestData = () => {
+    handleChange = (value) => {
+        console.log(`selected ${value}`)
+        this.setState({
+            loading: true,
+            selectedValue: value
+        })
+        this.getAttendanceData(value)
+    }
+
+    getAttendanceData = (value) => {
         var time = this.state.calendarTime
-        axios.get(`/user/cs?time=${time}`)
+        axios.get(`/api/attendance?time=${time}&realname=${value}`)
             .then(res => {
                 console.log('access_token ---- ')
                 console.log(res)
                 let data = []
-                if (res.data !== []) {
-                    res.data.forEach((arrItem) => {
-                        data = [...arrItem, ...data]
+                if ((typeof res.data) !== 'string') {
+                    if (res.data !== null) {
+                        res.data.forEach((arrItem) => {
+                            data = [...arrItem, ...data]
+                        })
+                    }
+                    this.setState({
+                        attendanceData: data,
+                        loading: false
+                    })
+                } else {
+                    message.error(res.data)
+                    this.setState({
+                        loading: false,
+                        attendanceData: []
                     })
                 }
-                this.setState({
-                    attendanceData: data,
-                    loading: false
-                })
             })
             .catch(err => {
                 console.log(err)
+                this.setState({
+                    loading: false
+                })
+                message.error(err.errmsg)
             })
     }
+
+    getSelectData = () => {
+        ajax('get', '/user/all')
+        .then(res => {
+            console.log(res)
+            this.setState({
+                selectData: res.data,
+                loading: false
+            })
+            message.success('请选择查询的人员姓名')
+        })
+    }
     render() {
-        const child = this.props.child
-        const route = this.props.route
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
+        const {
+            child,
+            route,
+            history,
+            location,
+            match
+        } = this.props
 
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Spin spinning={this.state.loading} size="large">
+                    <Select style={{ width: 200 }} onChange={this.handleChange} placeholder="请选择查询的人员">
+                        {
+                            this.state.selectData.map((person) => {
+                                return <Option value={person.realname} key={person.id}>{person.realname}</Option>
+                            })
+                        }
+                    </Select>
                     <Calendar
                         dateCellRender={this.dateCellRender}
                         monthCellRender={this.monthCellRender}
