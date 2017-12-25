@@ -147,12 +147,6 @@ class WorkerAffairs extends Component {
                 key: 'quit_date'
             },
             {
-                title: '用户类型',
-                dataIndex: 'type',
-                key: 'type',
-                render: text => <span>{text === '0' ? '最高级管理' : text === '1' ? '管理' : '普通用户'}</span>
-            },
-            {
                 title: '操作',
                 key: 'action',
                 width: 200,
