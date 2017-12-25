@@ -7,11 +7,15 @@
 @font_small: 12px;
 @font_middle: 14px;
 @font_big: 16px;
+
+.color(@bg){
+	background: @bg;
+	border-color: @bg;
+}
 // 主题
 .theme(@bg) {
-	.ant-btn-primary, .layout-header, .ant-radio-inner:after{
-		background: @bg;
-		border: @bg;
+	.ant-btn-primary, .layout-header, .ant-radio-inner:after, .ant-pagination-item-active{
+		.color(@bg)
 	}
 	.ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
 		background: @bg;
@@ -20,12 +24,14 @@
 		border-color: @bg;
 	}
 }
+//字体大小
 .fontSize(@fontSize) {
 	.ant-btn-primary{
 		font-size: @fontSize;
 	}
 }
-// 蓝色主题
+
+
 .blue{
     .theme(@blue_color)
 }
