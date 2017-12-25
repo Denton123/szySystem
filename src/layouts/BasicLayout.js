@@ -164,9 +164,6 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
-        this.setState({
-            theme: localStorage.getItem('theme')
-        })
         this.getData()
     }
 

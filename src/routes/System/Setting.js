@@ -188,6 +188,7 @@ class Setting extends Component {
     }
     componentDidMount() {
         this.getData()
+        console.log(this.props.test)
     }
 
     getData = () => {
