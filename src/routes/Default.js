@@ -89,7 +89,6 @@ class Default extends React.Component {
                     this.setState({
                         locationArr: res.data.HeWeather6[0].basic
                     })
-                    console.log(this.state.locationArr)
                 }).then(() => {
                     ajax('get', `https://free-api.heweather.com/v5/now?city=${cid}&key=${onkey}`).then(res => {
                         this.setState({
@@ -98,7 +97,6 @@ class Default extends React.Component {
                         this.setState({
                             weatherTime: res.data.HeWeather5[0].basic.update
                         })
-                        console.log(this.state.weatherTime)
                     })
                 })
             })

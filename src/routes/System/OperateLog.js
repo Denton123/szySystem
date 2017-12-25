@@ -111,7 +111,7 @@ class OperateLog extends Component {
                     updateFormFields={this.props.updateQueryFields}
                     formFieldsValues={this.props.queryFieldValues}
                 />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} />
+                <Table className="mt-10" {...this.props.dataSetting} rowKey={record => record.id} columns={columns} />
             </div>
         )
     }

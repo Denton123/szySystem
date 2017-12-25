@@ -20,7 +20,7 @@ import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 moment.locale('zh-cn')
 const { Content } = Layout
 const confirm = Modal.confirm
-class checkwork extends Component {
+class WorkLog extends Component {
     state = {
         show: false,
         text: '',
@@ -232,4 +232,4 @@ class checkwork extends Component {
         )
     }
 }
-export default checkwork
+export default WorkLog

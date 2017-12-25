@@ -1,36 +1,59 @@
-import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
-import { Layout, Breadcrumb, Icon, Button } from 'antd'
+import {
+    Card,
+} from 'antd'
 import {
     Link,
     Route,
     Switch,
     Redirect
 } from 'react-router-dom'
-import ReactQuill from 'react-quill'
 
-const { Content } = Layout
+import User from './Detail/PermissionUser'
+import Role from './Detail/PermissionRole'
 
-class checkwork extends Component {
+class Permission extends Component {
+    state = {
+        key: 'user',
+    }
+    onTabChange = (type, key) => {
+        this.setState({
+            [type]: key
+        })
+        // this.props.history.push(`${this.props.location.pathname}?current=${key}`, {current: key})
+    }
     render() {
-        console.log(this.props)
-        const child = this.props.child
-        const route = this.props.route
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
+        const {
+            history,
+            location,
+            match,
+            route
+        } = this.props
 
+        const tabList = [{
+            key: 'user',
+            tab: '用户',
+        }, {
+            key: 'role',
+            tab: '角色',
+        }]
+
+        const contentList = {
+            user: <User {...this.props} />,
+            role: <Role {...this.props} />,
+        }
         return (
-            <Content style={{ margin: '0 16px' }}>
-                <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item>{route.name}</Breadcrumb.Item>
-                    <Breadcrumb.Item>{child.name}</Breadcrumb.Item>
-                </Breadcrumb>
-                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    info
-                </div>
-            </Content>
+            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                <Card
+                    style={{ width: '100%' }}
+                    tabList={tabList}
+                    onTabChange={(key) => { this.onTabChange('key', key) }}
+                >
+                    {contentList[this.state.key]}
+                </Card>
+            </div>
         )
     }
 }
-export default checkwork
+
+export default Permission

@@ -18,7 +18,7 @@ const { Content } = Layout
 const Option = Select.Option
 moment.locale('zh-cn')
 
-class checkwork extends Component {
+class Attendance extends Component {
     state = {
         attendanceData: [],
         calendarTime: null,
@@ -215,4 +215,4 @@ class checkwork extends Component {
         )
     }
 }
-export default checkwork
+export default Attendance
