@@ -41,12 +41,14 @@ class WorkLog extends Component {
     }
 
     getLogData = () => {
-        const id = this.props.user.id
-        show(`/worklog/${id}`).then(res => {
-            this.setState({
-                note: res.data
+        if (this.props.user) {
+            const id = this.props.user.id
+            show(`/worklog/${id}`).then(res => {
+                this.setState({
+                    note: res.data
+                })
             })
-        })
+        }
     }
     handleok = (content) => {
         if (content === '') {
@@ -81,14 +83,16 @@ class WorkLog extends Component {
                 var i, time, editId
                 var okArr = []
                 for (i in note) {
-                    console.log(note)
                     if (note[i].time !== null) {
                         time = note[i].time.substr(0, 10)
+                        console.log(note)
+                        console.log(selectDay + 'selectDay')
+                        console.log(time + 'time')
                         if (selectDay === time) {
                             editId = note[i].id
                         }
                     }
-                    console.log(note[i].time)
+                    // console.log(note[i].time)
                 }
                 update(`/worklog/${editId}`, saveObj).then(res => {
                     if (res.status === 200) {

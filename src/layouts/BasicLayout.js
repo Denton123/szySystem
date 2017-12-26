@@ -116,7 +116,6 @@ class BasicLayout extends React.Component {
                         skin: res.data.skin,
                         fontSize: res.data.font_size
                     })
-                    console.log(this.state.skin)
                 })
         }
     }
