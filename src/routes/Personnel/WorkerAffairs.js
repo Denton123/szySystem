@@ -61,27 +61,27 @@ class WorkerAffairs extends Component {
             {
                 label: '姓名',
                 field: 'realname',
-                component: (<Input autoComplete="off" placeholder="姓名" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
             },
             {
                 label: '邮箱',
                 field: 'email',
-                component: (<Input autoComplete="off" placeholder="邮箱" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="邮箱" />)
             },
             {
                 label: '职位',
                 field: 'job',
-                component: (<Input autoComplete="off" placeholder="职位" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="职位" />)
             },
             {
                 label: '入职日期',
                 field: 'entry_date',
-                component: <CustomRangePicker {...entryDate} />,
+                component: <CustomRangePicker className="mb-10" {...entryDate} />,
             },
             {
                 label: '离职日期',
                 field: 'quit_date',
-                component: <CustomRangePicker {...quitDate} />,
+                component: <CustomRangePicker className="mb-10" {...quitDate} />,
             }
         ]
         const operationBtn = [

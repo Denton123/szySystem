@@ -161,7 +161,7 @@ class Attendance extends Component {
 
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <Spin spinning={this.state.loading} size="large">
+                <Spin spinning={this.state.loading}>
                     <Calendar
                         dateCellRender={this.dateCellRender}
                         monthCellRender={this.monthCellRender}

@@ -241,9 +241,22 @@ class Setting extends Component {
                 // 直接更新内部表单数据
                 // this.props.updateEditFormFieldsValues(res.data)
                 console.log(res)
+                message.success('保存成功！')
+                this.setState({
+                    formFieldsValues: {
+                        ...this.state.formFieldsValues,
+                        password: {
+                            value: null
+                        },
+                        confirm: {
+                            value: null
+                        }
+                    }
+                })
             })
             .catch(err => {
                 console.log(err)
+                message.error('保存失败！')
             })
     }
 

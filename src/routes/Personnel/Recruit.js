@@ -130,12 +130,12 @@ class Recruit extends Component {
             {
                 label: '职位',
                 field: 'job',
-                component: (<Input autoComplete="off" placeholder="请输入职位" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="请输入职位" />)
             },
             {
                 label: '面试时间',
                 field: 'date',
-                component: <CustomRangePicker {...entryDate} />
+                component: <CustomRangePicker className="mb-10" {...entryDate} />
             }
         ]
 
@@ -218,7 +218,7 @@ class Recruit extends Component {
                 valid: {
                     rules: [{required: true, message: '请输入职位'}]
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="面试职位" />)
+                component: (<Input autoComplete="off" placeholder="面试职位" />)
             },
             {
                 label: '面试日期',

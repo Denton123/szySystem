@@ -67,7 +67,7 @@ class Contract extends Component {
             {
                 label: '姓名',
                 field: 'realname',
-                component: (<Input autoComplete="off" placeholder="姓名" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
             }
         ]
         const operationBtn = [

@@ -35,7 +35,7 @@ class InputRange extends React.Component {
     }
     render() {
         return (
-            <InputGroup compact style={{ width: 250, marginRight: 50 }} >
+            <InputGroup className="mb-10" compact style={{ width: 250, marginRight: 50 }} >
                 <InputNumber onChange={this.handleNumberTarget('number1')} style={{ width: 100, textAlign: 'center' }} placeholder="Minimum" />
                 <Input style={{ width: 24, borderLeft: 0, pointerEvents: 'none', backgroundColor: '#fff' }} placeholder="~" disabled />
                 <InputNumber onChange={this.handleNumberTarget('number2')} style={{ width: 100, textAlign: 'center', borderLeft: 0 }} placeholder="Maximum" />

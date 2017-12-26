@@ -79,7 +79,7 @@ class Equipment extends Component {
             {
                 label: '名称',
                 field: 'name',
-                component: (<Input autoComplete="off" placeholder="姓名" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
             },
             {
                 label: '单价',
@@ -93,13 +93,13 @@ class Equipment extends Component {
             {
                 label: '购买日期',
                 field: 'date',
-                component: <CustomRangePicker {...entryDate} />,
+                component: <CustomRangePicker className="mb-10" {...entryDate} />,
             }
         ]
 
         // 操作
         const operationBtn = [
-            () => <Button type="primary" onClick={this.props.handleAdd}>新增</Button>,
+            () => <Button className="mr-10" type="primary" onClick={this.props.handleAdd} >新增</Button>,
             () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>
         ]
 

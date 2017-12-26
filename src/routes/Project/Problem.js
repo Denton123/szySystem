@@ -70,17 +70,17 @@ class Problem extends Component {
             {
                 label: '发布者',
                 field: 'realname',
-                component: (<Input autoComplete="off" placeholder="发布者" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="发布者" />)
             },
             {
                 label: '关键字',
                 field: 'keyword',
-                component: (<Input autoComplete="off" placeholder="关键字" />)
+                component: (<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
             },
             {
                 label: '发布日期',
                 field: 'date',
-                component: <CustomRangePicker showTime={false} format={'YYYY-MM-DD'} />
+                component: <CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />
             }
         ]
 
