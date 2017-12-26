@@ -3,7 +3,8 @@ import {
     Button,
     Table,
     Input,
-    Select
+    Select,
+    message
 } from 'antd'
 import {
     Link,
@@ -11,6 +12,8 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom'
+
+import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -25,8 +28,57 @@ class PermissionUser extends Component {
     state = {
         roleData: []
     }
+    componentDidMount() {
+        // let params = {
+        //     _current: this.props.current,
+        //     page: this.props.location.state ? this.props.location.state.page : 1,
+        // }
+        // this.props.getData(params)
+        ajax('get', '/role/all')
+        .then(res => {
+            this.setState({
+                roleData: res.data
+            })
+        })
+    }
     setRole = (e) => {
-        console.log('setRole')
+        this.props.handleSetState('operationType', 'edit')
+        let id = e.target.dataset['id']
+        ajax('get', `/role/get-role/${id}`)
+        .then(res => {
+            this.props.handleSetState('modalSetting', {
+                ...this.props.modalSetting,
+                visible: true,
+                title: `${this.props.title}`
+            })
+            this.props.updateEditFormFieldsValues(res.data)
+        })
+    }
+    handleFormSubmit = (values) => {
+        let id = this.props.formFieldsValues.id.value
+        ajax('post', `/role/set-role/${id}`, values)
+        .then(res => {
+            this.props.handleSetState('isSubmitting', false)
+            let newDataSource = []
+            this.props.dataSetting.dataSource.forEach(data => {
+                if (data.id === res.data.id) {
+                    newDataSource.push(res.data)
+                } else {
+                    newDataSource.push(data)
+                }
+            })
+            this.props.handleSetState('dataSetting', {
+                ...this.props.dataSetting,
+                dataSource: newDataSource
+            })
+            this.props.handleModalCancel()
+            message.success('保存成功')
+        })
+        .catch(err => {
+            console.log(err)
+            message.success('保存失败')
+            this.props.handleSetState('isSubmitting', false)
+        })
     }
     render() {
         const {
@@ -81,6 +133,15 @@ class PermissionUser extends Component {
                 title: '用户角色',
                 dataIndex: 'role',
                 key: 'role',
+                render: (text, record) => {
+                    let roles = []
+                    record.Roles.forEach(r => {
+                        roles.push(r.display_name)
+                    })
+                    return (
+                        <div>{roles.join(',')}</div>
+                    )
+                }
             },
             {
                 title: '操作',
@@ -130,7 +191,7 @@ class PermissionUser extends Component {
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}
-                        handleSubmit={this.props.handleFormSubmit}
+                        handleSubmit={this.handleFormSubmit}
                         updateFormFields={this.props.updateFormFields}
                         formFieldsValues={this.props.formFieldsValues}
                         isSubmitting={this.props.isSubmitting}
@@ -143,7 +204,7 @@ class PermissionUser extends Component {
 
 const PU = withBasicDataModel(PermissionUser, {
     model: 'user',
-    title: '用户角色设置',
+    title: '设置用户角色',
     queryFieldValues: {
         realname: {
             value: null
@@ -168,6 +229,7 @@ const PU = withBasicDataModel(PermissionUser, {
             value: []
         },
     },
+    // customGetData: true,
 })
 
 export default PU

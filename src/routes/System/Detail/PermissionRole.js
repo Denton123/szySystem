@@ -4,7 +4,7 @@ import {
     Button,
     Divider,
     Table,
-    Tree
+    List
 } from 'antd'
 import {
     Link,
@@ -13,6 +13,7 @@ import {
     Redirect
 } from 'react-router-dom'
 
+import {resetObject} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -22,16 +23,120 @@ import CustomForm from 'COMPONENTS/form/CustomForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
+import CustomTree from 'COMPONENTS/tree/CustomTree'
+
+/**
+ * [setPermissions 设置tree结构的权限]
+ * @Author   szh
+ * @DateTime 2017-12-26
+ * @param    {array}   permission [权限接口数组]
+ * @return   {array}              [权限数组]
+ */
+function setPermissions(permission) {
+    let arr = []
+    permission.forEach(per => {
+        arr.push({
+            title: per.display_name,
+            key: `permission-${per.id}`
+        })
+    })
+    return arr
+}
+
+/**
+ * [setList 设置tree数据结构]
+ * @Author   szh
+ * @DateTime 2017-12-26
+ * @param    {array}   menu     [菜单数组]
+ * @return   {array}            [重置后的tree结构数组]
+ */
+function setList(menu) {
+    let arr = []
+    menu.forEach(m => {
+        let obj = {
+            title: m.name,
+            key: `menu-${m.id}`,
+        }
+        if (m.children || m.Permissions.length > 0) {
+            obj['children'] = []
+        }
+        if (m.Permissions && m.Permissions.length > 0) {
+            obj['children'].push({
+                title: '权限',
+                key: `permission-0-${m.id}`,
+                children: setPermissions(m.Permissions)
+            })
+        }
+        if (m.children) {
+            obj['children'].push({
+                title: '下级菜单',
+                key: `menu-0-${m.id}`,
+                children: setList(m.children)
+            })
+        }
+        arr.push(obj)
+    })
+    return arr
+}
+
 class PermissionRole extends Component {
     state = {
-        permission: []
+        permission: [], // 记录当前角色保存的权限
+        permissionList: [] // 后台返回的菜单和权限结构
+    }
+    componentDidMount() {
+        // let params = {
+        //     _current: this.props.current,
+        //     page: this.props.location.state ? this.props.location.state.page : 1,
+        // }
+        // this.props.getData(params)
+        ajax('get', '/permission/all')
+            .then(res => {
+                let list = setList(res.data)
+                this.setState({
+                    permissionList: list
+                })
+            })
     }
     add = (e) => {
-        ajax('get', '/role/all-permission')
-        .then(res => {
-            console.log(res)
-        })
         this.props.handleAdd(e)
+    }
+    edit = (e) => {
+        this.props.handleEdit(e, (res) => {
+            this.props.handleSetState('modalSetting', {
+                ...this.props.modalSetting,
+                visible: true,
+                title: `${this.props.title}-编辑`
+            })
+            this.props.updateEditFormFieldsValues(resetObject(res.data))
+            let permission = []
+            res.data.Permissions.forEach(p => {
+                permission.push(`permission-${p.id}`)
+            })
+            this.setState({
+                permission: permission
+            })
+        })
+    }
+    handleTreeCheck = (checkedKeys) => {
+        this.setState({
+            permission: checkedKeys
+        })
+    }
+    handleFormSubmit = (values) => {
+        let permission = []
+        this.state.permission.forEach(p => {
+            // 权限，而且不包含0的值
+            if (p.indexOf('permission') > -1 && p.indexOf('0') === -1) {
+                let pid = p.split('-')[p.split('-').length - 1]
+                permission.push(parseInt(pid))
+            }
+        })
+        values['permission_ids'] = permission
+        this.props.handleFormSubmit(values)
+        this.setState({
+            permission: []
+        })
     }
     render() {
         const {
@@ -40,6 +145,8 @@ class PermissionRole extends Component {
             match,
             route
         } = this.props
+
+        const state = this.state
 
         const condition = [
             {
@@ -72,7 +179,7 @@ class PermissionRole extends Component {
                 width: 200,
                 render: (text, record) => (
                     <span>
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleEdit}>编辑</a>
+                        <a href="javascript:;" data-id={text.id} onClick={this.edit}>编辑</a>
                         <Divider type="vertical" />
                         <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
                     </span>
@@ -81,14 +188,26 @@ class PermissionRole extends Component {
         ]
 
         const expandedRowRender = (record, text) => {
-            // {
-            //     title: '权限选择',
-            //     dataIndex: 'Permission_ids',
-            //     key: 'Permission_ids',
-            // },
-            // 显示该角色有的权限
-            // TODO
-            return null
+            return (
+                <List
+                    size="small"
+                    style={{maxHeight: 220, overflowY: 'auto'}}
+                    dataSource={record.Permissions}
+                    renderItem={item => (
+                        <List.Item>
+                            <List.Item.Meta
+                                title={<div>名称：{item.display_name}</div>}
+                                description={
+                                    <div>
+                                        <span>方法：{item.method}</span>
+                                        <span>资源：{item.resource}</span>
+                                    </div>
+                                }
+                            />
+                        </List.Item>
+                    )}
+                />
+            )
         }
 
         // 表单
@@ -115,7 +234,7 @@ class PermissionRole extends Component {
                 valid: {
                     // rules: [{required: true, message: '请选择角色权限'}]
                 },
-                component: (<Input autoComplete="off" placeholder="邮箱" />)
+                component: (<CustomTree checkedKeys={state.permission} onCheck={this.handleTreeCheck} list={state.permissionList} />)
             },
         ]
         return (
@@ -135,7 +254,7 @@ class PermissionRole extends Component {
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}
-                        handleSubmit={this.props.handleFormSubmit}
+                        handleSubmit={this.handleFormSubmit}
                         updateFormFields={this.props.updateFormFields}
                         formFieldsValues={this.props.formFieldsValues}
                         isSubmitting={this.props.isSubmitting}
@@ -168,7 +287,7 @@ const PR = withBasicDataModel(PermissionRole, {
             value: null
         },
     },
-    locationSearch: false,
+    // customGetData: true,
 })
 
 export default PR

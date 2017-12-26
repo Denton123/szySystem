@@ -16,11 +16,25 @@ class Permission extends Component {
     state = {
         key: 'user',
     }
+    // componentWillMount() {
+    //     console.log(this.props.location.state)
+    //     this.setState({
+    //         key: this.props.location.state && this.props.location.state._current ? this.props.location.state._current : 'user'
+    //     })
+    // }
+    // componentWillReceiveProps(nextProps) {
+    //     console.log(nextProps)
+    // }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return nextProps.id !== this.props.id
+    // }
     onTabChange = (type, key) => {
         this.setState({
             [type]: key
         })
-        // this.props.history.push(`${this.props.location.pathname}?current=${key}`, {current: key})
+        this.props.history.replace(this.props.location.pathname, {
+            page: 1
+        })
     }
     render() {
         const {
@@ -39,8 +53,8 @@ class Permission extends Component {
         }]
 
         const contentList = {
-            user: <User {...this.props} />,
-            role: <Role {...this.props} />,
+            user: <User {...this.props} current={this.state.key} />,
+            role: <Role {...this.props} current={this.state.key} />,
         }
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
