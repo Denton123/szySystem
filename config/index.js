@@ -45,11 +45,8 @@ module.exports = {
             '/stage/**': proxyTableOptions,
             '/task/**': proxyTableOptions,
             '/answer/**': proxyTableOptions,
-<<<<<<< HEAD
             '/attendance/**': proxyTableOptions,
-=======
             '/role/**': proxyTableOptions,
->>>>>>> 02498e90f5ab19b411dacf732cdbf9558ad8922f
             // 上传文件
             '/uploadFiles/**': proxyTableOptions,
             // 上传图片
