@@ -139,6 +139,7 @@ function withBasicDataModel(PageComponent, Datas) {
             let getList = isFunction(customAjax) ? customAjax(data) : index(this.state.model, data)
             getList
                 .then(res => {
+                    console.log(res)
                     let pagination = {
                         current: res.data.currentPage,
                         pageSize: res.data.pageSize,

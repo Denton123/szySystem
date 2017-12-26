@@ -7,7 +7,7 @@
 import styles from './default.less'
 import React from 'react'
 import moment from 'moment'
-import { Layout, Breadcrumb, Icon, Card, Col, Row, Input, Avatar, List, Tooltip } from 'antd'
+import { Layout, Breadcrumb, Icon, Card, Col, Row, Input, Avatar, List, Tooltip, Spin } from 'antd'
 import {
     Link,
     Route,
@@ -30,7 +30,8 @@ class Default extends React.Component {
             summaryData: [],
             weatherArr: [],
             locationArr: [],
-            weatherTime: []
+            weatherTime: [],
+            loading: true
         }
     }
     componentDidMount() {
@@ -39,15 +40,6 @@ class Default extends React.Component {
     }
     componentWillUnmount() {
         clearInterval(this.timer)
-    }
-    testGetData = () => {
-        axios.get('/api/user')
-        .then(res => {
-            console.log(res)
-        })
-        .catch(err => {
-            console.log(err)
-        })
     }
     getTime = () => {
         var dt = new Date()
@@ -66,27 +58,24 @@ class Default extends React.Component {
                 this.setState({
                     workLog: res.data
                 })
-                console.log(this.state.workLog)
             })
             show(`/summary/?page=1&user_id=${id}`).then(res => {
-                console.log(res)
                 this.setState({
                     summaryData: res.data.data
                 })
             })
         }
-        var longitude, latitude
+        var longitude, latitude, cid
         const onkey = '576d7427ad2142eca98a21e9d4d5a997'
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
                 longitude = position.coords.longitude.toString().substr(0, 7)
                 latitude = position.coords.latitude.toString().substr(0, 6)
                 var location = longitude + ',' + latitude
-                var cid, test
                 ajax('get', `https://free-api.heweather.com/s6/search?location=${location}&key=${onkey}`).then(res => {
                     cid = res.data.HeWeather6[0].basic.cid
-                    test = res.data.HeWeather6[0].basic.parent_city
                     this.setState({
+                        loading: false,
                         locationArr: res.data.HeWeather6[0].basic
                     })
                 }).then(() => {
@@ -109,7 +98,7 @@ class Default extends React.Component {
         const location = this.props.location
         const match = this.props.match
         const user = this.props.user
-        const {workLog, summaryData, weatherArr, locationArr, weatherTime} = this.state
+        const {workLog, summaryData, weatherArr, locationArr, weatherTime, loading} = this.state
         const LogContent = ({content}) => (
             <p className="LogContent" dangerouslySetInnerHTML={{__html: content}} />
             )
@@ -193,13 +182,15 @@ class Default extends React.Component {
             )
         const updateTime = moment(weatherTime.loc).startOf('hour').fromNow()
         const Weather = (
-            <Card title={<Location
-                area={locationArr.admin_area}
-                city={locationArr.parent_city}
-                location={locationArr.location} />}
-                extra={`${updateTime}更新`}>
-                {DetailWeather}
-            </Card>
+            <Spin spinning={this.state.loading}>
+                <Card title={<Location
+                    area={locationArr.admin_area}
+                    city={locationArr.parent_city}
+                    location={locationArr.location} />}
+                    extra={`${updateTime}更新`}>
+                    {DetailWeather}
+                </Card>
+            </Spin>
             )
         return (
             <Content className="Content">
