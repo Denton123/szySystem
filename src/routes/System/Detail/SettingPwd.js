@@ -29,7 +29,7 @@ import CustomForm from 'COMPONENTS/form/CustomForm'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 // 引入工具方法
-import {show, update} from 'UTILS/ajax'
+import {show, update, ajax} from 'UTILS/ajax'
 import {getBase64} from 'UTILS/utils'
 
 const RadioGroup = Radio.Group
@@ -48,9 +48,6 @@ function transformValue(field, value) {
 }
 
 class SetForm extends React.Component {
-    state = {
-        confirmDirty: false
-    }
     handleSubmit = (e) => {
         e.preventDefault()
         this.props.form.validateFieldsAndScroll((err, values) => {
@@ -60,45 +57,89 @@ class SetForm extends React.Component {
             }
         })
     }
-    handleConfirmBlur = (e) => {
-        const value = e.target.value
-        this.setState({ confirmDirty: this.state.confirmDirty || !!value })
+    checkOldPassword = (rule, value, callback) => {
+        const form = this.props.form
+        if (
+            (form.getFieldValue('password') && form.getFieldValue('password').length > 0) ||
+            (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
+            ) {
+            if (value && value.length > 0) {
+                callback()
+            } else {
+                callback('请输入原密码')
+            }
+        } else {
+            callback()
+        }
     }
     checkPassword = (rule, value, callback) => {
         const form = this.props.form
-        if (value && value !== form.getFieldValue('password')) {
-            callback('两个密码输入不一致!')
+        if (
+            (value && value.length > 0) ||
+            (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
+            (form.getFieldValue('password') && form.getFieldValue('password').length > 0)
+            ) {
+            if (value !== form.getFieldValue('password')) {
+                callback('两个密码输入不一致!')
+            } else {
+                callback()
+            }
         } else {
             callback()
         }
     }
     checkConfirm = (rule, value, callback) => {
         const form = this.props.form
-        if (value && this.state.confirmDirty) {
-            form.validateFields(['confirm'], { force: true })
+        if (
+            (value && value.length > 0) ||
+            (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
+            (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
+            ) {
+            if (!/^.*(?=.{9,})(?=.*\d)(?=.*[a-z]).*$/.test(value)) {
+                callback('密码不能小于9位，必须包含字母和数字')
+            } else {
+                form.validateFields(['oldpassword', 'confirm'], {force: true})
+                callback()
+            }
+        } else {
+            callback()
         }
-        callback()
     }
     render() {
         const { getFieldDecorator } = this.props.form
         return (
             <Form onSubmit={this.handleSubmit}>
-                <FormItem label="密码">
+                <FormItem label="原密码">
+                    {getFieldDecorator('oldpassword', {
+                        rules: [{
+                            required: true, message: '请输入原密码!',
+                        }, {
+                            validator: this.checkOldPassword
+                        }],
+                    })(
+                        <Input type="password" />
+                    )}
+                </FormItem>
+                <FormItem label="新密码">
                     {getFieldDecorator('password', {
                         rules: [{
+                            required: true, message: '请输入新密码!',
+                        }, {
                             validator: this.checkConfirm
                         }],
                     })(
                         <Input type="password" />
                     )}
                 </FormItem>
-                <FormItem label="重复密码">
+                <FormItem label="重复新密码">
                     {getFieldDecorator('confirm', {
                         rules: [{
+                            required: true, message: '请重复新密码!',
+                        }, {
                             validator: this.checkPassword
                         }],
                     })(
-                        <Input type="password" onBlur={this.handleConfirmBlur} />
+                        <Input type="password" />
                     )}
                 </FormItem>
                 <FormItem>
@@ -128,6 +169,9 @@ const WrappedSetForm = Form.create({
 class Setting extends Component {
     state = {
         formFieldsValues: {
+            oldpassword: {
+                value: null
+            },
             password: {
                 value: null
             },
@@ -137,7 +181,7 @@ class Setting extends Component {
         }
     }
     componentDidMount() {
-        this.getData()
+        // this.getData()
     }
 
     getData = () => {
@@ -186,24 +230,27 @@ class Setting extends Component {
         console.log('handleSubmitForm ----- ')
         console.log(values)
         let uid = this.props.user.id
-        update(`user/${uid}`, values, false)
+        ajax('post', `/user/reset-password`, values, false)
             .then(res => {
                 // 直接更新内部表单数据
                 // this.props.updateEditFormFieldsValues(res.data)
                 console.log(res)
                 message.success('保存成功！')
                 this.props.globalUpdateUser(res.data)
-                // this.setState({
-                //     formFieldsValues: {
-                //         ...this.state.formFieldsValues,
-                //         password: {
-                //             value: null
-                //         },
-                //         confirm: {
-                //             value: null
-                //         }
-                //     }
-                // })
+                this.setState({
+                    formFieldsValues: {
+                        ...this.state.formFieldsValues,
+                        oldpassword: {
+                            value: null
+                        },
+                        password: {
+                            value: null
+                        },
+                        confirm: {
+                            value: null
+                        }
+                    }
+                })
             })
             .catch(err => {
                 console.log(err)

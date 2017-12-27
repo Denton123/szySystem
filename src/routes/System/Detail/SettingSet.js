@@ -48,9 +48,6 @@ function transformValue(field, value) {
 }
 
 class SetForm extends React.Component {
-    state = {
-        confirmDirty: false
-    }
     handleSubmit = (e) => {
         e.preventDefault()
         this.props.form.validateFieldsAndScroll((err, values) => {
@@ -60,24 +57,53 @@ class SetForm extends React.Component {
             }
         })
     }
-    handleConfirmBlur = (e) => {
-        const value = e.target.value
-        this.setState({ confirmDirty: this.state.confirmDirty || !!value })
+    checkOldPassword = (rule, value, callback) => {
+        const form = this.props.form
+        if (
+            (form.getFieldValue('password') && form.getFieldValue('password').length > 0) ||
+            (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
+            ) {
+            if (value && value.length > 0) {
+                callback()
+            } else {
+                callback('请输入原密码')
+            }
+        } else {
+            callback()
+        }
     }
     checkPassword = (rule, value, callback) => {
         const form = this.props.form
-        if (value && value !== form.getFieldValue('password')) {
-            callback('两个密码输入不一致!')
+        if (
+            (value && value.length > 0) ||
+            (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
+            (form.getFieldValue('password') && form.getFieldValue('password').length > 0)
+            ) {
+            if (value !== form.getFieldValue('password')) {
+                callback('两个密码输入不一致!')
+            } else {
+                callback()
+            }
         } else {
             callback()
         }
     }
     checkConfirm = (rule, value, callback) => {
         const form = this.props.form
-        if (value && this.state.confirmDirty) {
-            form.validateFields(['confirm'], { force: true })
+        if (
+            (value && value.length > 0) ||
+            (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
+            (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
+            ) {
+            if (!/^.*(?=.{9,})(?=.*\d)(?=.*[a-z]).*$/.test(value)) {
+                callback('密码不能小于9位，必须包含字母和数字')
+            } else {
+                form.validateFields(['oldpassword', 'confirm'], {force: true})
+                callback()
+            }
+        } else {
+            callback()
         }
-        callback()
     }
     render() {
         const { getFieldDecorator } = this.props.form
@@ -215,17 +241,20 @@ class Setting extends Component {
                 console.log(res)
                 message.success('保存成功！')
                 this.props.globalUpdateUser(res.data)
-                // this.setState({
-                //     formFieldsValues: {
-                //         ...this.state.formFieldsValues,
-                //         password: {
-                //             value: null
-                //         },
-                //         confirm: {
-                //             value: null
-                //         }
-                //     }
-                // })
+                this.setState({
+                    formFieldsValues: {
+                        ...this.state.formFieldsValues,
+                        oldpassword: {
+                            value: null
+                        },
+                        password: {
+                            value: null
+                        },
+                        confirm: {
+                            value: null
+                        }
+                    }
+                })
             })
             .catch(err => {
                 console.log(err)
