@@ -99,6 +99,9 @@ class PermissionRole extends Component {
             })
     }
     add = (e) => {
+        this.setState({
+            permission: []
+        })
         this.props.handleAdd(e)
     }
     edit = (e) => {
@@ -127,7 +130,7 @@ class PermissionRole extends Component {
         let permission = []
         this.state.permission.forEach(p => {
             // 权限，而且不包含0的值
-            if (p.indexOf('permission') > -1 && p.indexOf('0') === -1) {
+            if (p.indexOf('permission') > -1 && p.indexOf('-0-') === -1) {
                 let pid = p.split('-')[p.split('-').length - 1]
                 permission.push(parseInt(pid))
             }
