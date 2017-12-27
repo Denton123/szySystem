@@ -51,7 +51,6 @@ class Default extends React.Component {
             time: date
         })
     }
-
     getData = () => {
         if (this.props.user) {
             const id = this.props.user.id

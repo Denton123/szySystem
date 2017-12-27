@@ -100,6 +100,7 @@ class BasicLayout extends React.Component {
                 fontSize: this.props.user.font_size
             })
         }
+        tpwidget('show')
     }
 
     rootSubmenuKeys = this.props.routes.map((route, idx) => {
@@ -231,6 +232,7 @@ class BasicLayout extends React.Component {
                         </Dropdown>
                     </div>
                     <div className="pull-right layout-header-bell mr-10">
+                        <div id="tp-weather-widget" style={{display: 'inline-block'}} className="mr-10" />
                         <Icon type={'bell'} style={{fontSize: 16}} />
                     </div>
                 </Header>
