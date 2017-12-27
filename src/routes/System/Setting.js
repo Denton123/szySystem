@@ -48,9 +48,6 @@ function transformValue(field, value) {
 }
 
 class SetForm extends React.Component {
-    state = {
-        confirmDirty: false
-    }
     handleSubmit = (e) => {
         e.preventDefault()
         this.props.form.validateFieldsAndScroll((err, values) => {
@@ -59,10 +56,6 @@ class SetForm extends React.Component {
                 this.props.handleSubmitForm(values)
             }
         })
-    }
-    handleConfirmBlur = (e) => {
-        const value = e.target.value
-        this.setState({ confirmDirty: this.state.confirmDirty || !!value })
     }
     checkPassword = (rule, value, callback) => {
         const form = this.props.form
@@ -74,10 +67,15 @@ class SetForm extends React.Component {
     }
     checkConfirm = (rule, value, callback) => {
         const form = this.props.form
-        if (value && this.state.confirmDirty) {
-            form.validateFields(['confirm'], { force: true })
+        if ((value && value.length > 0) || (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)) {
+            if (!/^.*(?=.{9,})(?=.*\d)(?=.*[a-z]).*$/.test(value)) {
+                callback('密码不能小于9位，必须包含字母和数字')
+            } else {
+                callback()
+            }
+        } else {
+            callback()
         }
-        callback()
     }
     render() {
         const { getFieldDecorator } = this.props.form
@@ -138,7 +136,7 @@ class SetForm extends React.Component {
                             validator: this.checkPassword
                         }],
                     })(
-                        <Input type="password" onBlur={this.handleConfirmBlur} />
+                        <Input type="password" />
                     )}
                 </FormItem>
                 <FormItem>
