@@ -207,6 +207,7 @@ class Setting extends Component {
     }
 
     onChange = (e) => {
+        console.log(e.target.value)
         const value = e.target.value
     }
     // 编辑数据时更新表单数据
@@ -232,7 +233,6 @@ class Setting extends Component {
 
     // 提交表格到后台
     handleSubmitForm = (values) => {
-        console.log(this.props.routes)
         console.log('handleSubmitForm ----- ')
         console.log(values)
         let uid = this.props.user.id
@@ -242,7 +242,6 @@ class Setting extends Component {
                 // this.props.updateEditFormFieldsValues(res.data)
                 console.log(res)
                 message.success('保存成功！')
-                this.props.globalUpdateUser(res.data)
                 this.setState({
                     formFieldsValues: {
                         ...this.state.formFieldsValues,
