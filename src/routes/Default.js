@@ -86,6 +86,7 @@ class Default extends React.Component {
                         this.setState({
                             weatherTime: res.data.HeWeather5[0].basic.update
                         })
+                        console.log(this.state.weatherArr)
                     })
                 })
             })
@@ -106,7 +107,9 @@ class Default extends React.Component {
             <div className="Card">
                 <Row gutter={16}>
                     <Col span={12}>
-                        <Card title="工作日志"
+                        <Card
+                            hoverable
+                            title="工作日志"
                             bordered
                             extra={<a href="/home/personal/work-log">更多</a>}>
                             <List
@@ -126,7 +129,9 @@ class Default extends React.Component {
                         </Card>
                     </Col>
                     <Col span={12}>
-                        <Card title="个人总结"
+                        <Card
+                            hoverable
+                            title="个人总结"
                             bordered
                             extra={<a href="/home/personal/summary">更多</a>}>
                             <List
@@ -172,21 +177,23 @@ class Default extends React.Component {
                 </span>
                 <ul style={{display: 'inline-block'}}>
                     <li>{weatherArr.dir}-{weatherArr.sc}</li>
-                    <li>{`体感温度  ${weatherArr.fl}℃`}</li>
-                    <li>{`能见度  ${weatherArr.vis}%`}</li>
-                    <li>{`气压  ${weatherArr.pres}hpa`}</li>
-                    <li>{`降水量  ${weatherArr.pcpn}mm`}</li>
-                    <li>{`相对湿度  ${weatherArr.hum}%`}</li>
+                    <li>{`体感温度  ${weatherArr.fl} ℃`}</li>
+                    <li>{`能见度  ${weatherArr.vis} %`}</li>
+                    <li>{`气压  ${weatherArr.pres} hpa`}</li>
+                    <li>{`降水量  ${weatherArr.pcpn} mm`}</li>
+                    <li>{`相对湿度  ${weatherArr.hum} %`}</li>
                 </ul>
             </div>
             )
         const updateTime = moment(weatherTime.loc).startOf('hour').fromNow()
         const Weather = (
             <Spin spinning={this.state.loading}>
-                <Card title={<Location
-                    area={locationArr.admin_area}
-                    city={locationArr.parent_city}
-                    location={locationArr.location} />}
+                <Card
+                    hoverable
+                    title={<Location
+                        area={locationArr.admin_area}
+                        city={locationArr.parent_city}
+                        location={locationArr.location} />}
                     extra={`${updateTime}更新`}>
                     {DetailWeather}
                 </Card>

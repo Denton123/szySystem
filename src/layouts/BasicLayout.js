@@ -93,13 +93,7 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
-        console.log(this.props.user)
-        if (this.props.user) {
-            this.setState({
-                skin: this.props.user.skin,
-                fontSize: this.props.user.font_size
-            })
-        }
+        tpwidget('show')
     }
 
     rootSubmenuKeys = this.props.routes.map((route, idx) => {
@@ -109,8 +103,6 @@ class BasicLayout extends React.Component {
     state = {
         selectedKeys: [this.rootSubmenuKeys[0]],
         openKeys: [this.rootSubmenuKeys[0]],
-        skin: 'blue',
-        fontSize: 'middle'
     }
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
@@ -155,7 +147,6 @@ class BasicLayout extends React.Component {
             user,
             collapsed
         } = this.props
-        const {skin, fontSize} = this.state
         const newRoute = resetRoute(routes)
         const AvatarMenu = (
             <Menu>
@@ -231,6 +222,7 @@ class BasicLayout extends React.Component {
                         </Dropdown>
                     </div>
                     <div className="pull-right layout-header-bell mr-10">
+                        <div id="tp-weather-widget" style={{display: 'inline-block'}} className="mr-10" />
                         <Icon type={'bell'} style={{fontSize: 16}} />
                     </div>
                 </Header>
@@ -278,10 +270,11 @@ class BasicLayout extends React.Component {
             </div>
         )
         const Class = cs({
-            [`${skin}`]: true,
-            [`${fontSize}`]: true,
+            [`${user.skin}`]: true,
+            [`${user.font_size}`]: true,
             BasicLayout: true
         })
+        console.log(this.props.user)
         return (
             <Layout
                 style={{ minHeight: '100vh' }}
