@@ -13,7 +13,7 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -34,10 +34,6 @@ class OperateLog extends Component {
             location,
             match
         } = this.props
-
-        const timeDate = {
-            format: 'YYYY-MM-DD',
-        }
 
         const condition = [
             {
@@ -62,8 +58,8 @@ class OperateLog extends Component {
             },
             {
                 label: '时间',
-                field: 'time',
-                component: <CustomRangePicker {...timeDate} />,
+                field: 'log_date',
+                component: <CustomRangePicker format={'YYYY-MM-DD'} />,
             },
         ]
 
@@ -73,7 +69,27 @@ class OperateLog extends Component {
                 title: '操作类型',
                 dataIndex: 'type',
                 key: 'type',
-                width: 100
+                width: 100,
+                render: (text, record) => {
+                    const OPERATE = {
+                        0: '新增',
+                        1: '删除',
+                        2: '修改',
+                        3: '查询',
+                        4: '查看',
+                        5: '登录',
+                        6: '登出',
+                        7: '批量删除',
+                        8: '关联',
+                        9: '批量新增'
+                    }
+                    return <span>{OPERATE[text]}</span>
+                }
+            },
+            {
+                title: 'ip地址',
+                dataIndex: 'ip',
+                key: 'ip',
             },
             {
                 title: '用户',
@@ -94,8 +110,8 @@ class OperateLog extends Component {
             },
             {
                 title: '时间',
-                dataIndex: 'time',
-                key: 'time',
+                dataIndex: 'log_date',
+                key: 'log_date',
                 width: 200
             },
         ]
@@ -136,6 +152,13 @@ const OL = withBasicDataModel(OperateLog, {
         quit_date: {
             value: null
         }
+    },
+    handleData: (dataSource) => {
+        let arr = []
+        dataSource.forEach(data => {
+            arr.push(resetObject(data))
+        })
+        return arr
     },
 })
 

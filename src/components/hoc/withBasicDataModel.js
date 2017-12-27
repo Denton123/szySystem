@@ -507,6 +507,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     handleQuery={this.handleQuery}
                     updateFormFields={this.updateFormFields}
                     updateQueryFields={this.updateQueryFields}
+                    user={this.props.user}
                     {...this.state}
                     {...this.props}
                 />

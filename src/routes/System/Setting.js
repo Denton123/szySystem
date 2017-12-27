@@ -126,8 +126,6 @@ class SetForm extends React.Component {
                 <FormItem label="密码">
                     {getFieldDecorator('password', {
                         rules: [{
-                            required: true, message: '请输入你的密码!'
-                        }, {
                             validator: this.checkConfirm
                         }],
                     })(
@@ -137,8 +135,6 @@ class SetForm extends React.Component {
                 <FormItem label="重复密码">
                     {getFieldDecorator('confirm', {
                         rules: [{
-                            required: true, message: '请确认你的密码!'
-                        }, {
                             validator: this.checkPassword
                         }],
                     })(
@@ -242,17 +238,18 @@ class Setting extends Component {
                 // this.props.updateEditFormFieldsValues(res.data)
                 console.log(res)
                 message.success('保存成功！')
-                this.setState({
-                    formFieldsValues: {
-                        ...this.state.formFieldsValues,
-                        password: {
-                            value: null
-                        },
-                        confirm: {
-                            value: null
-                        }
-                    }
-                })
+                this.props.globalUpdateUser(res.data)
+                // this.setState({
+                //     formFieldsValues: {
+                //         ...this.state.formFieldsValues,
+                //         password: {
+                //             value: null
+                //         },
+                //         confirm: {
+                //             value: null
+                //         }
+                //     }
+                // })
             })
             .catch(err => {
                 console.log(err)
