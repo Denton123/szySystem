@@ -203,6 +203,7 @@ class Setting extends Component {
     }
 
     onChange = (e) => {
+        console.log(e.target.value)
         const value = e.target.value
     }
     // 编辑数据时更新表单数据
