@@ -25,7 +25,7 @@ import {
 } from 'react-router-dom'
 
 import {isArray} from 'UTILS/utils'
-import {show, update} from 'UTILS/ajax'
+import {ajax, show, update} from 'UTILS/ajax'
 
 const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
@@ -81,6 +81,20 @@ const ModelContent = ({breadcrumbs, children}) => (
 )
 
 class BasicLayout extends React.Component {
+    rootSubmenuKeys = this.props.routes.map((route, idx) => {
+        return route.path
+    })
+    state = {
+        selectedKeys: [this.rootSubmenuKeys[0]],
+        openKeys: [this.rootSubmenuKeys[0]],
+    }
+
+    componentWillMount() {
+        ajax('get', '/permission/all-menu')
+        .then(res => {
+            console.log(res)
+        })
+    }
     componentDidMount() {
         let currentPath = this.props.location.pathname.split('home')[1]
         if (currentPath.split('/').length > 2) {
@@ -96,14 +110,6 @@ class BasicLayout extends React.Component {
         tpwidget('show')
     }
 
-    rootSubmenuKeys = this.props.routes.map((route, idx) => {
-        return route.path
-    })
-
-    state = {
-        selectedKeys: [this.rootSubmenuKeys[0]],
-        openKeys: [this.rootSubmenuKeys[0]],
-    }
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
         if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -269,12 +275,13 @@ class BasicLayout extends React.Component {
                 </Footer>
             </div>
         )
+        const skin = user ? user.skin : null
+        const fontSize = user ? user.font_size : null
         const Class = cs({
-            [`${user.skin}`]: true,
-            [`${user.font_size}`]: true,
+            [`${skin}`]: true,
+            [`${fontSize}`]: true,
             BasicLayout: true
         })
-        console.log(this.props.user)
         return (
             <Layout
                 style={{ minHeight: '100vh' }}

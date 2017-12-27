@@ -230,13 +230,21 @@ class Setting extends Component {
         console.log('handleSubmitForm ----- ')
         console.log(values)
         let uid = this.props.user.id
-        ajax('post', `/user/reset-password`, values, false)
+        let data = {}
+        for (let i in values) {
+            data[i] = values[i]
+        }
+        data['id'] = uid
+        ajax('post', `/user/reset-password`, data, false)
             .then(res => {
                 // 直接更新内部表单数据
                 // this.props.updateEditFormFieldsValues(res.data)
                 console.log(res)
-                message.success('保存成功！')
-                this.props.globalUpdateUser(res.data)
+                if (res.data === 'true') {
+                    message.success('保存成功！')
+                } else {
+                    message.error(res.data)
+                }
                 this.setState({
                     formFieldsValues: {
                         ...this.state.formFieldsValues,
