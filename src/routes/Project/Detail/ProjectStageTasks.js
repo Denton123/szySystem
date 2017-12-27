@@ -414,7 +414,7 @@ class ProjectStageTasks extends React.Component {
                 >
                     <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
                     <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
-                    <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660}>
+                    <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660} user={this.props.user}>
                         <CustomForm
                             formStyle={{width: '100%'}}
                             formFields={formFields}

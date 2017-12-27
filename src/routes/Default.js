@@ -113,6 +113,7 @@ class Default extends React.Component {
                             bordered
                             extra={<a href="/home/personal/work-log">更多</a>}>
                             <List
+                                className='animated fadeInRight'
                                 itemLayout="horizontal"
                                 dataSource={workLog}
                                 renderItem={item => (

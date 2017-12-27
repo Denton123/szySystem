@@ -270,8 +270,8 @@ class BasicLayout extends React.Component {
             </div>
         )
         const Class = cs({
-            [`${user.skin}`]: true,
-            [`${user.font_size}`]: true,
+            [`${user && user.skin}`]: true,
+            [`${user && user.font_size}`]: true,
             BasicLayout: true
         })
         console.log(this.props.user)

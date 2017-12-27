@@ -187,7 +187,7 @@ class PermissionUser extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <Table className="mt-10" {...this.props.dataSetting} rowKey={record => record.id} columns={columns} />
-                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
+                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}

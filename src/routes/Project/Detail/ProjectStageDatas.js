@@ -260,7 +260,7 @@ class ProjectStageDatas extends Component {
                         '暂无详细信息'
                     )}
                 </Card>
-                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.handleModalCancel} width={780}>
+                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.handleModalCancel} width={780} user={this.props.user}>
                     <CustomDynamicForm
                         handleSubmit={this.handleSubmit}
                         formFields={formFields}

@@ -3,6 +3,8 @@
 @green_color: #0aa679;
 @purple_color: #7546c9;
 @yellow_color: #fbd437;
+
+@white: #fff;
 //字体大小
 @font_small: 12px;
 @font_middle: 14px;
@@ -13,14 +15,20 @@
 	border-color: @bg;
 }
 // 主题
-.theme(@bg) {
+.theme(@bg, @unite) {
+	.ant-layout, .tpwthwidt .text_1vUR5ag, .tpwthwidt .title_2I35arv{
+		color: @unite; 
+	}
+	a{
+		color: @bg;
+	}
 	.ant-btn-primary, .layout-header, .ant-radio-inner:after, .ant-pagination-item-active{
 		.color(@bg)
 	}
 	.ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
 		background: @bg;
 	}
-	.ant-radio-checked .ant-radio-inner,
+	.ant-radio-checked .ant-radio-inner,.ant-radio-button-wrapper-checked
 	.ant-radio-wrapper:hover .ant-radio .ant-radio-inner, .ant-radio:hover .ant-radio-inner, .ant-radio-focused .ant-radio-inner{
 		border-color: @bg;
 	}
@@ -34,16 +42,16 @@
 
 
 .blue{
-    .theme(@blue_color)
+    .theme(@blue_color, @white)
 }
 .green{
-    .theme(@green_color)
+    .theme(@green_color, @white)
 }
 .purple{
-    .theme(@purple_color)
+    .theme(@purple_color, @white)
 }
 .yellow{
-    .theme(@yellow_color)
+    .theme(@yellow_color, @white)
 }
 .small{
 	.fontSize(@font_small)

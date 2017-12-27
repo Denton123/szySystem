@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
 import 'STYLE/css/theme.less'
+import cs from 'classnames'
 
 class CustomModal extends React.Component {
     render() {
@@ -25,12 +26,18 @@ class CustomModal extends React.Component {
         // onCancel    点击遮罩层或右上角叉或取消按钮的回调  function(e) 无
         // onOk    点击确定回调  function(e)
         const props = {}
+        const user = this.props.user
         for (let i in this.props) {
             if (i === 'children') continue
             props[i] = this.props[i]
         }
+        console.log(this.props)
+        const Class = cs({
+            [`${user.skin}`]: true,
+            [`${user.font_size}`]: true
+        })
         return (
-            <Modal {...props}>
+            <Modal {...props} className={Class}>
                 {this.props.children}
             </Modal>
         )

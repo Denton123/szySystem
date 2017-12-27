@@ -258,7 +258,7 @@ class WorkerAffairs extends Component {
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
                 <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
-                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
+                <CustomModal user={this.props.user} {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}
