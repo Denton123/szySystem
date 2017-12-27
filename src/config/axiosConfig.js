@@ -51,14 +51,14 @@ axios.interceptors.request.use(function(config) {
 
 // Add a response interceptor
 axios.interceptors.response.use(function(response) {
+    if (response.data.data && isArray(response.data.data)) {
+        handleArr(response.data.data)
+    }
     if (isObject(response.data)) {
         response.data = formatDate(response.data)
     }
     if (isArray(response.data)) {
         handleArr(response.data)
-    }
-    if (response.data.data && isArray(response.data.data)) {
-        handleArr(response.data.data)
     }
     // Do something with response data
     return response
