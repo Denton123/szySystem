@@ -272,6 +272,7 @@ class BasicLayout extends React.Component {
             [`${user.font_size}`]: true,
             BasicLayout: true
         })
+        console.log(this.props.user)
         return (
             <Layout
                 style={{ minHeight: '100vh' }}
