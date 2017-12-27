@@ -272,7 +272,6 @@ class BasicLayout extends React.Component {
                 }
                 <Footer style={{ textAlign: 'center' }}>
                     szy公司系统 ©2017 Created by szy
-                    {user.skin}
                 </Footer>
             </div>
         )
