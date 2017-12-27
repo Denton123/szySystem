@@ -46,7 +46,11 @@ class App extends React.Component {
                             key={idx}
                             path={com.path}
                             render={props => (
-                                <com.component {...props} routes={com.routes} user={this.state.user} globalUpdateUser={this.globalUpdateUser} />
+                                <com.component {...props}
+                                    routes={com.routes}
+                                    user={this.state.user}
+                                    globalUpdateUser={this.globalUpdateUser}
+                                    />
                             )} />
                     ))}
                 </Switch>

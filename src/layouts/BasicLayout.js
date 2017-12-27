@@ -93,7 +93,11 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
-        this.getData()
+        console.log(this.props.user)
+        this.setState({
+            skin: this.props.user.skin,
+            fontSize: this.props.user.font_size
+        })
     }
 
     rootSubmenuKeys = this.props.routes.map((route, idx) => {
@@ -103,21 +107,8 @@ class BasicLayout extends React.Component {
     state = {
         selectedKeys: [this.rootSubmenuKeys[0]],
         openKeys: [this.rootSubmenuKeys[0]],
-        skin: '',
-        fontSize: ''
-    }
-    getData = () => {
-        if (this.props.user) {
-            let uid = this.props.user.id
-            show(`user/${uid}`)
-                .then(res => {
-                    console.log(res)
-                    this.setState({
-                        skin: res.data.skin,
-                        fontSize: res.data.font_size
-                    })
-                })
-        }
+        skin: 'blue',
+        fontSize: 'middle'
     }
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
@@ -162,8 +153,7 @@ class BasicLayout extends React.Component {
             user,
             collapsed
         } = this.props
-        const {skin} = this.state
-        const {fontSize} = this.state
+        const {skin, fontSize} = this.state
         const newRoute = resetRoute(routes)
         const AvatarMenu = (
             <Menu>
@@ -282,6 +272,7 @@ class BasicLayout extends React.Component {
                 }
                 <Footer style={{ textAlign: 'center' }}>
                     szy公司系统 ©2017 Created by szy
+                    {user.skin}
                 </Footer>
             </div>
         )
