@@ -126,8 +126,6 @@ class SetForm extends React.Component {
                 <FormItem label="密码">
                     {getFieldDecorator('password', {
                         rules: [{
-                            required: true, message: '请输入你的密码!'
-                        }, {
                             validator: this.checkConfirm
                         }],
                     })(
@@ -137,8 +135,6 @@ class SetForm extends React.Component {
                 <FormItem label="重复密码">
                     {getFieldDecorator('confirm', {
                         rules: [{
-                            required: true, message: '请确认你的密码!'
-                        }, {
                             validator: this.checkPassword
                         }],
                     })(
@@ -232,7 +228,6 @@ class Setting extends Component {
 
     // 提交表格到后台
     handleSubmitForm = (values) => {
-        console.log(this.props.routes)
         console.log('handleSubmitForm ----- ')
         console.log(values)
         let uid = this.props.user.id
@@ -243,17 +238,17 @@ class Setting extends Component {
                 console.log(res)
                 message.success('保存成功！')
                 this.props.globalUpdateUser(res.data)
-                this.setState({
-                    formFieldsValues: {
-                        ...this.state.formFieldsValues,
-                        password: {
-                            value: null
-                        },
-                        confirm: {
-                            value: null
-                        }
-                    }
-                })
+                // this.setState({
+                //     formFieldsValues: {
+                //         ...this.state.formFieldsValues,
+                //         password: {
+                //             value: null
+                //         },
+                //         confirm: {
+                //             value: null
+                //         }
+                //     }
+                // })
             })
             .catch(err => {
                 console.log(err)

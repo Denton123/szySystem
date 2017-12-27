@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal, Button } from 'antd'
+import 'STYLE/css/theme.less'
 
 class CustomModal extends React.Component {
     render() {

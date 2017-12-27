@@ -94,10 +94,12 @@ class BasicLayout extends React.Component {
             })
         }
         console.log(this.props.user)
-        this.setState({
-            skin: this.props.user.skin,
-            fontSize: this.props.user.font_size
-        })
+        if (this.props.user) {
+            this.setState({
+                skin: this.props.user.skin,
+                fontSize: this.props.user.font_size
+            })
+        }
     }
 
     rootSubmenuKeys = this.props.routes.map((route, idx) => {
