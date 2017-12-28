@@ -275,8 +275,6 @@ class BasicLayout extends React.Component {
                 </Footer>
             </div>
         )
-        const skin = user ? user.skin : null
-        const fontSize = user ? user.font_size : null
         const Class = cs({
             [`${user && user.skin}`]: true,
             [`${user && user.font_size}`]: true,

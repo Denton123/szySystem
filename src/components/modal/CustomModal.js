@@ -33,8 +33,8 @@ class CustomModal extends React.Component {
         }
         console.log(this.props)
         const Class = cs({
-            [`${user.skin}`]: true,
-            [`${user.font_size}`]: true
+            [`${user && user.skin}`]: true,
+            [`${user && user.font_size}`]: true
         })
         return (
             <Modal {...props} className={Class}>
