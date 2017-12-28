@@ -291,6 +291,7 @@ const PR = withBasicDataModel(PermissionRole, {
         },
     },
     // customGetData: true,
+    locationSearch: false
 })
 
 export default PR

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {
-    Card,
+    Tabs
 } from 'antd'
 import {
     Link,
@@ -8,21 +8,23 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom'
-
 import Set from './Detail/SettingSet'
 import Pwd from './Detail/SettingPwd'
 
+const TabPane = Tabs.TabPane
+
 class Setting extends Component {
     state = {
-        key: 'set',
+        key: this.props.location.state ? this.props.location.state.key : 'set'
     }
-    onTabChange = (type, key) => {
-        this.setState({
-            [type]: key
-        })
+    onTabChange = (key) => {
         this.props.history.replace(this.props.location.pathname, {
-            page: 1
+            page: 1,
+            key: key
         })
+    }
+    componentDidMount() {
+        console.log(this.props.location.state)
     }
     render() {
         const {
@@ -32,27 +34,16 @@ class Setting extends Component {
             route
         } = this.props
 
-        const tabList = [{
-            key: 'set',
-            tab: '基础设置',
-        }, {
-            key: 'pwd',
-            tab: '密码设置',
-        }]
-
-        const contentList = {
-            set: <Set {...this.props} current={this.state.key} />,
-            pwd: <Pwd {...this.props} current={this.state.key} />,
-        }
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <Card
-                    style={{ width: '100%' }}
-                    tabList={tabList}
-                    onTabChange={(key) => { this.onTabChange('key', key) }}
-                >
-                    {contentList[this.state.key]}
-                </Card>
+                <Tabs defaultActiveKey={this.state.key} onTabClick={this.onTabChange}>
+                    <TabPane tab="基础设置" key="set">
+                        <Set {...this.props} />
+                    </TabPane>
+                    <TabPane tab="密码设置" key="pwd">
+                        <Pwd {...this.props} />
+                    </TabPane>
+                </Tabs>
             </div>
         )
     }

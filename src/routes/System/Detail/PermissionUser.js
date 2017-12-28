@@ -230,6 +230,7 @@ const PU = withBasicDataModel(PermissionUser, {
         },
     },
     // customGetData: true,
+    locationSearch: false
 })
 
 export default PU
