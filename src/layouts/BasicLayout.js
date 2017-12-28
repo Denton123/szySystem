@@ -25,13 +25,12 @@ import {
 } from 'react-router-dom'
 
 import {isArray} from 'UTILS/utils'
-import {ajax, show, update} from 'UTILS/ajax'
 
 const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
 
 // 重整路由结构
-function resetRoute(routes) {
+function resetRoute(routes, permissionRoute) {
     let arr = []
     routes.forEach(r => {
         let obj = {}
@@ -45,7 +44,9 @@ function resetRoute(routes) {
                             name: `${r.name},${rc.name},${rcc.name}`,
                             path: `${r.path}${rc.path}${rcc.path}`
                         }
-                        children.push(obj)
+                        if (permissionRoute.find(k => k.path === rcc.path)) {
+                            children.push(obj)
+                        }
                     })
                     arr.push(children)
                 }
@@ -54,7 +55,9 @@ function resetRoute(routes) {
                     name: `${r.name},${rc.name}`,
                     path: `${r.path}${rc.path}`
                 }
-                arr.push(obj)
+                if (permissionRoute.find(k => k.path === rc.path)) {
+                    arr.push(obj)
+                }
             })
         } else {
             obj = {
@@ -62,7 +65,9 @@ function resetRoute(routes) {
                 name: r.name,
                 path: r.path
             }
-            arr.push(obj)
+            if (permissionRoute.find(k => k.path === r.path)) {
+                arr.push(obj)
+            }
         }
     })
     return arr
@@ -87,13 +92,6 @@ class BasicLayout extends React.Component {
     state = {
         selectedKeys: [this.rootSubmenuKeys[0]],
         openKeys: [this.rootSubmenuKeys[0]],
-    }
-
-    componentWillMount() {
-        ajax('get', '/permission/all-menu')
-        .then(res => {
-            console.log(res)
-        })
     }
     componentDidMount() {
         let currentPath = this.props.location.pathname.split('home')[1]
@@ -144,6 +142,14 @@ class BasicLayout extends React.Component {
         })
     }
 
+    isDisplay = (route) => {
+        if (this.props.permissionRoute.find(k => k.path === route.path)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     render() {
         const {
             routes,
@@ -151,9 +157,10 @@ class BasicLayout extends React.Component {
             location,
             match,
             user,
-            collapsed
+            collapsed,
+            permissionRoute
         } = this.props
-        const newRoute = resetRoute(routes)
+        const newRoute = resetRoute(routes, this.props.permissionRoute)
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
@@ -184,12 +191,13 @@ class BasicLayout extends React.Component {
                         if (route.routes) {
                             return (
                                 <SubMenu
+                                    className={this.isDisplay(route) ? '' : 'hide'}
                                     key={route.path}
                                     title={<span><Icon type={route.icon} style={{fontSize: 16}} /><span style={{fontSize: 14}}>{route.name}</span></span>}
                                 >
                                     {
                                         route.routes.map((child, sn) => (
-                                            <Menu.Item key={`${route.path}${child.path}`}>
+                                            <Menu.Item key={`${route.path}${child.path}`} className={this.isDisplay(child) ? '' : 'hide'}>
                                                 <Link to={`${match.path}${route.path}${child.path}`}>{child.name}</Link>
                                             </Menu.Item>
                                         ))
@@ -198,7 +206,7 @@ class BasicLayout extends React.Component {
                             )
                         } else {
                             return (
-                                <Menu.Item key={route.path}>
+                                <Menu.Item key={route.path} className={this.isDisplay(route) ? '' : 'hide'}>
                                     <Link to={`${match.path}${route.path}`}>
                                         <Icon type={route.icon} style={{fontSize: 16}} />
                                         <span style={{fontSize: 14}}>{route.name}</span>
