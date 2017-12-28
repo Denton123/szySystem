@@ -22,7 +22,7 @@ import {
     Redirect
 } from 'react-router-dom'
 
-// import './Setting.less'
+import '../Setting.less'
 
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
