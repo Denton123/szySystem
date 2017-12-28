@@ -22,8 +22,6 @@ import {
     Redirect
 } from 'react-router-dom'
 
-// import './Setting.less'
-
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'

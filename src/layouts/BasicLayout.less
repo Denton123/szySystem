@@ -10,12 +10,12 @@ html, body, #app {
     height: 100%;
     .ant-layout-sider{
     	background: @siderBg;
-    	.ant-layout-sider-trigger {
+    	&-trigger {
     		background: @siderBg;
     	}
     	.ant-menu {
     		background: @siderBg;
-    		.ant-menu-sub{
+    		&-sub{
     			background: @siderBg;
     		}
     	}
@@ -23,9 +23,7 @@ html, body, #app {
     .Header{
     	background: @whiteColor;
     }
-    .ant-layout-sider{
-        width: 256px !important;
-    }
+    
     .trigger {
 	  	font-size: 20px;
 	  	line-height: 64px;
@@ -37,8 +35,13 @@ html, body, #app {
 	  	  	color: white;
 	  	}
 	}
-    .ant-layout-header{
-        line-height: 23px;
+    .ant-layout{
+        &-header{
+            line-height: 23px;
+        }
+        &-sider{
+            width: 256px !important;
+        }
     }
     .tpwthwidt .container__sDy_v_{
         display: none;
@@ -50,14 +53,14 @@ html, body, #app {
 .layout-header {
     background: #fff;
     padding-right: 30px;
-    .layout-header-avatar {
+    &-avatar {
         padding: 0 10px;
     }
-    .layout-header-avatar:hover {
+    &-avatar:hover {
         cursor: pointer;
         background-color: @blue1;
     }
-    .layout-header-bell {
+    &-bell {
         // height: 64px;
         padding-top: 18px;
         i {

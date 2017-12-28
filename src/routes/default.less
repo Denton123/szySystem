@@ -17,23 +17,17 @@
 			width: 100%;
 			height: 100px;
 			overflow: hidden;
-			/*display: flex;*/
 			.avatar {
 				display: inline-block;
 				border-radius: 50%;
 				width: 80px;
 				height: 80px;
-				overflow: hidden;
 				margin: 9px 0;
 				float: left;
-				.ant-avatar.ant-avatar-icon{
-					width: 100%;
-					height: 100%;
+				font-size: 38px;
+				i{
+					padding-top: 20px;
 				}
-				.ant-avatar{
-					line-height: 69px;
-				}
-
 			}
 			.Greet {
 				float: left;
@@ -67,8 +61,13 @@
 				width: 60%;
 				margin-bottom: 20px;
 				float: left;
-				.ant-list-item-meta-description{
-					width: 100px;
+				.ant-list-item{
+					&-meta-description{
+						width: 100px;
+					}
+					&-action{
+						margin-left: 0;
+					}
 				}
 			}
 			.Weather {
