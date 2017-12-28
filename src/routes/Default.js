@@ -59,7 +59,7 @@ class Default extends React.Component {
                     workLog: res.data
                 })
             })
-            show(`/summary/?page=1&user_id=${id}`).then(res => {
+            show(`/summary?page=1&user_id=${id}`).then(res => {
                 this.setState({
                     summaryData: res.data.data
                 })
