@@ -162,7 +162,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         search = search.substr(0, search.length - 1)
                         this.props.history.push(`${this.props.location.pathname}${search}`, params)
                     } else {
-                        this.props.history.push(`${this.props.location.pathname}`, params)
+                        // this.props.history.push(`${this.props.location.pathname}`, params)
                     }
                 })
         }
