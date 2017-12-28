@@ -136,6 +136,7 @@ class Default extends React.Component {
                             bordered
                             extra={<a href="/home/personal/summary">更多</a>}>
                             <List
+                                className="animated fadeInRight"
                                 itemLayout="horizontal"
                                 dataSource={summaryData}
                                 renderItem={item => (
@@ -204,9 +205,7 @@ class Default extends React.Component {
             <Content className="Content">
                 <Header className="IndexHeader">
                     <div className="HeaderMsg">
-                        <span className="avatar">
-                            <Avatar icon="user" src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} style={{fontSize: 41}} />
-                        </span>
+                        <Avatar icon="user" src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} className="avatar" />
                         <div className="Greet">
                             <h2>下午好，{user && user.realname}，祝你开心每一天！</h2>
                             <h4>技术部 - 总监</h4>
