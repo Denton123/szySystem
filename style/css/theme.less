@@ -14,7 +14,9 @@
 	background: @bg;
 	border-color: @bg;
 }
-
+.border(@bg){
+	border-color: @bg;
+}
 // 主题
 .theme(@bg, @unite) {
 	.ant-layout, .tpwthwidt .text_1vUR5ag, .tpwthwidt .title_2I35arv{
@@ -30,7 +32,7 @@
 	}
 	.ant-pagination-item{
 		&:focus, &:hover{
-			border-color: @bg;
+			.border(@bg)
 		}
 	}
 	.ant-pagination-item:hover a, .ant-table-tbody a{
@@ -38,7 +40,7 @@
 	}
 	.ant-radio-button-wrapper{
 		&-checked{
-			border-color: @bg;
+			.border(@bg);
 			color: @bg;
 			box-shadow: -1px 0 0 0 @bg;
 		}
@@ -48,14 +50,20 @@
 	}
 	.ant-select-selection{
 		&:hover, &:active, &:focus{
-			border-color: @bg;
+			.border(@bg)
+		}
+	}
+	.ant-checkbox{
+		&-wrapper:hover,&:hover,&-input:focus{
+			.ant-checkbox-inner{
+				.border(@bg)
+			}
 		}
 	}
 	.ant-radio-checked .ant-radio-inner,.ant-input:hover,
-	.ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox:hover .ant-checkbox-inner, .ant-checkbox-input:focus + .ant-checkbox-inner,
 	.ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled),
 	.ant-radio-wrapper:hover .ant-radio .ant-radio-inner, .ant-radio:hover .ant-radio-inner, .ant-radio-focused .ant-radio-inner{
-		border-color: @bg;
+		.border(@bg)
 	}
 }
 //字体大小
