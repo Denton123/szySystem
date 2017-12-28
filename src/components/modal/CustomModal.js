@@ -31,7 +31,6 @@ class CustomModal extends React.Component {
             if (i === 'children') continue
             props[i] = this.props[i]
         }
-        console.log(this.props)
         const Class = cs({
             [`${user && user.skin}`]: true,
             [`${user && user.font_size}`]: true

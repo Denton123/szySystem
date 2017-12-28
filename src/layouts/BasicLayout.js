@@ -8,6 +8,7 @@ import styles from './BasicLayout.less'
 import 'STYLE/css/theme.less'
 import React from 'react'
 import cs from 'classnames'
+import 'UTILS/weather.js'
 import {
     Layout,
     Menu,
@@ -44,9 +45,9 @@ function resetRoute(routes, permissionRoute) {
                             name: `${r.name},${rc.name},${rcc.name}`,
                             path: `${r.path}${rc.path}${rcc.path}`
                         }
-                        if (permissionRoute.find(k => k.path === rcc.path)) {
-                            children.push(obj)
-                        }
+                        // if (permissionRoute.find(k => k.path === rcc.path)) {
+                        // }
+                        children.push(obj)
                     })
                     arr.push(children)
                 }
@@ -55,9 +56,9 @@ function resetRoute(routes, permissionRoute) {
                     name: `${r.name},${rc.name}`,
                     path: `${r.path}${rc.path}`
                 }
-                if (permissionRoute.find(k => k.path === rc.path)) {
-                    arr.push(obj)
-                }
+                // if (permissionRoute.find(k => k.path === rc.path)) {
+                // }
+                arr.push(obj)
             })
         } else {
             obj = {
@@ -65,9 +66,9 @@ function resetRoute(routes, permissionRoute) {
                 name: r.name,
                 path: r.path
             }
-            if (permissionRoute.find(k => k.path === r.path)) {
-                arr.push(obj)
-            }
+            // if (permissionRoute.find(k => k.path === r.path)) {
+            // }
+            arr.push(obj)
         }
     })
     return arr
@@ -191,13 +192,13 @@ class BasicLayout extends React.Component {
                         if (route.routes) {
                             return (
                                 <SubMenu
-                                    className={this.isDisplay(route) ? '' : 'hide'}
+                                    className={this.isDisplay(route) ? '' : ''}
                                     key={route.path}
                                     title={<span><Icon type={route.icon} style={{fontSize: 16}} /><span style={{fontSize: 14}}>{route.name}</span></span>}
                                 >
                                     {
                                         route.routes.map((child, sn) => (
-                                            <Menu.Item key={`${route.path}${child.path}`} className={this.isDisplay(child) ? '' : 'hide'}>
+                                            <Menu.Item key={`${route.path}${child.path}`} className={this.isDisplay(child) ? '' : ''}>
                                                 <Link to={`${match.path}${route.path}${child.path}`}>{child.name}</Link>
                                             </Menu.Item>
                                         ))
@@ -206,7 +207,7 @@ class BasicLayout extends React.Component {
                             )
                         } else {
                             return (
-                                <Menu.Item key={route.path} className={this.isDisplay(route) ? '' : 'hide'}>
+                                <Menu.Item key={route.path} className={this.isDisplay(route) ? '' : ''}>
                                     <Link to={`${match.path}${route.path}`}>
                                         <Icon type={route.icon} style={{fontSize: 16}} />
                                         <span style={{fontSize: 14}}>{route.name}</span>

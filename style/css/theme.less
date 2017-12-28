@@ -14,24 +14,62 @@
 	background: @bg;
 	border-color: @bg;
 }
-
+.border(@bg){
+	border-color: @bg;
+}
 // 主题
 .theme(@bg, @unite) {
 	.ant-layout, .tpwthwidt .text_1vUR5ag, .tpwthwidt .title_2I35arv{
 		color: @unite; 
 	}
-	a{
-		color: @bg;
-	}
-	.ant-btn-primary, .layout-header, .ant-radio-inner:after, .ant-pagination-item-active{
+	.ant-btn-primary, .layout-header, .ant-radio-inner:after, .ant-pagination-item-active,
+	.ant-checkbox-checked .ant-checkbox-inner, .ant-checkbox-indeterminate .ant-checkbox-inner,
+	{
 		.color(@bg)
 	}
 	.ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected{
 		background: @bg;
 	}
-	.ant-radio-checked .ant-radio-inner,.ant-radio-button-wrapper-checked
+	.ant-pagination-item{
+		&:focus, &:hover{
+			.border(@bg)
+		}
+	}
+	.ant-pagination-item:hover a, .ant-table-tbody a, .hasAccept{
+		color: @bg;
+	}
+	.ant-radio-button-wrapper{
+		&-checked{
+			.border(@bg);
+			color: @bg;
+			box-shadow: -1px 0 0 0 @bg;
+		}
+		&:hover{
+			color: @bg;
+		}
+	}
+	.ant-select-selection{
+		&:hover, &:active, &:focus{
+			.border(@bg)
+		}
+	}
+	.ant-checkbox{
+		&-wrapper:hover,&:hover,&-input:focus{
+			.ant-checkbox-inner{
+				.border(@bg)
+			}
+		}
+	}
+	.ant-btn{
+		&:hover, &:active,&:focus{
+			border-color: @bg;
+			color: @bg;
+		}
+	}
+	.ant-radio-checked .ant-radio-inner,.ant-input:hover,
+	.ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled),
 	.ant-radio-wrapper:hover .ant-radio .ant-radio-inner, .ant-radio:hover .ant-radio-inner, .ant-radio-focused .ant-radio-inner{
-		border-color: @bg;
+		.border(@bg)
 	}
 }
 //字体大小
