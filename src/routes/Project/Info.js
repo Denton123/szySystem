@@ -239,7 +239,7 @@ class ProjectInfo extends Component {
                         </List.Item>
                     )}
                 />
-                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
+                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}

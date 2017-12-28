@@ -265,7 +265,7 @@ class ProblemDetail extends Component {
                             <span>{`提问者：${DetailData.realname}`}</span>
                             <span>{`提问时间：${moment(DetailData.createdAt).format('LLL')}`}</span>
                         </div>
-                        <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
+                        <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                             <CustomForm
                                 formStyle={{width: '100%'}}
                                 formFields={formFields}

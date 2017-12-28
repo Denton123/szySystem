@@ -112,6 +112,10 @@ class SetForm extends React.Component {
                 <FormItem label="皮肤">
                     {getFieldDecorator('skin')(
                         <RadioGroup onChange={this.props.onChange}>
+                            <Radio value="default">
+                                默认
+                                <span className="RadioBlock" style={{background: '#f5f5f5'}} />
+                            </Radio>
                             <Radio value="blue">
                                 清新时尚蓝
                                 <span className="RadioBlock" style={{background: '#1890ff'}} />

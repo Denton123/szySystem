@@ -309,7 +309,7 @@ class ProjectStage extends Component {
                             }
                         />
                     )}
-                    <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.handleModalCancel} width={780}>
+                    <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.handleModalCancel} width={780} user={this.props.user}>
                         <CustomDynamicForm
                             handleSubmit={this.handleSubmit}
                             formFields={formFields}
