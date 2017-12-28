@@ -35,7 +35,7 @@
 			.border(@bg)
 		}
 	}
-	.ant-pagination-item:hover a, .ant-table-tbody a{
+	.ant-pagination-item:hover a, .ant-table-tbody a, .hasAccept{
 		color: @bg;
 	}
 	.ant-radio-button-wrapper{
@@ -58,6 +58,12 @@
 			.ant-checkbox-inner{
 				.border(@bg)
 			}
+		}
+	}
+	.ant-btn{
+		&:hover, &:active,&:focus{
+			border-color: @bg;
+			color: @bg;
 		}
 	}
 	.ant-radio-checked .ant-radio-inner,.ant-input:hover,

@@ -20,7 +20,6 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import moment from 'moment'
-import 'react-quill/dist/quill.snow.css'
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
 import {ajax, show, answerUpdate, store, index, update} from 'UTILS/ajax'
@@ -49,12 +48,6 @@ class ProblemDetail extends Component {
         allData: []
     }
     componentDidMount() {
-        this.getData()
-    }
-    goBack = () => {
-        this.props.history.push('/home/project/problem')
-    }
-    getData = (callback) => {
         let id = this.props.match.params.id
         show(`problem/${id}`).then(res => {
             this.setState({
@@ -62,40 +55,45 @@ class ProblemDetail extends Component {
                 DetailData: resetObject(res.data)
             })
         }).then(() => {
-            let showallId = this.state.DetailData.id
-            var usedAll = []
-            ajax('get', `/answer/${showallId}/showIdData`).then(res => {
-                console.log(res.data)
-                this.setState({
-                    allData: res.data
-                })
-                const allData = this.state.allData
-                for (let u in allData) {
-                    usedAll.push(allData[u].used)
-                }
+            this.getData()
+        })
+    }
+    goBack = () => {
+        this.props.history.push('/home/project/problem')
+    }
+    getData = (callback) => {
+        let showallId = this.state.DetailData.id
+        var usedAll = []
+        ajax('get', `/answer/${showallId}/showIdData`).then(res => {
+            this.setState({
+                allData: res.data
             })
-            this.getAnswerData(1, res => {
-                this.setState({
-                    answerList: res.data.data,
-                    flag: res.data.currentPage
-                })
-                if (res.data.total > res.data.pageSize) {
-                    this.setState({
-                        showLoadingMore: true
-                    })
-                }
-                const detailArr = this.state.DetailData
-                const userid = this.props.user.id
-                if (usedAll.indexOf('1') === -1 && userid === detailArr.user_id) {
-                    this.setState({
-                        showCheckbox: true
-                    })
-                } else {
-                    this.setState({
-                        showCheckbox: false
-                    })
-                }
+            const allData = this.state.allData
+            for (let u in allData) {
+                usedAll.push(allData[u].used)
+            }
+        })
+        this.getAnswerData(1, res => {
+            this.setState({
+                answerList: res.data.data,
+                flag: res.data.currentPage
             })
+            if (res.data.total > res.data.pageSize) {
+                this.setState({
+                    showLoadingMore: true
+                })
+            }
+            const detailArr = this.state.DetailData
+            const userid = this.props.user.id
+            if (usedAll.indexOf('1') === -1 && userid === detailArr.user_id) {
+                this.setState({
+                    showCheckbox: true
+                })
+            } else {
+                this.setState({
+                    showCheckbox: false
+                })
+            }
         })
     }
     getAnswerData = (page, callback) => {
@@ -291,7 +289,7 @@ class ProblemDetail extends Component {
                                 key={item.id}
                                 className="List"
                                 extra={item.used === '1' ? (
-                                    <span style={{color: '#40a9ff'}}>
+                                    <span className="hasAccept">
                                         <Icon type="check-circle" style={{marginRight: 8, fontSize: 18}} />
                                         已采纳
                                     </span>
@@ -313,7 +311,6 @@ class ProblemDetail extends Component {
                             style={{height: 150}}
                             value={answer}
                             onChange={this.answerChange}
-                            theme="snow"
                         />
                         <Button type="primary" style={{float: 'right', marginTop: 50}} onClick={this.answerSubmit}>提交</Button>
                     </div>
