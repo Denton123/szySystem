@@ -39,6 +39,8 @@ class Summary extends Component {
         let page = this.props.location.state ? this.props.location.state.page : 1
         this.props.getData({
             page: 1,
+        }, (data) => {
+            return ajax('get', '/summary/all', data)
         })
     }
     render() {

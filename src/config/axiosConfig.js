@@ -66,12 +66,14 @@ axios.interceptors.response.use(function(response) {
 }, function(error) {
     console.dir(error)
     // Do something with response error
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
         if (error.config.url !== '/user/auth') {
             message.error('权限不足')
         }
-    } else if (error.response.status === 404) {
+    } else if (error.response && error.response.status === 404) {
         message.error('接口不存在')
+    } else {
+        message.error('服务错误')
     }
     return Promise.reject(error)
 })

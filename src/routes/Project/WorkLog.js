@@ -29,7 +29,7 @@ class WorkLog extends Component {
     }
 
     getLogData = () => {
-        index('/worklog').then(res => {
+        ajax('get', '/worklog/all').then(res => {
             this.setState({
                 log: res.data
             })

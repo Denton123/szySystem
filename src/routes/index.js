@@ -88,7 +88,7 @@ const routes = [
                     },
                     {
                         name: '工作日志',
-                        path: '/work-log',
+                        path: '/work-log/all',
                         component: getRoutes(['Project', 'WorkLog'])
                     },
                     {
@@ -163,7 +163,7 @@ const routes = [
             {
                 name: '总结概况',
                 icon: 'profile',
-                path: '/summary',
+                path: '/summary/all',
                 component: getRoutes(['Summary'])
             },
             {
