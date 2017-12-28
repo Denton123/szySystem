@@ -15,7 +15,7 @@ const TabPane = Tabs.TabPane
 
 class Permission extends Component {
     state = {
-        key: (this.props.location.state && this.props.location.state.key) ? this.props.location.state.key : 'user'
+        key: this.props.location.state ? this.props.location.state._key : 'user'
     }
     // componentWillMount() {
     //     console.log(this.props.location.state)
@@ -32,7 +32,7 @@ class Permission extends Component {
     onTabChange = (key) => {
         this.props.history.replace(this.props.location.pathname, {
             page: 1,
-            key: key
+            _key: key
         })
     }
 

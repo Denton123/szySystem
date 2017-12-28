@@ -129,8 +129,13 @@ function withBasicDataModel(PageComponent, Datas) {
             if (Object.keys(subModel).length > 0) {
                 Object.assign(params, subModel)
             }
+            let p = {}
+            for (let i in params) {
+                if (i.indexOf('_') > -1) continue
+                p[i] = params[i]
+            }
             let data = {
-                params: params
+                params: p
             }
             this.handleSetState('dataSetting', {
                 ...this.state.dataSetting,
@@ -161,6 +166,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         }
                         search = search.substr(0, search.length - 1)
                         this.props.history.push(`${this.props.location.pathname}${search}`, params)
+                        console.log(params)
                     } else {
                         // this.props.history.push(`${this.props.location.pathname}`, params)
                     }
