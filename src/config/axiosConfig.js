@@ -1,3 +1,4 @@
+import {message} from 'antd'
 import moment from 'moment'
 import {isObject, isArray} from 'UTILS/utils'
 
@@ -64,5 +65,10 @@ axios.interceptors.response.use(function(response) {
     return response
 }, function(error) {
     // Do something with response error
+    if (error.response.status === 401) {
+        message.error('权限不足')
+    } else if (error.response.status === 404) {
+        message.error('接口不存在')
+    }
     return Promise.reject(error)
 })
