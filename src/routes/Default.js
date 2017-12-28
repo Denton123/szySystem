@@ -86,7 +86,6 @@ class Default extends React.Component {
                         this.setState({
                             weatherTime: res.data.HeWeather5[0].basic.update
                         })
-                        console.log(this.state.weatherArr)
                     })
                 })
             })

@@ -92,7 +92,6 @@ class WorkLog extends Component {
                             editId = note[i].id
                         }
                     }
-                    // console.log(note[i].time)
                 }
                 update(`/worklog/${editId}`, saveObj).then(res => {
                     if (res.status === 200) {
