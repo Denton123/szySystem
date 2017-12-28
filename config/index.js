@@ -48,6 +48,8 @@ module.exports = {
             '/attendance/**': proxyTableOptions,
             '/role/**': proxyTableOptions,
             '/permission/**': proxyTableOptions,
+            '/worklog/**': proxyTableOptions,
+            '/summary/**': proxyTableOptions,
             // 上传文件
             '/uploadFiles/**': proxyTableOptions,
             // 上传图片
