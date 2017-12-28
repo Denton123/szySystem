@@ -335,7 +335,8 @@ const PE = withBasicDataModel(ProblemDetail, {
         problem: {
             value: null
         }
-    }
+    },
+    customGetData: true
 })
 
 export default PE

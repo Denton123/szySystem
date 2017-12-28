@@ -50,9 +50,13 @@ class OperateLog extends Component {
                         placeholder="请选择类型"
                         allowClear
                     >
-                        <Option value="1">新增</Option>
+                        <Option value="0">新增</Option>
+                        <Option value="1">删除</Option>
                         <Option value="2">修改</Option>
-                        <Option value="3">删除</Option>
+                        <Option value="3">查询</Option>
+                        <Option value="4">查看</Option>
+                        <Option value="5">登录</Option>
+                        <Option value="6">登出</Option>
                     </Select>
                 )
             },

@@ -70,6 +70,12 @@ class ProjectInfo extends Component {
         })
         this.props.handleEdit(e)
     }
+    handleFormSubmit = (values) => {
+        this.props.handleFormSubmit(values)
+        this.setState({
+            imageUrl: null
+        })
+    }
     render() {
         const {
             child,
@@ -243,7 +249,7 @@ class ProjectInfo extends Component {
                     <CustomForm
                         formStyle={{width: '100%'}}
                         formFields={formFields}
-                        handleSubmit={this.props.handleFormSubmit}
+                        handleSubmit={this.handleFormSubmit}
                         updateFormFields={this.props.updateFormFields}
                         formFieldsValues={this.props.formFieldsValues}
                         isSubmitting={this.props.isSubmitting}
