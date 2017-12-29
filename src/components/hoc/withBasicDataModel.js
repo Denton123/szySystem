@@ -131,7 +131,7 @@ function withBasicDataModel(PageComponent, Datas) {
             }
             let p = {}
             for (let i in params) {
-                if (i.indexOf('_key') > -1) continue
+                if (i.indexOf('_') > -1) continue
                 p[i] = params[i]
             }
             let data = {
@@ -166,7 +166,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         }
                         search = search.substr(0, search.length - 1)
                         this.props.history.push(`${this.props.location.pathname}${search}`, params)
-                        console.log(params)
                     } else {
                         // this.props.history.push(`${this.props.location.pathname}`, params)
                     }
@@ -475,7 +474,6 @@ function withBasicDataModel(PageComponent, Datas) {
                 return
             }
             params['page'] = 1
-            console.log('handleQuery', params)
             this.getData(params, false)
         }
 

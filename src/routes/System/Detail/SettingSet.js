@@ -192,6 +192,8 @@ class Setting extends Component {
         FontValue: ''
     }
     componentDidMount() {
+        console.log('componentDidMount ---- ')
+        console.log(this.props)
         this.getData()
     }
 
