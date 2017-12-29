@@ -35,6 +35,7 @@ class Default extends React.Component {
         }
     }
     componentDidMount() {
+        console.log(this.props.user)
         this.getData()
         this.timer = setInterval(() => this.getTime(), 1000)
     }
@@ -86,7 +87,6 @@ class Default extends React.Component {
                         this.setState({
                             weatherTime: res.data.HeWeather5[0].basic.update
                         })
-                        console.log(this.state.weatherArr)
                     })
                 })
             })
@@ -208,7 +208,7 @@ class Default extends React.Component {
                         <Avatar icon="user" src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} className="avatar" />
                         <div className="Greet">
                             <h2>下午好，{user && user.realname}，祝你开心每一天！</h2>
-                            <h4>技术部 - 总监</h4>
+                            <h4>{user && user.job}</h4>
                         </div>
                         <p className="Time tada animated">{moment().format('L a h:mm:ss')}</p>
                     </div>

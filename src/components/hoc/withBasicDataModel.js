@@ -131,7 +131,7 @@ function withBasicDataModel(PageComponent, Datas) {
             }
             let p = {}
             for (let i in params) {
-                if (i.indexOf('_') > -1) continue
+                if (i.indexOf('_key') > -1) continue
                 p[i] = params[i]
             }
             let data = {
@@ -474,6 +474,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 return
             }
             params['page'] = 1
+            console.log('handleQuery', params)
             this.getData(params, false)
         }
 
