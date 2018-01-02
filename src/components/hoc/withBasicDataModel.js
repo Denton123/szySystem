@@ -129,6 +129,7 @@ function withBasicDataModel(PageComponent, Datas) {
             if (Object.keys(subModel).length > 0) {
                 Object.assign(params, subModel)
             }
+            console.log(params)
             let p = {}
             for (let i in params) {
                 if (i.indexOf('__') > -1) continue
