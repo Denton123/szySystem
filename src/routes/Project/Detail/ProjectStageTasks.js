@@ -348,62 +348,69 @@ class ProjectStageTasks extends React.Component {
         const formFields = [
             {
                 label: '任务内容',
-                field: 'content',
-                valid: {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [{required: true, message: '任务内容不能为空'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('content', {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{required: true, message: '任务内容不能为空'}]
+                    })(<TextArea rows={5} placeholder="任务内容" />)
                 },
-                component: (<TextArea rows={5} placeholder="任务内容" />),
             },
             {
                 label: '从属',
-                field: 'pid',
-                component: (
-                    <Select
-                        placeholder="选择从属后变为子级任务"
-                        allowClear
-                        disabled={state.taskDataDisabled}
-                        onChange={this.handlePidChange}
-                    >
-                        {state.taskData.map(t => (
-                            <Option key={t.id} value={t.id} className="ellipsis">{t.content}</Option>
-                        ))}
-                    </Select>
-                ),
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('pid', {})(
+                        <Select
+                            placeholder="选择从属后变为子级任务"
+                            allowClear
+                            disabled={state.taskDataDisabled}
+                            onChange={this.handlePidChange}
+                        >
+                            {state.taskData.map(t => (
+                                <Option key={t.id} value={t.id} className="ellipsis">{t.content}</Option>
+                            ))}
+                        </Select>
+                    )
+                },
             },
             {
                 label: '执行者',
-                field: 'user_id',
-                valid: {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [{required: true, message: '请选择执行者'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('user_id', {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{required: true, message: '请选择执行者'}]
+                    })(
+                        <Select
+                            mode="multiple"
+                            placeholder="请选择执行者"
+                        >
+                            {state.userData.map(u => (
+                                <Option key={u.id} value={u.id}>{u.realname}</Option>
+                            ))}
+                        </Select>
+                    )
                 },
-                component: (
-                    <Select
-                        mode="multiple"
-                        placeholder="请选择执行者"
-                    >
-                        {state.userData.map(u => (
-                            <Option key={u.id} value={u.id}>{u.realname}</Option>
-                        ))}
-                    </Select>
-                ),
             },
             {
                 label: '任务计划开始时间',
-                field: 'plan_start_date',
-                valid: {
-                    rules: [{required: true, message: '请选择计划开始时间'}]
+                content: ({getFieldDecorator}) => {
+                    const disabledDate = (dateValue) => {
+                        return Date.now() > new Date(dateValue).getTime()
+                    }
+                    return getFieldDecorator('plan_start_date', {
+                        rules: [{required: true, message: '请选择计划开始时间'}]
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} disabledDate={disabledDate} />)
                 },
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
                 label: '任务计划结束时间',
-                field: 'plan_end_date',
-                valid: {
-                    rules: [{required: true, message: '请选择计划结束时间'}]
+                content: ({getFieldDecorator, getFieldsValue}) => {
+                    const disabledDate = (dateValue) => {
+                        return new Date(getFieldsValue(['plan_start_date']).plan_start_date).getTime() > new Date(dateValue).getTime()
+                    }
+                    return getFieldDecorator('plan_end_date', {
+                        rules: [{required: true, message: '请选择计划结束时间'}]
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} disabledDate={disabledDate} />)
                 },
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
         ]
         return (

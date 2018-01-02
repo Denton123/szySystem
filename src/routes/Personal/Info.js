@@ -123,90 +123,88 @@ class Info extends Component {
         const formFields = [
             {
                 label: '头像',
-                field: 'avatar',
-                component: (
-                    <Upload {...uploadProps}>
-                        <Avatar
-                            size="large"
-                            src={imageUrl}
-                            icon="user"
-                        />
-                        <div>点击头像上传新图片</div>
-                    </Upload>
-                ),
-                value: null
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('avatar', {})(
+                        <Upload {...uploadProps} disabled={state.formDisabled}>
+                            <Avatar
+                                size="large"
+                                src={imageUrl}
+                                icon="user"
+                            />
+                            <div>点击头像上传新图片</div>
+                        </Upload>
+                    )
+                },
             },
             {
                 label: '用户名',
-                field: 'name',
-                valid: {
-                    rules: [{required: true, message: '请输入用户名'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('name', {
+                        rules: [{required: true, message: '请输入用户名'}]
+                    })(<Input disabled placeholder="用户名" />)
                 },
-                component: (<Input disabled prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />),
-                value: null
             },
             {
                 label: '真实姓名',
-                field: 'realname',
-                valid: {
-                    rules: [{required: true, message: '请输入真实姓名'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {
+                        rules: [{required: true, message: '请输入真实姓名'}]
+                    })(<Input disabled={state.formDisabled} placeholder="真实姓名" />)
                 },
-                component: (<Input disabled={state.formDisabled} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="真实姓名" />),
-                value: null
             },
             {
                 label: '性别',
-                field: 'gender',
-                valid: {
-                    rules: [{required: true, message: '请选择性别'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('gender', {
+                        rules: [{required: true, message: '请选择性别'}]
+                    })(
+                        <RadioGroup>
+                            <Radio disabled={state.formDisabled} value="male">男</Radio>
+                            <Radio disabled={state.formDisabled} value="female">女</Radio>
+                        </RadioGroup>
+                    )
                 },
-                component: (
-                    <RadioGroup>
-                        <Radio disabled={state.formDisabled} value="male">男</Radio>
-                        <Radio disabled={state.formDisabled} value="female">女</Radio>
-                    </RadioGroup>
-                )
             },
             {
                 label: '邮箱',
-                field: 'email',
-                valid: {
-                    rules: [{
-                        type: 'email', message: '邮箱格式不对'
-                    }, {
-                        required: true, message: '请输入邮箱'
-                    }]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('email', {
+                        rules: [{
+                            type: 'email', message: '邮箱格式不对'
+                        }, {
+                            required: true, message: '请输入邮箱'
+                        }]
+                    })(<Input disabled={state.formDisabled} placeholder="邮箱" />)
                 },
-                component: (<Input disabled={state.formDisabled} prefix={<Icon type="mail" style={{ fontSize: 13 }} />} placeholder="邮箱" />)
             },
             {
                 label: '电话',
-                field: 'phone',
-                valid: {
-                    rules: [
-                        { required: true, message: '请输入你的电话' },
-                        {
-                            validator: checkPhone
-                        }
-                    ]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('phone', {
+                        rules: [
+                            { required: true, message: '请输入你的电话' },
+                            {
+                                validator: checkPhone
+                            }
+                        ]
+                    })(<Input disabled={state.formDisabled} placeholder="电话" />)
                 },
-                component: (<Input disabled={state.formDisabled} prefix={<Icon type="phone" style={{ fontSize: 13 }} />} placeholder="电话" />)
             },
             {
                 label: '出生日期',
-                field: 'birth_date',
-                valid: {
-                    rules: [{required: true, message: '请选择出生日期'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('birth_date', {
+                        rules: [{required: true, message: '请选择出生日期'}]
+                    })(<CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />)
                 },
-                component: <CustomDatePicker disabled={state.formDisabled} format="YYYY-MM-DD" showTime={false} />
             },
             {
                 label: '职位',
-                field: 'job',
-                valid: {
-                    rules: [{required: true, message: '请输入职位'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('job', {
+                        rules: [{required: true, message: '请输入职位'}]
+                    })(<Input disabled={state.formDisabled} placeholder="职位" />)
                 },
-                component: (<Input disabled={state.formDisabled} placeholder="职位" />)
             },
         ]
 

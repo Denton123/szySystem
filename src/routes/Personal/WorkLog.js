@@ -229,7 +229,8 @@ class WorkLog extends Component {
                         showTip={showTip}
                         delete={this.delete}
                         showDelete={showDelete}
-                        logcont={logcont} />
+                        logcont={logcont}
+                        user={this.props.user} />
                 </div>
             </Content>
         )

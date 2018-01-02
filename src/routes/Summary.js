@@ -56,28 +56,22 @@ class Summary extends Component {
         const condition = [
             {
                 label: '作者',
-                field: 'realname',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="作者" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
+                },
             },
             {
                 label: '关键字',
-                field: 'keyword',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('keyword', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                },
             },
             {
                 label: '发表日期',
-                field: 'date',
-                component: (<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
+                },
             }
-        ]
-        const operationBtn = [
-            // () => (
-            //     <Link to={`${match.url}/add`}>
-            //         <Button type="primary">
-            //             发表总结
-            //         </Button>
-            //     </Link>
-            // )
         ]
 
         const columns = [
@@ -97,31 +91,10 @@ class Summary extends Component {
                 dataIndex: 'date',
                 key: 'date',
             },
-            // {
-            //     title: '操作',
-            //     key: 'action',
-            //     render: (text, record) => {
-            //         if (text.user_id === user.id) {
-            //             return (
-            //                 <span>
-            //                     <Link to={`${match.path}/${text.id}`}>编辑</Link>
-            //                     <Divider type="vertical" />
-            //                     <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
-            //                 </span>
-            //             )
-            //         } else {
-            //             return (
-            //                 <span />
-            //             )
-            //         }
-            //     }
-            // }
         ]
 
         const tableExpandedRowRender = (record) => {
-            console.log(record.content)
             let content = escape(record.content)
-            console.log(content)
             return (
                 <div dangerouslySetInnerHTML={{__html: content}} />
             )
@@ -138,7 +111,6 @@ class Summary extends Component {
                     updateFormFields={this.props.updateQueryFields}
                     formFieldsValues={this.props.queryFieldValues}
                 />
-                <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
                 <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
             </div>
         )

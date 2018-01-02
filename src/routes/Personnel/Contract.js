@@ -66,8 +66,9 @@ class Contract extends Component {
         const condition = [
             {
                 label: '姓名',
-                field: 'realname',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
+                },
             }
         ]
         const operationBtn = [
@@ -124,32 +125,32 @@ class Contract extends Component {
         const formFields = [
             {
                 label: '用户名',
-                field: 'user_id',
-                valid: {
-                    rules: [{required: true, message: '请选择用户名'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('user_id', {
+                        rules: [{required: true, message: '请选择用户名'}]
+                    })(
+                        <Select>
+                            <Option value={null}>请选择用户</Option>
+                            {this.state.userData.map(u => (
+                                <Option key={u.id} value={u.id}>{u.realname}</Option>
+                            ))}
+                        </Select>
+                    )
                 },
-                component: (
-                    <Select>
-                        <Option value={null}>请选择用户</Option>
-                        {this.state.userData.map(u => (
-                            <Option key={u.id} value={u.id}>{u.realname}</Option>
-                        ))}
-                    </Select>
-                ),
             },
             {
                 label: '合同文件',
-                field: 'contract',
-                valid: {
-                    rules: [{required: true, message: '请上传合同文件'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('contract', {
+                        rules: [{required: true, message: '请上传合同文件'}]
+                    })(
+                        <Upload {...uploadProps}>
+                            <Button>
+                                <Icon type="upload" /> 选择文件
+                            </Button>
+                        </Upload>
+                    )
                 },
-                component: (
-                    <Upload {...uploadProps}>
-                        <Button>
-                            <Icon type="upload" /> 选择文件
-                        </Button>
-                    </Upload>
-                )
             },
         ]
 

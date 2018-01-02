@@ -28,8 +28,6 @@ import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
-import CustomForm from 'COMPONENTS/form/CustomForm'
-import CustomDynamicForm from 'COMPONENTS/form/CustomDynamicForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 

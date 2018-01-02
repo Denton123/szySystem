@@ -38,32 +38,35 @@ class OperateLog extends Component {
         const condition = [
             {
                 label: '用户',
-                field: 'realname',
-                component: (<Input autoComplete="off" placeholder="用户" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {})(<Input autoComplete="off" placeholder="用户" />)
+                },
             },
             {
                 label: '类型',
-                field: 'type',
-                component: (
-                    <Select
-                        style={{width: 150}}
-                        placeholder="请选择类型"
-                        allowClear
-                    >
-                        <Option value="0">新增</Option>
-                        <Option value="1">删除</Option>
-                        <Option value="2">修改</Option>
-                        <Option value="3">查询</Option>
-                        <Option value="4">查看</Option>
-                        <Option value="5">登录</Option>
-                        <Option value="6">登出</Option>
-                    </Select>
-                )
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('type', {})(
+                        <Select
+                            style={{width: 150}}
+                            placeholder="请选择类型"
+                            allowClear
+                        >
+                            <Option value="0">新增</Option>
+                            <Option value="1">删除</Option>
+                            <Option value="2">修改</Option>
+                            <Option value="3">查询</Option>
+                            <Option value="4">查看</Option>
+                            <Option value="5">登录</Option>
+                            <Option value="6">登出</Option>
+                        </Select>
+                    )
+                },
             },
             {
                 label: '时间',
-                field: 'log_date',
-                component: <CustomRangePicker format={'YYYY-MM-DD'} />,
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('log_date', {})(<CustomRangePicker format={'YYYY-MM-DD'} />)
+                },
             },
         ]
 

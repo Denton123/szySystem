@@ -88,8 +88,9 @@ class ProjectInfo extends Component {
         const condition = [
             {
                 label: '项目名称',
-                field: 'name',
-                component: (<Input autoComplete="off" placeholder="项目名称" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('name', {})(<Input autoComplete="off" placeholder="项目名称" />)
+                },
             },
         ]
 
@@ -136,68 +137,66 @@ class ProjectInfo extends Component {
         const formFields = [
             {
                 label: '项目名称',
-                field: 'name',
-                valid: {
-                    rules: [{required: true, message: '请输入项目名称'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('name', {
+                        rules: [{required: true, message: '请输入项目名称'}]
+                    })(<Input autoComplete="off" placeholder="项目名称" />)
                 },
-                component: (<Input autoComplete="off" placeholder="项目名称" />),
             },
             {
                 label: '项目负责人',
-                field: 'user_id',
-                valid: {
-                    rules: [{required: true, message: '请选择项目负责人'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('user_id', {
+                        rules: [{required: true, message: '请选择项目负责人'}]
+                    })(
+                        <Select>
+                            <Option value={null}>请选择用户</Option>
+                            {this.state.userData.map(u => (
+                                <Option key={u.id} value={u.id}>{u.realname}</Option>
+                            ))}
+                        </Select>
+                    )
                 },
-                component: (
-                    <Select>
-                        <Option value={null}>请选择用户</Option>
-                        {this.state.userData.map(u => (
-                            <Option key={u.id} value={u.id}>{u.realname}</Option>
-                        ))}
-                    </Select>
-                ),
             },
             {
                 label: '项目介绍',
-                field: 'introduce',
-                valid: {
-                    rules: [{required: true, message: '请输入项目介绍'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('introduce', {
+                        rules: [{required: true, message: '请输入项目介绍'}]
+                    })(<TextArea rows={6} autoComplete="off" placeholder="项目介绍" />)
                 },
-                component: (
-                    <TextArea rows={6} autoComplete="off" placeholder="项目介绍" />
-                )
             },
             {
                 label: '计划开始日期',
-                field: 'plan_start_date',
-                valid: {
-                    rules: [{required: true, message: '请选择计划开始日期'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('plan_start_date', {
+                        rules: [{required: true, message: '请选择计划开始日期'}]
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
                 },
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
                 label: '计划结束日期',
-                field: 'plan_end_date',
-                valid: {
-                    rules: [{required: true, message: '请选择计划结束日期'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('plan_end_date', {
+                        rules: [{required: true, message: '请选择计划结束日期'}]
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
                 },
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
                 label: '项目封面',
-                field: 'img',
-                component: (
-                    <Upload {...uploadProps}>
-                        {imageUrl ? (
-                            <img className="block w100" src={imageUrl} />
-                        ) : (
-                            <div className="projectInfo-upload-btn">
-                                <Icon type="plus" />
-                            </div>
-                        )}
-                    </Upload>
-                ),
-                value: null
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('img', {})(
+                        <Upload {...uploadProps}>
+                            {imageUrl ? (
+                                <img className="block w100" src={imageUrl} />
+                            ) : (
+                                <div className="projectInfo-upload-btn">
+                                    <Icon type="plus" />
+                                </div>
+                            )}
+                        </Upload>
+                    )
+                },
             },
         ]
 
@@ -259,55 +258,6 @@ class ProjectInfo extends Component {
         )
     }
 }
-
-/*
-<div className="mt-10">
-    <List
-        grid={{ gutter: 16, xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }}
-        {...this.props.dataSetting}
-        renderItem={item => (
-            <List.Item
-                bordered="false"
-            >
-                {
-                    item.type
-                    ? (
-                        <Card
-                            hoverable="true"
-                            className="projectInfo-card"
-                            onClick={this.add}
-                        >
-                            <div className="projectInfo-card-add txt-c">
-                                <Icon type="plus" className="mr-10" />新增项目
-                            </div>
-                        </Card>
-                    ) : (
-                        <Card
-                            hoverable="true"
-                            className="projectInfo-card"
-                            cover={<img className="block w100 projectInfo-card-cover" src={`/uploadImgs/${item.img}`} />}
-                            actions={[<Icon type="ellipsis" />, <Icon type="edit" />, <Icon type="delete" />]}
-                        >
-                            <Meta
-                                title={
-                                    <div className="projectInfo-card-meta-title">
-                                        <h2>{item.name}</h2>
-                                        <p>{`项目计划开始时间：${item.plan_start_date}`}</p>
-                                        <p>{`项目计划结束时间：${item.plan_end_date}`}</p>
-                                    </div>
-                                }
-                                description={
-                                    <p className="wrap-3" style={{height: 62}}>{item.introduce}</p>
-                                }
-                            />
-                        </Card>
-                    )
-                }
-            </List.Item>
-        )}
-    />
-</div>
-*/
 
 const PI = withBasicDataModel(ProjectInfo, {
     model: 'project',
