@@ -21,7 +21,7 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -43,9 +43,25 @@ class Recruit extends Component {
         fileList: []
     }
 
-    componentDidMount() {
+    handleModalCancel = (e) => {
+        this.setState({
+            fileList: []
+        })
+        this.props.handleModalCancel(e)
     }
 
+    handleFormSubmit = (values) => {
+        this.setState({
+            fileList: []
+        })
+        let params = {
+            date: formatDate()
+        }
+        for (let i in values) {
+            params[i] = values[i]
+        }
+        this.props.handleFormSubmit(params)
+    }
     /**
      * [是否通过]
      * @Author   szh
@@ -54,8 +70,6 @@ class Recruit extends Component {
      * @param    {String}   pass [选择是否pass]
      */
     handlePass = (id, pass) => {
-        console.log(id)
-        console.log(pass)
         let values = {
             pass: pass
         }
@@ -85,7 +99,7 @@ class Recruit extends Component {
             location,
             match
         } = this.props
-        console.log(this.props)
+
         const entryDate = {
             format: 'YYYY-MM-DD',
             showTime: false,
@@ -190,10 +204,6 @@ class Recruit extends Component {
             }
         ]
 
-        const rowSelection = {
-            onChange: this.props.handleTableRowChange
-        }
-
         // 表单
         const formFields = [
             {
@@ -269,20 +279,20 @@ class Recruit extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
-                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} />
+                <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.handleModalCancel} user={this.props.user}>
                     {
                         this.props.operationType === 'add' || this.props.operationType === 'edit' ? (<CustomForm
                             formStyle={{width: '100%'}}
                             formFields={formFields}
-                            handleSubmit={this.props.handleFormSubmit}
+                            handleSubmit={this.handleFormSubmit}
                             updateFormFields={this.props.updateFormFields}
                             formFieldsValues={this.props.formFieldsValues}
                             isSubmitting={this.props.isSubmitting}
                         />) : (<CustomForm
                             formStyle={{width: '100%'}}
                             formFields={commentFields}
-                            handleSubmit={this.props.handleFormSubmit}
+                            handleSubmit={this.handleFormSubmit}
                             updateFormFields={this.props.updateFormFields}
                             formFieldsValues={this.props.formFieldsValues}
                             isSubmitting={this.props.isSubmitting}

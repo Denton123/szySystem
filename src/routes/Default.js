@@ -35,7 +35,6 @@ class Default extends React.Component {
         }
     }
     componentDidMount() {
-        console.log(this.props.user)
         this.getData()
         this.timer = setInterval(() => this.getTime(), 1000)
     }

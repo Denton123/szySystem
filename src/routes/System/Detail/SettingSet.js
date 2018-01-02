@@ -36,7 +36,8 @@ const RadioGroup = Radio.Group
 const FormItem = Form.Item
 
 function transformValue(field, value) {
-    if (value === null || value === undefined) return null
+    if (value === null && field === 'skin') return 'default'
+    if (value === null && field === 'font_size') return 'small'
     let v
     if (field.indexOf('date') > -1) {
         // 日期组件的value必须使用moment
@@ -111,7 +112,7 @@ class SetForm extends React.Component {
             <Form onSubmit={this.handleSubmit}>
                 <FormItem label="皮肤">
                     {getFieldDecorator('skin')(
-                        <RadioGroup onChange={this.props.onChange}>
+                        <RadioGroup>
                             <Radio value="default">
                                 默认
                                 <span className="RadioBlock" style={{background: '#f5f5f5'}} />
@@ -186,9 +187,13 @@ class Setting extends Component {
             font_size: {
                 value: null
             }
-        }
+        },
+        RadioValue: '',
+        FontValue: ''
     }
     componentDidMount() {
+        console.log('componentDidMount ---- ')
+        console.log(this.props)
         this.getData()
     }
 
@@ -199,7 +204,6 @@ class Setting extends Component {
         let uid = this.props.user.id
         show(`user/${uid}`)
             .then(res => {
-                console.log(res)
                 // 直接更新内部表单数据
                 this.updateEditFormFieldsValues(res.data)
             })
@@ -214,6 +218,7 @@ class Setting extends Component {
     }
     // 编辑数据时更新表单数据
     updateEditFormFieldsValues = (data) => {
+        console.log(data)
         this.setState((prevState, props) => {
             let obj = {}
             Object.keys(prevState.formFieldsValues).forEach(field => {
@@ -279,8 +284,7 @@ class Setting extends Component {
         const props = {
             formFieldsValues: this.state.formFieldsValues,
             updateFormFields: this.updateFormFields,
-            handleSubmitForm: this.handleSubmitForm,
-            onChange: this.onChange
+            handleSubmitForm: this.handleSubmitForm
         }
 
         return (
