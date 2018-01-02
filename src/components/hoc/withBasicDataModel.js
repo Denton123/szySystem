@@ -131,7 +131,7 @@ function withBasicDataModel(PageComponent, Datas) {
             }
             let p = {}
             for (let i in params) {
-                if (i.indexOf('_') > -1) continue
+                if (i.indexOf('__') > -1) continue
                 p[i] = params[i]
             }
             let data = {
