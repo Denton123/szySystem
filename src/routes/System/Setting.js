@@ -15,12 +15,12 @@ const TabPane = Tabs.TabPane
 
 class Setting extends Component {
     state = {
-        key: this.props.location.state ? this.props.location.state._key : 'set'
+        key: this.props.location.state ? this.props.location.state.__key : 'set'
     }
     onTabChange = (key) => {
         this.props.history.replace(this.props.location.pathname, {
             page: 1,
-            _key: key
+            __key: key
         })
     }
     componentDidMount() {
