@@ -106,7 +106,7 @@ class WorkerAffairs extends Component {
                 title: '姓名',
                 dataIndex: 'realname',
                 key: 'realname',
-                width: 70
+                width: 100
             },
             {
                 title: '性别',
