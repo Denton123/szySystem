@@ -69,18 +69,21 @@ class Problem extends Component {
         const condition = [
             {
                 label: '发布者',
-                field: 'realname',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="发布者" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="发布者" />)
+                },
             },
             {
                 label: '关键字',
-                field: 'keyword',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('keyword', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                },
             },
             {
                 label: '发布日期',
-                field: 'date',
-                component: <CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
+                },
             }
         ]
 
@@ -139,19 +142,22 @@ class Problem extends Component {
         const formFields = [
             {
                 label: '标题',
-                field: 'title',
-                valid: {
-                    rules: [{required: true, message: '请输入标题'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('title', {
+                        rules: [{required: true, message: '请输入标题'}]
+                    })(<Input autoComplete="off" placeholder="请输入标题" />)
                 },
-                component: (<Input autoComplete="off" placeholder="请输入标题" />)
             },
             {
                 label: '内容',
-                field: 'problem',
                 formItemStyle: {
                     height: 350
                 },
-                component: (<ReactQuill placeholder="内容" style={{height: 250}} />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('problem', {
+                        rules: [{required: true, message: '请输入标题'}]
+                    })(<ReactQuill placeholder="内容" style={{height: 250}} />)
+                },
             }
         ]
 

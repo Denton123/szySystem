@@ -154,8 +154,9 @@ class PermissionRole extends Component {
         const condition = [
             {
                 label: '角色名称',
-                field: 'display_name',
-                component: (<Input autoComplete="off" placeholder="角色名称" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('display_name', {})(<Input autoComplete="off" placeholder="角色名称" />)
+                },
             },
         ]
 
@@ -217,27 +218,25 @@ class PermissionRole extends Component {
         const formFields = [
             {
                 label: '角色',
-                field: 'name',
-                valid: {
-                    rules: [{required: true, message: '请输入角色'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('name', {
+                        rules: [{required: true, message: '请输入角色'}]
+                    })(<Input autoComplete="off" placeholder="角色" />)
                 },
-                component: (<Input autoComplete="off" placeholder="角色" />),
             },
             {
                 label: '角色名称',
-                field: 'display_name',
-                valid: {
-                    rules: [{required: true, message: '请输入角色名称'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('display_name', {
+                        rules: [{required: true, message: '请输入角色名称'}]
+                    })(<Input autoComplete="off" placeholder="角色名称" />)
                 },
-                component: (<Input autoComplete="off" placeholder="角色名称" />),
             },
             {
                 label: '权限选择',
-                field: 'permission_ids',
-                valid: {
-                    // rules: [{required: true, message: '请选择角色权限'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('permission_ids', {})(<CustomTree checkedKeys={state.permission} onCheck={this.handleTreeCheck} list={state.permissionList} />)
                 },
-                component: (<CustomTree checkedKeys={state.permission} onCheck={this.handleTreeCheck} list={state.permissionList} />)
             },
         ]
         return (

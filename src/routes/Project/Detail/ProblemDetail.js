@@ -200,16 +200,18 @@ class ProblemDetail extends Component {
         const formFields = [
             {
                 label: '标题',
-                field: 'title',
-                component: (<Input autoComplete="off" placeholder="请输入标题" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('title', {})(<Input autoComplete="off" placeholder="请输入标题" />)
+                },
             },
             {
                 label: '内容',
-                field: 'problem',
                 formItemStyle: {
                     height: 350
                 },
-                component: (<ReactQuill placeholder="内容" style={{height: 250}} />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('problem', {})(<ReactQuill placeholder="内容" style={{height: 250}} />)
+                },
             }
         ]
         const loadMore = showLoadingMore ? (

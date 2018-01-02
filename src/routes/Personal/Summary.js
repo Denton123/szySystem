@@ -55,18 +55,21 @@ class Summary extends Component {
         const condition = [
             {
                 label: '作者',
-                field: 'realname',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="作者" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
+                },
             },
             {
                 label: '关键字',
-                field: 'keyword',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('keyword', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                },
             },
             {
                 label: '发表日期',
-                field: 'date',
-                component: (<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
+                },
             }
         ]
         const operationBtn = [
@@ -118,9 +121,7 @@ class Summary extends Component {
         ]
 
         const tableExpandedRowRender = (record) => {
-            console.log(record.content)
             let content = escape(record.content)
-            console.log(content)
             return (
                 <div dangerouslySetInnerHTML={{__html: content}} />
             )

@@ -20,7 +20,6 @@ import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
-import CustomForm from 'COMPONENTS/form/CustomForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 

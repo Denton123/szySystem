@@ -100,21 +100,6 @@ class Recruit extends Component {
             match
         } = this.props
 
-        const entryDate = {
-            format: 'YYYY-MM-DD',
-            showTime: false,
-            style: {
-                width: 220
-            }
-        }
-        const quitDate = {
-            format: 'YYYY-MM-DD',
-            showTime: false,
-            style: {
-                width: 220
-            }
-        }
-
         const uploadProps = {
             action: '/recruit',
             onRemove: (file) => {
@@ -143,13 +128,15 @@ class Recruit extends Component {
         const condition = [
             {
                 label: '职位',
-                field: 'job',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="请输入职位" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('job', {})(<Input className="mb-10" autoComplete="off" placeholder="请输入职位" />)
+                },
             },
             {
                 label: '面试时间',
-                field: 'date',
-                component: <CustomRangePicker className="mb-10" {...entryDate} />
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" format="YYYY-MM-DD" showTime={false} style={{ width: 220 }} />)
+                },
             }
         ]
 
@@ -208,62 +195,60 @@ class Recruit extends Component {
         const formFields = [
             {
                 label: '面试官',
-                field: 'interviewer',
-                valid: {
-                    rules: [{required: true, message: '请输入面试官'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('interviewer', {
+                        rules: [{required: true, message: '请输入面试官'}]
+                    })(<Input autoComplete="off" placeholder="面试官" />)
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="面试官" />),
             },
             {
                 label: '面试者',
-                field: 'interviewee',
-                valid: {
-                    rules: [{required: true, message: '请输入面试者'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('interviewee', {
+                        rules: [{required: true, message: '请输入面试者'}]
+                    })(<Input autoComplete="off" placeholder="面试者" />)
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="面试者" />)
             },
             {
                 label: '面试职位',
-                field: 'job',
-                valid: {
-                    rules: [{required: true, message: '请输入职位'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('job', {
+                        rules: [{required: true, message: '请输入职位'}]
+                    })(<Input autoComplete="off" placeholder="面试职位" />)
                 },
-                component: (<Input autoComplete="off" placeholder="面试职位" />)
             },
             {
                 label: '面试日期',
-                field: 'date',
-                valid: {
-                    rules: [{
-                        required: true, message: '请输入面试日期'
-                    }]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('date', {
+                        rules: [{required: true, message: '请输入面试日期'}]
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
                 },
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
                 label: '简历',
-                field: 'recruit',
-                valid: {
-                    rules: [{required: true, message: '请上传简历文件'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('recruit', {
+                        rules: [{required: true, message: '请上传简历文件'}]
+                    })(
+                        <Upload {...uploadProps}>
+                            <Button>
+                                <Icon type="upload" /> 选择文件
+                            </Button>
+                        </Upload>
+                    )
                 },
-                component: (
-                    <Upload {...uploadProps}>
-                        <Button>
-                            <Icon type="upload" /> 选择文件
-                        </Button>
-                    </Upload>
-                )
             }
         ]
 
         const commentFields = [
             {
                 label: '评论',
-                field: 'comment',
-                valid: {
-                    rules: [{required: true, message: '请输入评论'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('comment', {
+                        rules: [{required: true, message: '请输入评论'}]
+                    })(<TextArea rows={4} placeholder="对评论者的评价" />)
                 },
-                component: (<TextArea rows={4} placeholder="对评论者的评价" />)
             }
         ]
 

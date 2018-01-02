@@ -29,11 +29,6 @@ class PermissionUser extends Component {
         roleData: []
     }
     componentDidMount() {
-        // let params = {
-        //     _current: this.props.current,
-        //     page: this.props.location.state ? this.props.location.state.page : 1,
-        // }
-        // this.props.getData(params)
         ajax('get', '/role/all')
         .then(res => {
             this.setState({
@@ -92,13 +87,15 @@ class PermissionUser extends Component {
         const condition = [
             {
                 label: '姓名',
-                field: 'realname',
-                component: (<Input autoComplete="off" placeholder="姓名" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {})(<Input autoComplete="off" placeholder="姓名" />)
+                },
             },
             {
                 label: '职位',
-                field: 'job',
-                component: (<Input autoComplete="off" placeholder="职位" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('job', {})(<Input autoComplete="off" placeholder="职位" />)
+                },
             },
         ]
 
@@ -159,20 +156,20 @@ class PermissionUser extends Component {
         const formFields = [
             {
                 label: '用户名',
-                field: 'role_ids',
-                valid: {
-                    rules: [{required: true, message: '请选择角色'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('role_ids', {
+                        rules: [{required: true, message: '请选择角色'}]
+                    })(
+                        <Select
+                            mode="multiple"
+                            placeholder="设置角色"
+                        >
+                            {state.roleData.map(r => (
+                                <Option key={r.id} value={r.id}>{r.display_name}</Option>
+                            ))}
+                        </Select>
+                    )
                 },
-                component: (
-                    <Select
-                        mode="multiple"
-                        placeholder="设置角色"
-                    >
-                        {state.roleData.map(r => (
-                            <Option key={r.id} value={r.id}>{r.display_name}</Option>
-                        ))}
-                    </Select>
-                ),
             },
         ]
         return (

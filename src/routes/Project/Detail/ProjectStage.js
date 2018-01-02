@@ -24,7 +24,6 @@ import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
-import CustomForm from 'COMPONENTS/form/CustomForm'
 import CustomDynamicForm from 'COMPONENTS/form/CustomDynamicForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'

@@ -94,21 +94,18 @@ class SummaryDetail extends Component {
         const condition = [
             {
                 label: '标题',
-                field: 'title',
-                component: (<Input autoComplete="off" placeholder="标题" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('title', {})(<Input autoComplete="off" placeholder="标题" />)
+                },
             },
-            // {
-            //     label: '内容',
-            //     field: 'content',
-            //     component: (<TextArea rows={20} autoComplete="off" placeholder="关键字" />)
-            // },
             {
                 label: '内容',
-                field: 'content',
                 formItemStyle: {
                     height: 350
                 },
-                component: (<ReactQuill placeholder="内容" style={{height: 300}} />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('content', {})(<ReactQuill placeholder="内容" style={{height: 300}} />)
+                },
             }
         ]
 

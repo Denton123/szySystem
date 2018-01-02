@@ -60,28 +60,33 @@ class WorkerAffairs extends Component {
         const condition = [
             {
                 label: '姓名',
-                field: 'realname',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
+                },
             },
             {
                 label: '邮箱',
-                field: 'email',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="邮箱" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('email', {})(<Input className="mb-10" autoComplete="off" placeholder="邮箱" />)
+                },
             },
             {
                 label: '职位',
-                field: 'job',
-                component: (<Input className="mb-10" autoComplete="off" placeholder="职位" />)
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('job', {})(<Input className="mb-10" autoComplete="off" placeholder="职位" />)
+                },
             },
             {
                 label: '入职日期',
-                field: 'entry_date',
-                component: <CustomRangePicker className="mb-10" {...entryDate} />,
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('entry_date', {})(<CustomRangePicker className="mb-10" {...entryDate} />)
+                },
             },
             {
                 label: '离职日期',
-                field: 'quit_date',
-                component: <CustomRangePicker className="mb-10" {...quitDate} />,
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('quit_date', {})(<CustomRangePicker className="mb-10" {...quitDate} />)
+                },
             }
         ]
         const operationBtn = [
@@ -167,81 +172,85 @@ class WorkerAffairs extends Component {
         const formFields = [
             {
                 label: '用户名',
-                field: 'name',
-                valid: {
-                    rules: [{required: true, message: '请输入用户名'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('name', {
+                        rules: [{required: true, message: '请输入用户名'}]
+                    })(<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="用户名" />)
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="用户名" />),
             },
             {
                 label: '姓名',
-                field: 'realname',
-                valid: {
-                    rules: [{required: true, message: '请输入姓名'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('realname', {
+                        rules: [{required: true, message: '请输入姓名'}]
+                    })(<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="姓名" />)
                 },
-                component: (<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="姓名" />)
             },
             {
                 label: '性别',
-                field: 'gender',
-                valid: {
-                    rules: [{required: true, message: '请选择性别'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('gender', {
+                        rules: [{required: true, message: '请选择性别'}]
+                    })(
+                        <RadioGroup>
+                            <Radio value="male">男</Radio>
+                            <Radio value="female">女</Radio>
+                        </RadioGroup>
+                    )
                 },
-                component: (
-                    <RadioGroup>
-                        <Radio value="male">男</Radio>
-                        <Radio value="female">女</Radio>
-                    </RadioGroup>
-                )
             },
             {
                 label: '邮箱',
-                field: 'email',
-                valid: {
-                    rules: [{
-                        type: 'email', message: '邮箱格式不对'
-                    }, {
-                        required: true, message: '请输入邮箱'
-                    }]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('email', {
+                        rules: [{
+                            type: 'email', message: '邮箱格式不对'
+                        }, {
+                            required: true, message: '请输入邮箱'
+                        }]
+                    })(<Input prefix={<Icon type="mail" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="邮箱" />)
                 },
-                component: (<Input prefix={<Icon type="mail" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="邮箱" />)
             },
             {
                 label: '电话',
-                field: 'phone',
-                valid: {
-                    rules: [{ required: true, message: '请输入你的电话' }]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('phone', {
+                        rules: [{ required: true, message: '请输入你的电话' }]
+                    })(<Input prefix={<Icon type="phone" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="电话" />)
                 },
-                component: (<Input prefix={<Icon type="phone" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="电话" />)
             },
             {
                 label: '出生日期',
-                field: 'birth_date',
-                valid: {
-                    rules: [{required: true, message: '请选择出生日期'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('birth_date', {
+                        rules: [{required: true, message: '请选择出生日期'}]
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
                 },
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
                 label: '职位',
-                field: 'job',
-                valid: {
-                    rules: [{required: true, message: '请输入职位'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('job', {
+                        rules: [{required: true, message: '请输入职位'}]
+                    })(<Input autoComplete="off" placeholder="职位" />)
                 },
-                component: (<Input autoComplete="off" placeholder="职位" />)
             },
             {
                 label: '入职日期',
-                field: 'entry_date',
-                valid: {
-                    rules: [{required: true, message: '请选择入职日期'}]
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('entry_date', {
+                        rules: [{required: true, message: '请选择入职日期'}]
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
                 },
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
             },
             {
                 label: '离职日期',
-                field: 'quit_date',
-                component: <CustomDatePicker format="YYYY-MM-DD" showTime={false} />,
+                content: ({getFieldDecorator, getFieldsValue}) => {
+                    const disabledDate = (endValue) => {
+                        return new Date(getFieldsValue(['entry_date']).entry_date).getTime() > new Date(endValue).getTime()
+                    }
+                    return getFieldDecorator('quit_date', {})(<CustomDatePicker format="YYYY-MM-DD" showTime={false} disabledDate={disabledDate} />)
+                },
             }
         ]
 
