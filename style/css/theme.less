@@ -4,6 +4,12 @@
 @purple_color: #7546c9;
 @yellow_color: #fbd437;
 
+@a_blue: rgba(24, 144, 255, 0.17);
+@a_green: rgba(10, 166, 121, 0.22);
+@a_purple: rgba(117, 70, 201, 0.2);
+@a_yellow: rgba(251, 212, 55, 0.15);
+
+
 @white: #fff;
 //字体大小
 @font_small: 12px;
@@ -15,10 +21,29 @@
 	border-color: @bg;
 }
 .border(@bg){
-	border-color: @bg;
+	border-color: @bg !important;
 }
 // 主题
-.theme(@bg, @unite) {
+.theme(@bg, @unite, @opa) {
+	.ant-fullcalendar{
+		&-month-panel-selected-cell .ant-fullcalendar-month, &-selected-day .ant-fullcalendar-date{
+			border-top-color: @bg;
+			background: @opa;
+		}
+		&-date:hover{
+			background: @opa;
+		}
+	}
+	.ant-fullcalendar-fullscreen{
+		.ant-fullcalendar{
+			&-month-panel-selected-cell .ant-fullcalendar-value,&-selected-day .ant-fullcalendar-value{
+				color: @bg;
+			}
+			&-today .ant-fullcalendar-date{
+				border-color: @bg;
+			}
+		}
+	}
 	.ant-layout, .tpwthwidt .text_1vUR5ag, .tpwthwidt .title_2I35arv{
 		color: @unite; 
 	}
@@ -35,8 +60,35 @@
 			.border(@bg)
 		}
 	}
-	.ant-pagination-item:hover a, .ant-table-tbody a, .hasAccept{
-		color: @bg;
+	.ant-pagination-item{
+		&:hover a{
+			color: @bg;
+		}
+		&-active{
+			&:hover{
+				color:@unite;
+			}
+		}
+	}
+	.ant-tree-checkbox{
+		&-checked, &-indeterminate{
+			.ant-tree-checkbox-inner{
+				.color(@bg)
+			}
+		}
+		&:hover .ant-tree-checkbox-inner{
+			.border(@bg)
+		}
+	}
+	.ant-tabs{
+		&-tab{
+			&:hover, &:focus,&-active{
+				color: @bg;
+			}
+		}
+		&-ink-bar{
+			background-color: @bg;
+		}
 	}
 	.ant-radio-button-wrapper{
 		&-checked{
@@ -48,7 +100,7 @@
 			color: @bg;
 		}
 	}
-	.ant-select-selection{
+	.ant-select-selection,.ant-input{
 		&:hover, &:active, &:focus{
 			.border(@bg)
 		}
@@ -60,16 +112,13 @@
 			}
 		}
 	}
-	.ant-btn{
-		&:hover, &:active,&:focus{
-			border-color: @bg;
-			color: @bg;
-		}
-	}
-	.ant-radio-checked .ant-radio-inner,.ant-input:hover,
+	.ant-radio-checked .ant-radio-inner,
 	.ant-calendar-picker:hover .ant-calendar-picker-input:not(.ant-input-disabled),
 	.ant-radio-wrapper:hover .ant-radio .ant-radio-inner, .ant-radio:hover .ant-radio-inner, .ant-radio-focused .ant-radio-inner{
 		.border(@bg)
+	}
+	.Card a,.ant-table-tbody a, .hasAccept{
+		color: @bg;
 	}
 }
 //字体大小
@@ -81,16 +130,16 @@
 
 
 .blue{
-    .theme(@blue_color, @white)
+    .theme(@blue_color, @white, @a_blue)
 }
 .green{
-    .theme(@green_color, @white)
+    .theme(@green_color, @white, @a_green)
 }
 .purple{
-    .theme(@purple_color, @white)
+    .theme(@purple_color, @white, @a_purple)
 }
 .yellow{
-    .theme(@yellow_color, @white)
+    .theme(@yellow_color, @white, @a_yellow)
 }
 
 

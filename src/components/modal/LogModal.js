@@ -5,6 +5,8 @@ import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
 import { Modal, Input, Button, Menu, Dropdown, Icon } from 'antd'
 import 'ROUTES/Personal/WorkLog.less'
+import 'STYLE/css/theme.less'
+import cs from 'classnames'
 
 const { TextArea } = Input
 class PopModal extends Component {
@@ -38,13 +40,19 @@ class PopModal extends Component {
         )
         const { textContent } = this.state
         const { show, onCancel, onChange, title, showTip, showDelete } = this.props
+        const user = this.props.user
+        const Class = cs({
+            [`${user && user.skin}`]: true,
+            [`${user && user.font_size}`]: true
+        })
         return (
             <div>
                 <Modal
                     title={`${title}日志`}
                     visible={show}
                     onOk={this.onSubmit}
-                    onCancel={onCancel}>
+                    onCancel={onCancel}
+                    className={Class}>
                     {showTip === true ? <p style={{color: 'red'}}>请输入日志！</p> : null}
                     <div className="wrap">
                         <TextArea
