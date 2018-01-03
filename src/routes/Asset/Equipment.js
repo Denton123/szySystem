@@ -1,5 +1,5 @@
 import React from 'react'
-import Asset from './Asset.js'
+import Asset from 'COMPONENTS/page/Asset.js'
 
 const TheEquipment = Asset({
     belong: 'equipment',

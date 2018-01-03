@@ -1,10 +1,7 @@
 import React, {Component} from 'react'
 import {
-    Input,
-    Button,
-    Table,
-    Divider,
-    message
+    Card,
+    Button
 } from 'antd'
 import {
     Link,
@@ -27,26 +24,19 @@ import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
-const {TextArea} = Input
-
 class SummaryDetail extends Component {
+    state = {
+        data: {},
+    }
     componentDidMount() {
-        if (this.props.match.params.id) {
-        // 编辑
-            this.getData()
-        } else {
-        // 新增
-            this.props.handleSetState('operationType', 'add')
-        }
+        this.getData()
     }
     getData = () => {
-        if (!this.props.user) {
-            this.props.history.push('/login')
-        }
         show(`summary/${this.props.match.params.id}`)
             .then(res => {
-                // 直接更新内部表单数据
-                this.props.updateEditFormFieldsValues(res.data)
+                this.setState({
+                    data: res.data
+                })
             })
             .catch(err => {
                 console.log(err)
@@ -54,25 +44,6 @@ class SummaryDetail extends Component {
     }
     goBack = (e) => {
         this.props.history.goBack()
-    }
-    handleFormSubmit = (values) => {
-        let params = {
-            user_id: this.props.user.id,
-        }
-        if (!this.props.match.params.id) {
-            params['date'] = formatDate(true)
-        }
-        for (let i in values) {
-            params[i] = values[i]
-        }
-        this.props.handleFormSubmit(params, (res) => {
-            if (res.status === 200) {
-                message.success('保存成功')
-                setTimeout(() => {
-                    this.props.history.push('/home/personal/summary')
-                }, 200)
-            }
-        })
     }
     render() {
         const {
@@ -82,62 +53,26 @@ class SummaryDetail extends Component {
             location,
             match
         } = this.props
-
-        const operationBtn = [
-            () => (
-                <Button className="pull-right" type="primary" onClick={this.goBack}>
-                    返回
-                </Button>
-            )
-        ]
-
-        const condition = [
-            {
-                label: '标题',
-                content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('title', {})(<Input autoComplete="off" placeholder="标题" />)
-                },
-            },
-            {
-                label: '内容',
-                formItemStyle: {
-                    height: 350
-                },
-                content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('content', {})(<ReactQuill placeholder="内容" style={{height: 300}} />)
-                },
-            }
-        ]
-
+        const data = this.state.data
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <BasicOperation className="mt-10 mb-10 clearfix" operationBtns={operationBtn} />
-                <CustomForm
-                    formStyle={{width: '80%'}}
-                    formFields={condition}
-                    handleSubmit={this.handleFormSubmit}
-                    updateFormFields={this.props.updateFormFields}
-                    formFieldsValues={this.props.formFieldsValues}
-                />
+                <Card
+                    title={
+                        <div>
+                            <h1>{data.title}</h1>
+                            <p>
+                                <span className="mr-10">作者：{data.User ? data.User.realname : null}</span>
+                                <span className="mr-10">发表时间：{data.date}</span>
+                            </p>
+                        </div>
+                    }
+                    extra={<Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>}
+                >
+                    <div dangerouslySetInnerHTML={{__html: data.content}} />
+                </Card>
             </div>
         )
     }
 }
 
-const Sd = withBasicDataModel(SummaryDetail, {
-    model: 'summary',
-    formFieldsValues: {
-        id: {
-            value: null
-        },
-        title: {
-            value: null
-        },
-        content: {
-            value: null
-        }
-    },
-    customGetData: true
-})
-
-export default Sd
+export default SummaryDetail

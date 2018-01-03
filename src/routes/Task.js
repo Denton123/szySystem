@@ -21,7 +21,7 @@ import {
 
 // 引入工具方法
 import {isObject, isArray, valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
-import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
+import {ajax, index, store, show, update, destroy, check} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -380,9 +380,9 @@ class Task extends React.Component {
             },
             {
                 label: '任务计划结束时间',
-                content: ({getFieldDecorator, getFieldsValue}) => {
+                content: ({getFieldDecorator, getFieldValue}) => {
                     const disabledDate = (dateValue) => {
-                        return new Date(getFieldsValue(['plan_start_date']).plan_start_date).getTime() > new Date(dateValue).getTime()
+                        return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
                     }
                     return getFieldDecorator('plan_end_date', {
                         rules: [{required: true, message: '请选择计划结束时间'}]

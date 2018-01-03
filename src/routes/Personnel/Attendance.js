@@ -153,17 +153,16 @@ class Attendance extends Component {
                             data = [...arrItem, ...data]
                         })
                     }
-                    this.setState({
-                        attendanceData: data,
-                        loading: false
-                    })
+                    if (data.length === 0) {
+                        message.warning('该用户暂无考勤记录')
+                    }
                 } else {
                     message.error(res.data)
-                    this.setState({
-                        loading: false,
-                        attendanceData: []
-                    })
                 }
+                this.setState({
+                    attendanceData: data,
+                    loading: false
+                })
             })
             .catch(err => {
                 console.log(err)

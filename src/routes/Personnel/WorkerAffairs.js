@@ -21,7 +21,8 @@ import {
 
 // 引入工具方法
 // import {isObject, isArray, valueToMoment} from 'UTILS/utils'
-// import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
+import {ajax} from 'UTILS/ajax'
+import {checkFormField} from 'UTILS/regExp'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -172,9 +173,16 @@ class WorkerAffairs extends Component {
         const formFields = [
             {
                 label: '用户名',
-                content: ({getFieldDecorator}) => {
+                content: ({getFieldDecorator, getFieldValue}) => {
+                    const validator = (rule, value, callback) => {
+                        checkFormField(rule.field, value, 'User', '用户名')
+                        .then(res => {
+                            callback(res)
+                        })
+                    }
                     return getFieldDecorator('name', {
-                        rules: [{required: true, message: '请输入用户名'}]
+                        validateTrigger: ['onBlur'],
+                        rules: [{required: true, validator: validator}]
                     })(<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="用户名" />)
                 },
             },

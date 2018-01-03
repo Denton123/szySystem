@@ -22,7 +22,7 @@ import ReactQuill from 'react-quill'
 import moment from 'moment'
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
-import {ajax, show, answerUpdate, store, index, update} from 'UTILS/ajax'
+import {ajax, show, store, index, update} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 

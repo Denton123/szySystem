@@ -217,25 +217,42 @@ class ProjectStageDatas extends Component {
         const formFields = [
             {
                 label: '名称',
-                field: 'name',
-                valid: {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [
-                        {required: true, message: '请输入名称，如“阶段负责人”'},
-                    ],
-                },
-                component: (<Input style={{width: '80%'}} autoComplete="off" placeholder="名称" />),
+                content: ({getFieldDecorator, getFieldsValue}, k) => {
+                    const validator = (rule, value, callback) => {
+                        if (value) {
+                            let temp = false
+                            let values = getFieldsValue()
+                            for (let i in values) {
+                                if (i === rule.field) continue
+                                if (values[i] === value) {
+                                    temp = true
+                                }
+                            }
+                            if (temp) {
+                                callback('名称中存在重复')
+                            } else {
+                                callback()
+                            }
+                        } else {
+                            callback('请输入名称，如“阶段负责人”')
+                        }
+                    }
+                    return getFieldDecorator(`name-${k}`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [{required: true, validator: validator}],
+                    })(<Input style={{width: '80%'}} autoComplete="off" placeholder="名称" />)
+                }
             },
             {
                 label: '具体信息',
-                field: 'info',
-                valid: {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [
-                        {required: true, message: '请输入具体信息，如“张三、李四”'},
-                    ],
-                },
-                component: (<Input style={{width: '80%'}} autoComplete="off" placeholder="具体信息" />),
+                content: ({getFieldDecorator}, k) => {
+                    return getFieldDecorator(`info-${k}`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [
+                            {required: true, message: '请输入具体信息，如“张三、李四”'},
+                        ],
+                    })(<Input style={{width: '80%'}} autoComplete="off" placeholder="具体信息" />)
+                }
             },
         ]
 

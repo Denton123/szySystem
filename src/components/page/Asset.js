@@ -22,6 +22,7 @@ import {
 // 引入工具方法
 import {isObject, isArray, valueToMoment} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
+import {checkFormField} from 'UTILS/regExp'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 import InputRange from 'COMPONENTS/input/InputRange'
@@ -236,8 +237,15 @@ module.exports = function(opts) {
                 formFields.unshift({
                     label: 'rfid',
                     content: ({getFieldDecorator}) => {
+                        const validator = (rule, value, callback) => {
+                            checkFormField(rule.field, value, 'Asset', 'rfid')
+                            .then(res => {
+                                callback(res)
+                            })
+                        }
                         return getFieldDecorator('rfid', {
-                            rules: [{required: true, message: '请输入rfid'}]
+                            validateTrigger: ['onBlur'],
+                            rules: [{required: true, validator: validator}]
                         })(<Input autoComplete="off" placeholder="rfid" />)
                     },
                 })

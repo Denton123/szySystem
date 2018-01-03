@@ -48,10 +48,15 @@ const routes = [
                             {
                                 name: '发表总结',
                                 path: '/add',
-                                component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
+                                component: getRoutes(['Personal', 'Detail', 'SummaryEdit'])
                             },
                             {
                                 name: '编辑总结',
+                                path: '/edit/:id',
+                                component: getRoutes(['Personal', 'Detail', 'SummaryEdit'])
+                            },
+                            {
+                                name: '总结详情',
                                 path: '/:id',
                                 component: getRoutes(['Personal', 'Detail', 'SummaryDetail'])
                             },
@@ -164,7 +169,7 @@ const routes = [
                 name: '总结概况',
                 icon: 'profile',
                 path: '/summary/all',
-                component: getRoutes(['Summary'])
+                component: getRoutes(['Summary']),
             },
             {
                 name: '系统设置',
