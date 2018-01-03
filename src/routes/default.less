@@ -40,6 +40,7 @@
 				}
 				p{
 					float: right;
+
 				}
 			}
 			.Time {
@@ -47,34 +48,31 @@
 				float: right;
 				line-height: 7;
 				font-size: 20px;
+				color: black;
 			}
 		}
 	}
 	
 	.Main{
-		width:100%;
-		margin: 0 auto;
 		.CardWrap{
-			width: 100%;
 			overflow: hidden;
 			.Card {
-				width: 60%;
 				margin-bottom: 20px;
-				float: left;
 				.ant-list-item{
-					&-meta-description{
-						width: 100px;
+					&-meta{
+						width: 100%;
 					}
-					&-action{
-						margin-left: 0;
+					&-meta-content{
+						width: 100%;
 					}
-				}
-			}
-			.Weather {
-				max-width: 294px;
-				float: right;
-				li{
-					list-style: none;
+					&-content{
+						width:60%;
+						p{
+							white-space: nowrap;
+							overflow: hidden;
+							text-overflow: ellipsis;
+						}
+					}
 				}
 			}
 		}
@@ -85,13 +83,16 @@
 		}
 	}
 	.LogContent{
-		width: 60%;
+		// width: 100%;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		word-wrap: break-word;
+		// word-wrap: break-word;
 		overflow: hidden;
 	}
 	.LogTime{
 		float: right;
+	}
+	.ant-list-item-action li span.itemTime{
+		color: #1890ff;
 	}
 }

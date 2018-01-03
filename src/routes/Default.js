@@ -50,12 +50,19 @@ class Default extends React.Component {
     getData = () => {
         if (this.props.user) {
             const id = this.props.user.id
-            show(`/worklog/${id}`).then(res => {
+            // show(`/worklog/${id}`).then(res => {
+            //     this.setState({
+            //         workLog: res.data
+            //     })
+            // })
+            axios.get(`/worklog/default?page=1&user_id=${id}&pageSize=5`).then(res => {
+                console.log('res --------- ')
+                console.log(res)
                 this.setState({
-                    workLog: res.data
+                    workLog: res.data.data
                 })
             })
-            show(`/summary?page=1&user_id=${id}`).then(res => {
+            show(`/summary?page=1&user_id=${id}&pageSize=4&page=1`).then(res => {
                 this.setState({
                     summaryData: res.data.data
                 })
@@ -70,8 +77,25 @@ class Default extends React.Component {
         const match = this.props.match
         const user = this.props.user
         const {workLog, summaryData} = this.state
+        console.log('this.props---')
+        console.log(this.props)
+        let color = (this.props.user && this.props.user.skin !== null) ? this.props.user.skin : 'blue'
+        switch (color) {
+            case 'blue':
+                color = '#1890ff'
+                break
+            case 'green':
+                color = '#0aa679'
+                break
+            case 'purple':
+                color = '#7546c9'
+                break
+            case 'yellow':
+                color = '#fbd437'
+                break
+        }
         const LogContent = ({content}) => (
-            <p className="LogContent" dangerouslySetInnerHTML={{__html: content}} />
+            <p dangerouslySetInnerHTML={{__html: content}} />
             )
         const CardMsg = (
             <div className="Card">
@@ -81,7 +105,7 @@ class Default extends React.Component {
                             hoverable
                             title="工作日志"
                             bordered
-                            extra={<a href="/home/personal/work-log">更多</a>}>
+                            extra={<Link to="/home/personal/work-log">更多</Link>}>
                             <List
                                 className="animated fadeInRight"
                                 itemLayout="horizontal"
@@ -89,7 +113,7 @@ class Default extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         key={item.id}
-                                        actions={[<span>{moment(item.date).format('LL')}</span>]}>
+                                        actions={[<span style={{color: color}} href="javascript:void(0)">{moment(item.time).format('LL')}</span>]}>
                                         <Tooltip title={item.content} placement="top">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.content} />} />
@@ -104,15 +128,17 @@ class Default extends React.Component {
                             hoverable
                             title="个人总结"
                             bordered
-                            extra={<a href="/home/personal/summary">更多</a>}>
+                            extra={<Link to="/home/personal/summary">更多</Link>}>
                             <List
                                 className="animated fadeInRight"
                                 itemLayout="horizontal"
                                 dataSource={summaryData}
+                                sm="5"
+                                xs="5"
                                 renderItem={item => (
                                     <List.Item
                                         key={item.id}
-                                        actions={[<span>{moment(item.date).format('LL')}</span>]}>
+                                        actions={[<Link style={{color: color}} to={`/home/personal/summary/${item.id}`}>{moment(item.time).format('LL')}</Link>]}>
                                         <Tooltip title={<LogContent content={item.content} />} placement="top">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.content} />} />
