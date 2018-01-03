@@ -21,7 +21,7 @@ import {
 
 // 引入工具方法
 // import {isObject, isArray, valueToMoment} from 'UTILS/utils'
-// import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
+import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -172,9 +172,29 @@ class WorkerAffairs extends Component {
         const formFields = [
             {
                 label: '用户名',
-                content: ({getFieldDecorator}) => {
+                content: ({getFieldDecorator, getFieldValue}) => {
+                    const validator = (rule, value, callback) => {
+                        if (value) {
+                            ajax('post', '/check', {
+                                field: 'name',
+                                value: value,
+                                model: 'User'
+                            })
+                            .then(res => {
+                                console.log(res)
+                                if (res.data === true) {
+                                    callback()
+                                } else {
+                                    callback('该用户名已经存在')
+                                }
+                            })
+                        } else {
+                            callback('请输入用户名')
+                        }
+                    }
                     return getFieldDecorator('name', {
-                        rules: [{required: true, message: '请输入用户名'}]
+                        validateTrigger: ['onBlur'],
+                        rules: [{required: true, validator: validator}]
                     })(<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="用户名" />)
                 },
             },

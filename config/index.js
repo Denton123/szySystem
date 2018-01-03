@@ -50,6 +50,7 @@ module.exports = {
             '/permission/**': proxyTableOptions,
             '/worklog/**': proxyTableOptions,
             '/summary/**': proxyTableOptions,
+            '/check': proxyTableOptions,
             // 上传文件
             '/uploadFiles/**': proxyTableOptions,
             // 上传图片
