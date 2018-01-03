@@ -65,10 +65,6 @@ class CustomForm extends React.Component {
             : defaultOperationLayout
         const layout = this.props.layout ? this.props.layout : 'horizontal'
         const formStyle = this.props.formStyle ? this.props.formStyle : {width: 300}
-        // {item.field
-        //     ? getFieldDecorator(item.field, item.valid ? item.valid : {})(item.component)
-        //     : item.component
-        // }
         return (
             <Form onSubmit={this.handleSubmit} layout={layout} style={formStyle}>
                 {formFields.map((item, idx) => (

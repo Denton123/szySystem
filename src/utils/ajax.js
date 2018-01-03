@@ -60,9 +60,6 @@ function ajax(type, url, data = {}, hasFile = false) {
                 resolve(res)
             })
             .catch(err => {
-                if (err.response.status === 500) {
-                    // 服务器错误
-                }
                 // 统一错误处理
                 // TODO
                 reject(err)
@@ -87,8 +84,8 @@ const commonApi = {
     destroy: function(url) {
         return ajax('delete', apiUrl(url))
     },
-    answerUpdate: function(url, data) {
-        return ajax('put', apiUrl(url), data)
+    check: function(data) {
+        return ajax('post', '/check', data)
     }
 }
 

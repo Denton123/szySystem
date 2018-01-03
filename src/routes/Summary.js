@@ -1,143 +1,16 @@
-import React, {Component} from 'react'
-import {
-    Input,
-    Button,
-    Table,
-    Divider
-} from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
-import ReactQuill from 'react-quill'
-// 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
-import {ajax} from 'UTILS/ajax'
+import React from 'react'
+import Sy from 'COMPONENTS/page/Summary'
 
-import BasicOperation from 'COMPONENTS/basic/BasicOperation'
+const TotalSummary = Sy({
+    personal: false
+})
 
-import CustomModal from 'COMPONENTS/modal/CustomModal'
-import CustomForm from 'COMPONENTS/form/CustomForm'
-import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
-
-import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
-
-/**
- * [escape 过滤script标签]
- * @DateTime 2017-12-11
- * @param    {string}   str [html标签字符串]
- * @return   {string}       [过滤后的html标签字符串]
- */
-function escape(str) {
-    return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
-}
-
-class Summary extends Component {
-    componentDidMount() {
-        let page = this.props.location.state ? this.props.location.state.page : 1
-        this.props.getData({
-            page: 1,
-        }, (data) => {
-            return ajax('get', '/summary/all', data)
-        })
-    }
+class Summary extends React.Component {
     render() {
-        const {
-            child,
-            route,
-            history,
-            location,
-            match,
-            user
-        } = this.props
-
-        const condition = [
-            {
-                label: '作者',
-                content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
-                },
-            },
-            {
-                label: '关键字',
-                content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('keyword', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
-                },
-            },
-            {
-                label: '发表日期',
-                content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
-                },
-            }
-        ]
-
-        const columns = [
-            {
-                title: '作者',
-                dataIndex: 'realname',
-                key: 'realname',
-            },
-            {
-                title: '标题',
-                dataIndex: 'title',
-                key: 'title',
-                width: 350,
-            },
-            {
-                title: '发表时间',
-                dataIndex: 'date',
-                key: 'date',
-            },
-        ]
-
-        const tableExpandedRowRender = (record) => {
-            let content = escape(record.content)
-            return (
-                <div dangerouslySetInnerHTML={{__html: content}} />
-            )
-        }
-
         return (
-            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <CustomForm
-                    layout="inline"
-                    formStyle={{width: '100%'}}
-                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
-                    formFields={condition}
-                    handleSubmit={this.props.handleQuery}
-                    updateFormFields={this.props.updateQueryFields}
-                    formFieldsValues={this.props.queryFieldValues}
-                />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
-            </div>
+            <TotalSummary {...this.props} />
         )
     }
 }
 
-const Sy = withBasicDataModel(Summary, {
-    model: 'summary',
-    queryFieldValues: {
-        realname: {
-            value: null
-        },
-        keyword: {
-            value: null
-        },
-        date: {
-            value: null
-        }
-    },
-    handleData: (dataSource) => {
-        let arr = []
-        dataSource.forEach(data => {
-            arr.push(resetObject(data))
-        })
-        return arr
-    },
-    customGetData: true
-})
-
-export default Sy
+export default Summary

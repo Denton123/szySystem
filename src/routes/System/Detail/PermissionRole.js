@@ -15,6 +15,7 @@ import {
 
 import {resetObject} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
+import {checkFormField} from 'UTILS/regExp'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -219,8 +220,15 @@ class PermissionRole extends Component {
             {
                 label: '角色',
                 content: ({getFieldDecorator}) => {
+                    const validator = (rule, value, callback) => {
+                        checkFormField(rule.field, value, 'Role', '角色')
+                        .then(res => {
+                            callback(res)
+                        })
+                    }
                     return getFieldDecorator('name', {
-                        rules: [{required: true, message: '请输入角色'}]
+                        validateTrigger: ['onBlur'],
+                        rules: [{required: true, validator: validator}]
                     })(<Input autoComplete="off" placeholder="角色" />)
                 },
             },

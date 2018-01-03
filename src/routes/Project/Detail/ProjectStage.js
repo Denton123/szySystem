@@ -264,15 +264,37 @@ class ProjectStage extends Component {
         const formFields = [
             {
                 label: '阶段名称',
-                field: 'name',
-                valid: {
-                    validateTrigger: ['onChange', 'onBlur'],
-                    rules: [
-                        {required: true, message: '请输入阶段名称'},
-                        {max: 6, min: 2, message: '阶段名称长度为2~6个字符'}
-                    ],
-                },
-                component: (<Input style={{width: '80%'}} autoComplete="off" placeholder="阶段名称" />),
+                content: ({getFieldDecorator, getFieldsValue}, k) => {
+                    const validator = (rule, value, callback) => {
+                        if (value) {
+                            if (value.length < 2 || value.length > 6) {
+                                callback('阶段名称长度为2~6个字符')
+                            } else {
+                                let temp = false
+                                let values = getFieldsValue()
+                                for (let i in values) {
+                                    if (i === rule.field) continue
+                                    if (values[i] === value) {
+                                        temp = true
+                                    }
+                                }
+                                if (temp) {
+                                    callback('阶段名称中存在重复')
+                                } else {
+                                    callback()
+                                }
+                            }
+                        } else {
+                            callback('请输入阶段名称')
+                        }
+                    }
+                    return getFieldDecorator(`name-${k}`, {
+                        validateTrigger: ['onChange', 'onBlur'],
+                        rules: [
+                            {required: true, validator: validator},
+                        ],
+                    })(<Input style={{width: '80%'}} autoComplete="off" placeholder="阶段名称" />)
+                }
             },
         ]
 

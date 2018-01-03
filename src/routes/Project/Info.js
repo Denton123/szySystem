@@ -23,6 +23,7 @@ import './Info.less'
 // 引入工具方法
 import {getBase64, resetObject} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
+import {checkFormField} from 'UTILS/regExp'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -138,8 +139,15 @@ class ProjectInfo extends Component {
             {
                 label: '项目名称',
                 content: ({getFieldDecorator}) => {
+                    const validator = (rule, value, callback) => {
+                        checkFormField(rule.field, value, 'Project', '项目名称')
+                        .then(res => {
+                            callback(res)
+                        })
+                    }
                     return getFieldDecorator('name', {
-                        rules: [{required: true, message: '请输入项目名称'}]
+                        validateTrigger: ['onBlur'],
+                        rules: [{required: true, validator: validator}]
                     })(<Input autoComplete="off" placeholder="项目名称" />)
                 },
             },
@@ -169,17 +177,23 @@ class ProjectInfo extends Component {
             {
                 label: '计划开始日期',
                 content: ({getFieldDecorator}) => {
+                    const disabledDate = (dateValue) => {
+                        return Date.now() > new Date(dateValue).getTime()
+                    }
                     return getFieldDecorator('plan_start_date', {
                         rules: [{required: true, message: '请选择计划开始日期'}]
-                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} disabledDate={disabledDate} />)
                 },
             },
             {
                 label: '计划结束日期',
-                content: ({getFieldDecorator}) => {
+                content: ({getFieldDecorator, getFieldValue}) => {
+                    const disabledDate = (dateValue) => {
+                        return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                    }
                     return getFieldDecorator('plan_end_date', {
                         rules: [{required: true, message: '请选择计划结束日期'}]
-                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
+                    })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} disabledDate={disabledDate} />)
                 },
             },
             {

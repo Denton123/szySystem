@@ -10,6 +10,8 @@ import {
     Redirect
 } from 'react-router-dom'
 
+import {isArray} from 'UTILS/utils'
+
 const { Content } = Layout
 moment.locale('zh-cn')
 
@@ -132,10 +134,15 @@ class Attendance extends Component {
                 console.log('access_token ---- ')
                 console.log(res)
                 let data = []
-                if (res.data !== []) {
+                if (isArray(res.data)) {
                     res.data.forEach((arrItem) => {
                         data = [...arrItem, ...data]
                     })
+                    if (data.length === 0) {
+                        message.warning('该用户暂无考勤记录')
+                    }
+                } else {
+                    message.error(res.data)
                 }
                 this.setState({
                     attendanceData: data,

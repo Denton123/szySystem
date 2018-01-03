@@ -89,7 +89,7 @@ class CustomDynamicForm extends React.Component {
                             required={false}
                             key={idx}
                         >
-                            {getFieldDecorator(`${item.field}-${k}`, item.valid)(item.component)}
+                            {item.content(this.props.form, k)}
                         </FormItem>
                     ))}
                     {keys.length > 1 ? (

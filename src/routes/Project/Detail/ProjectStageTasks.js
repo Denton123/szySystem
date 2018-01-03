@@ -403,9 +403,9 @@ class ProjectStageTasks extends React.Component {
             },
             {
                 label: '任务计划结束时间',
-                content: ({getFieldDecorator, getFieldsValue}) => {
+                content: ({getFieldDecorator, getFieldValue}) => {
                     const disabledDate = (dateValue) => {
-                        return new Date(getFieldsValue(['plan_start_date']).plan_start_date).getTime() > new Date(dateValue).getTime()
+                        return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
                     }
                     return getFieldDecorator('plan_end_date', {
                         rules: [{required: true, message: '请选择计划结束时间'}]
