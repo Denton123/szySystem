@@ -45,6 +45,10 @@ class SummaryDetail extends Component {
     goBack = (e) => {
         this.props.history.goBack()
     }
+
+    goEdit = (e) => {
+        this.props.history.push(`/home/personal/summary/edit/${this.props.match.params.id}`)
+    }
     render() {
         const {
             child,
@@ -54,6 +58,7 @@ class SummaryDetail extends Component {
             match
         } = this.props
         const data = this.state.data
+        console.log(this.props)
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Card
@@ -66,7 +71,12 @@ class SummaryDetail extends Component {
                             </p>
                         </div>
                     }
-                    extra={<Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>}
+                    extra={
+                        <div>
+                            <Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>
+                            <Button className="pull-right mr-10" type="primary" onClick={this.goEdit}>编辑</Button>
+                        </div>
+                    }
                 >
                     <div dangerouslySetInnerHTML={{__html: data.content}} />
                 </Card>

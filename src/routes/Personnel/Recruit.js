@@ -248,7 +248,7 @@ class Recruit extends Component {
                     return getFieldDecorator('comment', {
                         rules: [{required: true, message: '请输入评论'}]
                     })(<TextArea rows={4} placeholder="对评论者的评价" />)
-                },
+                }
             }
         ]
 

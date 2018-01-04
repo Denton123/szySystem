@@ -310,7 +310,7 @@ class ProblemDetail extends Component {
                         <h3>撰写答案</h3>
                         <ReactQuill
                             placeholder="撰写答案"
-                            style={{height: 150}}
+                            style={{height: 150, color: 'black'}}
                             value={answer}
                             onChange={this.answerChange}
                         />
