@@ -25,15 +25,17 @@ const regExp = {
      * @param    {string}   value    [字段的值]
      * @param    {string}   model    [字段所属于的后台模块]
      * @param    {string}   fieldTxt [字段的显示名称]
+     * @param    {number}   id       [编辑表单时需要id]
      * @return   {string||void}            [返回值]
      */
-    checkFormField: function(field, value, model, fieldTxt) {
+    checkFormField: function(field, value, model, fieldTxt, id = 0) {
         return new Promise(resolve => {
             if (value) {
                 check({
                     field: field,
                     value: value,
-                    model: model
+                    model: model,
+                    id: id
                 })
                 .then(res => {
                     if (res.data === true) {

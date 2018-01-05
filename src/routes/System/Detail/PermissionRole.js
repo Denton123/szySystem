@@ -220,8 +220,12 @@ class PermissionRole extends Component {
             {
                 label: '角色',
                 content: ({getFieldDecorator}) => {
+                    let id = 0
+                    if (this.props.formFieldsValues.id.value) {
+                        id = this.props.formFieldsValues.id.value
+                    }
                     const validator = (rule, value, callback) => {
-                        checkFormField(rule.field, value, 'Role', '角色')
+                        checkFormField(rule.field, value, 'Role', '角色', id)
                         .then(res => {
                             callback(res)
                         })
