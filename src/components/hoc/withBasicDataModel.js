@@ -267,7 +267,6 @@ function withBasicDataModel(PageComponent, Datas) {
             } else {
                 if (this.state.operationType === 'comment') {
                     values = {comment: values.comment}
-                    console.log(values)
                 }
                 this.ajaxUpdate(this.state.formFieldsValues.id.value, values, cb)
             }

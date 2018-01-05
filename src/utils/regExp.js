@@ -1,6 +1,14 @@
 import {check} from 'UTILS/ajax'
 const regExp = {
-    // 手机和固话验证
+    /**
+     * [checkPhone 手机和固话验证]
+     * @Author   wyp
+     * @DateTime 2017-12-03
+     * @param    {array}    rule        [规则]
+     * @param    {string}   value       [字段的值]
+     * @param    {fn}       callback    [callback]
+     * @return   {fn}       callback    [返回值]
+     */
     checkPhone: function(rule, value, callback) {
         let length = value.length
         if (!((value.length === 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value)) || (value.length === 12 && /^(([0+]\d{2,3}-)?(0\d{2,3})-)?(\d{7,8})(-(\d{3,}))?$/.test(value)))) {
