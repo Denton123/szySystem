@@ -81,16 +81,16 @@ module.exports = function(opts) {
                     },
                 }
             ]
-            const operationBtn = [
-                () => (
+            const operationBtn = []
+            if (opts.personal) {
+                operationBtn.push(() => (
                     <Link to={`${match.url}/add`}>
                         <Button type="primary">
                             发表总结
                         </Button>
                     </Link>
-                )
-            ]
-
+                ))
+            }
             const columns = [
                 {
                     title: '作者',
