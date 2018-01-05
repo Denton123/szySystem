@@ -94,7 +94,7 @@ class ProjectInfo extends Component {
             {
                 label: '项目名称',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('name', {})(<Input autoComplete="off" placeholder="项目名称" />)
+                    return getFieldDecorator('name', {})(<Input className="mb-10" autoComplete="off" placeholder="项目名称" />)
                 },
             },
         ]

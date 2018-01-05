@@ -396,6 +396,7 @@ function withBasicDataModel(PageComponent, Datas) {
          */
         handleDelete = (e, cb) => {
             let id = e.target.dataset['id']
+            console.log(id)
             CustomPrompt({
                 type: 'confirm',
                 content: <div>是否要删除这条信息</div>,
