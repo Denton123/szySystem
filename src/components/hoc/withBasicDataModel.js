@@ -391,9 +391,10 @@ function withBasicDataModel(PageComponent, Datas) {
          * [单个删除]
          * @Author   szh
          * @DateTime 2017-12-19
-         * @param    {Object}   e [Proxy.event事件]
+         * @param    {Object}     e  [Proxy.event事件]
+         * @param    {Function}   cb [回调]
          */
-        handleDelete = (e) => {
+        handleDelete = (e, cb) => {
             let id = e.target.dataset['id']
             CustomPrompt({
                 type: 'confirm',
@@ -402,15 +403,19 @@ function withBasicDataModel(PageComponent, Datas) {
                 onOk: () => {
                     destroy(`${this.state.model}/${id}`)
                         .then(res => {
-                            let { dataSource } = this.state.dataSetting
-                            dataSource.splice(
-                                dataSource.findIndex(item => item.id === res.data.id),
-                                1
-                            )
-                            this.handleSetState('dataSetting', {
-                                ...this.state.dataSetting,
-                                dataSource: dataSource
-                            })
+                            if (cb) {
+                                cb(res)
+                            } else {
+                                let { dataSource } = this.state.dataSetting
+                                dataSource.splice(
+                                    dataSource.findIndex(item => item.id === res.data.id),
+                                    1
+                                )
+                                this.handleSetState('dataSetting', {
+                                    ...this.state.dataSetting,
+                                    dataSource: dataSource
+                                })
+                            }
                         })
                 }
             })
