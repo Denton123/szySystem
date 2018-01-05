@@ -54,6 +54,10 @@ class ProjectInfo extends Component {
                     })
                 })
         }
+        this.setState({
+            fileList: [],
+            imageUrl: null
+        })
         this.props.handleAdd()
     }
     edit = (e) => {
@@ -67,7 +71,7 @@ class ProjectInfo extends Component {
         }
         let img = e.target.dataset['img']
         this.setState({
-            imageUrl: `/uploadImgs/${img}`
+            imageUrl: img ? `/uploadImgs/${img}` : img
         })
         this.props.handleEdit(e)
     }
