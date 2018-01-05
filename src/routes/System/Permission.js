@@ -10,12 +10,15 @@ import {
 } from 'react-router-dom'
 import User from './Detail/PermissionUser'
 import Role from './Detail/PermissionRole'
+import {ajax} from 'UTILS/ajax'
 
 const TabPane = Tabs.TabPane
 
 class Permission extends Component {
     state = {
-        key: this.props.location.state ? this.props.location.state.__key : 'user'
+        key: this.props.location.state ? this.props.location.state.__key : 'user',
+        // 获取角色数据列表
+        roleData: []
     }
     // componentWillMount() {
     //     console.log(this.props.location.state)
@@ -36,6 +39,15 @@ class Permission extends Component {
         })
     }
 
+    getRoleData = () => {
+        ajax('get', '/role/all')
+        .then(res => {
+            this.setState({
+                roleData: res.data
+            })
+        })
+    }
+
     render() {
         const {
             history,
@@ -48,10 +60,10 @@ class Permission extends Component {
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Tabs defaultActiveKey={this.state.key} onTabClick={this.onTabChange}>
                     <TabPane tab="用户" key="user">
-                        <User {...this.props} />
+                        <User {...this.props} getRoleData={this.getRoleData} roleData={this.state.roleData} />
                     </TabPane>
                     <TabPane tab="角色" key="role">
-                        <Role {...this.props} />
+                        <Role {...this.props} getRoleData={this.getRoleData} />
                     </TabPane>
                 </Tabs>
             </div>
