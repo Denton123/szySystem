@@ -237,8 +237,13 @@ module.exports = function(opts) {
                 formFields.unshift({
                     label: 'rfid',
                     content: ({getFieldDecorator}) => {
+                        console.log(this.props.formFieldsValues)
+                        let id = 0
+                        if (this.props.formFieldsValues.id.value) {
+                            id = this.props.formFieldsValues.id.value
+                        }
                         const validator = (rule, value, callback) => {
-                            checkFormField(rule.field, value, 'Asset', 'rfid')
+                            checkFormField(rule.field, value, 'Asset', 'rfid', id)
                             .then(res => {
                                 callback(res)
                             })

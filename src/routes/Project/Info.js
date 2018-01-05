@@ -139,8 +139,12 @@ class ProjectInfo extends Component {
             {
                 label: '项目名称',
                 content: ({getFieldDecorator}) => {
+                    let id = 0
+                    if (this.props.formFieldsValues.id.value) {
+                        id = this.props.formFieldsValues.id.value
+                    }
                     const validator = (rule, value, callback) => {
-                        checkFormField(rule.field, value, 'Project', '项目名称')
+                        checkFormField(rule.field, value, 'Project', '项目名称', id)
                         .then(res => {
                             callback(res)
                         })

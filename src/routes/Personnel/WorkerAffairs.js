@@ -174,8 +174,12 @@ class WorkerAffairs extends Component {
             {
                 label: '用户名',
                 content: ({getFieldDecorator, getFieldValue}) => {
+                    let id = 0
+                    if (this.props.formFieldsValues.id.value) {
+                        id = this.props.formFieldsValues.id.value
+                    }
                     const validator = (rule, value, callback) => {
-                        checkFormField(rule.field, value, 'User', '用户名')
+                        checkFormField(rule.field, value, 'User', '用户名', id)
                         .then(res => {
                             callback(res)
                         })
