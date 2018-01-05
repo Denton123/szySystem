@@ -33,11 +33,17 @@ class WorkLog extends Component {
         showTip: false,
         logcont: '',
         showDelete: false,
-        deleteId: ''
+        deleteId: '',
+        date: this.props.location.state ? this.props.location.state.date : moment().format('YYYY-MM-DD'),
+        mode: this.props.location.state ? this.props.location.state.mode : 'month'
     }
 
     componentDidMount() {
         this.getLogData()
+        console.log(this.props.location)
+        // this.props.history.replace(this.props.location.pathname, {
+        //     date: key
+        // })
     }
 
     getLogData = () => {
@@ -162,10 +168,24 @@ class WorkLog extends Component {
         this.setState({
             show: true
         })
+        this.props.history.replace(this.props.location.pathname, {
+            date: onSelectDay
+        })
         localStorage.setItem('recordDay', onSelectDay)
         const da = localStorage.getItem('recordDay')
     }
 
+    onPanelChange = (date, mode) => {
+        let dateMoment = moment(date).format('YYYY-MM-DD')
+        this.setState({
+            date: dateMoment,
+            mode: mode
+        })
+        this.props.history.replace(this.props.location.pathname, {
+            date: dateMoment,
+            mode: mode
+        })
+    }
     delete = (e) => {
         var deleteID = this.state.deleteId
         confirm({
@@ -220,7 +240,10 @@ class WorkLog extends Component {
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                     <Calendar
                         onSelect={this.onSelect}
-                        dateCellRender={this.dateCellRender} />
+                        dateCellRender={this.dateCellRender}
+                        defaultValue={moment(this.state.date)}
+                        onPanelChange={this.onPanelChange}
+                        mode={this.state.mode} />
                     <PopModal
                         show={show}
                         handleok={this.handleok}

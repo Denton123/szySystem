@@ -135,7 +135,7 @@ class WorkerAffairs extends Component {
                 title: '头像',
                 dataIndex: 'avatar',
                 key: 'avatar',
-                render: text => <Avatar src={text} />
+                render: text => text !== null ? <Avatar src={`/uploadImgs/${text}`} /> : <Avatar icon="user" />
             },
             {
                 title: '职位',

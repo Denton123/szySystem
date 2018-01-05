@@ -265,6 +265,10 @@ function withBasicDataModel(PageComponent, Datas) {
             if (this.state.operationType === 'add') {
                 this.ajaxStore(values, cb)
             } else {
+                if (this.state.operationType === 'comment') {
+                    values = {comment: values.comment}
+                    console.log(values)
+                }
                 this.ajaxUpdate(this.state.formFieldsValues.id.value, values, cb)
             }
         }

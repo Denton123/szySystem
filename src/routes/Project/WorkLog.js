@@ -21,7 +21,9 @@ const { Content } = Layout
 
 class WorkLog extends Component {
     state = {
-        log: []
+        log: [],
+        date: this.props.location.state ? this.props.location.state.date : moment().format('YYYY-MM-DD'),
+        mode: this.props.location.state ? this.props.location.state.mode : 'month'
     }
 
     componentWillMount() {
@@ -71,13 +73,33 @@ class WorkLog extends Component {
                     Arr[id].subContent.map(item => (
                         <Popover content={item.cont} title={item.name} key={item.cont}>
                             <span style={{marginRight: '10px'}}>
-                                <Avatar src={`/uploadImgs/${item.avatar}`} icon="user" />
+                                {
+                                    item.avatar ? <Avatar src={`/uploadImgs/${item.avatar}`} icon="user" /> : <Avatar icon="user" />
+                                }
                             </span>
                         </Popover>
                     ))
                 )
             }
         }
+    }
+
+    onPanelChange = (date, mode) => {
+        let dateMoment = moment(date).format('YYYY-MM-DD')
+        this.setState({
+            date: dateMoment,
+            mode: mode
+        })
+        this.props.history.replace(this.props.location.pathname, {
+            date: dateMoment,
+            mode: mode
+        })
+    }
+    onSelect = (value) => {
+        const onSelectDay = moment(value).format('YYYY-MM-DD')
+        this.props.history.replace(this.props.location.pathname, {
+            date: onSelectDay
+        })
     }
     render() {
         const {
@@ -91,7 +113,11 @@ class WorkLog extends Component {
             <Content style={{ margin: '0 16px' }}>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                     <Calendar
-                        dateCellRender={this.dateCellRender} />
+                        dateCellRender={this.dateCellRender}
+                        defaultValue={moment(this.state.date)}
+                        onPanelChange={this.onPanelChange}
+                        mode={this.state.mode}
+                        onSelect={this.onSelect} />
                 </div>
             </Content>
         )

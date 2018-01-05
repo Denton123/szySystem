@@ -21,14 +21,14 @@ moment.locale('zh-cn')
 class Attendance extends Component {
     state = {
         attendanceData: [],
-        calendarTime: null,
         loading: false,
         selectData: [],
-        selectedValue: ''
+        selectedValue: '',
+        calendarTime: this.props.location.state ? this.props.location.state.calendarTime : moment().format('YYYY-MM-DD'),
+        mode: this.props.location.state ? this.props.location.state.mode : 'month'
     }
     componentDidMount() {
         this.setState({
-            calendarTime: moment().format('YYYY-MM-DD'),
             loading: true
         }, () => {
             this.getSelectData()
@@ -109,24 +109,34 @@ class Attendance extends Component {
     }
 
     // 日期面板变化回调
-    onPanelChange = (value) => {
+    onPanelChange = (value, mode) => {
+        let calendarTime = moment(value).format('YYYY-MM-DD')
         this.setState({
-            calendarTime: moment(value).format('YYYY-MM-DD'),
-            loading: true
+            calendarTime: calendarTime,
+            loading: true,
+            mode: mode
         }, () => {
-            this.getAttendanceData(this.state.selectedValue)
+            this.getAttendanceData()
+        })
+        this.props.history.replace(this.props.location.pathname, {
+            calendarTime: calendarTime,
+            mode: mode
         })
     }
 
     onSelect = (value) => {
+        let calendarTime = moment(value).format('YYYY-MM-DD')
         this.setState({
-            calendarTime: moment(value).format('YYYY-MM-DD')
+            calendarTime: calendarTime
         })
         if (!(moment(moment(value).format('YYYY-MM')).isSame(moment(this.state.calendarTime).format('YYYY-MM')))) {
             this.setState({
                 loading: true
             }, () => {
                 this.getAttendanceData(this.state.selectedValue)
+            })
+            this.props.history.replace(this.props.location.pathname, {
+                calendarTime: calendarTime
             })
         }
     }
@@ -208,6 +218,8 @@ class Attendance extends Component {
                         monthCellRender={this.monthCellRender}
                         onPanelChange={this.onPanelChange}
                         onSelect={this.onSelect}
+                        defaultValue={moment(this.state.calendarTime)}
+                        mode={this.state.mode}
                     />
                 </Spin>
             </div>

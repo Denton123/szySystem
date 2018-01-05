@@ -55,6 +55,7 @@ class SummaryDetail extends Component {
     goBack = (e) => {
         this.props.history.goBack()
     }
+
     handleFormSubmit = (values) => {
         let params = {
             user_id: this.props.user.id,

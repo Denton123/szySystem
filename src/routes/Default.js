@@ -77,8 +77,6 @@ class Default extends React.Component {
         const match = this.props.match
         const user = this.props.user
         const {workLog, summaryData} = this.state
-        console.log('this.props---')
-        console.log(this.props)
         let color = (this.props.user && this.props.user.skin !== null) ? this.props.user.skin : 'blue'
         switch (color) {
             case 'blue':
@@ -141,7 +139,7 @@ class Default extends React.Component {
                                         actions={[<Link style={{color: color}} to={`/home/personal/summary/${item.id}`}>{moment(item.time).format('LL')}</Link>]}>
                                         <Tooltip title={<LogContent content={item.content} />} placement="top">
                                             <List.Item.Meta
-                                                description={<LogContent content={item.content} />} />
+                                                description={<LogContent content={item.title} />} />
                                         </Tooltip>
                                     </List.Item>
                                     )}
