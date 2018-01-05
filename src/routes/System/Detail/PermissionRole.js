@@ -130,8 +130,7 @@ class PermissionRole extends Component {
             .then(res => {
                 if (res.data > 0) {
                     message.warning('不能删除，该角色已有用户使用！')
-                }
-                else {
+                } else {
                     this.props.handleDelete(e)
                 }
             })
