@@ -25,6 +25,8 @@ import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
+// 自定义弹窗
+import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
@@ -85,34 +87,41 @@ class MyMission extends Component {
     handleTaskStatus = (e) => {
         let tid = e.target.dataset['tid']
         let status = e.target.dataset['status']
-        this.props.handleSetState('isSubmitting', true)
-        ajax('put', `/task/${tid}/user/${this.props.user.id}/status`, {status: status})
-            .then(res => {
-                if (res.data.errors) {
-                    message.error(res.data.errors.message)
-                } else {
-                    let dataSource = []
-                    this.props.dataSetting.dataSource.forEach(ds => {
-                        if (ds.id === res.data.id) {
-                            dataSource.push(res.data)
+        CustomPrompt({
+            type: 'confirm',
+            content: <div>{`是否${status === '1' ? '开始任务' : '完成任务'}`}</div>,
+            okType: 'info',
+            onOk: () => {
+                this.props.handleSetState('isSubmitting', true)
+                ajax('put', `/task/${tid}/user/${this.props.user.id}/status`, {status: status})
+                    .then(res => {
+                        if (res.data.errors) {
+                            message.error(res.data.errors.message)
                         } else {
-                            dataSource.push(ds)
+                            let dataSource = []
+                            this.props.dataSetting.dataSource.forEach(ds => {
+                                if (ds.id === res.data.id) {
+                                    dataSource.push(res.data)
+                                } else {
+                                    dataSource.push(ds)
+                                }
+                            })
+                            this.props.handleSetState('dataSetting', {
+                                ...this.props.dataSetting,
+                                dataSource: dataSource
+                            })
+                            this.props.handleSetState('isSubmitting', false)
+                            message.success('保存成功')
+                            this.getMyTaskStatus()
                         }
                     })
-                    this.props.handleSetState('dataSetting', {
-                        ...this.props.dataSetting,
-                        dataSource: dataSource
+                    .catch(err => {
+                        console.log(err)
+                        this.props.handleSetState('isSubmitting', false)
+                        message.error('保存失败')
                     })
-                    this.props.handleSetState('isSubmitting', false)
-                    message.success('保存成功')
-                    this.getMyTaskStatus()
-                }
-            })
-            .catch(err => {
-                console.log(err)
-                this.props.handleSetState('isSubmitting', false)
-                message.error('保存失败')
-            })
+            }
+        })
     }
 
     render() {
@@ -145,6 +154,14 @@ class MyMission extends Component {
                     </Popover>
                 )
             },
+            // {
+            //     title: '所属项目',
+            //     dataIndex: 'project',
+            //     key: 'project',
+            //     render: (text, record) => (
+            //         <span>{text}</span>
+            //     )
+            // },
             {
                 title: '状态',
                 dataIndex: 'status',

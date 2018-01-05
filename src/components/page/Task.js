@@ -59,7 +59,9 @@ module.exports = function(opts) {
             // 全部父级任务
             taskData: [],
             // 选择父级是否禁用
-            taskDataDisabled: false
+            taskDataDisabled: false,
+            // 父任务的计划开始时间和计划结束时间
+            taskDate: {}
         }
 
         componentDidMount() {
@@ -119,8 +121,18 @@ module.exports = function(opts) {
                 })
         }
 
+        getTaskDateByTaskId = (pid) => {
+            ajax('get', `/task/${pid}/date`)
+                .then(res => {
+                    this.setState({
+                        taskDate: res.data
+                    })
+                })
+        }
+
         add = (e) => {
             this.setState({
+                taskDate: {},
                 taskDataDisabled: false
             })
             this.getAllUser()
@@ -134,11 +146,13 @@ module.exports = function(opts) {
                 return
             }
             this.setState({
+                taskDate: {},
                 taskDataDisabled: true
             })
             let pid = e.target.dataset['pid']
             if (pid) {
                 this.getAllUserByTaskId(pid)
+                this.getTaskDateByTaskId(pid)
             } else {
                 this.getAllUser()
             }
@@ -206,14 +220,17 @@ module.exports = function(opts) {
         handlePidChange = (pid) => {
             if (pid) {
                 this.getAllUserByTaskId(pid)
+                this.getTaskDateByTaskId(pid)
             } else {
                 this.getAllUser()
+                this.setState({
+                    taskDate: {}
+                })
             }
         }
 
         handleDelete = (e) => {
             this.props.handleDelete(e, (res) => {
-                console.log(res)
                 let { dataSource } = this.props.dataSetting
                 if (res.data.pid) {
                     let parentIdx = dataSource.findIndex(k => k.id === res.data.pid)
@@ -410,10 +427,10 @@ module.exports = function(opts) {
                         return getFieldDecorator('pid', {})(
                             <Select
                                 placeholder="选择从属后变为子级任务"
-                                allowClear
                                 disabled={state.taskDataDisabled}
                                 onChange={this.handlePidChange}
                             >
+                                <Option value={null}>无从属关系</Option>
                                 {state.taskData.map(t => (
                                     <Option key={t.id} value={t.id} className="ellipsis">{t.content}</Option>
                                 ))}
@@ -441,12 +458,34 @@ module.exports = function(opts) {
                 },
                 {
                     label: '任务计划开始时间',
-                    content: ({getFieldDecorator}) => {
+                    content: ({getFieldDecorator, getFieldValue}) => {
                         const disabledDate = (dateValue) => {
-                            return Date.now() > new Date(dateValue).getTime()
+                            if (Object.keys(state.taskDate).length > 0) {
+                                return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
+                            } else {
+                                return Date.now() > new Date(dateValue).getTime()
+                            }
+                        }
+                        const validator = (rule, value, callback) => {
+                            if (value) {
+                                if (Object.keys(state.taskDate).length > 0) {
+                                    if (
+                                        new Date(dateValue).getTime() < new Date(state.taskDate.plan_start_date).getTime() ||
+                                        new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
+                                    ) {
+                                        callback('计划开始时间超出父任务计划时间范围')
+                                    } else {
+                                        callback()
+                                    }
+                                } else {
+                                    callback()
+                                }
+                            } else {
+                                callback('请选择计划开始时间')
+                            }
                         }
                         return getFieldDecorator('plan_start_date', {
-                            rules: [{required: true, message: '请选择计划开始时间'}]
+                            rules: [{required: true, validator: validator}]
                         })(<CustomDatePicker disabledDate={disabledDate} />)
                     },
                 },
@@ -454,10 +493,36 @@ module.exports = function(opts) {
                     label: '任务计划结束时间',
                     content: ({getFieldDecorator, getFieldValue}) => {
                         const disabledDate = (dateValue) => {
-                            return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                            if (Object.keys(state.taskDate).length > 0) {
+                                return new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime() || new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                            } else {
+                                if (getFieldValue('plan_start_date')) {
+                                    return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                                } else {
+                                    return Date.now() > new Date(dateValue).getTime()
+                                }
+                            }
+                        }
+                        const validator = (rule, value, callback) => {
+                            if (value) {
+                                if (Object.keys(state.taskDate).length > 0) {
+                                    if (
+                                        new Date(dateValue).getTime() > new Date(state.taskDate.plan_end_date).getTime() ||
+                                        new Date(dateValue).getTime() < new Date(state.taskDate.plan_start_date).getTime()
+                                    ) {
+                                        callback('计划开始时间超出父任务计划时间范围')
+                                    } else {
+                                        callback()
+                                    }
+                                } else {
+                                    callback()
+                                }
+                            } else {
+                                callback('请选择计划结束时间')
+                            }
                         }
                         return getFieldDecorator('plan_end_date', {
-                            rules: [{required: true, message: '请选择计划结束时间'}]
+                            rules: [{required: true, validator: validator}]
                         })(<CustomDatePicker disabledDate={disabledDate} />)
                     },
                 },
@@ -517,7 +582,7 @@ module.exports = function(opts) {
                 value: null
             },
             pid: {
-                value: undefined
+                value: null
             },
             user_id: {
                 value: []
@@ -540,7 +605,7 @@ module.exports = function(opts) {
                 value: null
             },
             pid: {
-                value: undefined
+                value: null
             },
             user_id: {
                 value: []
