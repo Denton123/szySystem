@@ -7,7 +7,7 @@
 import styles from './default.less'
 import React from 'react'
 import moment from 'moment'
-import { Layout, Breadcrumb, Icon, Card, Col, Row, Input, Avatar, List, Tooltip, Spin } from 'antd'
+import { Layout, Breadcrumb, Icon, Card, Col, Row, Input, Avatar, List, Tooltip } from 'antd'
 import {
     Link,
     Route,
@@ -111,7 +111,7 @@ class Default extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         key={item.id}
-                                        actions={[<span style={{color: color}} href="javascript:void(0)">{moment(item.time).format('LL')}</span>]}>
+                                        actions={[<span className="defaultTime" href="javascript:void(0)">{moment(item.time).format('LL')}</span>]}>
                                         <Tooltip title={item.content} placement="top">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.content} />} />
@@ -136,7 +136,7 @@ class Default extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         key={item.id}
-                                        actions={[<Link style={{color: color}} to={`/home/personal/summary/${item.id}`}>{moment(item.time).format('LL')}</Link>]}>
+                                        actions={[<Link className="defaultTime" to={`/home/personal/summary/${item.id}`}>{moment(item.time).format('LL')}</Link>]}>
                                         <Tooltip title={<LogContent content={item.content} />} placement="top">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.title} />} />
