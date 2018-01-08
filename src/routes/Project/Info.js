@@ -54,6 +54,10 @@ class ProjectInfo extends Component {
                     })
                 })
         }
+        this.setState({
+            fileList: [],
+            imageUrl: null
+        })
         this.props.handleAdd()
     }
     edit = (e) => {
@@ -67,7 +71,7 @@ class ProjectInfo extends Component {
         }
         let img = e.target.dataset['img']
         this.setState({
-            imageUrl: `/uploadImgs/${img}`
+            imageUrl: img ? `/uploadImgs/${img}` : img
         })
         this.props.handleEdit(e)
     }
@@ -90,7 +94,7 @@ class ProjectInfo extends Component {
             {
                 label: '项目名称',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('name', {})(<Input autoComplete="off" placeholder="项目名称" />)
+                    return getFieldDecorator('name', {})(<Input className="mb-10" autoComplete="off" placeholder="项目名称" />)
                 },
             },
         ]
@@ -139,8 +143,12 @@ class ProjectInfo extends Component {
             {
                 label: '项目名称',
                 content: ({getFieldDecorator}) => {
+                    let id = 0
+                    if (this.props.formFieldsValues.id.value) {
+                        id = this.props.formFieldsValues.id.value
+                    }
                     const validator = (rule, value, callback) => {
-                        checkFormField(rule.field, value, 'Project', '项目名称')
+                        checkFormField(rule.field, value, 'Project', '项目名称', id)
                         .then(res => {
                             callback(res)
                         })

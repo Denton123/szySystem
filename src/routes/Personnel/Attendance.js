@@ -206,7 +206,7 @@ class Attendance extends Component {
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Spin spinning={this.state.loading}>
-                    姓名：<Select style={{ width: 200 }} onChange={this.handleChange} placeholder="请选择查询的人员">
+                    <span style={{ color: 'black' }}>姓名：</span><Select style={{ width: 200 }} onChange={this.handleChange} placeholder="请选择查询的人员">
                         {
                             this.state.selectData.map((person) => {
                                 return <Option value={person.realname} key={person.id}>{person.realname}</Option>

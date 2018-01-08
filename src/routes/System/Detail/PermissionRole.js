@@ -4,7 +4,8 @@ import {
     Button,
     Divider,
     Table,
-    List
+    List,
+    message
 } from 'antd'
 import {
     Link,
@@ -122,6 +123,18 @@ class PermissionRole extends Component {
             })
         })
     }
+    handleDelete = (e) => {
+        let id = e.target.dataset['id']
+        e.persist()
+        axios.get(`/role/${id}/count`)
+            .then(res => {
+                if (res.data > 0) {
+                    message.warning('不能删除，该角色已有用户使用！')
+                } else {
+                    this.props.handleDelete(e)
+                }
+            })
+    }
     handleTreeCheck = (checkedKeys) => {
         this.setState({
             permission: checkedKeys
@@ -186,7 +199,7 @@ class PermissionRole extends Component {
                     <span>
                         <a href="javascript:;" data-id={text.id} onClick={this.edit}>编辑</a>
                         <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
+                        <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
                     </span>
                 )
             }
@@ -220,8 +233,12 @@ class PermissionRole extends Component {
             {
                 label: '角色',
                 content: ({getFieldDecorator}) => {
+                    let id = 0
+                    if (this.props.formFieldsValues.id.value) {
+                        id = this.props.formFieldsValues.id.value
+                    }
                     const validator = (rule, value, callback) => {
-                        checkFormField(rule.field, value, 'Role', '角色')
+                        checkFormField(rule.field, value, 'Role', '角色', id)
                         .then(res => {
                             callback(res)
                         })
