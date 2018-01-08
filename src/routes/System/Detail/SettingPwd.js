@@ -1,19 +1,8 @@
 import React, {Component} from 'react'
 import {
-    Icon,
     Button,
     Form,
     Input,
-    Tooltip,
-    Cascader,
-    Select,
-    Checkbox,
-    AutoComplete,
-    Radio,
-    DatePicker,
-    Upload,
-    message,
-    Avatar
 } from 'antd'
 import {
     Link,
@@ -30,7 +19,6 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 import {show, update, ajax} from 'UTILS/ajax'
 import {getBase64} from 'UTILS/utils'
 
-const RadioGroup = Radio.Group
 const FormItem = Form.Item
 
 function transformValue(field, value) {

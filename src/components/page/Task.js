@@ -61,7 +61,7 @@ module.exports = function(opts) {
             // 选择父级是否禁用
             taskDataDisabled: false,
             // 父任务的计划开始时间和计划结束时间
-            taskDate: {}
+            taskDate: {},
         }
 
         componentDidMount() {
@@ -415,20 +415,47 @@ module.exports = function(opts) {
                 {
                     label: '任务内容',
                     content: ({getFieldDecorator}) => {
+                        // const reset = () => {
+                        //     setFields({
+                        //         plan_start_date: {
+                        //             value: null,
+                        //             errors: [new Error('请选择计划开始时间')],
+                        //         },
+                        //         plan_end_date: {
+                        //             value: null,
+                        //             errors: [new Error('请选择计划结束时间')],
+                        //         },
+                        //     })
+                        // }
+                        //  onBlur={reset}
                         return getFieldDecorator('content', {
-                            validateTrigger: ['onChange', 'onBlur'],
                             rules: [{required: true, message: '任务内容不能为空'}]
                         })(<TextArea rows={5} placeholder="任务内容" />)
                     },
                 },
                 {
                     label: '从属',
-                    content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('pid', {})(
+                    content: ({getFieldDecorator, getFieldValue, setFields}) => {
+                        const pidChange = () => {
+                            if (getFieldValue('pid') !== null) {
+                                setFields({
+                                    plan_start_date: {
+                                        value: null,
+                                        errors: [new Error('请选择计划开始时间')],
+                                    },
+                                    plan_end_date: {
+                                        value: null,
+                                        errors: [new Error('请选择计划结束时间')],
+                                    },
+                                })
+                            }
+                        }
+                        return getFieldDecorator('pid')(
                             <Select
                                 placeholder="选择从属后变为子级任务"
                                 disabled={state.taskDataDisabled}
                                 onChange={this.handlePidChange}
+                                onBlur={pidChange}
                             >
                                 <Option value={null}>无从属关系</Option>
                                 {state.taskData.map(t => (
@@ -461,17 +488,25 @@ module.exports = function(opts) {
                     content: ({getFieldDecorator, getFieldValue}) => {
                         const disabledDate = (dateValue) => {
                             if (Object.keys(state.taskDate).length > 0) {
-                                return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
+                                if (getFieldValue('plan_end_date')) {
+                                    return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(getFieldValue('plan_end_date')).getTime() < new Date(dateValue).getTime()
+                                } else {
+                                    return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
+                                }
                             } else {
-                                return Date.now() > new Date(dateValue).getTime()
+                                if (getFieldValue('plan_end_date')) {
+                                    return Date.now() > new Date(dateValue).getTime() || new Date(getFieldValue('plan_end_date')).getTime() < new Date(dateValue).getTime()
+                                } else {
+                                    return Date.now() > new Date(dateValue).getTime()
+                                }
                             }
                         }
                         const validator = (rule, value, callback) => {
                             if (value) {
-                                if (Object.keys(state.taskDate).length > 0) {
+                                if (getFieldValue('pid')) {
                                     if (
-                                        new Date(dateValue).getTime() < new Date(state.taskDate.plan_start_date).getTime() ||
-                                        new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
+                                        new Date(value).getTime() < new Date(state.taskDate.plan_start_date).getTime() ||
+                                        new Date(state.taskDate.plan_end_date).getTime() < new Date(value).getTime()
                                     ) {
                                         callback('计划开始时间超出父任务计划时间范围')
                                     } else {
@@ -485,7 +520,8 @@ module.exports = function(opts) {
                             }
                         }
                         return getFieldDecorator('plan_start_date', {
-                            rules: [{required: true, validator: validator}]
+                            // rules: [{required: true, validator: validator}]
+                            rules: [{required: true, message: '请选择计划开始时间'}]
                         })(<CustomDatePicker disabledDate={disabledDate} />)
                     },
                 },
@@ -494,7 +530,11 @@ module.exports = function(opts) {
                     content: ({getFieldDecorator, getFieldValue}) => {
                         const disabledDate = (dateValue) => {
                             if (Object.keys(state.taskDate).length > 0) {
-                                return new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime() || new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                                if (getFieldValue('plan_start_date')) {
+                                    return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
+                                } else {
+                                    return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
+                                }
                             } else {
                                 if (getFieldValue('plan_start_date')) {
                                     return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
@@ -505,24 +545,30 @@ module.exports = function(opts) {
                         }
                         const validator = (rule, value, callback) => {
                             if (value) {
-                                if (Object.keys(state.taskDate).length > 0) {
+                                console.log(Object.keys(state.taskDate))
+                                if (getFieldValue('pid')) {
                                     if (
-                                        new Date(dateValue).getTime() > new Date(state.taskDate.plan_end_date).getTime() ||
-                                        new Date(dateValue).getTime() < new Date(state.taskDate.plan_start_date).getTime()
+                                        new Date(value).getTime() > new Date(state.taskDate.plan_end_date).getTime() ||
+                                        new Date(value).getTime() < new Date(state.taskDate.plan_start_date).getTime()
                                     ) {
+                                        console.log(1)
                                         callback('计划开始时间超出父任务计划时间范围')
                                     } else {
+                                        console.log(2)
                                         callback()
                                     }
                                 } else {
+                                    console.log(3)
                                     callback()
                                 }
                             } else {
+                                console.log(4)
                                 callback('请选择计划结束时间')
                             }
                         }
                         return getFieldDecorator('plan_end_date', {
-                            rules: [{required: true, validator: validator}]
+                            // rules: [{required: true, validator: validator}]
+                            rules: [{required: true, message: '请选择计划结束时间'}]
                         })(<CustomDatePicker disabledDate={disabledDate} />)
                     },
                 },

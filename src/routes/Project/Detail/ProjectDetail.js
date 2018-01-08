@@ -46,7 +46,7 @@ class ProjectDetail extends Component {
             })
     }
     goBack = (e) => {
-        this.props.history.goBack()
+        this.props.history.push('/home/project/info')
     }
     render() {
         const {
