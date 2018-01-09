@@ -156,7 +156,7 @@ class Problem extends Component {
                 },
                 content: ({getFieldDecorator}) => {
                     return getFieldDecorator('problem', {
-                        rules: [{required: true, message: '请输入标题'}]
+                        rules: [{required: true, message: '请输入内容'}]
                     })(<ReactQuill placeholder="内容" style={{height: 250}} />)
                 },
             }
