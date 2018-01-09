@@ -23,7 +23,13 @@ import CustomModal from 'COMPONENTS/modal/CustomModal'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
-import Stage from './ProjectStage.js'
+// import Stage from './ProjectStage.js'
+
+import Ts from 'COMPONENTS/page/Task'
+
+const Task = Ts({
+    total: false
+})
 
 const {Meta} = Card
 
@@ -46,7 +52,8 @@ class ProjectDetail extends Component {
             })
     }
     goBack = (e) => {
-        this.props.history.push('/home/project/info')
+        // this.props.history.push('/home/project/info')
+        this.props.history.goBack()
     }
     render() {
         const {
@@ -57,6 +64,7 @@ class ProjectDetail extends Component {
             user
         } = this.props
         const {projectData, loading} = this.state
+        // <Stage id={match.params.id} user={user} route={route} history={history} location={location} match={match} />
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Card
@@ -83,7 +91,7 @@ class ProjectDetail extends Component {
                         }
                     />
                 </Card>
-                <Stage id={match.params.id} user={user} route={route} history={history} location={location} match={match} />
+                <Task project={projectData} user={user} route={route} history={history} location={location} match={match} />
             </div>
         )
     }

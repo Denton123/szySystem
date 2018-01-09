@@ -20,7 +20,7 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, momentToValue, resetObject, getTime} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -56,6 +56,10 @@ module.exports = function(opts) {
             status: 'all',
             // 全部用户信息
             userData: [],
+            // 默认的项目值
+            defaultProject: undefined,
+            // 全部项目信息
+            projectData: [],
             // 全部父级任务
             taskData: [],
             // 选择父级是否禁用
@@ -67,28 +71,37 @@ module.exports = function(opts) {
         componentDidMount() {
             let page = this.props.location.state ? this.props.location.state.page : 1
             if (opts.total) {
-                this.props.getData({page: page})
-            } else {
-                let sid = this.props.stage.id
-                this.props.getData({
-                    page: page,
-                    stage_id: sid
-                })
+                if (opts.hasProject) {
+                    this.props.getData({page: page, project_id: 'notnull', __key: 'project'})
+                    this.getAllProject()
+                } else {
+                    this.props.getData({page: page, project_id: 'null', __key: 'normal'})
+                }
             }
         }
 
         componentWillReceiveProps(nextProps) {
             if (!opts.total) {
-                if (nextProps.stage.id !== this.props.stage.id) {
+                if (nextProps.project.id !== this.props.project.id) {
+                    let page = this.props.location.state ? this.props.location.state.page : 1
                     this.setState({
                         status: 'all'
                     })
                     this.props.getData({
-                        page: 1,
-                        stage_id: nextProps.stage.id
+                        page: page,
+                        project_id: nextProps.project.id
                     })
                 }
             }
+        }
+
+        getAllProject = () => {
+            ajax('get', '/project/all')
+                .then(res => {
+                    this.setState({
+                        projectData: res.data
+                    })
+                })
         }
 
         getAllUser = () => {
@@ -112,7 +125,7 @@ module.exports = function(opts) {
         getAllParentsTask = () => {
             let getAllParentsTasks = opts.total
                 ? ajax('get', '/task/all-parents')
-                : ajax('get', '/task/all-parents', {params: {stage_id: this.props.stage.id}})
+                : ajax('get', '/task/all-parents', {params: {project_id: this.props.project.id}})
             getAllParentsTasks
                 .then(res => {
                     this.setState({
@@ -157,7 +170,16 @@ module.exports = function(opts) {
                 this.getAllUser()
             }
             this.getAllParentsTask()
-            this.props.handleEdit(e)
+            this.props.handleEdit(e, (res) => {
+                this.props.handleSetState('modalSetting', {
+                    ...this.props.modalSetting,
+                    visible: true,
+                    title: `${this.props.title}-编辑`
+                })
+                let data = resetObject(res.data)
+                data['plan_date'] = [data['plan_start_date'], data['plan_end_date']]
+                this.props.updateEditFormFieldsValues(data)
+            })
         }
 
         handleFormSubmit = (values) => {
@@ -165,11 +187,14 @@ module.exports = function(opts) {
                 status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value// 表示任务未完成(等待中)
             }
             if (!opts.total) {
-                params['stage_id'] = this.props.stage.id
+                params['project_id'] = this.props.project.id
             }
             for (let i in values) {
+                if (i.indexOf('date') > -1) continue
                 params[i] = values[i]
             }
+            params['plan_start_date'] = values['plan_date'][0].format('YYYY-MM-DD')
+            params['plan_end_date'] = values['plan_date'][1].format('YYYY-MM-DD')
             if (this.props.operationType === 'edit' && this.props.formFieldsValues.pid.value !== null) {
                 // 更新子类保存需要特殊处理
                 this.props.ajaxUpdate(this.props.formFieldsValues.id.value, params, (res) => {
@@ -209,10 +234,18 @@ module.exports = function(opts) {
                 page: 1,
             }
             if (!opts.total) {
-                params['stage_id'] = this.props.stage.id
+                params['project_id'] = this.props.project.id
             }
             if (val !== 'all') {
                 params['status'] = val
+            }
+            if (opts.hasProject) {
+                params['project_id'] = 'notnull'
+                this.setState({
+                    defaultProject: undefined
+                })
+            } else {
+                params['project_id'] = 'null'
             }
             this.props.getData(params)
         }
@@ -253,19 +286,30 @@ module.exports = function(opts) {
             })
         }
 
+        projectChange = (id) => {
+            this.setState({
+                defaultProject: id
+            })
+            if (!id) {
+                id = 'notnull'
+            }
+            this.setState({
+                status: 'all'
+            })
+            let page = this.props.location.state ? this.props.location.state.page : 1
+            this.props.getData({page: page, project_id: id, __key: 'project'})
+        }
+
         render() {
             const {
                 route,
                 history,
                 location,
-                match,
-                stage
+                match
             } = this.props
             const state = this.state
 
-            const operationBtn = [
-                () => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>,
-                () => <Button type="danger">删除</Button>,
+            let operationBtn = [
                 () => (
                     <Radio.Group className="pull-right" value={state.status} onChange={this.handleStatusChange}>
                         <Radio.Button value="all">全部</Radio.Button>
@@ -273,8 +317,28 @@ module.exports = function(opts) {
                         <Radio.Button value="1">进行中</Radio.Button>
                         <Radio.Button value="2">已完成</Radio.Button>
                     </Radio.Group>
-                )
+                ),
             ]
+            if (!opts.hasProject) {
+                operationBtn.unshift(() => <Button type="danger">删除</Button>)
+                operationBtn.unshift(() => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>)
+            } else {
+                operationBtn.unshift(() => (
+                    <Select
+                        style={{width: 120}}
+                        className="pull-left"
+                        placeholder="请选择项目"
+                        allowClear
+                        value={state.defaultProject}
+                        onChange={this.projectChange}
+                    >
+                        {state.projectData.map((pro) => (
+                            <Option value={pro.id} key={pro.id}>{pro.name}</Option>
+                        ))}
+                    </Select>
+                ))
+            }
+
             const popoverTableCol = [
                 {
                     title: '头像',
@@ -298,7 +362,7 @@ module.exports = function(opts) {
                     key: 'end_date',
                 },
             ]
-            const columns = [
+            let columns = [
                 {
                     title: '任务内容',
                     dataIndex: 'content',
@@ -383,15 +447,32 @@ module.exports = function(opts) {
                     title: '操作',
                     key: 'action',
                     width: 200,
-                    render: (text, record) => (
-                        <span>
-                            <a href="javascript:;" data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.edit}>编辑</a>
-                            <Divider type="vertical" />
-                            <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
-                        </span>
-                    )
+                    render: (text, record) => {
+                        if (opts.hasProject) {
+                            return <Link to={`/home/project/info/${record.Project.id}`}>查看</Link>
+                        } else {
+                            return (
+                                <span>
+                                    <a href="javascript:;" data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.edit}>编辑</a>
+                                    <Divider type="vertical" />
+                                    <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
+                                </span>
+                            )
+                        }
+                    }
                 }
             ]
+
+            if (opts.total && opts.hasProject) {
+                columns.unshift({
+                    title: '所属项目',
+                    dataIndex: 'projectname',
+                    key: 'projectname',
+                    render: (text, record) => (
+                        <span>{record.Project.name}</span>
+                    )
+                })
+            }
 
             const expandedRowRender = (record, text) => {
                 if (record.child) {
@@ -415,19 +496,6 @@ module.exports = function(opts) {
                 {
                     label: '任务内容',
                     content: ({getFieldDecorator}) => {
-                        // const reset = () => {
-                        //     setFields({
-                        //         plan_start_date: {
-                        //             value: null,
-                        //             errors: [new Error('请选择计划开始时间')],
-                        //         },
-                        //         plan_end_date: {
-                        //             value: null,
-                        //             errors: [new Error('请选择计划结束时间')],
-                        //         },
-                        //     })
-                        // }
-                        //  onBlur={reset}
                         return getFieldDecorator('content', {
                             rules: [{required: true, message: '任务内容不能为空'}]
                         })(<TextArea rows={5} placeholder="任务内容" />)
@@ -439,13 +507,9 @@ module.exports = function(opts) {
                         const pidChange = () => {
                             if (getFieldValue('pid') !== null) {
                                 setFields({
-                                    plan_start_date: {
+                                    plan_date: {
                                         value: null,
-                                        errors: [new Error('请选择计划开始时间')],
-                                    },
-                                    plan_end_date: {
-                                        value: null,
-                                        errors: [new Error('请选择计划结束时间')],
+                                        errors: [new Error('请选择计划时间')],
                                     },
                                 })
                             }
@@ -484,99 +548,33 @@ module.exports = function(opts) {
                     },
                 },
                 {
-                    label: '任务计划开始时间',
+                    label: '任务计划时间',
                     content: ({getFieldDecorator, getFieldValue}) => {
-                        const disabledDate = (dateValue) => {
-                            if (Object.keys(state.taskDate).length > 0) {
-                                if (getFieldValue('plan_end_date')) {
-                                    return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(getFieldValue('plan_end_date')).getTime() < new Date(dateValue).getTime()
-                                } else {
-                                    return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
-                                }
+                        const disabledDate = (start, end) => {
+                            let startDate = start.format('YYYY-MM-DD')
+                            let endDate = end.format('YYYY-MM-DD')
+                            if (getFieldValue('pid') !== null) { // 判断是否为子任务，子任务的时间区间在父任务中
+                                return getTime(startDate) < getTime(state.taskDate.plan_start_date) ||
+                                    getTime(startDate) > getTime(state.taskDate.plan_end_date)
                             } else {
-                                if (getFieldValue('plan_end_date')) {
-                                    return Date.now() > new Date(dateValue).getTime() || new Date(getFieldValue('plan_end_date')).getTime() < new Date(dateValue).getTime()
-                                } else {
-                                    return Date.now() > new Date(dateValue).getTime()
+                                if (this.props.project) { // 判断是否为项目父任务
+                                    return getTime(startDate) < getTime(this.props.project.plan_start_date) ||
+                                        getTime(startDate) > getTime(this.props.project.plan_end_date)
+                                } else { // 普通情况的父任务
+                                    return getTime(startDate) < getTime()
                                 }
                             }
                         }
-                        const validator = (rule, value, callback) => {
-                            if (value) {
-                                if (getFieldValue('pid')) {
-                                    if (
-                                        new Date(value).getTime() < new Date(state.taskDate.plan_start_date).getTime() ||
-                                        new Date(state.taskDate.plan_end_date).getTime() < new Date(value).getTime()
-                                    ) {
-                                        callback('计划开始时间超出父任务计划时间范围')
-                                    } else {
-                                        callback()
-                                    }
-                                } else {
-                                    callback()
-                                }
-                            } else {
-                                callback('请选择计划开始时间')
-                            }
-                        }
-                        return getFieldDecorator('plan_start_date', {
-                            // rules: [{required: true, validator: validator}]
-                            rules: [{required: true, message: '请选择计划开始时间'}]
-                        })(<CustomDatePicker disabledDate={disabledDate} />)
-                    },
-                },
-                {
-                    label: '任务计划结束时间',
-                    content: ({getFieldDecorator, getFieldValue}) => {
-                        const disabledDate = (dateValue) => {
-                            if (Object.keys(state.taskDate).length > 0) {
-                                if (getFieldValue('plan_start_date')) {
-                                    return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
-                                } else {
-                                    return new Date(state.taskDate.plan_start_date).getTime() > new Date(dateValue).getTime() || new Date(state.taskDate.plan_end_date).getTime() < new Date(dateValue).getTime()
-                                }
-                            } else {
-                                if (getFieldValue('plan_start_date')) {
-                                    return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
-                                } else {
-                                    return Date.now() > new Date(dateValue).getTime()
-                                }
-                            }
-                        }
-                        const validator = (rule, value, callback) => {
-                            if (value) {
-                                console.log(Object.keys(state.taskDate))
-                                if (getFieldValue('pid')) {
-                                    if (
-                                        new Date(value).getTime() > new Date(state.taskDate.plan_end_date).getTime() ||
-                                        new Date(value).getTime() < new Date(state.taskDate.plan_start_date).getTime()
-                                    ) {
-                                        console.log(1)
-                                        callback('计划开始时间超出父任务计划时间范围')
-                                    } else {
-                                        console.log(2)
-                                        callback()
-                                    }
-                                } else {
-                                    console.log(3)
-                                    callback()
-                                }
-                            } else {
-                                console.log(4)
-                                callback('请选择计划结束时间')
-                            }
-                        }
-                        return getFieldDecorator('plan_end_date', {
-                            // rules: [{required: true, validator: validator}]
-                            rules: [{required: true, message: '请选择计划结束时间'}]
-                        })(<CustomDatePicker disabledDate={disabledDate} />)
+                        return getFieldDecorator('plan_date', {
+                            rules: [{required: true, message: '请选择计划时间'}]
+                        })(<CustomRangePicker showTime={false} format={'YYYY-MM-DD'} disabledDate={disabledDate} />)
                     },
                 },
             ]
 
             if (opts.total) {
                 return (
-                    <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                    <div>
                         <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
                         <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
                         <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} width={660} user={this.props.user}>
@@ -596,7 +594,6 @@ module.exports = function(opts) {
                     <div className="w100 mt-10">
                         <Card
                             style={{ width: '100%' }}
-                            title={`${stage.name}-任务`}
                         >
                             <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
                             <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} expandedRowRender={expandedRowRender} />
@@ -616,7 +613,6 @@ module.exports = function(opts) {
             }
         }
     }
-
     const Ts = withBasicDataModel(Task, {
         model: 'task',
         title: '任务管理',
@@ -633,10 +629,7 @@ module.exports = function(opts) {
             user_id: {
                 value: []
             },
-            plan_start_date: {
-                value: null
-            },
-            plan_end_date: {
+            plan_date: {
                 value: null
             },
             status: {
@@ -656,10 +649,7 @@ module.exports = function(opts) {
             user_id: {
                 value: []
             },
-            plan_start_date: {
-                value: null
-            },
-            plan_end_date: {
+            plan_date: {
                 value: null
             },
             status: {
@@ -667,6 +657,7 @@ module.exports = function(opts) {
             }
         },
         customGetData: true,
+        locationSearch: false
     })
 
     return Ts
