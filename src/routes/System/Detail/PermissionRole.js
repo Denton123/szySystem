@@ -126,13 +126,30 @@ class PermissionRole extends Component {
     handleDelete = (e) => {
         let id = e.target.dataset['id']
         e.persist()
-        axios.get(`/role/${id}/count`)
+        axios.post(`/role/use-count`, {role_ids: [id]})
             .then(res => {
-                if (res.data > 0) {
+                console.log(res)
+                if (res.data[0].Users.length !== 0) {
                     message.warning('不能删除，该角色已有用户使用！')
                 } else {
                     this.props.handleDelete(e)
                 }
+            })
+    }
+    handleBatchDelete = (e) => {
+        e.persist()
+        console.log(this.props.rowSelection.selectedRowKeys)
+        axios.post(`/role/use-count`, {role_ids: this.props.rowSelection.selectedRowKeys})
+            .then(res => {
+                let delBol = true
+                let useRoleArr = []
+                res.data.forEach(itemObj => {
+                    if (itemObj.Users.length !== 0) {
+                        delBol = false
+                        useRoleArr.unshift(itemObj.name)
+                    }
+                })
+                delBol ? this.props.handleBatchDelete(e) : message.warning(`不能删除，${useRoleArr}角色已有用户使用！`)
             })
     }
     handleTreeCheck = (checkedKeys) => {
@@ -176,8 +193,12 @@ class PermissionRole extends Component {
 
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>,
-            () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>
+            () => <Button type="danger" onClick={this.handleBatchDelete}>删除</Button>
         ]
+
+        const rowSelection = {
+            onChange: this.props.handleTableRowChange
+        }
 
         // 表格
         const columns = [
@@ -276,7 +297,7 @@ class PermissionRole extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={expandedRowRender} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={expandedRowRender} rowSelection={{...rowSelection, ...this.props.rowSelection}} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -315,7 +336,10 @@ const PR = withBasicDataModel(PermissionRole, {
         },
     },
     // customGetData: true,
-    locationSearch: false
+    locationSearch: false,
+    rowSelection: {
+        selectedRowKeys: []
+    }
 })
 
 export default PR

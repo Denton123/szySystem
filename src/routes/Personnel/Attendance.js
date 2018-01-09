@@ -27,6 +27,7 @@ class Attendance extends Component {
         calendarTime: this.props.location.state ? this.props.location.state.calendarTime : moment().format('YYYY-MM-DD'),
         mode: this.props.location.state ? this.props.location.state.mode : 'month'
     }
+
     componentDidMount() {
         this.setState({
             loading: true
@@ -34,6 +35,7 @@ class Attendance extends Component {
             this.getSelectData()
         })
     }
+
     getListData = (value) => {
         let oneDayArr = []
         this.state.attendanceData.forEach(item => {
@@ -110,13 +112,17 @@ class Attendance extends Component {
 
     // 日期面板变化回调
     onPanelChange = (value, mode) => {
+        if (!this.state.selectedValue) {
+            message.warning('请选择查询的人员！')
+            return false
+        }
         let calendarTime = moment(value).format('YYYY-MM-DD')
         this.setState({
             calendarTime: calendarTime,
             loading: true,
             mode: mode
         }, () => {
-            this.getAttendanceData()
+            this.getAttendanceData(this.state.selectedValue)
         })
         this.props.history.replace(this.props.location.pathname, {
             calendarTime: calendarTime,
