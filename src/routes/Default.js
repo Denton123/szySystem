@@ -77,21 +77,6 @@ class Default extends React.Component {
         const match = this.props.match
         const user = this.props.user
         const {workLog, summaryData} = this.state
-        let color = (this.props.user && this.props.user.skin !== null) ? this.props.user.skin : 'blue'
-        switch (color) {
-            case 'blue':
-                color = '#1890ff'
-                break
-            case 'green':
-                color = '#0aa679'
-                break
-            case 'purple':
-                color = '#7546c9'
-                break
-            case 'yellow':
-                color = '#fbd437'
-                break
-        }
         const LogContent = ({content}) => (
             <p dangerouslySetInnerHTML={{__html: content}} />
             )

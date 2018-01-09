@@ -25,9 +25,24 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 const {Option} = Select
 
 class PermissionUser extends Component {
-    componentDidMount() {
-        this.props.getRoleData()
+    state = {
+        // 获取角色数据列表
+        roleData: []
     }
+
+    getRoleData = () => {
+        ajax('get', '/role/all')
+        .then(res => {
+            this.setState({
+                roleData: res.data
+            })
+        })
+    }
+
+    componentDidMount() {
+        this.getRoleData()
+    }
+
     setRole = (e) => {
         this.props.handleSetState('operationType', 'edit')
         let id = e.target.dataset['id']
@@ -40,7 +55,6 @@ class PermissionUser extends Component {
             })
             this.props.updateEditFormFieldsValues(res.data)
         })
-        this.props.getRoleData()
     }
     handleFormSubmit = (values) => {
         let id = this.props.formFieldsValues.id.value
@@ -157,7 +171,7 @@ class PermissionUser extends Component {
                             mode="multiple"
                             placeholder="设置角色"
                         >
-                            {this.props.roleData.map(r => (
+                            {this.state.roleData.map(r => (
                                 <Option key={r.id} value={r.id}>{r.display_name}</Option>
                             ))}
                         </Select>

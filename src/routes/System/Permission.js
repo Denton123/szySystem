@@ -16,9 +16,7 @@ const TabPane = Tabs.TabPane
 
 class Permission extends Component {
     state = {
-        key: this.props.location.state ? this.props.location.state.__key : 'user',
-        // 获取角色数据列表
-        roleData: []
+        key: this.props.location.state ? this.props.location.state.__key : 'user'
     }
     // componentWillMount() {
     //     console.log(this.props.location.state)
@@ -37,17 +35,21 @@ class Permission extends Component {
             page: 1,
             __key: key
         })
+        this.handleSetState('key', key)
     }
 
-    getRoleData = () => {
-        ajax('get', '/role/all')
-        .then(res => {
-            this.setState({
-                roleData: res.data
-            })
+    /**
+     * [自定义更新组件的]
+     * @Author   szh
+     * @DateTime 2017-12-19
+     * @param    {String}   stateFields [需要修改的状态名称state]
+     * @param    {*}        stateValue  [修改状态的值]
+     */
+    handleSetState = (stateKey, stateValue) => {
+        this.setState({
+            [stateKey]: stateValue
         })
     }
-
     render() {
         const {
             history,
@@ -58,12 +60,12 @@ class Permission extends Component {
 
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <Tabs defaultActiveKey={this.state.key} onTabClick={this.onTabChange}>
+                <Tabs defaultActiveKey={this.state.key} onTabClick={this.onTabChange} animated={false}>
                     <TabPane tab="用户" key="user">
-                        <User {...this.props} getRoleData={this.getRoleData} roleData={this.state.roleData} />
+                        <User {...this.props} getRoleData={this.getRoleData} roleData={this.state.roleData} key={this.state.key} />
                     </TabPane>
                     <TabPane tab="角色" key="role">
-                        <Role {...this.props} getRoleData={this.getRoleData} />
+                        <Role {...this.props} getRoleData={this.getRoleData} key={this.state.key} />
                     </TabPane>
                 </Tabs>
             </div>
