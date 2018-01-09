@@ -92,7 +92,7 @@ class WorkerAffairs extends Component {
         ]
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>,
-            () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>
+            () => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>
         ]
 
         // 表格
@@ -278,7 +278,7 @@ class WorkerAffairs extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={{...rowSelection, ...this.props.rowSelection}} />
                 <CustomModal user={this.props.user} {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -346,6 +346,9 @@ const WA = withBasicDataModel(WorkerAffairs, {
             value: null
         }
     },
+    rowSelection: {
+        selectedRowKeys: []
+    }
 })
 
 export default WA

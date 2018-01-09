@@ -88,7 +88,7 @@ module.exports = function(opts) {
                 {
                     label: '购买日期',
                     content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" format="YYYY-MM-DD" showTime={false} style={{ width: 220 }} />)
+                        return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" format="YYYY-MM-DD HH:mm:ss" showTime style={{ width: 220 }} />)
                     },
                 }
             ]
@@ -96,7 +96,7 @@ module.exports = function(opts) {
             // 操作
             const operationBtn = [
                 () => <Button className="mr-10" type="primary" onClick={this.props.handleAdd}>新增</Button>,
-                () => <Button type="danger" onClick={this.props.handleDelete}>删除</Button>
+                () => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>
             ]
 
             // 表格
@@ -202,7 +202,7 @@ module.exports = function(opts) {
                     content: ({getFieldDecorator}) => {
                         return getFieldDecorator('date', {
                             rules: [{required: true, message: '请选择购买日期'}]
-                        })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
+                        })(<CustomDatePicker format="YYYY-MM-DD HH:mm:ss" showTime />)
                     },
                 },
                 {
@@ -268,7 +268,7 @@ module.exports = function(opts) {
                         formFieldsValues={this.props.queryFieldValues}
                     />
                     <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                    <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
+                    <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={{...rowSelection, ...this.props.rowSelection}} />
                     <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                         <CustomForm
                             formStyle={{width: '100%'}}
@@ -357,6 +357,9 @@ module.exports = function(opts) {
             belong: {
                 value: opts.belong
             }
+        },
+        rowSelection: {
+            selectedRowKeys: []
         }
     })
     return As

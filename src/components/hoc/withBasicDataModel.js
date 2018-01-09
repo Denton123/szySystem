@@ -37,6 +37,7 @@ function transformValue(field, value) {
  * modalSetting         对话框设置                  Object    具体参数请看antd对话框设置
  * queryFieldValues    *查询字段的值                Object    {name: {value: null}}
  * formFieldsValues    *表单字段的值                Object    {name: {value: null}, realname: {value: null}}
+ * rowSelection         表格的rowSelection属性      Object    具体参数请看antd表格的rowSelection属性设置
  *
  *  不影响state的属性
  * formSubmitHasFile   表单提交时是否有文件         Boolean   默认false(无文件)
@@ -61,6 +62,7 @@ function withBasicDataModel(PageComponent, Datas) {
     const clearFormValues = Datas.clearFormValues !== undefined ? Datas.clearFormValues : {}
     const locationSearch = Datas.locationSearch !== undefined ? Datas.locationSearch : true
     const subModel = Datas.subModel !== undefined ? Datas.subModel : {}
+    const rowSelection = Datas.rowSelection !== undefined ? Datas.rowSelection : null
     return class extends React.Component {
         constructor(props) {
             super(props)
@@ -76,6 +78,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 },
                 // 记录表格被选择的行
                 tableRowSelection: [],
+                rowSelection: rowSelection,
                 // 操作类型 add 和 edit
                 operationType: '',
                 // 对话框设置
@@ -194,7 +197,6 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {Object}   e [Proxy，DOM的事件对象]
          */
         handleAdd = (e) => {
-            console.log(e)
             this.handleSetState('operationType', 'add')
             this.handleSetState('modalSetting', {
                 ...this.state.modalSetting,
@@ -417,6 +419,21 @@ function withBasicDataModel(PageComponent, Datas) {
                                     dataSource: dataSource
                                 })
                             }
+                            if (this.state.rowSelection) {
+                                let index = this.state.rowSelection.selectedRowKeys.indexOf(Number(id))
+                                console.log(index)
+                                if (index > -1) {
+                                    let arr = this.state.rowSelection.selectedRowKeys
+                                    arr.splice(index, 1)
+                                    console.log(arr)
+                                    this.setState({
+                                        rowSelection: {
+                                            ...this.state.rowSelection,
+                                            selectedRowKeys: arr
+                                        }
+                                    })
+                                }
+                            }
                         })
                 }
             })
@@ -424,34 +441,51 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
+            console.log('handleTableRowChange ------- ')
+            console.log(selectedRowKeys)
             this.setState({
-                tableRowSelection: selectedRowKeys
+                rowSelection: {
+                    ...this.state.rowSelection,
+                    selectedRowKeys
+                }
             })
         }
 
         // 批量删除
         handleBatchDelete = (e) => {
             console.log('=========')
-            if (this.state.tableRowSelection.length === 0) {
+            console.log(this.state.rowSelection)
+            if (this.state.rowSelection.selectedRowKeys.length === 0) {
                 message.warning('至少要选择一条数据')
                 return
             }
             CustomPrompt({
                 type: 'confirm',
-                content: <div>{`是否要删除这${this.state.tableRowSelection.length}条数据`}</div>,
+                content: <div>{`是否要删除这${this.state.rowSelection.selectedRowKeys.length}条数据`}</div>,
                 okType: 'danger',
                 onOk: () => {
-                    ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.tableRowSelection})
+                    ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.rowSelection.selectedRowKeys})
                         .then(res => {
+                            this.getData(this.props.location.state)
+                            message.success('删除成功')
                             this.setState({
-                                dataSetting: {
-                                    ...this.state.dataSetting,
-                                    dataSource: res.data
+                                rowSelection: {
+                                    ...this.state.rowSelection,
+                                    selectedRowKeys: []
                                 }
+                            }, () => {
+                                console.log(this.state.rowSelection)
                             })
+                            // this.setState({
+                            //     dataSetting: {
+                            //         ...this.state.dataSetting,
+                            //         dataSource: res.data
+                            //     }
+                            // })
                         })
                         .catch(err => {
                             console.log(err)
+                            message.error('删除失败')
                         })
                 }
             })
@@ -522,6 +556,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     handleQuery={this.handleQuery}
                     updateFormFields={this.updateFormFields}
                     updateQueryFields={this.updateQueryFields}
+                    rowSelection={this.rowSelection}
                     user={this.props.user}
                     {...this.state}
                     {...this.props}

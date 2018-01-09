@@ -89,7 +89,8 @@ class Problem extends Component {
 
         // 操作
         const operationBtn = [
-            () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>
+            () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>,
+            () => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>
         ]
 
         const columns = [
@@ -180,7 +181,7 @@ class Problem extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} rowSelection={{...rowSelection, ...this.props.rowSelection}} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -231,6 +232,9 @@ const Pr = withBasicDataModel(Problem, {
         })
         return arr
     },
-    customGetData: true
+    customGetData: true,
+    rowSelection: {
+        selectedRowKeys: []
+    }
 })
 export default Pr
