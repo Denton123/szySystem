@@ -16,7 +16,7 @@ const TabPane = Tabs.TabPane
 
 class Permission extends Component {
     state = {
-        key: this.props.location.state ? this.props.location.state.__key : 'user'
+        key: this.props.location.state && this.props.location.state.__key ? this.props.location.state.__key : 'user'
     }
     // componentWillMount() {
     //     console.log(this.props.location.state)

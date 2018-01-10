@@ -46,6 +46,9 @@ function getPercent(arr) {
         }
     })
     percent = ((percent / (arr.length * 2)) * 100).toFixed(0)
+    if (isNaN(percent)) {
+        percent = 0
+    }
     return percent
 }
 
@@ -124,7 +127,7 @@ module.exports = function(opts) {
 
         getAllParentsTask = () => {
             let getAllParentsTasks = opts.total
-                ? ajax('get', '/task/all-parents')
+                ? ajax('get', '/task/all-parents', {params: {project_id: 'null'}})
                 : ajax('get', '/task/all-parents', {params: {project_id: this.props.project.id}})
             getAllParentsTasks
                 .then(res => {
@@ -188,6 +191,10 @@ module.exports = function(opts) {
             }
             if (!opts.total) {
                 params['project_id'] = this.props.project.id
+            } else {
+                if (!opts.hasProject) {
+                    params['project_id'] = 'null'
+                }
             }
             for (let i in values) {
                 if (i.indexOf('date') > -1) continue
@@ -320,7 +327,7 @@ module.exports = function(opts) {
                 ),
             ]
             if (!opts.hasProject) {
-                operationBtn.unshift(() => <Button type="danger">删除</Button>)
+                operationBtn.unshift(() => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>)
                 operationBtn.unshift(() => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>)
             } else {
                 operationBtn.unshift(() => (
@@ -421,6 +428,9 @@ module.exports = function(opts) {
                             } else {
                                 return <Table dataSource={popoverTableData} columns={popoverTableCol} pagination={false} size="small" />
                             }
+                        }
+                        if (users === '') {
+                            users = '暂无执行者'
                         }
                         return (
                             <Popover content={<Content />}>

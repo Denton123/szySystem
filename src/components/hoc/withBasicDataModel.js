@@ -37,7 +37,10 @@ function transformValue(field, value) {
  * modalSetting         对话框设置                  Object    具体参数请看antd对话框设置
  * queryFieldValues    *查询字段的值                Object    {name: {value: null}}
  * formFieldsValues    *表单字段的值                Object    {name: {value: null}, realname: {value: null}}
+ * ----------------------------------------------
+ * 废弃
  * rowSelection         表格的rowSelection属性      Object    具体参数请看antd表格的rowSelection属性设置
+ * ----------------------------------------------
  *
  *  不影响state的属性
  * formSubmitHasFile   表单提交时是否有文件         Boolean   默认false(无文件)
@@ -62,7 +65,6 @@ function withBasicDataModel(PageComponent, Datas) {
     const clearFormValues = Datas.clearFormValues !== undefined ? Datas.clearFormValues : {}
     const locationSearch = Datas.locationSearch !== undefined ? Datas.locationSearch : true
     const subModel = Datas.subModel !== undefined ? Datas.subModel : {}
-    const rowSelection = Datas.rowSelection !== undefined ? Datas.rowSelection : null
     return class extends React.Component {
         constructor(props) {
             super(props)
@@ -77,8 +79,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     dataSource: []
                 },
                 // 记录表格被选择的行
-                tableRowSelection: [],
-                rowSelection: rowSelection,
+                rowSelection: [],
                 // 操作类型 add 和 edit
                 operationType: '',
                 // 对话框设置
@@ -187,7 +188,6 @@ function withBasicDataModel(PageComponent, Datas) {
                 ...this.props.location.state, // 每个页面自己保存的状态
                 page: page,
             }
-            console.log(params)
             this.getData(params)
         }
 
@@ -457,51 +457,33 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
-            console.log('handleTableRowChange ------- ')
-            console.log(selectedRowKeys)
             this.setState({
-                rowSelection: {
-                    ...this.state.rowSelection,
-                    selectedRowKeys
-                }
+                rowSelection: selectedRowKeys
             })
         }
 
         // 批量删除
         handleBatchDelete = (e) => {
-            console.log('=========')
-            console.log(this.state.rowSelection)
-            if (this.state.rowSelection.selectedRowKeys.length === 0) {
+            if (this.state.rowSelection.length === 0) {
                 message.warning('至少要选择一条数据')
                 return
             }
             CustomPrompt({
                 type: 'confirm',
-                content: <div>{`是否要删除这${this.state.rowSelection.selectedRowKeys.length}条数据`}</div>,
+                content: <div>{`是否要删除这${this.state.rowSelection.length}条数据`}</div>,
                 okType: 'danger',
                 onOk: () => {
-                    ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.rowSelection.selectedRowKeys})
+                    ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.rowSelection})
                         .then(res => {
-                            this.getData(this.props.location.state)
-                            message.success('删除成功')
-                            this.setState({
-                                rowSelection: {
-                                    ...this.state.rowSelection,
-                                    selectedRowKeys: []
-                                }
-                            }, () => {
-                                console.log(this.state.rowSelection)
-                            })
-                            // this.setState({
-                            //     dataSetting: {
-                            //         ...this.state.dataSetting,
-                            //         dataSource: res.data
-                            //     }
-                            // })
-                        })
-                        .catch(err => {
-                            console.log(err)
-                            message.error('删除失败')
+                            if (res.data === true) {
+                                this.getData(this.props.location.state)
+                                message.success('删除成功')
+                                this.setState({
+                                    rowSelection: []
+                                })
+                            } else {
+                                message.error('删除失败')
+                            }
                         })
                 }
             })

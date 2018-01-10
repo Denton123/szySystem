@@ -268,7 +268,7 @@ module.exports = function(opts) {
                         formFieldsValues={this.props.queryFieldValues}
                     />
                     <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                    <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={{...rowSelection, ...this.props.rowSelection}} />
+                    <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
                     <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                         <CustomForm
                             formStyle={{width: '100%'}}
@@ -358,9 +358,6 @@ module.exports = function(opts) {
                 value: opts.belong
             }
         },
-        rowSelection: {
-            selectedRowKeys: []
-        }
     })
     return As
 }
