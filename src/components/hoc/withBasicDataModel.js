@@ -160,6 +160,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         pagination: pagination,
                         dataSource: dataSource
                     })
+                    console.log(locationSearch)
                     if (locationSearch) {
                         let search = '?'
                         for (let p in params) {
@@ -184,6 +185,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 ...this.props.location.state, // 每个页面自己保存的状态
                 page: page,
             }
+            console.log(params)
             this.getData(params)
         }
 
@@ -328,6 +330,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         // 编辑后的默认处理
                         this.setState((prevState, props) => {
                             let newDataSource = []
+                            console.log(prevState)
                             prevState.dataSetting.dataSource.forEach(data => {
                                 if (data.id === prevState.formFieldsValues.id.value) {
                                     newDataSource.push(resetObject(res.data))
