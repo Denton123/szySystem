@@ -37,7 +37,7 @@ const {Meta} = Card
 
 class ProblemDetail extends Component {
     state = {
-        DetailData: [],
+        DetailData: {},
         answer: '',
         answerList: [],
         loading: true,
@@ -50,12 +50,18 @@ class ProblemDetail extends Component {
     componentDidMount() {
         let id = this.props.match.params.id
         show(`problem/${id}`).then(res => {
-            this.setState({
-                loading: false,
-                DetailData: resetObject(res.data)
-            })
+            if (Object.keys(res.data).length === 0) {
+                this.props.history.push('/home/404')
+            } else {
+                this.setState({
+                    loading: false,
+                    DetailData: resetObject(res.data)
+                })
+            }
         }).then(() => {
-            this.getData()
+            if (Object.keys(this.state.DetailData).length > 0) {
+                this.getData()
+            }
         })
     }
     goBack = () => {

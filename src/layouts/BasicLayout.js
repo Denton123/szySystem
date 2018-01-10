@@ -69,6 +69,9 @@ function resetRoute(routes, permissionRoute) {
             if (permissionRoute.find(k => k.path === r.path)) {
                 arr.push(obj)
             }
+            if (r.path === '/404') { // 404默认加入
+                arr.push(obj)
+            }
         }
     })
     return arr

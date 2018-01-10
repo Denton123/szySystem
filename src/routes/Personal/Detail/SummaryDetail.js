@@ -34,9 +34,13 @@ class SummaryDetail extends Component {
     getData = () => {
         show(`summary/${this.props.match.params.id}`)
             .then(res => {
-                this.setState({
-                    data: res.data
-                })
+                if (Object.keys(res.data).length === 0) {
+                    this.props.history.push('/home/404')
+                } else {
+                    this.setState({
+                        data: res.data
+                    })
+                }
             })
             .catch(err => {
                 console.log(err)

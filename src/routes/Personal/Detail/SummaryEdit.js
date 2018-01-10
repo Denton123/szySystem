@@ -45,8 +45,12 @@ class SummaryDetail extends Component {
         }
         show(`summary/${this.props.match.params.id}`)
             .then(res => {
-                // 直接更新内部表单数据
-                this.props.updateEditFormFieldsValues(res.data)
+                if (Object.keys(res.data).length === 0) {
+                    this.props.history.push('/home/404')
+                } else {
+                    // 直接更新内部表单数据
+                    this.props.updateEditFormFieldsValues(res.data)
+                }
             })
             .catch(err => {
                 console.log(err)

@@ -45,10 +45,14 @@ class ProjectDetail extends Component {
         this.props.handleSetState('loading', true)
         show(`project/${id}`)
             .then(res => {
-                this.props.handleSetState('loading', false)
-                this.setState({
-                    projectData: resetObject(res.data),
-                })
+                if (Object.keys(res.data).length === 0) {
+                    this.props.history.push('/home/404')
+                } else {
+                    this.props.handleSetState('loading', false)
+                    this.setState({
+                        projectData: resetObject(res.data),
+                    })
+                }
             })
     }
     goBack = (e) => {
