@@ -101,8 +101,25 @@ function withBasicDataModel(PageComponent, Datas) {
         componentDidMount() {
             // 默认自动获取当前模块的列表数据
             if (!customGetData) {
+                console.log('默认自动获取当前模块的列表数据 ---- ')
+                console.log(this.props.location)
                 let page = this.props.location.state ? this.props.location.state.page : 1
                 this.getData({page: page})
+
+                // let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+                // console.log(p)
+                // this.getData(p)
+                // let queryFieldValues = Object.assign({}, this.state.queryFieldValues)
+                // for (let key in this.state.queryFieldValues) {
+                //     if (p.hasOwnProperty(key)) {
+                //         console.log(11)
+                //         // queryFieldValues[key].value = p[key]
+                //     }
+                // }
+                // console.log(queryFieldValues)
+                // this.setState({
+                //     queryFieldValues
+                // })
             }
         }
 
@@ -163,6 +180,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         dataSource: dataSource
                     })
                     console.log(locationSearch)
+                    console.log(params)
                     if (locationSearch) {
                         let search = '?'
                         for (let p in params) {
@@ -170,8 +188,12 @@ function withBasicDataModel(PageComponent, Datas) {
                         }
                         search = search.substr(0, search.length - 1)
                         this.props.history.replace(`${this.props.location.pathname}${search}`, params)
+                        console.log(this.props.location)
                     } else {
                         this.props.history.replace(`${this.props.location.pathname}`, params)
+                        console.log(222)
+                        console.log(params)
+                        console.log(this.props.location)
                         // this.props.history.push(`${this.props.location.pathname}`, params)
                     }
                 })
