@@ -30,6 +30,7 @@ import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
+import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
@@ -79,6 +80,24 @@ class ProjectInfo extends Component {
         this.props.handleFormSubmit(values)
         this.setState({
             imageUrl: null
+        })
+    }
+    handleDelete = (e) => {
+        let projectId = e.target.dataset['id']
+        ajax('get', `/task/${projectId}/count`)
+        .then(res => {
+            if (res.data.count > 0) {
+                CustomPrompt({
+                    type: 'confirm',
+                    content: <div>{`项目中已经存在${res.data.count}个任务，是否继续删除`}</div>,
+                    okType: 'danger',
+                    onOk: () => {
+                        this.props.ajaxDestroy(projectId)
+                    }
+                })
+            } else {
+                this.props.handleDelete(e)
+            }
         })
     }
     render() {
@@ -184,9 +203,13 @@ class ProjectInfo extends Component {
             },
             {
                 label: '计划开始日期',
-                content: ({getFieldDecorator}) => {
+                content: ({getFieldDecorator, getFieldValue}) => {
                     const disabledDate = (dateValue) => {
-                        return Date.now() > new Date(dateValue).getTime()
+                        if (getFieldValue('plan_end_date')) {
+                            return Date.now() > new Date(dateValue).getTime() || new Date(getFieldValue('plan_end_date')).getTime() < new Date(dateValue).getTime()
+                        } else {
+                            return Date.now() > new Date(dateValue).getTime()
+                        }
                     }
                     return getFieldDecorator('plan_start_date', {
                         rules: [{required: true, message: '请选择计划开始日期'}]
@@ -197,7 +220,11 @@ class ProjectInfo extends Component {
                 label: '计划结束日期',
                 content: ({getFieldDecorator, getFieldValue}) => {
                     const disabledDate = (dateValue) => {
-                        return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                        if (getFieldValue('plan_start_date')) {
+                            return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                        } else {
+                            return Date.now() > new Date(dateValue).getTime()
+                        }
                     }
                     return getFieldDecorator('plan_end_date', {
                         rules: [{required: true, message: '请选择计划结束日期'}]
@@ -242,7 +269,7 @@ class ProjectInfo extends Component {
                             key={item.id}
                             actions={[
                                 <Icon type="edit" className="projectInfo-listItem-actions" data-id={item.id} data-img={item.img} onClick={this.edit} />,
-                                <Icon type="delete" className="projectInfo-listItem-actions" data-id={item.id} onClick={this.props.handleDelete} />
+                                <Icon type="delete" className="projectInfo-listItem-actions" data-id={item.id} onClick={this.handleDelete} />
                             ]}
                             extra={<img width={272} height={155} alt="logo" src={`/uploadImgs/${item.img}`} />}
                         >

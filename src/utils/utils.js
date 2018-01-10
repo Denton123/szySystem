@@ -111,6 +111,16 @@ const utils = {
         return dateStr
     },
     /**
+     * [getTime 返回时间戳]
+     * @Author   szh
+     * @DateTime 2018-01-09
+     * @param    {String}   date [日期字符串]
+     * @return   {Number}        [时间戳]
+     */
+    getTime: function(date = utils.formatDate()) {
+        return new Date(date).getTime()
+    },
+    /**
      * [getBase64 获取图片的base64]
      * @Author   szh
      * @DateTime 2017-12-12

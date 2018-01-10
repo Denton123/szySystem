@@ -37,6 +37,7 @@ function transformValue(field, value) {
  * modalSetting         对话框设置                  Object    具体参数请看antd对话框设置
  * queryFieldValues    *查询字段的值                Object    {name: {value: null}}
  * formFieldsValues    *表单字段的值                Object    {name: {value: null}, realname: {value: null}}
+ * rowSelection         表格的rowSelection属性      Object    具体参数请看antd表格的rowSelection属性设置
  *
  *  不影响state的属性
  * formSubmitHasFile   表单提交时是否有文件         Boolean   默认false(无文件)
@@ -61,6 +62,7 @@ function withBasicDataModel(PageComponent, Datas) {
     const clearFormValues = Datas.clearFormValues !== undefined ? Datas.clearFormValues : {}
     const locationSearch = Datas.locationSearch !== undefined ? Datas.locationSearch : true
     const subModel = Datas.subModel !== undefined ? Datas.subModel : {}
+    const rowSelection = Datas.rowSelection !== undefined ? Datas.rowSelection : null
     return class extends React.Component {
         constructor(props) {
             super(props)
@@ -76,6 +78,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 },
                 // 记录表格被选择的行
                 tableRowSelection: [],
+                rowSelection: rowSelection,
                 // 操作类型 add 和 edit
                 operationType: '',
                 // 对话框设置
@@ -129,7 +132,6 @@ function withBasicDataModel(PageComponent, Datas) {
             if (Object.keys(subModel).length > 0) {
                 Object.assign(params, subModel)
             }
-            console.log(params)
             let p = {}
             for (let i in params) {
                 if (i.indexOf('__') > -1) continue
@@ -145,7 +147,6 @@ function withBasicDataModel(PageComponent, Datas) {
             let getList = isFunction(customAjax) ? customAjax(data) : index(this.state.model, data)
             getList
                 .then(res => {
-                    console.log(res)
                     let pagination = {
                         current: res.data.currentPage,
                         pageSize: res.data.pageSize,
@@ -167,8 +168,9 @@ function withBasicDataModel(PageComponent, Datas) {
                             search += `${p}=${params[p]}&`
                         }
                         search = search.substr(0, search.length - 1)
-                        this.props.history.push(`${this.props.location.pathname}${search}`, params)
+                        this.props.history.replace(`${this.props.location.pathname}${search}`, params)
                     } else {
+                        this.props.history.replace(`${this.props.location.pathname}`, params)
                         // this.props.history.push(`${this.props.location.pathname}`, params)
                     }
                 })
@@ -196,7 +198,6 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {Object}   e [Proxy，DOM的事件对象]
          */
         handleAdd = (e) => {
-            console.log(e)
             this.handleSetState('operationType', 'add')
             this.handleSetState('modalSetting', {
                 ...this.state.modalSetting,
@@ -213,7 +214,6 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {Function} cb [自定义回调函数，存在时，则执行回调函数，不执行默认处理]
          */
         handleEdit = (e, cb) => {
-            console.log(e.target.dataset)
             this.handleSetState('operationType', 'edit')
             let id = e.target.dataset['id']
             show(`/${this.state.model}/${id}`)
@@ -258,7 +258,7 @@ function withBasicDataModel(PageComponent, Datas) {
          * @Author   szh
          * @DateTime 2017-12-19
          * @param    {Object}   values [表单提交的数据]
-         * @param    {Function} cb     [description]
+         * @param    {Function} cb     [回调]
          */
         handleFormSubmit = (values, cb) => {
             this.handleSetState('isSubmitting', true)
@@ -302,7 +302,7 @@ function withBasicDataModel(PageComponent, Datas) {
             })
             .catch(err => {
                 console.log(err)
-                message.success('保存失败')
+                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -352,7 +352,7 @@ function withBasicDataModel(PageComponent, Datas) {
             })
             .catch(err => {
                 console.log(err)
-                message.success('保存失败')
+                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -399,62 +399,109 @@ function withBasicDataModel(PageComponent, Datas) {
          */
         handleDelete = (e, cb) => {
             let id = e.target.dataset['id']
-            console.log(id)
             CustomPrompt({
                 type: 'confirm',
                 content: <div>是否要删除这条信息</div>,
                 okType: 'danger',
                 onOk: () => {
-                    destroy(`${this.state.model}/${id}`)
-                        .then(res => {
-                            if (cb) {
-                                cb(res)
-                            } else {
-                                let { dataSource } = this.state.dataSetting
-                                dataSource.splice(
-                                    dataSource.findIndex(item => item.id === res.data.id),
-                                    1
-                                )
-                                this.handleSetState('dataSetting', {
-                                    ...this.state.dataSetting,
-                                    dataSource: dataSource
-                                })
-                            }
-                        })
+                    this.ajaxDestroy(id, cb)
                 }
             })
         }
 
+        /**
+         * [ajax destroy]
+         * @Author   szh
+         * @DateTime 2018-01-09
+         * @param    {number}   id [当前行id]
+         * @param    {Function} cb [回调]
+         */
+        ajaxDestroy = (id, cb) => {
+            destroy(`${this.state.model}/${id}`)
+                .then(res => {
+                    if (cb) {
+                        cb(res)
+                    } else {
+                        if (parseInt(res.data.id) === parseInt(id)) {
+                            let { dataSource } = this.state.dataSetting
+                            dataSource.splice(
+                                dataSource.findIndex(item => item.id === res.data.id),
+                                1
+                            )
+                            this.handleSetState('dataSetting', {
+                                ...this.state.dataSetting,
+                                dataSource: dataSource
+                            })
+                            message.success('删除成功')
+                        } else {
+                            message.error('删除失败')
+                        }
+                    }
+                    if (this.state.rowSelection) {
+                        let index = this.state.rowSelection.selectedRowKeys.indexOf(Number(id))
+                        console.log(index)
+                        if (index > -1) {
+                            let arr = this.state.rowSelection.selectedRowKeys
+                            arr.splice(index, 1)
+                            console.log(arr)
+                            this.setState({
+                                rowSelection: {
+                                    ...this.state.rowSelection,
+                                    selectedRowKeys: arr
+                                }
+                            })
+                        }
+                    }
+                })
+        }
+
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
+            console.log('handleTableRowChange ------- ')
+            console.log(selectedRowKeys)
             this.setState({
-                tableRowSelection: selectedRowKeys
+                rowSelection: {
+                    ...this.state.rowSelection,
+                    selectedRowKeys
+                }
             })
         }
 
         // 批量删除
         handleBatchDelete = (e) => {
             console.log('=========')
-            if (this.state.tableRowSelection.length === 0) {
+            console.log(this.state.rowSelection)
+            if (this.state.rowSelection.selectedRowKeys.length === 0) {
                 message.warning('至少要选择一条数据')
                 return
             }
             CustomPrompt({
                 type: 'confirm',
-                content: <div>{`是否要删除这${this.state.tableRowSelection.length}条数据`}</div>,
+                content: <div>{`是否要删除这${this.state.rowSelection.selectedRowKeys.length}条数据`}</div>,
                 okType: 'danger',
                 onOk: () => {
-                    ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.tableRowSelection})
+                    ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.rowSelection.selectedRowKeys})
                         .then(res => {
+                            this.getData(this.props.location.state)
+                            message.success('删除成功')
                             this.setState({
-                                dataSetting: {
-                                    ...this.state.dataSetting,
-                                    dataSource: res.data
+                                rowSelection: {
+                                    ...this.state.rowSelection,
+                                    selectedRowKeys: []
                                 }
+                            }, () => {
+                                console.log(this.state.rowSelection)
                             })
+                            // this.setState({
+                            //     dataSetting: {
+                            //         ...this.state.dataSetting,
+                            //         dataSource: res.data
+                            //     }
+                            // })
                         })
                         .catch(err => {
                             console.log(err)
+                            message.error('删除失败')
                         })
                 }
             })
@@ -520,11 +567,13 @@ function withBasicDataModel(PageComponent, Datas) {
                     ajaxUpdate={this.ajaxUpdate}
                     handleModalCancel={this.handleModalCancel}
                     handleDelete={this.handleDelete}
+                    ajaxDestroy={this.ajaxDestroy}
                     handleTableRowChange={this.handleTableRowChange}
                     handleBatchDelete={this.handleBatchDelete}
                     handleQuery={this.handleQuery}
                     updateFormFields={this.updateFormFields}
                     updateQueryFields={this.updateQueryFields}
+                    rowSelection={this.rowSelection}
                     user={this.props.user}
                     {...this.state}
                     {...this.props}

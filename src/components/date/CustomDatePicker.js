@@ -16,9 +16,6 @@ class CustomDatePicker extends React.Component {
         //     onOpenChange  // 打开和关闭弹层时的回调 function
         // } = this.props.setting
         const props = {}
-        for (let i in this.props) {
-            props[i] = this.props[i]
-        }
         // 部分默认属性
         let defaultPropsArr = [
             {
@@ -39,6 +36,9 @@ class CustomDatePicker extends React.Component {
                 props[item.prop] = item.value
             }
         })
+        for (let i in this.props) {
+            props[i] = this.props[i]
+        }
         return (
             <DatePicker {...props} />
         )

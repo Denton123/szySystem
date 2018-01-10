@@ -42,7 +42,7 @@ module.exports = {
             // }
             '/api/**': proxyTableOptions,
             '/user/**': proxyTableOptions,
-            '/stage/**': proxyTableOptions,
+            '/project/**': proxyTableOptions,
             '/task/**': proxyTableOptions,
             '/answer/**': proxyTableOptions,
             '/attendance/**': proxyTableOptions,
