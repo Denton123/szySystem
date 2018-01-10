@@ -11,7 +11,7 @@ class BasicNotMatch extends React.Component {
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Button className="pull-right" type="primary" onClick={this.goBack}>返回首页</Button>
-                <h3 className="txt-c">内容不见了</h3>
+                <h3 className="txt-c">您所查看的内容不存在或者已删除</h3>
             </div>
         )
     }

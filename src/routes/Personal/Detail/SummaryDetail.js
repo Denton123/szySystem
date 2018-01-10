@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import {
     Card,
-    Button
+    Button,
+    message
 } from 'antd'
 import {
     Link,
@@ -32,8 +33,10 @@ class SummaryDetail extends Component {
         this.getData()
     }
     getData = () => {
+        const hide = message.loading('数据读取中', 0)
         show(`summary/${this.props.match.params.id}`)
             .then(res => {
+                setTimeout(hide, 0)
                 if (Object.keys(res.data).length === 0) {
                     this.props.history.push('/home/404')
                 } else {

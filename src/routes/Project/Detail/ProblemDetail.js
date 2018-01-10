@@ -49,7 +49,9 @@ class ProblemDetail extends Component {
     }
     componentDidMount() {
         let id = this.props.match.params.id
+        const hide = message.loading('数据读取中', 0)
         show(`problem/${id}`).then(res => {
+            setTimeout(hide, 0)
             if (Object.keys(res.data).length === 0) {
                 this.props.history.push('/home/404')
             } else {
