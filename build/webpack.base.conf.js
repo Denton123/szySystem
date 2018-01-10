@@ -15,7 +15,6 @@ module.exports = {
         app: './src/main.js',
         vendor: [
             'axios',
-            'jquery'
         ]
     },
     output: {
@@ -132,12 +131,8 @@ module.exports = {
     },
     plugins: [
         new webpack.ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery',
-            'window.jQuery': 'jquery',
-            'window.$': 'jquery',
             axios: 'axios',
-            'window.axios': 'axios'
+            // 'window.axios': 'axios'
         })
     ]
 }
