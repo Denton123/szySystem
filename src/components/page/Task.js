@@ -233,12 +233,6 @@ module.exports = function(opts) {
             let params = {
                 page: 1,
             }
-            if (!opts.total) {
-                params['project_id'] = this.props.project.id
-            }
-            if (val !== 'all') {
-                params['status'] = val
-            }
             if (opts.hasProject) {
                 params['project_id'] = 'notnull'
                 this.setState({
@@ -246,6 +240,12 @@ module.exports = function(opts) {
                 })
             } else {
                 params['project_id'] = 'null'
+            }
+            if (!opts.total) {
+                params['project_id'] = this.props.project.id
+            }
+            if (val !== 'all') {
+                params['status'] = val
             }
             this.props.getData(params)
         }
