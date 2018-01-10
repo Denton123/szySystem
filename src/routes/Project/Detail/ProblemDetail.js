@@ -35,9 +35,14 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 import './ProblemDetail.less'
 const {Meta} = Card
 
+// 去除字符串换行和空格
+function replaceBlank(str) {
+    return str.replace(/\s/g, '').replace(/<\/?.+?>/g, '')
+}
+
 class ProblemDetail extends Component {
     state = {
-        DetailData: [],
+        DetailData: {},
         answer: '',
         answerList: [],
         loading: true,
@@ -48,6 +53,13 @@ class ProblemDetail extends Component {
         allData: []
     }
     componentDidMount() {
+        this.getProblemData()
+    }
+    goBack = () => {
+        this.props.history.go(-1)
+    }
+    // 获取问题数据
+    getProblemData = () => {
         let id = this.props.match.params.id
         show(`problem/${id}`).then(res => {
             this.setState({
@@ -57,9 +69,6 @@ class ProblemDetail extends Component {
         }).then(() => {
             this.getData()
         })
-    }
-    goBack = () => {
-        this.props.history.push('/home/project/problem')
     }
     getData = (callback) => {
         let showallId = this.state.DetailData.id
@@ -185,7 +194,7 @@ class ProblemDetail extends Component {
     }
     handleFormSubmit = (values) => {
         this.props.handleFormSubmit(values)
-        this.getData()
+        this.getProblemData()
     }
     render() {
         const {DetailData, answer, answerList, showLoadingMore, loading, loadingMore, showCheckbox} = this.state
@@ -302,7 +311,7 @@ class ProblemDetail extends Component {
                                     avatar={answerList && item.User.avatar ? `/uploadImgs/${item.User.avatar}` : null}
                                         />]}>
                                 <List.Item.Meta
-                                    description={<Answer answer={item.answer} />}
+                                    description={<Answer answer={replaceBlank(item.answer)} />}
                                 />
                             </List.Item>
                             )} />
@@ -324,6 +333,7 @@ class ProblemDetail extends Component {
 
 const PE = withBasicDataModel(ProblemDetail, {
     model: 'problem',
+    title: '问题',
     formFieldsValues: {
         id: {
             value: null
