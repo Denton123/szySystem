@@ -324,7 +324,6 @@ function withBasicDataModel(PageComponent, Datas) {
             })
             .catch(err => {
                 console.log(err)
-                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -349,32 +348,36 @@ function withBasicDataModel(PageComponent, Datas) {
                     if (cb) {
                         cb(res)
                     } else {
-                        // 编辑后的默认处理
-                        this.setState((prevState, props) => {
-                            let newDataSource = []
-                            console.log(prevState)
-                            prevState.dataSetting.dataSource.forEach(data => {
-                                if (data.id === prevState.formFieldsValues.id.value) {
-                                    newDataSource.push(resetObject(res.data))
-                                } else {
-                                    newDataSource.push(data)
+                        if (parseInt(res.data.id) === parseInt(id)) {
+                            // 编辑后的默认处理
+                            this.setState((prevState, props) => {
+                                let newDataSource = []
+                                console.log(prevState)
+                                prevState.dataSetting.dataSource.forEach(data => {
+                                    if (data.id === prevState.formFieldsValues.id.value) {
+                                        newDataSource.push(resetObject(res.data))
+                                    } else {
+                                        newDataSource.push(data)
+                                    }
+                                })
+                                return {
+                                    dataSetting: {
+                                        ...prevState.dataSetting,
+                                        dataSource: newDataSource
+                                    }
                                 }
                             })
-                            return {
-                                dataSetting: {
-                                    ...prevState.dataSetting,
-                                    dataSource: newDataSource
-                                }
-                            }
-                        })
-                        this.handleModalCancel()
-                        message.success('保存成功')
+                            message.success('保存成功')
+                            this.handleModalCancel()
+                        } else {
+                            message.error('保存失败')
+                            this.handleSetState('isSubmitting', false)
+                        }
                     }
                 }
             })
             .catch(err => {
                 console.log(err)
-                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -459,21 +462,6 @@ function withBasicDataModel(PageComponent, Datas) {
                             message.error('删除失败')
                         }
                     }
-                    if (this.state.rowSelection) {
-                        let index = this.state.rowSelection.selectedRowKeys.indexOf(Number(id))
-                        console.log(index)
-                        if (index > -1) {
-                            let arr = this.state.rowSelection.selectedRowKeys
-                            arr.splice(index, 1)
-                            console.log(arr)
-                            this.setState({
-                                rowSelection: {
-                                    ...this.state.rowSelection,
-                                    selectedRowKeys: arr
-                                }
-                            })
-                        }
-                    }
                 })
         }
 
@@ -532,7 +520,6 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 }
             }
-            console.log(params)
             if (Object.keys(params).length === 0) {
                 message.warning('请增加查询条件')
                 return
@@ -543,11 +530,9 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 更新表单数据
         updateFormFields = (changedFields) => {
-            // console.log(this.state.formFieldsValues)
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })
-            Datas.formFieldsRelation && Datas.formFieldsRelation(changedFields)
         }
 
         // 更新查询表单数据

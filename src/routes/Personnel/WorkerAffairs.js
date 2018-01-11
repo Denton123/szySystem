@@ -36,6 +36,56 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 const RadioGroup = Radio.Group
 
 class WorkerAffairs extends Component {
+    /**
+     * [根据用户id获取进行中或者完成的任务]
+     * @Author   szh
+     * @DateTime 2018-01-11
+     * @param    {Array}    uids [用户id数组]
+     * @return   {Function}      [promise对象]
+     */
+    getTaskByUserIds = (uids) => {
+        return ajax('post', `/user/start-task`, {user_ids: uids})
+    }
+    handleDelete = (e) => {
+        e.persist()
+        let uid = e.target.dataset['id']
+        this.getTaskByUserIds([uid])
+        .then(res => {
+            if (res.data.length > 0) {
+                if (res.data[0].Tasks.length > 0) {
+                    message.warning('该用户已经开始执行任务')
+                } else {
+                    this.props.handleDelete(e)
+                }
+            } else {
+                message.error('用户不存在')
+            }
+        })
+    }
+    handleBatchDelete = (e) => {
+        e.persist()
+        if (this.props.rowSelection.length === 0) {
+            message.warning('至少选择一条数据!')
+        }
+        this.getTaskByUserIds(this.props.rowSelection)
+        .then(res => {
+            if (res.data.length > 0) {
+                let users = ''
+                res.data.forEach(d => {
+                    if (d.Tasks.length > 0) {
+                        users += `${d.realname} `
+                    }
+                })
+                if (users.length > 0) {
+                    message.warning(`${users}已经开始执行任务`)
+                } else {
+                    this.props.handleBatchDelete(e)
+                }
+            } else {
+                message.error('用户不存在')
+            }
+        })
+    }
     render() {
         const {
             child,
@@ -92,7 +142,7 @@ class WorkerAffairs extends Component {
         ]
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>,
-            () => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>
+            () => <Button type="danger" onClick={this.handleBatchDelete}>删除</Button>
         ]
 
         // 表格
@@ -160,7 +210,7 @@ class WorkerAffairs extends Component {
                     <span>
                         <a href="javascript:;" data-id={text.id} onClick={this.props.handleEdit}>编辑</a>
                         <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
+                        <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
                     </span>
                 )
             }

@@ -205,27 +205,32 @@ module.exports = function(opts) {
             if (this.props.operationType === 'edit' && this.props.formFieldsValues.pid.value !== null) {
                 // 更新子类保存需要特殊处理
                 this.props.ajaxUpdate(this.props.formFieldsValues.id.value, params, (res) => {
-                    let dataSource = []
-                    this.props.dataSetting.dataSource.forEach(d => {
-                        if (d.id === res.data.pid) {
-                            let child = []
-                            d['child'].forEach(c => {
-                                if (c.id === res.data.id) {
-                                    child.push(res.data)
-                                } else {
-                                    child.push(c)
-                                }
-                            })
-                            d['child'] = child
-                        }
-                        dataSource.push(d)
-                    })
-                    this.props.handleSetState('dataSetting', {
-                        ...this.props.dataSetting,
-                        dataSource: dataSource
-                    })
-                    this.props.handleModalCancel()
-                    message.success('保存成功')
+                    if (res.data.id === this.props.formFieldsValues.id.value) {
+                        let dataSource = []
+                        this.props.dataSetting.dataSource.forEach(d => {
+                            if (d.id === res.data.pid) {
+                                let child = []
+                                d['child'].forEach(c => {
+                                    if (c.id === res.data.id) {
+                                        child.push(res.data)
+                                    } else {
+                                        child.push(c)
+                                    }
+                                })
+                                d['child'] = child
+                            }
+                            dataSource.push(d)
+                        })
+                        this.props.handleSetState('dataSetting', {
+                            ...this.props.dataSetting,
+                            dataSource: dataSource
+                        })
+                        this.props.handleModalCancel()
+                        message.success('保存成功')
+                    } else {
+                        message.error('保存失败')
+                        this.props.handleSetState('isSubmitting', false)
+                    }
                 })
             } else {
                 this.props.handleFormSubmit(params)
@@ -271,25 +276,30 @@ module.exports = function(opts) {
 
         handleDelete = (e) => {
             this.props.handleDelete(e, (res) => {
-                let { dataSource } = this.props.dataSetting
-                if (res.data.pid) {
-                    let parentIdx = dataSource.findIndex(k => k.id === res.data.pid)
-                    let parent = dataSource.find(k => k.id === res.data.pid)
-                    parent['child'].splice(
-                        parent['child'].findIndex(item => item.id === res.data.id),
-                        1
-                    )
-                    dataSource[parentIdx] = parent
+                if (parseInt(res.data.id) === parseInt(e.target.dataset['id'])) {
+                    let { dataSource } = this.props.dataSetting
+                    if (res.data.pid) {
+                        let parentIdx = dataSource.findIndex(k => k.id === res.data.pid)
+                        let parent = dataSource.find(k => k.id === res.data.pid)
+                        parent['child'].splice(
+                            parent['child'].findIndex(item => item.id === res.data.id),
+                            1
+                        )
+                        dataSource[parentIdx] = parent
+                    } else {
+                        dataSource.splice(
+                            dataSource.findIndex(item => item.id === res.data.id),
+                            1
+                        )
+                    }
+                    this.props.handleSetState('dataSetting', {
+                        ...this.props.dataSetting,
+                        dataSource: dataSource
+                    })
+                    message.success('删除成功')
                 } else {
-                    dataSource.splice(
-                        dataSource.findIndex(item => item.id === res.data.id),
-                        1
-                    )
+                    message.error('删除失败')
                 }
-                this.props.handleSetState('dataSetting', {
-                    ...this.props.dataSetting,
-                    dataSource: dataSource
-                })
             })
         }
 
