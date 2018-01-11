@@ -3,6 +3,8 @@ import {
     Button,
     Form,
     Input,
+    Row,
+    Col
 } from 'antd'
 import {
     Link,
@@ -271,7 +273,9 @@ class Setting extends Component {
 
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                <WrappedSetForm {...props} />
+                <Row>
+                    <Col span={8}><WrappedSetForm {...props} /></Col>
+                </Row>
             </div>
         )
     }

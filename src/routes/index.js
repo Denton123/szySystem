@@ -192,6 +192,11 @@ const routes = [
                         component: getRoutes(['System', 'OperateLog'])
                     }
                 ]
+            },
+            {
+                name: '页面不存在',
+                path: '/404',
+                component: getRoutes(['NotMatch']),
             }
         ]
     },

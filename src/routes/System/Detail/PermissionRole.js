@@ -138,8 +138,8 @@ class PermissionRole extends Component {
     }
     handleBatchDelete = (e) => {
         e.persist()
-        console.log(this.props.rowSelection.selectedRowKeys)
-        axios.post(`/role/use-count`, {role_ids: this.props.rowSelection.selectedRowKeys})
+        console.log(this.props.rowSelection)
+        axios.post(`/role/use-count`, {role_ids: this.props.rowSelection})
             .then(res => {
                 let delBol = true
                 let useRoleArr = []
@@ -297,7 +297,7 @@ class PermissionRole extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={expandedRowRender} rowSelection={{...rowSelection, ...this.props.rowSelection}} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={expandedRowRender} rowSelection={rowSelection} />
                 <CustomModal {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel} user={this.props.user}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -337,9 +337,6 @@ const PR = withBasicDataModel(PermissionRole, {
     },
     // customGetData: true,
     locationSearch: false,
-    rowSelection: {
-        selectedRowKeys: []
-    }
 })
 
 export default PR

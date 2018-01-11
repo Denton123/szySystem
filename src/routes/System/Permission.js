@@ -16,25 +16,14 @@ const TabPane = Tabs.TabPane
 
 class Permission extends Component {
     state = {
-        key: this.props.location.state ? this.props.location.state.__key : 'user'
+        key: this.props.location.state && this.props.location.state.__key ? this.props.location.state.__key : 'user'
     }
-    // componentWillMount() {
-    //     console.log(this.props.location.state)
-    //     this.setState({
-    //         key: this.props.location.state && this.props.location.state._current ? this.props.location.state._current : 'user'
-    //     })
-    // }
-    // componentWillReceiveProps(nextProps) {
-    //     console.log(nextProps)
-    // }
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     return nextProps.id !== this.props.id
-    // }
     onTabChange = (key) => {
         this.props.history.replace(this.props.location.pathname, {
             page: 1,
             __key: key
         })
+        console.log(this.props.location)
         this.handleSetState('key', key)
     }
 

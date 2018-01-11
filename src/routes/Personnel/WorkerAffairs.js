@@ -278,7 +278,7 @@ class WorkerAffairs extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={{...rowSelection, ...this.props.rowSelection}} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} rowSelection={rowSelection} />
                 <CustomModal user={this.props.user} {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
                     <CustomForm
                         formStyle={{width: '100%'}}
@@ -346,9 +346,6 @@ const WA = withBasicDataModel(WorkerAffairs, {
             value: null
         }
     },
-    rowSelection: {
-        selectedRowKeys: []
-    }
 })
 
 export default WA

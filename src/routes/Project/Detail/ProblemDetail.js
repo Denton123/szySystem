@@ -61,13 +61,21 @@ class ProblemDetail extends Component {
     // 获取问题数据
     getProblemData = () => {
         let id = this.props.match.params.id
+        const hide = message.loading('数据读取中', 0)
         show(`problem/${id}`).then(res => {
-            this.setState({
-                loading: false,
-                DetailData: resetObject(res.data)
-            })
+            setTimeout(hide, 0)
+            if (Object.keys(res.data).length === 0) {
+                this.props.history.push('/home/404')
+            } else {
+                this.setState({
+                    loading: false,
+                    DetailData: resetObject(res.data)
+                })
+            }
         }).then(() => {
-            this.getData()
+            if (Object.keys(this.state.DetailData).length > 0) {
+                this.getData()
+            }
         })
     }
     getData = (callback) => {

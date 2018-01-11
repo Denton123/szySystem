@@ -43,10 +43,16 @@ class SummaryDetail extends Component {
         if (!this.props.user) {
             this.props.history.push('/login')
         }
+        const hide = message.loading('数据读取中', 0)
         show(`summary/${this.props.match.params.id}`)
             .then(res => {
-                // 直接更新内部表单数据
-                this.props.updateEditFormFieldsValues(res.data)
+                setTimeout(hide, 0)
+                if (Object.keys(res.data).length === 0) {
+                    this.props.history.push('/home/404')
+                } else {
+                    // 直接更新内部表单数据
+                    this.props.updateEditFormFieldsValues(res.data)
+                }
             })
             .catch(err => {
                 console.log(err)

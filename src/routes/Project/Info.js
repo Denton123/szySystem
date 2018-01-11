@@ -83,6 +83,7 @@ class ProjectInfo extends Component {
         })
     }
     handleDelete = (e) => {
+        e.persist()
         let projectId = e.target.dataset['id']
         ajax('get', `/task/${projectId}/count`)
         .then(res => {

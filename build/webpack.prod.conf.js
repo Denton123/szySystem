@@ -77,6 +77,7 @@ let webpackConfig = merge(baseWebpackConfig, {
         //         ignore: ['.*']
         //     }
         // ])
+        new webpack.optimize.ModuleConcatenationPlugin(),
     ]
 });
 

@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import {
     Card,
-    Button
+    Button,
+    message
 } from 'antd'
 import {
     Link,
@@ -43,12 +44,18 @@ class ProjectDetail extends Component {
     getData = () => {
         let id = this.props.match.params.id
         this.props.handleSetState('loading', true)
+        const hide = message.loading('数据读取中', 0)
         show(`project/${id}`)
             .then(res => {
-                this.props.handleSetState('loading', false)
-                this.setState({
-                    projectData: resetObject(res.data),
-                })
+                setTimeout(hide, 0)
+                if (Object.keys(res.data).length === 0) {
+                    this.props.history.push('/home/404')
+                } else {
+                    this.props.handleSetState('loading', false)
+                    this.setState({
+                        projectData: resetObject(res.data),
+                    })
+                }
             })
     }
     goBack = (e) => {
