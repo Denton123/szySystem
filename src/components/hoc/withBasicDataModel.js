@@ -138,13 +138,10 @@ function withBasicDataModel(PageComponent, Datas) {
             if (Object.keys(subModel).length > 0) {
                 Object.assign(params, subModel)
             }
-            let p = {}
+            let data = {}
             for (let i in params) {
                 if (i.indexOf('__') > -1) continue
-                p[i] = params[i]
-            }
-            let data = {
-                params: p
+                data[i] = params[i]
             }
             this.handleSetState('dataSetting', {
                 ...this.state.dataSetting,
@@ -167,10 +164,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         pagination: pagination,
                         dataSource: dataSource
                     })
-                    console.log('getData() -------- ')
-                    console.log(locationSearch)
-                    console.log(params)
-                    console.log(data.params)
+                    console.log('getData() -------- ', locationSearch, params)
                     if (locationSearch) {
                         let search = '?'
                         for (let p in data.params) {

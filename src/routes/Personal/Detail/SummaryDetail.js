@@ -68,8 +68,10 @@ class SummaryDetail extends Component {
         console.log(this.props)
         let extra = [
             () => <Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>,
-            () => <Button className="pull-right mr-10" type="primary" onClick={this.goEdit}>编辑</Button>,
         ]
+        if (this.props.user.id === this.state.data.user_id) {
+            extra.push(() => <Button className="pull-right mr-10" type="primary" onClick={this.goEdit}>编辑</Button>)
+        }
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Card

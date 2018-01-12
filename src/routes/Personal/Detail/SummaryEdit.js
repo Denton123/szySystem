@@ -48,10 +48,10 @@ class SummaryDetail extends Component {
             .then(res => {
                 setTimeout(hide, 0)
                 if (parseInt(res.data.id) === parseInt(this.props.match.params.id)) {
-                    this.props.history.push('/home/404')
-                } else {
                     // 直接更新内部表单数据
                     this.props.updateEditFormFieldsValues(res.data)
+                } else {
+                    this.props.history.push('/home/404')
                 }
             })
             .catch(err => {

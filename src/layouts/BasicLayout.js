@@ -112,6 +112,10 @@ class BasicLayout extends React.Component {
         tpwidget('show')
     }
 
+    componentWillReceiveProps(nextProps) {
+        console.log(this.state, nextProps)
+    }
+
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
         if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -222,7 +226,7 @@ class BasicLayout extends React.Component {
                 </Menu>
             </div>
         )
-        console.log(permissionRoute)
+
         const dynamicLayout = (
             <div>
                 <Header className="layout-header" >

@@ -22,7 +22,7 @@ import {
 // 引入工具方法
 // import {isObject, isArray, valueToMoment} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
-import {checkFormField} from 'UTILS/regExp'
+import {checkFormField, checkPhone} from 'UTILS/regExp'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -280,8 +280,14 @@ class WorkerAffairs extends Component {
             {
                 label: '电话',
                 content: ({getFieldDecorator}) => {
+                    const validator = (rule, value, callback) => {
+                        checkPhone(value, '电话')
+                        .then(resolve => {
+                            callback(resolve)
+                        })
+                    }
                     return getFieldDecorator('phone', {
-                        rules: [{ required: true, message: '请输入你的电话' }]
+                        rules: [{ required: true, validator: validator }]
                     })(<Input prefix={<Icon type="phone" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="电话" />)
                 },
             },

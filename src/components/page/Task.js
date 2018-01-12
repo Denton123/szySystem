@@ -127,8 +127,8 @@ module.exports = function(opts) {
 
         getAllParentsTask = () => {
             let getAllParentsTasks = opts.total
-                ? ajax('get', '/task/all-parents', {params: {project_id: 'null'}})
-                : ajax('get', '/task/all-parents', {params: {project_id: this.props.project.id}})
+                ? ajax('get', '/task/all-parents', {project_id: 'null'})
+                : ajax('get', '/task/all-parents', {project_id: this.props.project.id})
             getAllParentsTasks
                 .then(res => {
                     this.setState({
