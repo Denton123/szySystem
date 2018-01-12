@@ -132,6 +132,43 @@ const utils = {
         reader.addEventListener('load', () => callback(reader.result))
         reader.readAsDataURL(img)
     },
+    /**
+     * [valueToPriceRange inputRange组件在传值需要value]
+     * @Author   wyp
+     * @DateTime 2018-1-11
+     * @param    {null，Arr}   value       [value变成对象]
+     * @return   {null||Str||Arr}          [根据value决定返回值类型]
+     */
+    valueToPriceRange: function(value) {
+        if (value === null || value === undefined) return value
+        if (utils.isArray(value)) {
+            var temp = {}
+            temp = {number1: value[0], number2: value[1]}
+            return temp
+        }
+    },
+
+    /**
+     * [transformValue 表单值转换]
+     * @Author   szh
+     * @DateTime 2017-12-05
+     * @param    {String}              field [表单字段]
+     * @param    {str||num||bool}      value [当前值，可以是任何基本类型的值]
+     * @return   {all}                       [返回所有类型的值]
+     */
+    transformValue: function(field, value) {
+        if (value === null || value === undefined) return null
+        let v
+        if (field.indexOf('date') > -1) {
+            // 日期组件的value必须使用moment
+            v = utils.valueToMoment(value)
+        } else if (field.indexOf('price') > -1) {
+            v = utils.valueToPriceRange(value)
+        } else {
+            v = value
+        }
+        return v
+    }
 }
 
 module.exports = utils

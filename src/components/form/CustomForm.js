@@ -11,7 +11,7 @@ const FormItem = Form.Item
  * customFormItemLayout  {object}   表单行的布局
  * layout                {string}   表单布局方式             默认'horizontal'    'horizontal'|'vertical'|'inline'
  * formStyle             {object}   表单样式
- * customFormOperation   {ReactNode}表单的提交时的按钮
+ * customFormOperation   {array}    表单的提交时的按钮
  * customOperationLayout {object}   表单提交操作行的布局
  * isSubmitting          {boolean}  表单提交按钮loading状态  - 当customFormOperation传入后，这值不需要再传
  * formItemStyle         {object}   表单域的样式             默认 {}
@@ -21,7 +21,6 @@ class CustomForm extends React.Component {
         e.preventDefault()
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values)
                 this.props.handleSubmit(values)
             }
             console.log('Received values of form: ', values)
@@ -72,17 +71,19 @@ class CustomForm extends React.Component {
                         {item.content(this.props.form)}
                     </FormItem>
                 ))}
-                <FormItem wrapperCol={operationLayout}>
-                    {
-                        this.props.customFormOperation
-                        ? this.props.customFormOperation
-                        : (
+                {
+                    this.props.customFormOperation ? this.props.customFormOperation.map((Btn, idx) => (
+                        <FormItem key={idx} wrapperCol={operationLayout}>
+                            <Btn />
+                        </FormItem>
+                    )) : (
+                        <FormItem wrapperCol={operationLayout}>
                             <Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>
                                 保存
                             </Button>
-                        )
-                    }
-                </FormItem>
+                        </FormItem>
+                    )
+                }
             </Form>
         )
     }

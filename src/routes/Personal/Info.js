@@ -119,6 +119,9 @@ class Info extends Component {
             showUploadList: false
         }
 
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>保存</Button>
+        ]
          // 表单
         const formFields = [
             {
@@ -215,7 +218,7 @@ class Info extends Component {
                     handleSubmit={this.handleFormSubmit}
                     updateFormFields={this.props.updateFormFields}
                     formFieldsValues={this.props.formFieldsValues}
-                    customFormOperation={<Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>保存</Button>}
+                    customFormOperation={customFormOperation}
                 />
             </div>
         )

@@ -158,6 +158,10 @@ class ProjectInfo extends Component {
             fileList: this.state.fileList,
             showUploadList: false
         }
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
+        ]
 
         const formFields = [
             {
@@ -255,7 +259,7 @@ class ProjectInfo extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    customFormOperation={customFormOperation}
                     formFields={condition}
                     handleSubmit={this.props.handleQuery}
                     updateFormFields={this.props.updateQueryFields}

@@ -195,6 +195,10 @@ class PermissionRole extends Component {
             () => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>,
             () => <Button type="danger" onClick={this.handleBatchDelete}>删除</Button>
         ]
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
+        ]
 
         const rowSelection = {
             onChange: this.props.handleTableRowChange
@@ -290,7 +294,7 @@ class PermissionRole extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    customFormOperation={customFormOperation}
                     formFields={condition}
                     handleSubmit={this.props.handleQuery}
                     updateFormFields={this.props.updateQueryFields}
@@ -334,9 +338,10 @@ const PR = withBasicDataModel(PermissionRole, {
         permission_ids: {
             value: null
         },
-    },
+    }
+    // ,
     // customGetData: true,
-    locationSearch: false,
+    // locationSearch: false,
 })
 
 export default PR

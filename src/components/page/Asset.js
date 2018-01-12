@@ -58,6 +58,11 @@ module.exports = function(opts) {
             data['belong'] = opts.belong
             this.props.handleFormSubmit(data)
         }
+        handleQuery = (values) => {
+            console.log('handleQuery ------ ')
+            console.log(values)
+            this.props.handleQuery()
+        }
 
         render() {
             const {
@@ -97,6 +102,11 @@ module.exports = function(opts) {
             const operationBtn = [
                 () => <Button className="mr-10" type="primary" onClick={this.props.handleAdd}>新增</Button>,
                 () => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>
+            ]
+
+            const customFormOperation = [
+                () => <Button type="primary" htmlType="submit">查询</Button>,
+                () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
             ]
 
             // 表格
@@ -261,9 +271,9 @@ module.exports = function(opts) {
                     <CustomForm
                         layout="inline"
                         formStyle={{width: '100%'}}
-                        customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                        customFormOperation={customFormOperation}
                         formFields={condition}
-                        handleSubmit={this.props.handleQuery}
+                        handleSubmit={this.handleQuery}
                         updateFormFields={this.props.updateQueryFields}
                         formFieldsValues={this.props.queryFieldValues}
                     />

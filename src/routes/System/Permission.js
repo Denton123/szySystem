@@ -18,6 +18,9 @@ class Permission extends Component {
     state = {
         key: this.props.location.state && this.props.location.state.__key ? this.props.location.state.__key : 'user'
     }
+    componentDidMount() {
+        console.log(this.props.location)
+    }
     onTabChange = (key) => {
         this.props.history.replace(this.props.location.pathname, {
             page: 1,
