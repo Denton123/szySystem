@@ -93,7 +93,7 @@ module.exports = function(opts) {
                 {
                     label: '购买日期',
                     content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" format="YYYY-MM-DD HH:mm:ss" showTime style={{ width: 220 }} />)
+                        return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" format="YYYY-MM-DD" showTime={false} style={{ width: 220 }} />)
                     },
                 }
             ]
@@ -212,7 +212,7 @@ module.exports = function(opts) {
                     content: ({getFieldDecorator}) => {
                         return getFieldDecorator('date', {
                             rules: [{required: true, message: '请选择购买日期'}]
-                        })(<CustomDatePicker format="YYYY-MM-DD HH:mm:ss" showTime />)
+                        })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
                     },
                 },
                 {
