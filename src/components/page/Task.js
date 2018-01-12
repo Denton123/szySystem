@@ -275,6 +275,7 @@ module.exports = function(opts) {
         }
 
         handleDelete = (e) => {
+            e.persist()
             this.props.handleDelete(e, (res) => {
                 if (parseInt(res.data.id) === parseInt(e.target.dataset['id'])) {
                     let { dataSource } = this.props.dataSetting

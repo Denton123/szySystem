@@ -75,13 +75,7 @@ module.exports = function(opts) {
                 user
             } = this.props
 
-            const condition = [
-                {
-                    label: '作者',
-                    content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
-                    },
-                },
+            let condition = [
                 {
                     label: '关键字',
                     content: ({getFieldDecorator}) => {
@@ -95,6 +89,14 @@ module.exports = function(opts) {
                     },
                 }
             ]
+            if (!opts.personal) {
+                condition.unshift({
+                    label: '作者',
+                    content: ({getFieldDecorator}) => {
+                        return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
+                    },
+                })
+            }
             const operationBtn = []
             if (opts.personal) {
                 operationBtn.push(() => (
