@@ -9,6 +9,7 @@ import {
     List,
     Spin,
     Checkbox,
+    Modal,
     Popconfirm,
     Icon
 } from 'antd'
@@ -22,7 +23,7 @@ import ReactQuill from 'react-quill'
 import moment from 'moment'
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
-import {ajax, show, store, index, update} from 'UTILS/ajax'
+import {ajax, show, store, index, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -32,8 +33,11 @@ import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
+import AnswerEdit from './AnswerForm.js'
+
 import './ProblemDetail.less'
 const {Meta} = Card
+const confirm = Modal.confirm
 
 // 去除字符串换行和空格
 function replaceBlank(str) {
@@ -42,19 +46,25 @@ function replaceBlank(str) {
 
 class ProblemDetail extends Component {
     state = {
-        DetailData: {},
-        answer: '',
-        answerList: [],
+        DetailData: {}, // 问题数据
+        answer: '', // 答案value值
+        answerList: [], // 当前页答案数据
         loading: true,
         loadingMore: false,
-        showLoadingMore: false,
-        showCheckbox: false,
-        flag: 1,
-        allData: []
+        showLoadingMore: false, // 加载更多
+        showCheckbox: false, // 采纳框是否显示
+        flag: 1, // 当前页数
+        allData: [], // 全部答案数据
+        show: false, // 是否弹出模态框
+        title: '', // 编辑表单标题
+        editContent: '', // 编辑内容
+        editID: '', // 编辑ID
+        quillShow: true, // 答案编辑器显示
     }
     componentDidMount() {
         this.getProblemData()
     }
+    // 返回上一页
     goBack = () => {
         this.props.history.go(-1)
     }
@@ -78,6 +88,7 @@ class ProblemDetail extends Component {
             }
         })
     }
+    // 获取当前页答案
     getData = (callback) => {
         let showallId = this.state.DetailData.id
         var usedAll = []
@@ -95,6 +106,18 @@ class ProblemDetail extends Component {
                 answerList: res.data.data,
                 flag: res.data.currentPage
             })
+            const answerList = this.state.answerList
+            const hasArr = []
+            if (answerList) {
+                for (let d in answerList) {
+                    hasArr.push(answerList[d].user_id)
+                }
+            }
+            if (hasArr.indexOf(this.props.user.id) !== -1) {
+                this.setState({
+                    quillShow: false
+                })
+            }
             if (res.data.total > res.data.pageSize) {
                 this.setState({
                     showLoadingMore: true
@@ -113,6 +136,7 @@ class ProblemDetail extends Component {
             }
         })
     }
+    // 获取答案数据公共方法
     getAnswerData = (page, callback) => {
         let showId = this.state.DetailData.id
         show(`/answer/${showId}?page=${page}`).then(res => {
@@ -132,6 +156,7 @@ class ProblemDetail extends Component {
             answer: value
         })
     }
+    // 加载更多
     onLoadMore = () => {
         this.setState({
             loadingMore: true
@@ -162,6 +187,7 @@ class ProblemDetail extends Component {
             }
         })
     }
+    // 答案提交
     answerSubmit = () => {
         if (this.state.answer !== '') {
             const Data = this.state.DetailData
@@ -184,28 +210,91 @@ class ProblemDetail extends Component {
             message.info('请输入答案再提交')
         }
     }
+    // 采纳答案
     acceptAnswer = (e) => {
         const id = e.target.dataset.id
         localStorage.setItem('changeId', id)
     }
+    // 确认采纳答案
     onConfirm = (e) => {
         const id = this.state.DetailData.id
-        update(`/answer/${id}`, '1').then(res => {
-            const changeId = localStorage.getItem('changeId')
-        })
         const changeId = localStorage.getItem('changeId')
-        ajax('post', `/answer/${changeId}/answerupdate`).then(res => {
+        const used = {
+            ansId: changeId,
+            proId: id
+        }
+        ajax('post', `/answer/answerChange`, used).then(res => {
             this.getData()
         })
     }
     onCancel = (e) => {
     }
+    // 问题编辑
     handleFormSubmit = (values) => {
         this.props.handleFormSubmit(values)
         this.getProblemData()
     }
+    // 答案编辑
+    editAnswer = (e) => {
+        const editId = e.target.dataset.id
+        const answerList = this.state.answerList
+        this.setState({
+            show: true,
+            title: '答案编辑',
+            editID: editId
+        })
+        for (let i in answerList) {
+            if (Number(editId) === answerList[i].id) {
+                this.setState({
+                    editContent: answerList[i].answer
+                })
+            }
+        }
+    }
+    Edit = (e) => {
+        localStorage.setItem('editText', e)
+    }
+    // 提交答案编辑
+    handleok = (e) => {
+        this.setState({
+            show: false
+        })
+        const answer = localStorage.getItem('editText')
+        const changeId = this.state.editID
+        const editText = {
+            answer: answer
+        }
+        ajax('post', `/answer/${changeId}/editupdate`, editText).then(res => {
+            this.getProblemData()
+        })
+    }
+    // 取消答案编辑
+    onCancel = (e) => {
+        this.setState({
+            show: false
+        })
+    }
+    // 删除答案
+    deleteAnswer = (e) => {
+        const deleteId = e.target.dataset.id
+        confirm({
+            title: '确定要删除答案吗?',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: () => {
+                destroy(`/answer/${deleteId}`).then(res => {
+                    this.getData()
+                })
+            },
+            onCancel: () => {
+                console.log('Cancel')
+            }
+        })
+    }
     render() {
-        const {DetailData, answer, answerList, showLoadingMore, loading, loadingMore, showCheckbox} = this.state
+        const {DetailData, answer, answerList, showLoadingMore, loading,
+            loadingMore, showCheckbox, show, title, editAnswer, editContent, onCancel, quillShow} = this.state
         const {
             child,
             route,
@@ -238,11 +327,26 @@ class ProblemDetail extends Component {
             </div>
             ) : null
 
-        const Bottom = ({time, text, avatar}) => (
+        const Bottom = ({time, userId, id, used}) => (
             <span>
-                <span style={{marginRight: 10}}>{time}回答</span>
-                {text}
-                <Avatar src={avatar} icon="user" className="answerAvatar" />
+                <span>{time}回答</span>
+                {
+                    user && user.id === userId ? (
+                        <span className="answerOperate">
+                            <a data-id={id} onClick={this.editAnswer}>编辑</a>
+                            {
+                                used === '0' ? (<a data-id={id} onClick={this.deleteAnswer}>删除</a>) : null
+                            }
+                        </span>
+                    ) : null
+                }
+                <AnswerEdit
+                    show={show}
+                    title={title}
+                    handleok={this.handleok}
+                    onCancel={this.onCancel}
+                    editAnswer={editContent}
+                    Edit={this.Edit} />
             </span>
             )
         const Accept = ({id, used}) => (
@@ -316,23 +420,32 @@ class ProblemDetail extends Component {
                                 actions={[<Bottom
                                     time={item.date}
                                     text={item.User.realname}
+                                    userId={item.user_id}
+                                    id={item.id}
+                                    used={item.used}
                                     avatar={answerList && item.User.avatar ? `/uploadImgs/${item.User.avatar}` : null}
                                         />]}>
+                                <span>{item.User.realname}</span>
+                                <Avatar src={item.User.avatar} icon="user" className="answerAvatar" />
                                 <List.Item.Meta
-                                    description={<Answer answer={replaceBlank(item.answer)} />}
+                                    description={<Answer answer={item.answer} />}
                                 />
                             </List.Item>
                             )} />
-                    <div style={{height: 300, marginTop: 30}}>
-                        <h3>撰写答案</h3>
-                        <ReactQuill
-                            placeholder="撰写答案"
-                            style={{height: 150, color: 'black'}}
-                            value={answer}
-                            onChange={this.answerChange}
-                        />
-                        <Button type="primary" style={{float: 'right', marginTop: 50}} onClick={this.answerSubmit}>提交</Button>
-                    </div>
+                    {
+                        quillShow ? (
+                            <div style={{height: 300, marginTop: 30}}>
+                                <h3>撰写答案</h3>
+                                <ReactQuill
+                                    placeholder="撰写答案"
+                                    style={{height: 150, color: 'black'}}
+                                    value={answer}
+                                    onChange={this.answerChange}
+                                />
+                                <Button type="primary" style={{float: 'right', marginTop: 50}} onClick={this.answerSubmit}>提交</Button>
+                            </div>
+                        ) : null
+                    }
                 </div>
             </div>
         )

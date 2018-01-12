@@ -152,16 +152,10 @@ const OL = withBasicDataModel(OperateLog, {
         realname: {
             value: null
         },
-        email: {
+        type: {
             value: null
         },
-        job: {
-            value: null
-        },
-        entry_date: {
-            value: null
-        },
-        quit_date: {
+        log_date: {
             value: null
         }
     },

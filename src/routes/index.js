@@ -178,6 +178,12 @@ const routes = [
                 ]
             },
             {
+                name: '工作日志',
+                icon: 'calendar',
+                path: '/work-log/all',
+                component: getRoutes(['Project', 'WorkLog'])
+            },
+            {
                 name: '系统设置',
                 icon: 'tool',
                 path: '/system',

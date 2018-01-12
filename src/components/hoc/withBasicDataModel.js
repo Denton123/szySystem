@@ -76,22 +76,19 @@ function withBasicDataModel(PageComponent, Datas) {
                 // 表单提交
                 isSubmitting: false,
                 // 加载中
-                loading: false,
+                loading: false
             }
         }
 
         componentDidMount() {
             // 默认自动获取当前模块的列表数据
             if (!customGetData) {
-                console.log('默认自动获取当前模块的列表数据 ---- ')
-                console.log(this.props.location)
                 // let page = this.props.location.state ? this.props.location.state.page : 1
                 // this.getData({page: page})
 
                 // this.getData({page: 1})
 
                 let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-                console.log(p)
                 this.setState((prevState, props) => {
                     let obj = Object.assign({}, this.state.queryFieldValues)
                     Object.keys(prevState.queryFieldValues).forEach(field => {
@@ -101,8 +98,6 @@ function withBasicDataModel(PageComponent, Datas) {
                             }
                         }
                     })
-                    console.log('queryFieldValues ---- ')
-                    console.log(obj)
                     return {
                         queryFieldValues: obj
                     }
@@ -164,7 +159,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         pagination: pagination,
                         dataSource: dataSource
                     })
-                    console.log('getData() -------- ', locationSearch, params)
                     if (locationSearch) {
                         let search = '?'
                         for (let p in data.params) {
@@ -172,12 +166,8 @@ function withBasicDataModel(PageComponent, Datas) {
                         }
                         search = search.substr(0, search.length - 1)
                         this.props.history.replace(`${this.props.location.pathname}${search}`, params)
-                        console.log(111)
-                        console.log(this.props.location)
                     } else {
                         this.props.history.replace(`${this.props.location.pathname}`, params)
-                        console.log(222)
-                        console.log(this.props.location)
                         // this.props.history.push(`${this.props.location.pathname}`, params)
                     }
                 })
@@ -251,8 +241,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         value: transformValue(field, data[field])
                     }
                 })
-                console.log('oupdateEditFormFieldsValues ---- ')
-                console.log(obj)
                 return {
                     formFieldsValues: obj
                 }
@@ -268,8 +256,6 @@ function withBasicDataModel(PageComponent, Datas) {
          */
         handleFormSubmit = (values, cb) => {
             this.handleSetState('isSubmitting', true)
-            console.log('handleFormSubmit ------ ')
-            console.log(values)
             if (this.state.operationType === 'add') {
                 this.ajaxStore(values, cb)
             } else {
@@ -308,6 +294,7 @@ function withBasicDataModel(PageComponent, Datas) {
             })
             .catch(err => {
                 console.log(err)
+                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -332,36 +319,32 @@ function withBasicDataModel(PageComponent, Datas) {
                     if (cb) {
                         cb(res)
                     } else {
-                        if (parseInt(res.data.id) === parseInt(id)) {
-                            // 编辑后的默认处理
-                            this.setState((prevState, props) => {
-                                let newDataSource = []
-                                console.log(prevState)
-                                prevState.dataSetting.dataSource.forEach(data => {
-                                    if (data.id === prevState.formFieldsValues.id.value) {
-                                        newDataSource.push(resetObject(res.data))
-                                    } else {
-                                        newDataSource.push(data)
-                                    }
-                                })
-                                return {
-                                    dataSetting: {
-                                        ...prevState.dataSetting,
-                                        dataSource: newDataSource
-                                    }
+                        // 编辑后的默认处理
+                        this.setState((prevState, props) => {
+                            let newDataSource = []
+                            console.log(prevState)
+                            prevState.dataSetting.dataSource.forEach(data => {
+                                if (data.id === prevState.formFieldsValues.id.value) {
+                                    newDataSource.push(resetObject(res.data))
+                                } else {
+                                    newDataSource.push(data)
                                 }
                             })
-                            message.success('保存成功')
-                            this.handleModalCancel()
-                        } else {
-                            message.error('保存失败')
-                            this.handleSetState('isSubmitting', false)
-                        }
+                            return {
+                                dataSetting: {
+                                    ...prevState.dataSetting,
+                                    dataSource: newDataSource
+                                }
+                            }
+                        })
+                        this.handleModalCancel()
+                        message.success('保存成功')
                     }
                 }
             })
             .catch(err => {
                 console.log(err)
+                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -446,6 +429,19 @@ function withBasicDataModel(PageComponent, Datas) {
                             message.error('删除失败')
                         }
                     }
+                    if (this.state.rowSelection) {
+                        let index = this.state.rowSelection.selectedRowKeys.indexOf(Number(id))
+                        if (index > -1) {
+                            let arr = this.state.rowSelection.selectedRowKeys
+                            arr.splice(index, 1)
+                            this.setState({
+                                rowSelection: {
+                                    ...this.state.rowSelection,
+                                    selectedRowKeys: arr
+                                }
+                            })
+                        }
+                    }
                 })
         }
 
@@ -484,7 +480,7 @@ function withBasicDataModel(PageComponent, Datas) {
         }
 
         // 处理查询
-        handleQuery = () => {
+        handleQuery = (values) => {
             let params = {}
             for (let i in this.state.queryFieldValues) {
                 if (this.state.queryFieldValues[i].value !== null) {
@@ -510,15 +506,16 @@ function withBasicDataModel(PageComponent, Datas) {
             }
             params['page'] = 1
             let locationState = this.props.location.state
-            console.log({...locationState, ...params})
             this.getData({...locationState, ...params}, false)
         }
 
         // 更新表单数据
         updateFormFields = (changedFields) => {
+            // console.log(this.state.formFieldsValues)
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })
+            Datas.formFieldsRelation && Datas.formFieldsRelation(changedFields)
         }
 
         // 更新查询表单数据
@@ -533,6 +530,12 @@ function withBasicDataModel(PageComponent, Datas) {
             let queryFieldValues = {}
             let newLocationState = {}                           // 新的locationState
             let nowLocationState = this.props.location.state    // 现在的locationState
+            Object.keys(this.state.queryFieldValues).forEach(field => {
+                // 给queryFieldValues清空
+                queryFieldValues[field] = {
+                    value: null
+                }
+            })
 
             if (isObject(nowLocationState)) {
                 Object.keys(nowLocationState).forEach(field => {
@@ -541,12 +544,10 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 })
             }
-
-            console.log(newLocationState)
             this.setState({
                 queryFieldValues: queryFieldValues
             }, () => {
-                console.log({...newLocationState, page: 1})
+                // console.log({...newLocationState, page: 1})
                 this.getData({...newLocationState, page: 1}, false)
             })
         }
