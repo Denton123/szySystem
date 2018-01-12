@@ -477,7 +477,17 @@ module.exports = function(opts) {
                         } else {
                             percent = getPercent(record['Users'])
                         }
-                        return <Progress percent={parseInt(percent)} type="circle" size="small" status="active" />
+                        let status
+                        if (record.status === '0' || record.status === '1') {
+                            status = 'active'
+                        }
+                        if (record.status === '2') {
+                            status = 'success'
+                        }
+                        if (record.status === '3') {
+                            status = 'exception'
+                        }
+                        return <Progress percent={parseInt(percent)} type="circle" size="small" status={status} />
                     }
                 },
                 {
