@@ -203,6 +203,11 @@ const routes = [
                 name: '页面不存在',
                 path: '/404',
                 component: getRoutes(['NotMatch']),
+            },
+            {
+                name: '提示',
+                path: '/no-permission',
+                component: getRoutes(['NoPermission']),
             }
         ]
     },
