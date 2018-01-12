@@ -5,27 +5,9 @@ import {message} from 'antd'
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 
 // 引入工具方法
-import {isFunction, valueToMoment, momentToValue, resetObject} from 'UTILS/utils'
+import {isFunction, isObject, valueToMoment, momentToValue, resetObject, valueToPriceRange, transformValue} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
-/**
- * [transformValue 表单值转换]
- * @Author   szh
- * @DateTime 2017-12-05
- * @param    {String}              field [表单字段]
- * @param    {str||num||bool}      value [当前值，可以是任何基本类型的值]
- * @return   {all}                       [返回所有类型的值]
- */
-function transformValue(field, value) {
-    if (value === null || value === undefined) return null
-    let v
-    if (field.indexOf('date') > -1) {
-        // 日期组件的value必须使用moment
-        v = valueToMoment(value)
-    } else {
-        v = value
-    }
-    return v
-}
+
 /**
  * Datas传值说明
  *
@@ -103,23 +85,29 @@ function withBasicDataModel(PageComponent, Datas) {
             if (!customGetData) {
                 console.log('默认自动获取当前模块的列表数据 ---- ')
                 console.log(this.props.location)
-                let page = this.props.location.state ? this.props.location.state.page : 1
-                this.getData({page: page})
+                // let page = this.props.location.state ? this.props.location.state.page : 1
+                // this.getData({page: page})
 
-                // let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-                // console.log(p)
-                // this.getData(p)
-                // let queryFieldValues = Object.assign({}, this.state.queryFieldValues)
-                // for (let key in this.state.queryFieldValues) {
-                //     if (p.hasOwnProperty(key)) {
-                //         console.log(11)
-                //         // queryFieldValues[key].value = p[key]
-                //     }
-                // }
-                // console.log(queryFieldValues)
-                // this.setState({
-                //     queryFieldValues
-                // })
+                // this.getData({page: 1})
+
+                let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+                console.log(p)
+                this.setState((prevState, props) => {
+                    let obj = Object.assign({}, this.state.queryFieldValues)
+                    Object.keys(prevState.queryFieldValues).forEach(field => {
+                        if (p.hasOwnProperty(field)) {
+                            obj[field] = {
+                                value: transformValue(field, p[field])
+                            }
+                        }
+                    })
+                    console.log('queryFieldValues ---- ')
+                    console.log(obj)
+                    return {
+                        queryFieldValues: obj
+                    }
+                })
+                this.getData(p)
             }
         }
 
@@ -150,13 +138,10 @@ function withBasicDataModel(PageComponent, Datas) {
             if (Object.keys(subModel).length > 0) {
                 Object.assign(params, subModel)
             }
-            let p = {}
+            let data = {}
             for (let i in params) {
                 if (i.indexOf('__') > -1) continue
-                p[i] = params[i]
-            }
-            let data = {
-                params: p
+                data[i] = params[i]
             }
             this.handleSetState('dataSetting', {
                 ...this.state.dataSetting,
@@ -179,20 +164,19 @@ function withBasicDataModel(PageComponent, Datas) {
                         pagination: pagination,
                         dataSource: dataSource
                     })
-                    console.log(locationSearch)
-                    console.log(params)
+                    console.log('getData() -------- ', locationSearch, params)
                     if (locationSearch) {
                         let search = '?'
-                        for (let p in params) {
-                            search += `${p}=${params[p]}&`
+                        for (let p in data.params) {
+                            search += `${p}=${data.params[p]}&`
                         }
                         search = search.substr(0, search.length - 1)
                         this.props.history.replace(`${this.props.location.pathname}${search}`, params)
+                        console.log(111)
                         console.log(this.props.location)
                     } else {
                         this.props.history.replace(`${this.props.location.pathname}`, params)
                         console.log(222)
-                        console.log(params)
                         console.log(this.props.location)
                         // this.props.history.push(`${this.props.location.pathname}`, params)
                     }
@@ -324,7 +308,6 @@ function withBasicDataModel(PageComponent, Datas) {
             })
             .catch(err => {
                 console.log(err)
-                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -349,32 +332,36 @@ function withBasicDataModel(PageComponent, Datas) {
                     if (cb) {
                         cb(res)
                     } else {
-                        // 编辑后的默认处理
-                        this.setState((prevState, props) => {
-                            let newDataSource = []
-                            console.log(prevState)
-                            prevState.dataSetting.dataSource.forEach(data => {
-                                if (data.id === prevState.formFieldsValues.id.value) {
-                                    newDataSource.push(resetObject(res.data))
-                                } else {
-                                    newDataSource.push(data)
+                        if (parseInt(res.data.id) === parseInt(id)) {
+                            // 编辑后的默认处理
+                            this.setState((prevState, props) => {
+                                let newDataSource = []
+                                console.log(prevState)
+                                prevState.dataSetting.dataSource.forEach(data => {
+                                    if (data.id === prevState.formFieldsValues.id.value) {
+                                        newDataSource.push(resetObject(res.data))
+                                    } else {
+                                        newDataSource.push(data)
+                                    }
+                                })
+                                return {
+                                    dataSetting: {
+                                        ...prevState.dataSetting,
+                                        dataSource: newDataSource
+                                    }
                                 }
                             })
-                            return {
-                                dataSetting: {
-                                    ...prevState.dataSetting,
-                                    dataSource: newDataSource
-                                }
-                            }
-                        })
-                        this.handleModalCancel()
-                        message.success('保存成功')
+                            message.success('保存成功')
+                            this.handleModalCancel()
+                        } else {
+                            message.error('保存失败')
+                            this.handleSetState('isSubmitting', false)
+                        }
                     }
                 }
             })
             .catch(err => {
                 console.log(err)
-                message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
         }
@@ -459,21 +446,6 @@ function withBasicDataModel(PageComponent, Datas) {
                             message.error('删除失败')
                         }
                     }
-                    if (this.state.rowSelection) {
-                        let index = this.state.rowSelection.selectedRowKeys.indexOf(Number(id))
-                        console.log(index)
-                        if (index > -1) {
-                            let arr = this.state.rowSelection.selectedRowKeys
-                            arr.splice(index, 1)
-                            console.log(arr)
-                            this.setState({
-                                rowSelection: {
-                                    ...this.state.rowSelection,
-                                    selectedRowKeys: arr
-                                }
-                            })
-                        }
-                    }
                 })
         }
 
@@ -532,28 +504,50 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 }
             }
-            console.log(params)
             if (Object.keys(params).length === 0) {
                 message.warning('请增加查询条件')
                 return
             }
             params['page'] = 1
-            this.getData(params, false)
+            let locationState = this.props.location.state
+            console.log({...locationState, ...params})
+            this.getData({...locationState, ...params}, false)
         }
 
         // 更新表单数据
         updateFormFields = (changedFields) => {
-            // console.log(this.state.formFieldsValues)
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })
-            Datas.formFieldsRelation && Datas.formFieldsRelation(changedFields)
         }
 
         // 更新查询表单数据
         updateQueryFields = (changedFields) => {
             this.setState({
                 queryFieldValues: {...this.state.queryFieldValues, ...changedFields}
+            })
+        }
+
+        // 重置查询表单
+        handleReset = () => {
+            let queryFieldValues = {}
+            let newLocationState = {}                           // 新的locationState
+            let nowLocationState = this.props.location.state    // 现在的locationState
+
+            if (isObject(nowLocationState)) {
+                Object.keys(nowLocationState).forEach(field => {
+                    if (!this.state.queryFieldValues.hasOwnProperty(field)) {
+                        newLocationState[field] = nowLocationState[field]
+                    }
+                })
+            }
+
+            console.log(newLocationState)
+            this.setState({
+                queryFieldValues: queryFieldValues
+            }, () => {
+                console.log({...newLocationState, page: 1})
+                this.getData({...newLocationState, page: 1}, false)
             })
         }
 
@@ -578,6 +572,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     updateFormFields={this.updateFormFields}
                     updateQueryFields={this.updateQueryFields}
                     rowSelection={this.rowSelection}
+                    handleReset={this.handleReset}
                     user={this.props.user}
                     {...this.state}
                     {...this.props}

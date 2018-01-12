@@ -58,6 +58,11 @@ module.exports = function(opts) {
             data['belong'] = opts.belong
             this.props.handleFormSubmit(data)
         }
+        handleQuery = (values) => {
+            console.log('handleQuery ------ ')
+            console.log(values)
+            this.props.handleQuery()
+        }
 
         render() {
             const {
@@ -88,7 +93,7 @@ module.exports = function(opts) {
                 {
                     label: '购买日期',
                     content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" format="YYYY-MM-DD HH:mm:ss" showTime style={{ width: 220 }} />)
+                        return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" format="YYYY-MM-DD" showTime={false} style={{ width: 220 }} />)
                     },
                 }
             ]
@@ -97,6 +102,11 @@ module.exports = function(opts) {
             const operationBtn = [
                 () => <Button className="mr-10" type="primary" onClick={this.props.handleAdd}>新增</Button>,
                 () => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>
+            ]
+
+            const customFormOperation = [
+                () => <Button type="primary" htmlType="submit">查询</Button>,
+                () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
             ]
 
             // 表格
@@ -132,7 +142,10 @@ module.exports = function(opts) {
                 {
                     title: '类型',
                     dataIndex: 'type',
-                    key: 'type'
+                    key: 'type',
+                    render: (text) => (
+                        <span>{parseInt(text) === 1 ? '公司' : '学校'}</span>
+                    )
                 },
                 {
                     title: '备注',
@@ -202,7 +215,7 @@ module.exports = function(opts) {
                     content: ({getFieldDecorator}) => {
                         return getFieldDecorator('date', {
                             rules: [{required: true, message: '请选择购买日期'}]
-                        })(<CustomDatePicker format="YYYY-MM-DD HH:mm:ss" showTime />)
+                        })(<CustomDatePicker format="YYYY-MM-DD" showTime={false} />)
                     },
                 },
                 {
@@ -218,8 +231,8 @@ module.exports = function(opts) {
                     content: ({getFieldDecorator}) => {
                         return getFieldDecorator('type', {})(
                             <RadioGroup>
-                                <Radio value="公司">公司</Radio>
-                                <Radio value="学校">学校</Radio>
+                                <Radio value="1">公司</Radio>
+                                <Radio value="2">学校</Radio>
                             </RadioGroup>
                         )
                     },
@@ -261,9 +274,9 @@ module.exports = function(opts) {
                     <CustomForm
                         layout="inline"
                         formStyle={{width: '100%'}}
-                        customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                        customFormOperation={customFormOperation}
                         formFields={condition}
-                        handleSubmit={this.props.handleQuery}
+                        handleSubmit={this.handleQuery}
                         updateFormFields={this.props.updateQueryFields}
                         formFieldsValues={this.props.queryFieldValues}
                     />
@@ -323,7 +336,7 @@ module.exports = function(opts) {
                 value: null
             },
             type: {
-                value: null
+                value: '1'
             },
             belong: {
                 value: opts.belong
@@ -352,7 +365,7 @@ module.exports = function(opts) {
                 value: null
             },
             type: {
-                value: null
+                value: '1'
             },
             belong: {
                 value: opts.belong

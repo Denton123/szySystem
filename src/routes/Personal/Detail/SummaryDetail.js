@@ -66,6 +66,12 @@ class SummaryDetail extends Component {
         } = this.props
         const data = this.state.data
         console.log(this.props)
+        let extra = [
+            () => <Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>,
+        ]
+        if (this.props.user.id === this.state.data.user_id) {
+            extra.push(() => <Button className="pull-right mr-10" type="primary" onClick={this.goEdit}>编辑</Button>)
+        }
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Card
@@ -80,8 +86,9 @@ class SummaryDetail extends Component {
                     }
                     extra={
                         <div>
-                            <Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>
-                            <Button className="pull-right mr-10" type="primary" onClick={this.goEdit}>编辑</Button>
+                            {extra.map((Btn, idx) => (
+                                <Btn key={idx} />
+                            ))}
                         </div>
                     }
                 >

@@ -119,6 +119,9 @@ class Info extends Component {
             showUploadList: false
         }
 
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>保存</Button>
+        ]
          // 表单
         const formFields = [
             {
@@ -180,13 +183,14 @@ class Info extends Component {
             {
                 label: '电话',
                 content: ({getFieldDecorator}) => {
+                    const validator = (rule, value, callback) => {
+                        checkPhone(value, '电话')
+                        .then(resolve => {
+                            callback(resolve)
+                        })
+                    }
                     return getFieldDecorator('phone', {
-                        rules: [
-                            { required: true, message: '请输入你的电话' },
-                            {
-                                validator: checkPhone
-                            }
-                        ]
+                        rules: [{ required: true, validator: validator }]
                     })(<Input disabled={state.formDisabled} placeholder="电话" />)
                 },
             },
@@ -215,7 +219,7 @@ class Info extends Component {
                     handleSubmit={this.handleFormSubmit}
                     updateFormFields={this.props.updateFormFields}
                     formFieldsValues={this.props.formFieldsValues}
-                    customFormOperation={<Button type="primary" htmlType="submit" loading={this.props.isSubmitting}>保存</Button>}
+                    customFormOperation={customFormOperation}
                 />
             </div>
         )

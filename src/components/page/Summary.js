@@ -13,7 +13,7 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject, transformValue} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -37,15 +37,29 @@ function escape(str) {
 module.exports = function(opts) {
     class Summary extends Component {
         componentDidMount() {
-            let page = this.props.location.state ? this.props.location.state.page : 1
+            // let page = this.props.location.state ? this.props.location.state.page : 1
+            let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+            console.log(p)
+            let obj = Object.assign({}, this.props.queryFieldValues)
+            Object.keys(this.props.queryFieldValues).forEach(field => {
+                if (p.hasOwnProperty(field)) {
+                    obj[field] = {
+                        value: transformValue(field, p[field])
+                    }
+                }
+            })
+            console.log('queryFieldValues ---- ')
+            console.log(obj)
+            this.props.handleSetState('queryFieldValues', obj)
+
             if (opts.personal) {
                 this.props.getData({
-                    page: 1,
+                    ...p,
                     user_id: this.props.user.id
                 })
             } else {
                 this.props.getData({
-                    page: 1,
+                    ...p,
                 }, (data) => {
                     return ajax('get', '/summary/all', data)
                 })
@@ -61,17 +75,11 @@ module.exports = function(opts) {
                 user
             } = this.props
 
-            const condition = [
-                {
-                    label: '作者',
-                    content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
-                    },
-                },
+            let condition = [
                 {
                     label: '关键字',
                     content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('keyword', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                        return getFieldDecorator('title', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
                     },
                 },
                 {
@@ -81,6 +89,14 @@ module.exports = function(opts) {
                     },
                 }
             ]
+            if (!opts.personal) {
+                condition.unshift({
+                    label: '作者',
+                    content: ({getFieldDecorator}) => {
+                        return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
+                    },
+                })
+            }
             const operationBtn = []
             if (opts.personal) {
                 operationBtn.push(() => (
@@ -91,6 +107,10 @@ module.exports = function(opts) {
                     </Link>
                 ))
             }
+            const customFormOperation = [
+                () => <Button type="primary" htmlType="submit">查询</Button>,
+                () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
+            ]
             const columns = [
                 {
                     title: '作者',
@@ -145,7 +165,7 @@ module.exports = function(opts) {
                     <CustomForm
                         layout="inline"
                         formStyle={{width: '100%'}}
-                        customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                        customFormOperation={customFormOperation}
                         formFields={condition}
                         handleSubmit={this.props.handleQuery}
                         updateFormFields={this.props.updateQueryFields}
@@ -163,7 +183,7 @@ module.exports = function(opts) {
             realname: {
                 value: null
             },
-            keyword: {
+            title: {
                 value: null
             },
             date: {

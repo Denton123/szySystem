@@ -70,6 +70,11 @@ class OperateLog extends Component {
             },
         ]
 
+        const customFormOperation = [
+            () => <Button style={{marginLeft: 50}} type="primary" htmlType="submit">查询</Button>,
+            () => <Button className="mr-10" type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
+        ]
+
         // 表格
         const columns = [
             {
@@ -128,7 +133,7 @@ class OperateLog extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={<Button style={{marginLeft: 50}} type="primary" htmlType="submit">查询</Button>}
+                    customFormOperation={customFormOperation}
                     formFields={condition}
                     handleSubmit={this.props.handleQuery}
                     updateFormFields={this.props.updateQueryFields}

@@ -74,6 +74,10 @@ class Contract extends Component {
         const operationBtn = [
             () => <Button type="primary" onClick={this.add}>新增</Button>
         ]
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
+        ]
 
         const columns = [
             {
@@ -159,7 +163,7 @@ class Contract extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    customFormOperation={customFormOperation}
                     formFields={condition}
                     handleSubmit={this.props.handleQuery}
                     updateFormFields={this.props.updateQueryFields}

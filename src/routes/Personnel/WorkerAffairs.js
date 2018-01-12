@@ -22,7 +22,7 @@ import {
 // 引入工具方法
 // import {isObject, isArray, valueToMoment} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
-import {checkFormField} from 'UTILS/regExp'
+import {checkFormField, checkPhone} from 'UTILS/regExp'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
@@ -36,6 +36,56 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 const RadioGroup = Radio.Group
 
 class WorkerAffairs extends Component {
+    /**
+     * [根据用户id获取进行中或者完成的任务]
+     * @Author   szh
+     * @DateTime 2018-01-11
+     * @param    {Array}    uids [用户id数组]
+     * @return   {Function}      [promise对象]
+     */
+    getTaskByUserIds = (uids) => {
+        return ajax('post', `/user/start-task`, {user_ids: uids})
+    }
+    handleDelete = (e) => {
+        e.persist()
+        let uid = e.target.dataset['id']
+        this.getTaskByUserIds([uid])
+        .then(res => {
+            if (res.data.length > 0) {
+                if (res.data[0].Tasks.length > 0) {
+                    message.warning('该用户已经开始执行任务')
+                } else {
+                    this.props.handleDelete(e)
+                }
+            } else {
+                message.error('用户不存在')
+            }
+        })
+    }
+    handleBatchDelete = (e) => {
+        e.persist()
+        if (this.props.rowSelection.length === 0) {
+            message.warning('至少选择一条数据!')
+        }
+        this.getTaskByUserIds(this.props.rowSelection)
+        .then(res => {
+            if (res.data.length > 0) {
+                let users = ''
+                res.data.forEach(d => {
+                    if (d.Tasks.length > 0) {
+                        users += `${d.realname} `
+                    }
+                })
+                if (users.length > 0) {
+                    message.warning(`${users}已经开始执行任务`)
+                } else {
+                    this.props.handleBatchDelete(e)
+                }
+            } else {
+                message.error('用户不存在')
+            }
+        })
+    }
     render() {
         const {
             child,
@@ -92,7 +142,11 @@ class WorkerAffairs extends Component {
         ]
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>,
-            () => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>
+            () => <Button type="danger" onClick={this.handleBatchDelete}>删除</Button>
+        ]
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
         ]
 
         // 表格
@@ -160,7 +214,7 @@ class WorkerAffairs extends Component {
                     <span>
                         <a href="javascript:;" data-id={text.id} onClick={this.props.handleEdit}>编辑</a>
                         <Divider type="vertical" />
-                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
+                        <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
                     </span>
                 )
             }
@@ -226,8 +280,14 @@ class WorkerAffairs extends Component {
             {
                 label: '电话',
                 content: ({getFieldDecorator}) => {
+                    const validator = (rule, value, callback) => {
+                        checkPhone(value, '电话')
+                        .then(resolve => {
+                            callback(resolve)
+                        })
+                    }
                     return getFieldDecorator('phone', {
-                        rules: [{ required: true, message: '请输入你的电话' }]
+                        rules: [{ required: true, validator: validator }]
                     })(<Input prefix={<Icon type="phone" style={{ fontSize: 13 }} />} autoComplete="off" placeholder="电话" />)
                 },
             },
@@ -271,7 +331,7 @@ class WorkerAffairs extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    customFormOperation={customFormOperation}
                     formFields={condition}
                     handleSubmit={this.props.handleQuery}
                     updateFormFields={this.props.updateQueryFields}

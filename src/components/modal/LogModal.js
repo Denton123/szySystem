@@ -11,7 +11,6 @@ import cs from 'classnames'
 const { TextArea } = Input
 class PopModal extends Component {
     state = {
-        showTip: false,
         textContent: ''
     }
 
@@ -34,7 +33,7 @@ class PopModal extends Component {
         const menu = (
             <Menu>
                 <Menu.Item>
-                    <span onClick={this.props.delete}>删除日志</span>
+                    <span onClick={this.props.handDelete}>删除日志</span>
                 </Menu.Item>
             </Menu>
         )

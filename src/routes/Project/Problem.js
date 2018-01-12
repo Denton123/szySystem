@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
 import { Layout, Breadcrumb, Icon, Button, Input, Table, Divider } from 'antd'
 import {
@@ -28,12 +27,12 @@ function escape(str) {
 }
 
 class Problem extends Component {
-    componentDidMount() {
-        let page = this.props.location.state ? this.props.location.state.page : 1
-        this.props.getData({
-            page: 1
-        })
-    }
+    // componentDidMount() {
+    //     let page = this.props.location.state ? this.props.location.state.page : 1
+    //     this.props.getData({
+    //         page: 1
+    //     })
+    // }
     handleFormSubmit = (values) => {
         let params = {
             user_id: this.props.user.id
@@ -74,9 +73,9 @@ class Problem extends Component {
                 },
             },
             {
-                label: '关键字',
+                label: '标题',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('keyword', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                    return getFieldDecorator('title', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
                 },
             },
             {
@@ -90,6 +89,11 @@ class Problem extends Component {
         // 操作
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>
+        ]
+
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
         ]
 
         const columns = [
@@ -169,7 +173,7 @@ class Problem extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    customFormOperation={customFormOperation}
                     formFields={condition}
                     handleSubmit={this.props.handleQuery}
                     updateFormFields={this.props.updateQueryFields}
@@ -199,7 +203,7 @@ const Pr = withBasicDataModel(Problem, {
         realname: {
             value: null
         },
-        problem: {
+        title: {
             value: null
         },
         date: {
@@ -226,7 +230,8 @@ const Pr = withBasicDataModel(Problem, {
             arr.push(resetObject(data))
         })
         return arr
-    },
-    customGetData: true
+    }
+    // ,
+    // customGetData: true
 })
 export default Pr

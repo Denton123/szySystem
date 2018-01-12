@@ -126,9 +126,8 @@ class PermissionRole extends Component {
     handleDelete = (e) => {
         let id = e.target.dataset['id']
         e.persist()
-        axios.post(`/role/use-count`, {role_ids: [id]})
+        ajax('post', `/role/use-count`, {role_ids: [id]})
             .then(res => {
-                console.log(res)
                 if (res.data[0].Users.length !== 0) {
                     message.warning('不能删除，该角色已有用户使用！')
                 } else {
@@ -138,8 +137,7 @@ class PermissionRole extends Component {
     }
     handleBatchDelete = (e) => {
         e.persist()
-        console.log(this.props.rowSelection)
-        axios.post(`/role/use-count`, {role_ids: this.props.rowSelection})
+        ajax('post', `/role/use-count`, {role_ids: this.props.rowSelection})
             .then(res => {
                 let delBol = true
                 let useRoleArr = []
@@ -194,6 +192,10 @@ class PermissionRole extends Component {
         const operationBtn = [
             () => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>,
             () => <Button type="danger" onClick={this.handleBatchDelete}>删除</Button>
+        ]
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
         ]
 
         const rowSelection = {
@@ -290,7 +292,7 @@ class PermissionRole extends Component {
                 <CustomForm
                     layout="inline"
                     formStyle={{width: '100%'}}
-                    customFormOperation={<Button type="primary" htmlType="submit">查询</Button>}
+                    customFormOperation={customFormOperation}
                     formFields={condition}
                     handleSubmit={this.props.handleQuery}
                     updateFormFields={this.props.updateQueryFields}
@@ -334,9 +336,10 @@ const PR = withBasicDataModel(PermissionRole, {
         permission_ids: {
             value: null
         },
-    },
+    }
+    // ,
     // customGetData: true,
-    locationSearch: false,
+    // locationSearch: false,
 })
 
 export default PR

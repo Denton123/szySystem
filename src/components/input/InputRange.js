@@ -8,6 +8,8 @@ class InputRange extends React.Component {
         super(props)
 
         const value = this.props.value || {}
+        console.log('InputRange.js ---- ')
+        console.log(value)
         this.state = {
             number1: value.number1 || 0,
             number2: value.number2 || 0

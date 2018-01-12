@@ -1,41 +1,26 @@
 /**
  * 每日日志
  */
-import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
-import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, message, Modal, Spin, Avatar } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
-import ReactQuill from 'react-quill'
-import moment from 'moment'
+import { Layout, Button, Calendar, Badge, message, Modal } from 'antd'
 import PopModal from 'COMPONENTS/modal/LogModal.js'
 import 'ROUTES/Personal/WorkLog.less'
-import 'moment/locale/zh-cn'
-import {isObject, isArray, valueToMoment} from 'UTILS/utils'
+import {valueToMoment, momentToValue, formatDate, resetObject, getTime} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
-moment.locale('zh-cn')
 const { Content } = Layout
 const confirm = Modal.confirm
 class WorkLog extends Component {
     state = {
-        show: false,
-        text: '',
-        log: '',
-        note: [],
-        id: 0,
-        content: '',
-        title: '',
-        checkFlag: '',
-        showTip: false,
-        logcont: '',
-        showDelete: false,
-        deleteId: '',
-        date: this.props.location.state ? this.props.location.state.date : moment().format('YYYY-MM-DD'),
-        mode: this.props.location.state ? this.props.location.state.mode : 'month'
+        note: [], // 记录当前用户全部工作日志
+        show: false, // 是否显示对话框
+        title: '', // 对话框标题
+        showTip: false, // 显示提示
+        logcont: '', // 对话框内容
+        showDelete: false, // 是否显示对话框中的删除
+        worklogId: 0, // 当前的工作日志id
+        worklogDate: '', // 当前的工作日志的日期
+        date: this.props.location.state && this.props.location.state.date ? this.props.location.state.date : valueToMoment(formatDate()),
+        mode: this.props.location.state && this.props.location.state.mode ? this.props.location.state.mode : 'month'
     }
 
     componentDidMount() {
@@ -49,62 +34,63 @@ class WorkLog extends Component {
     getLogData = () => {
         if (this.props.user) {
             const id = this.props.user.id
-            show(`/worklog/${id}`).then(res => {
+            index('/worklog', {user_id: this.props.user.id})
+            .then(res => {
+                let arr = []
+                res.data.forEach(d => {
+                    arr.push(resetObject(d))
+                })
                 this.setState({
-                    note: res.data
+                    note: arr
                 })
             })
         }
     }
+
     handleok = (content) => {
         if (content === '') {
             this.setState({
-                show: true,
                 showTip: true
             })
         } else {
-            this.setState({
-                show: false,
-                showTip: false
-            })
-            localStorage.setItem('logcont', content)
-            var selectDay = localStorage.getItem('recordDay')
-            var saveObj = {
-                index: this.state.id++,
-                id: this.props.user.id,
+            let data = {
+                user_id: this.props.user.id,
                 content: content,
-                selectDay: selectDay
+                date: this.state.worklogDate
             }
-            var note = this.state.note
-            if (this.state.checkFlag === 'add') {
-                store('/worklog', saveObj).then(res => {
-                    if (res.status === 200) {
-                        this.getLogData()
-                        message.success('新增日志成功')
-                    } else {
-                        message.error('新增日志失败')
-                    }
-                })
-            } else {
-                var i, time, editId
-                var okArr = []
-                for (i in note) {
-                    if (note[i].time !== null) {
-                        time = note[i].time.substr(0, 10)
-                        console.log(note)
-                        console.log(selectDay + 'selectDay')
-                        console.log(time + 'time')
-                        if (selectDay === time) {
-                            editId = note[i].id
-                        }
-                    }
-                }
-                update(`/worklog/${editId}`, saveObj).then(res => {
-                    if (res.status === 200) {
-                        this.getLogData()
+            if (this.state.worklogId) { // 编辑
+                update(`/worklog/${this.state.worklogId}`, data)
+                .then(res => {
+                    if (parseInt(res.data.id) === parseInt(this.state.worklogId)) {
                         message.success('编辑日志成功')
+                        this.setState({
+                            show: false
+                        })
+                        let arr = []
+                        this.state.note.forEach(n => {
+                            if (n.id === res.data.id) {
+                                arr.push(res.data)
+                            } else {
+                                arr.push(n)
+                            }
+                        })
+                        this.setState({
+                            note: arr
+                        })
                     } else {
                         message.error('编辑日志失败')
+                    }
+                })
+            } else { // 新增
+                store('/worklog', data).then(res => {
+                    if (res.status === 200) {
+                        message.success('新增日志成功')
+                        this.getLogData()
+                        this.setState({
+                            show: false
+                        })
+                    } else {
+                        message.error('新增日志失败')
                     }
                 })
             }
@@ -114,91 +100,71 @@ class WorkLog extends Component {
     onCancel = (e) => {
         this.setState({
             show: false,
-            showTip: false
+            showTip: false,
+            worklogId: null
         })
-    }
-    onSelect = (value) => {
-        const onSelectDay = moment(value).format('YYYY-MM-DD')
-        const localArr = this.state.note
-        var id, time, ol, checkFlag, i
-        var arr = []
-        if (localArr !== null) {
-            for (id in localArr) {
-                if (localArr[id].time !== null) {
-                    time = moment(localArr[id].time).format('YYYY-MM-DD')
-                    arr.push(time)
-                }
-            }
-            checkFlag = arr.indexOf(onSelectDay)
-            if (checkFlag === -1) {
-                this.setState({
-                    title: '新增',
-                    checkFlag: 'add',
-                    logcont: '',
-                    showDelete: false
-                })
-            } else {
-                var testarr = []
-                var editContent, atTime
-                for (ol in localArr) {
-                    if (localArr[ol].time !== null) {
-                        var timearr = moment(localArr[ol].time).format('YYYY-MM-DD')
-                        testarr.push(timearr)
-                        var Flag = timearr.indexOf(onSelectDay)
-                        if (Flag === 0) {
-                            editContent = localArr[ol].content
-                        }
-                    }
-                }
-                for (i in localArr) {
-                    atTime = moment(localArr[i].time).format('YYYY-MM-DD')
-                    if (onSelectDay === atTime) {
-                        var editId = localArr[i].id
-                    }
-                }
-                this.setState({
-                    title: '编辑',
-                    checkFlag: 'edit',
-                    logcont: editContent,
-                    showDelete: true,
-                    deleteId: editId
-                })
-            }
-        }
-        this.setState({
-            show: true
-        })
-        this.props.history.replace(this.props.location.pathname, {
-            date: onSelectDay
-        })
-        localStorage.setItem('recordDay', onSelectDay)
-        const da = localStorage.getItem('recordDay')
     }
 
-    onPanelChange = (date, mode) => {
-        let dateMoment = moment(date).format('YYYY-MM-DD')
+    onSelect = (moment) => {
+        const currentDate = momentToValue(moment)
+        console.log(moment)
+        const currentLog = this.state.note.find(n => n.date === currentDate) // 获取当前用户当天的日志
+        if (currentLog) { // 存在时编辑
+            show(`/worklog/${currentLog.id}`)
+            .then(res => {
+                if (Object.keys(res.data).length > 0) {
+                    this.setState({
+                        title: '编辑',
+                        logcont: res.data.content,
+                        showDelete: true,
+                        worklogId: res.data.id,
+                        worklogDate: currentDate,
+                        show: true,
+                    })
+                } else {
+                    message.error('该日志不存在，请刷新页面')
+                }
+            })
+        } else { // 新增
+            this.setState({
+                title: '新增',
+                logcont: '',
+                showDelete: false,
+                worklogId: null,
+                worklogDate: currentDate,
+                show: true,
+            })
+        }
+    }
+
+    onPanelChange = (moment, mode) => {
         this.setState({
-            date: dateMoment,
+            date: momentToValue(moment),
             mode: mode
         })
         this.props.history.replace(this.props.location.pathname, {
-            date: dateMoment,
+            date: momentToValue(moment),
             mode: mode
         })
     }
-    delete = (e) => {
-        var deleteID = this.state.deleteId
+    handDelete = (e) => {
+        let worklogId = this.state.worklogId
         confirm({
             title: '确定要删除日志吗?',
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
             onOk: () => {
-                destroy(`/worklog/${this.state.deleteId}`).then(res => {
-                    this.setState({
-                        show: false
-                    })
-                    this.getLogData()
+                destroy(`/worklog/${worklogId}`).then(res => {
+                    if (parseInt(res.data.id) === parseInt(worklogId)) {
+                        this.setState({
+                            show: false
+                        })
+                        this.getLogData()
+                        message.success('删除成功')
+                    } else {
+                        message.error('删除失败')
+                    }
                 })
             },
             onCancel: () => {
@@ -206,25 +172,22 @@ class WorkLog extends Component {
             }
         })
     }
-
-    dateCellRender = (value) => {
-        const cellDate = moment(value).format('YYYY-MM-DD')
-        const localArr = this.state.note
-        var time
-        if (localArr !== '') {
-            for (let i in localArr) {
-                if (localArr[i].time !== '') {
-                    time = moment(localArr[i].time).format('YYYY-MM-DD')
-                }
-                if (cellDate === time) {
-                    return (
-                        <div>
-                            <Badge status="success" text={localArr[i].content} />
-                        </div>
-                    )
-                }
-            }
+    dateCellRender = (moment) => {
+        const cellDate = momentToValue(moment)
+        const currentLog = this.state.note.find(n => n.date === cellDate) // 当前日期的工作日志
+        if (currentLog) {
+            return (
+                <Badge status="success" text={currentLog.content} />
+            )
         }
+    }
+    /**
+     * [不可选择日期]
+     * @Author   szh
+     * @DateTime 2018-01-11
+     */
+    disabledDate = (moment) => {
+        return getTime() < getTime(moment)
     }
     render() {
         const { selectedValue, show, title, showTip, logcont, showDelete } = this.state
@@ -240,8 +203,9 @@ class WorkLog extends Component {
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                     <Calendar
                         onSelect={this.onSelect}
+                        disabledDate={this.disabledDate}
                         dateCellRender={this.dateCellRender}
-                        defaultValue={moment(this.state.date)}
+                        defaultValue={valueToMoment(this.state.date)}
                         onPanelChange={this.onPanelChange}
                         mode={this.state.mode} />
                     <PopModal
@@ -250,7 +214,7 @@ class WorkLog extends Component {
                         onCancel={this.onCancel}
                         title={title}
                         showTip={showTip}
-                        delete={this.delete}
+                        handDelete={this.handDelete}
                         showDelete={showDelete}
                         logcont={logcont}
                         user={this.props.user} />
