@@ -1,24 +1,29 @@
 /**
  * 工作日志
  */
+import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
+import { Layout, Breadcrumb, Icon, Button, Calendar, Avatar, Popover } from 'antd'
 import {
-    Layout,
-    Icon,
-    Calendar,
-    Avatar,
-    Popover
-} from 'antd'
-import {valueToMoment, momentToValue, formatDate, resetObject} from 'UTILS/utils'
-import {ajax} from 'UTILS/ajax'
+    Link,
+    Route,
+    Switch,
+    Redirect
+} from 'react-router-dom'
+import moment from 'moment'
+import ReactQuill from 'react-quill'
+import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
+import 'moment/locale/zh-cn'
+
+moment.locale('zh-cn')
 
 const { Content } = Layout
 
 class WorkLog extends Component {
     state = {
         log: [],
-        date: this.props.location.state && this.props.location.state.date ? valueToMoment(this.props.location.state.date) : valueToMoment(formatDate()),
-        mode: this.props.location.state && this.props.location.state.mode ? this.props.location.state.mode : 'month'
+        date: this.props.location.state ? this.props.location.state.date : moment().format('YYYY-MM-DD'),
+        mode: this.props.location.state ? this.props.location.state.mode : 'month'
     }
 
     componentWillMount() {
@@ -27,94 +32,73 @@ class WorkLog extends Component {
 
     getLogData = () => {
         ajax('get', '/worklog/all').then(res => {
-            let arr = []
-            res.data.forEach(d => {
-                arr.push(resetObject(d))
-            })
             this.setState({
-                log: arr
+                log: res.data
             })
         })
     }
-    dateCellRender = (moment) => {
-        const cellDate = momentToValue(moment)
-        let currentDateLog = [] // 记录当天全部用户日志
-        this.state.log.forEach(log => {
-            if (log.date === cellDate) {
-                currentDateLog.push(log)
-            }
-        })
-        return (
-            currentDateLog.map(item => (
-                <Popover content={item.content} title={item.realname} key={item.id}>
-                    <span style={{marginRight: '10px'}}>
-                        {
-                            item.avatar ? <Avatar src={`/uploadImgs/${item.avatar}`} /> : <Avatar icon="user" />
+    dateCellRender = (value) => {
+        const cellDate = moment(value).format('YYYY-MM-DD')
+        const logData = this.state.log
+        var Arr = []
+        var timeArr = []
+        var i = 0
+        if (logData !== null) {
+            for (i in logData) {
+                if (logData[i].time !== null) {
+                    var time = moment(logData[i].time).format('YYYY-MM-DD')
+                    if (timeArr.indexOf(time) === -1) {
+                        timeArr.push(time)
+                        var saveObj = {
+                            onlytime: time,
+                            subContent: []
                         }
-                    </span>
-                </Popover>
-            ))
-        )
+                        Arr.push(saveObj)
+                    }
+                    for (let j in Arr) {
+                        if (moment(logData[i].time).format('YYYY-MM-DD') === Arr[j].onlytime) {
+                            Arr[j].subContent.push({
+                                cont: logData[i].content,
+                                avatar: logData[i].User.avatar,
+                                name: logData[i].User.realname
+                            })
+                        }
+                    }
+                }
+            }
+        }
+        for (let id in Arr) {
+            if (cellDate === Arr[id].onlytime) {
+                return (
+                    Arr[id].subContent.map(item => (
+                        <Popover content={item.cont} title={item.name} key={item.cont}>
+                            <span style={{marginRight: '10px'}}>
+                                {
+                                    item.avatar ? <Avatar src={`/uploadImgs/${item.avatar}`} icon="user" /> : <Avatar icon="user" />
+                                }
+                            </span>
+                        </Popover>
+                    ))
+                )
+            }
+        }
     }
-    // dateCellRender = (value) => {
-    //     const cellDate = moment(value).format('YYYY-MM-DD')
-    //     const logData = this.state.log
-    //     var Arr = []
-    //     var timeArr = []
-    //     var i = 0
-    //     if (logData !== null) {
-    //         for (i in logData) {
-    //             if (logData[i].time !== null) {
-    //                 var time = moment(logData[i].time).format('YYYY-MM-DD')
-    //                 if (timeArr.indexOf(time) === -1) {
-    //                     timeArr.push(time)
-    //                     var saveObj = {
-    //                         onlytime: time,
-    //                         subContent: []
-    //                     }
-    //                     Arr.push(saveObj)
-    //                 }
-    //                 for (let j in Arr) {
-    //                     if (logData[i].time.substr(0, 10) === Arr[j].onlytime) {
-    //                         Arr[j].subContent.push({
-    //                             cont: logData[i].content,
-    //                             avatar: logData[i].User.avatar,
-    //                             name: logData[i].User.realname
-    //                         })
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     for (let id in Arr) {
-    //         if (cellDate === Arr[id].onlytime) {
-    //             return (
-    //                 Arr[id].subContent.map(item => (
-    //                     <Popover content={item.cont} title={item.name} key={item.cont}>
-    //                         <span style={{marginRight: '10px'}}>
-    //                             {
-    //                                 item.avatar ? <Avatar src={`/uploadImgs/${item.avatar}`} icon="user" /> : <Avatar icon="user" />
-    //                             }
-    //                         </span>
-    //                     </Popover>
-    //                 ))
-    //             )
-    //         }
-    //     }
-    // }
-    onPanelChange = (moment, mode) => {
+
+    onPanelChange = (date, mode) => {
+        let dateMoment = moment(date).format('YYYY-MM-DD')
         this.setState({
-            date: momentToValue(moment),
+            date: dateMoment,
             mode: mode
         })
         this.props.history.replace(this.props.location.pathname, {
-            date: momentToValue(moment),
+            date: dateMoment,
             mode: mode
         })
     }
-    onSelect = (moment) => {
+    onSelect = (value) => {
+        const onSelectDay = moment(value).format('YYYY-MM-DD')
         this.props.history.replace(this.props.location.pathname, {
-            date: momentToValue(moment)
+            date: onSelectDay
         })
     }
     render() {
@@ -125,17 +109,15 @@ class WorkLog extends Component {
             location,
             match
         } = this.props
-
         return (
             <Content style={{ margin: '0 16px' }}>
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                     <Calendar
                         dateCellRender={this.dateCellRender}
+                        defaultValue={moment(this.state.date)}
                         onPanelChange={this.onPanelChange}
-                        defaultValue={valueToMoment(this.state.date)}
                         mode={this.state.mode}
-                        onSelect={this.onSelect}
-                    />
+                        onSelect={this.onSelect} />
                 </div>
             </Content>
         )

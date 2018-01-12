@@ -92,11 +92,6 @@ const routes = [
                         ]
                     },
                     {
-                        name: '工作日志',
-                        path: '/work-log/all',
-                        component: getRoutes(['Project', 'WorkLog'])
-                    },
-                    {
                         name: '项目问题',
                         path: '/problem',
                         component: getRoutes(['Project', 'Problem']),
@@ -166,10 +161,27 @@ const routes = [
                 component: getRoutes(['Task'])
             },
             {
-                name: '总结概况',
-                icon: 'profile',
-                path: '/summary/all',
-                component: getRoutes(['Summary']),
+                name: '工作概况',
+                icon: 'solution',
+                path: '/work',
+                routes: [
+                    {
+                        name: '总结概况',
+                        path: '/summary-all',
+                        component: getRoutes(['Work', 'Summary'])
+                    },
+                    {
+                        name: '工作日志',
+                        path: '/work-log-all',
+                        component: getRoutes(['Work', 'WorkLog'])
+                    },
+                ]
+            },
+            {
+                name: '工作日志',
+                icon: 'calendar',
+                path: '/work-log/all',
+                component: getRoutes(['Project', 'WorkLog'])
             },
             {
                 name: '系统设置',
@@ -197,6 +209,11 @@ const routes = [
                 name: '页面不存在',
                 path: '/404',
                 component: getRoutes(['NotMatch']),
+            },
+            {
+                name: '提示',
+                path: '/no-permission',
+                component: getRoutes(['NoPermission']),
             }
         ]
     },

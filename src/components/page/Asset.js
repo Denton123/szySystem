@@ -142,7 +142,10 @@ module.exports = function(opts) {
                 {
                     title: '类型',
                     dataIndex: 'type',
-                    key: 'type'
+                    key: 'type',
+                    render: (text) => (
+                        <span>{parseInt(text) === 1 ? '公司' : '学校'}</span>
+                    )
                 },
                 {
                     title: '备注',
@@ -228,8 +231,8 @@ module.exports = function(opts) {
                     content: ({getFieldDecorator}) => {
                         return getFieldDecorator('type', {})(
                             <RadioGroup>
-                                <Radio value="公司">公司</Radio>
-                                <Radio value="学校">学校</Radio>
+                                <Radio value="1">公司</Radio>
+                                <Radio value="2">学校</Radio>
                             </RadioGroup>
                         )
                     },
@@ -333,7 +336,7 @@ module.exports = function(opts) {
                 value: null
             },
             type: {
-                value: null
+                value: '1'
             },
             belong: {
                 value: opts.belong
@@ -362,7 +365,7 @@ module.exports = function(opts) {
                 value: null
             },
             type: {
-                value: null
+                value: '1'
             },
             belong: {
                 value: opts.belong

@@ -69,7 +69,7 @@ function resetRoute(routes, permissionRoute) {
             if (permissionRoute.find(k => k.path === r.path)) {
                 arr.push(obj)
             }
-            if (r.path === '/404') { // 404默认加入
+            if (r.path === '/404' || r.path === '/no-permission') { // 404默认加入
                 arr.push(obj)
             }
         }
@@ -110,6 +110,10 @@ class BasicLayout extends React.Component {
             })
         }
         tpwidget('show')
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log(this.state, nextProps)
     }
 
     onOpenChange = (openKeys) => {
@@ -164,7 +168,7 @@ class BasicLayout extends React.Component {
             collapsed,
             permissionRoute
         } = this.props
-        const newRoute = resetRoute(routes, this.props.permissionRoute)
+        const newRoute = resetRoute(routes, permissionRoute)
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
@@ -244,9 +248,9 @@ class BasicLayout extends React.Component {
                         <Icon type={'bell'} style={{fontSize: 16}} />
                     </div>
                 </Header>
-                <Route exact path={match.path} render={() => (
-                    <Redirect to={`${match.path}/default`} />
-                )} />
+                <Route exact path={match.path} render={() => {
+                    return <Redirect to={`${match.path}/default`} />
+                }} />
                 {
                     newRoute.map((route, idx) => {
                         if (isArray(route)) {

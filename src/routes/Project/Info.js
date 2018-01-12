@@ -21,7 +21,7 @@ import {
 import './Info.less'
 
 // 引入工具方法
-import {getBase64, resetObject} from 'UTILS/utils'
+import {getBase64, resetObject, getTime} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 import {checkFormField} from 'UTILS/regExp'
 
@@ -211,9 +211,9 @@ class ProjectInfo extends Component {
                 content: ({getFieldDecorator, getFieldValue}) => {
                     const disabledDate = (dateValue) => {
                         if (getFieldValue('plan_end_date')) {
-                            return Date.now() > new Date(dateValue).getTime() || new Date(getFieldValue('plan_end_date')).getTime() < new Date(dateValue).getTime()
+                            return getTime() > getTime(dateValue) || getTime(getFieldValue('plan_end_date')) < getTime(dateValue)
                         } else {
-                            return Date.now() > new Date(dateValue).getTime()
+                            return getTime() > getTime(dateValue)
                         }
                     }
                     return getFieldDecorator('plan_start_date', {
@@ -226,9 +226,9 @@ class ProjectInfo extends Component {
                 content: ({getFieldDecorator, getFieldValue}) => {
                     const disabledDate = (dateValue) => {
                         if (getFieldValue('plan_start_date')) {
-                            return new Date(getFieldValue('plan_start_date')).getTime() > new Date(dateValue).getTime()
+                            return getTime(getFieldValue('plan_start_date')) > getTime(dateValue)
                         } else {
-                            return Date.now() > new Date(dateValue).getTime()
+                            return getTime() > getTime(dateValue)
                         }
                     }
                     return getFieldDecorator('plan_end_date', {

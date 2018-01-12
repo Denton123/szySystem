@@ -183,13 +183,14 @@ class Info extends Component {
             {
                 label: '电话',
                 content: ({getFieldDecorator}) => {
+                    const validator = (rule, value, callback) => {
+                        checkPhone(value, '电话')
+                        .then(resolve => {
+                            callback(resolve)
+                        })
+                    }
                     return getFieldDecorator('phone', {
-                        rules: [
-                            { required: true, message: '请输入你的电话' },
-                            {
-                                validator: checkPhone
-                            }
-                        ]
+                        rules: [{ required: true, validator: validator }]
                     })(<Input disabled={state.formDisabled} placeholder="电话" />)
                 },
             },

@@ -19,43 +19,46 @@ import { apiUrl, isObject, valueToMoment } from 'UTILS/utils'
 function ajax(type, url, data = {}, hasFile = false) {
     return new Promise((resolve, reject) => {
         let config = {}
-        if (type === ' get') {
-            let params = {
+        let params = {}
+        if (type === 'get') {
+            params = {
                 params: data
             }
-            data = params
-        }
-        if (hasFile) {
-            config = {
-                headers: {
-                    'Content-Type': 'multiple/form-data'
-                }
-            }
-            let fd = new FormData()
-            for (let i in data) {
-                if (data[i] === null) continue
-                if (i.indexOf('date') > -1) {
-                    fd.append(i, valueToMoment(data[i]))
-                    continue
-                }
-                if (data[i] instanceof Blob) { // 如果是文件
-                    fd.append(i, data[i])
-                    continue
-                }
-                if (isObject(data[i])) {
-                    // antd上传组件改变后返回{ file: { /* ... */ }, fileList: [ /* ... */ ], event: { /* ... */ },}
-                    if (data[i].fileList) {
-                        data[i].fileList.forEach(fl => {
-                            fd.append(i, fl)
-                        })
+        } else {
+            if (hasFile) {
+                config = {
+                    headers: {
+                        'Content-Type': 'multiple/form-data'
                     }
-                } else {
-                    fd.append(i, data[i])
                 }
+                let fd = new FormData()
+                for (let i in data) {
+                    if (data[i] === null) continue
+                    if (i.indexOf('date') > -1) {
+                        fd.append(i, valueToMoment(data[i]))
+                        continue
+                    }
+                    if (data[i] instanceof Blob) { // 如果是文件
+                        fd.append(i, data[i])
+                        continue
+                    }
+                    if (isObject(data[i])) {
+                        // antd上传组件改变后返回{ file: { /* ... */ }, fileList: [ /* ... */ ], event: { /* ... */ },}
+                        if (data[i].fileList) {
+                            data[i].fileList.forEach(fl => {
+                                fd.append(i, fl)
+                            })
+                        }
+                    } else {
+                        fd.append(i, data[i])
+                    }
+                }
+                params = fd
+            } else {
+                params = data
             }
-            data = fd
         }
-        axios[type](url, data, config)
+        axios[type](url, params, config)
             .then(res => {
                 resolve(res)
             })
