@@ -97,7 +97,7 @@ class Default extends React.Component {
                                     <List.Item
                                         key={item.id}
                                         actions={[<span className="defaultTime" href="javascript:void(0)">{moment(item.time).format('LL')}</span>]}>
-                                        <Tooltip title={item.content} placement="top">
+                                        <Tooltip title={item.content} placement="topLeft">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.content} />} />
                                         </Tooltip>
@@ -122,7 +122,7 @@ class Default extends React.Component {
                                     <List.Item
                                         key={item.id}
                                         actions={[<Link className="defaultTime" to={`/home/personal/summary/${item.id}`}>{moment(item.time).format('LL')}</Link>]}>
-                                        <Tooltip title={<LogContent content={item.content} />} placement="top">
+                                        <Tooltip title={<LogContent content={item.content} />} placement="topLeft">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.title} />} />
                                         </Tooltip>

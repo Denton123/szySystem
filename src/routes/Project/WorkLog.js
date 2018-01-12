@@ -56,7 +56,7 @@ class WorkLog extends Component {
                         Arr.push(saveObj)
                     }
                     for (let j in Arr) {
-                        if (logData[i].time.substr(0, 10) === Arr[j].onlytime) {
+                        if (moment(logData[i].time).format('YYYY-MM-DD') === Arr[j].onlytime) {
                             Arr[j].subContent.push({
                                 cont: logData[i].content,
                                 avatar: logData[i].User.avatar,
