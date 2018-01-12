@@ -126,9 +126,8 @@ class PermissionRole extends Component {
     handleDelete = (e) => {
         let id = e.target.dataset['id']
         e.persist()
-        axios.post(`/role/use-count`, {role_ids: [id]})
+        ajax('post', `/role/use-count`, {role_ids: [id]})
             .then(res => {
-                console.log(res)
                 if (res.data[0].Users.length !== 0) {
                     message.warning('不能删除，该角色已有用户使用！')
                 } else {
@@ -138,8 +137,7 @@ class PermissionRole extends Component {
     }
     handleBatchDelete = (e) => {
         e.persist()
-        console.log(this.props.rowSelection)
-        axios.post(`/role/use-count`, {role_ids: this.props.rowSelection})
+        ajax('post', `/role/use-count`, {role_ids: this.props.rowSelection})
             .then(res => {
                 let delBol = true
                 let useRoleArr = []

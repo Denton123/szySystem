@@ -47,7 +47,7 @@ class SummaryDetail extends Component {
         show(`summary/${this.props.match.params.id}`)
             .then(res => {
                 setTimeout(hide, 0)
-                if (Object.keys(res.data).length === 0) {
+                if (parseInt(res.data.id) === parseInt(this.props.match.params.id)) {
                     this.props.history.push('/home/404')
                 } else {
                     // 直接更新内部表单数据
@@ -73,11 +73,13 @@ class SummaryDetail extends Component {
             params[i] = values[i]
         }
         this.props.handleFormSubmit(params, (res) => {
-            if (res.status === 200) {
+            if (parseInt(res.data.id) === parseInt(this.props.match.params.id)) {
                 message.success('保存成功')
                 setTimeout(() => {
                     this.props.history.push('/home/personal/summary')
                 }, 200)
+            } else {
+                message.success('保存失败')
             }
         })
     }
