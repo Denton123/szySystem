@@ -24,7 +24,6 @@ class Home extends React.Component {
                     permissionRoute: res.data
                 })
                 if (res.data.length === 0) {
-                    console.log(1)
                     this.props.history.push('/home/no-permission')
                 }
             })
