@@ -75,7 +75,7 @@ class Problem extends Component {
             {
                 label: '标题',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('title', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                    return getFieldDecorator('title', {})(<Input className="mb-10" autoComplete="off" placeholder="标题" />)
                 },
             },
             {

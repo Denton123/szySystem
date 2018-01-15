@@ -10,7 +10,7 @@ import {
     Redirect
 } from 'react-router-dom'
 
-import {isArray} from 'UTILS/utils'
+import {isArray, getTime} from 'UTILS/utils'
 
 const { Content } = Layout
 moment.locale('zh-cn')
@@ -22,13 +22,11 @@ class Attendance extends Component {
         calendarTime: this.props.location.state ? this.props.location.state.calendarTime : moment().format('YYYY-MM-DD'),
         mode: this.props.location.state ? this.props.location.state.mode : 'month'
     }
+
     componentDidMount() {
-        this.setState({
-            loading: true
-        }, () => {
-            this.getAttendanceData()
-        })
+        this.getAttendanceData()
     }
+
     getListData = (value) => {
         let oneDayArr = []
         this.state.attendanceData.forEach(item => {
@@ -86,29 +84,11 @@ class Attendance extends Component {
         )
     }
 
-    getMonthData = (value) => {
-        if (value.month() === 8) {
-            return 1394
-        }
-    }
-
-    // 自定义渲染月单元格，返回内容会被追加到单元格
-    monthCellRender = (value) => {
-        const num = this.getMonthData(value)
-        return num ? (
-            <div className="notes-month">
-                <section>{num}</section>
-                <span>Backlog number</span>
-            </div>
-        ) : null
-    }
-
     // 日期面板变化回调
     onPanelChange = (value, mode) => {
         let calendarTime = moment(value).format('YYYY-MM-DD')
         this.setState({
             calendarTime: calendarTime,
-            loading: true,
             mode: mode
         }, () => {
             this.getAttendanceData()
@@ -125,48 +105,52 @@ class Attendance extends Component {
             calendarTime: calendarTime
         })
         if (!(moment(moment(value).format('YYYY-MM')).isSame(moment(this.state.calendarTime).format('YYYY-MM')))) {
+            this.getAttendanceData()
+        }
+        this.props.history.replace(this.props.location.pathname, {
+            calendarTime: calendarTime,
+            mode: this.state.mode
+        })
+    }
+
+    getAttendanceData = () => {
+        if (this.state.mode === 'month') {
             this.setState({
                 loading: true
             }, () => {
-                this.getAttendanceData()
-            })
-            this.props.history.replace(this.props.location.pathname, {
-                calendarTime: calendarTime
+                var time = this.state.calendarTime
+                axios.get(`/api/attendance?time=${time}&realname=${this.props.user.realname}`)
+                    .then(res => {
+                        let data = []
+                        if (isArray(res.data)) {
+                            res.data.forEach((arrItem) => {
+                                data = [...arrItem, ...data]
+                            })
+                            if (data.length === 0) {
+                                message.warning('该用户暂无考勤记录')
+                            }
+                        } else {
+                            message.error(res.data)
+                        }
+                        this.setState({
+                            attendanceData: data,
+                            loading: false
+                        })
+                    })
+                    .catch(err => {
+                        this.setState({
+                            loading: false
+                        })
+                        message.error(err.errmsg)
+                    })
             })
         }
     }
 
-    getAttendanceData = () => {
-        var time = this.state.calendarTime
-        console.log(this.props)
-        axios.get(`/api/attendance?time=${time}&realname=${this.props.user.realname}`)
-            .then(res => {
-                console.log('access_token ---- ')
-                console.log(res)
-                let data = []
-                if (isArray(res.data)) {
-                    res.data.forEach((arrItem) => {
-                        data = [...arrItem, ...data]
-                    })
-                    if (data.length === 0) {
-                        message.warning('该用户暂无考勤记录')
-                    }
-                } else {
-                    message.error(res.data)
-                }
-                this.setState({
-                    attendanceData: data,
-                    loading: false
-                })
-            })
-            .catch(err => {
-                console.log(err)
-                this.setState({
-                    loading: false
-                })
-                message.error(err.errmsg)
-            })
+    disabledDate = (moment) => {
+        return getTime() < getTime(moment)
     }
+
     render() {
         const {
             child,
@@ -181,11 +165,11 @@ class Attendance extends Component {
                 <Spin spinning={this.state.loading}>
                     <Calendar
                         dateCellRender={this.dateCellRender}
-                        monthCellRender={this.monthCellRender}
                         onPanelChange={this.onPanelChange}
                         onSelect={this.onSelect}
                         defaultValue={moment(this.state.calendarTime)}
                         mode={this.state.mode}
+                        disabledDate={this.disabledDate}
                     />
                 </Spin>
             </div>
