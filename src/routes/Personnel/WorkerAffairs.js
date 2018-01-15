@@ -44,7 +44,7 @@ class WorkerAffairs extends Component {
      * @return   {Function}      [promise对象]
      */
     getTaskByUserIds = (uids) => {
-        return ajax('post', `/user/start-task`, {user_ids: uids})
+        return ajax('get', `/user/start-task`, {user_ids: uids})
     }
     handleDelete = (e) => {
         e.persist()
