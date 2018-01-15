@@ -115,13 +115,13 @@ module.exports = function(opts) {
                     title: '名称',
                     dataIndex: 'name',
                     key: 'name',
-                    width: 70
+                    width: 120
                 },
                 {
                     title: '单价',
                     dataIndex: 'price',
                     key: 'price',
-                    width: 70
+                    width: 100
                 },
                 {
                     title: '数量',
@@ -244,7 +244,7 @@ module.exports = function(opts) {
                     title: 'rifd',
                     dataIndex: 'rfid',
                     key: 'rfid',
-                    width: 70
+                    width: 150
                 })
 
                 formFields.unshift({

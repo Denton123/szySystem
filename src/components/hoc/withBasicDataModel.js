@@ -465,7 +465,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 onOk: () => {
                     ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.rowSelection})
                         .then(res => {
-                            if (res.data === true) {
+                            if (res.data.result === true) {
                                 this.getData(this.props.location.state)
                                 message.success('删除成功')
                                 this.setState({

@@ -166,7 +166,7 @@ class PermissionUser extends Component {
         // 表单
         const formFields = [
             {
-                label: '用户名',
+                label: '用户角色',
                 content: ({getFieldDecorator}) => {
                     return getFieldDecorator('role_ids', {
                         rules: [{required: false, message: '请选择角色'}]
