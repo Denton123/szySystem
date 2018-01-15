@@ -44,7 +44,7 @@ class Default extends React.Component {
         var s = dt.getSeconds()
         var date = h + '时' + m + '分' + s + '秒'
         this.setState({
-            time: date
+            time: moment().format('a')
         })
     }
     getData = () => {
@@ -76,7 +76,7 @@ class Default extends React.Component {
         const location = this.props.location
         const match = this.props.match
         const user = this.props.user
-        const {workLog, summaryData} = this.state
+        const {workLog, summaryData, time} = this.state
         const LogContent = ({content}) => (
             <p dangerouslySetInnerHTML={{__html: content}} />
             )
@@ -150,7 +150,7 @@ class Default extends React.Component {
                     <div className="HeaderMsg">
                         <Avatar icon="user" src={user && user.avatar ? `/uploadImgs/${user.avatar}` : null} className="avatar" />
                         <div className="Greet">
-                            <h2>下午好，{user && user.realname}，祝你开心每一天！</h2>
+                            <h2>{time}好，{user && user.realname}，祝你开心每一天！</h2>
                             <h4>{user && user.job}</h4>
                         </div>
                         <p className="Time tada animated">{moment().format('L a h:mm:ss')}</p>

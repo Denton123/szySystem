@@ -60,6 +60,7 @@ class ProblemDetail extends Component {
         editContent: '', // 编辑内容
         editID: '', // 编辑ID
         quillShow: true, // 答案编辑器显示
+        changId: ''
     }
     componentDidMount() {
         this.getProblemData()
@@ -117,6 +118,10 @@ class ProblemDetail extends Component {
                 this.setState({
                     quillShow: false
                 })
+            } else if (answerList.length === 0) {
+                this.setState({
+                    quillShow: true
+                })
             }
             if (res.data.total > res.data.pageSize) {
                 this.setState({
@@ -141,7 +146,7 @@ class ProblemDetail extends Component {
         let showId = this.state.DetailData.id
         show(`/answer/${showId}?page=${page}`).then(res => {
             res.data.data.forEach((t) => {
-                t.date = moment(t.date).startOf('hour').fromNow()
+                t.date = moment(t.date).startOf('minute').fromNow()
             })
             if (res.data.currentPage === res.data.totalPage) {
                 this.setState({
@@ -212,7 +217,10 @@ class ProblemDetail extends Component {
     }
     // 采纳答案
     acceptAnswer = (e) => {
-        const id = e.target.dataset.id
+        const id = e.target.dataset['id']
+        // this.setState({
+        //     changId: id
+        // })
         localStorage.setItem('changeId', id)
     }
     // 确认采纳答案
@@ -265,11 +273,9 @@ class ProblemDetail extends Component {
             answer: answer
         }
         update(`/answer/${changeId}`, editText).then(res => {
+            res.status === 200 ? message.success('保存成功') : message.success('保存失败')
             this.getProblemData()
         })
-        // ajax('post', `/answer/${changeId}/editupdate`, editText).then(res => {
-        //     this.getProblemData()
-        // })
     }
     // 取消答案编辑
     onCancel = (e) => {
@@ -359,7 +365,7 @@ class ProblemDetail extends Component {
                     cancelText="取消"
                     onConfirm={this.onConfirm}
                     onCancel={this.onCancel}>
-                    <Checkbox onClick={this.acceptAnswer} data-id={id}>采纳</Checkbox>
+                    <Checkbox onClick={(e) => this.acceptAnswer(e)} data-id={id}>采纳</Checkbox>
                 </Popconfirm>
                 ) : null
         )
