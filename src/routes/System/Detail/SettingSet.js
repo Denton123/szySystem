@@ -37,7 +37,7 @@ const FormItem = Form.Item
 
 function transformValue(field, value) {
     if (value === null && field === 'skin') return 'default'
-    if (value === null && field === 'font_size') return 'small'
+    if (value === null && field === 'font_size') return 'middle'
     let v
     if (field.indexOf('date') > -1) {
         // 日期组件的value必须使用moment
