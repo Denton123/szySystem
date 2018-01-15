@@ -33,7 +33,6 @@ class Default extends React.Component {
     componentDidMount() {
         this.getData()
         this.timer = setInterval(() => this.getTime(), 1000)
-
     }
     componentWillUnmount() {
         clearInterval(this.timer)
