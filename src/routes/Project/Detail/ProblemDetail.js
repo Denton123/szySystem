@@ -223,7 +223,7 @@ class ProblemDetail extends Component {
             ansId: changeId,
             proId: id
         }
-        ajax('post', `/answer/answerChange`, used).then(res => {
+        ajax('post', `/answer/answerupdate`, used).then(res => {
             this.getData()
         })
     }
@@ -264,9 +264,12 @@ class ProblemDetail extends Component {
         const editText = {
             answer: answer
         }
-        ajax('post', `/answer/${changeId}/editupdate`, editText).then(res => {
+        update(`/answer/${changeId}`, editText).then(res => {
             this.getProblemData()
         })
+        // ajax('post', `/answer/${changeId}/editupdate`, editText).then(res => {
+        //     this.getProblemData()
+        // })
     }
     // 取消答案编辑
     onCancel = (e) => {
