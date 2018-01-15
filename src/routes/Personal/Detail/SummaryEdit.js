@@ -100,7 +100,9 @@ class SummaryDetail extends Component {
             {
                 label: '标题',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('title', {})(<Input autoComplete="off" placeholder="标题" />)
+                    return getFieldDecorator('title', {
+                        rules: [{required: true, message: '请输入标题'}]
+                    })(<Input autoComplete="off" placeholder="标题" />)
                 },
             },
             {
@@ -109,7 +111,9 @@ class SummaryDetail extends Component {
                     height: 350
                 },
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('content', {})(<ReactQuill placeholder="内容" style={{height: 300}} />)
+                    return getFieldDecorator('content', {
+                        rules: [{required: true, message: '请输入内容'}]
+                    })(<ReactQuill placeholder="内容" style={{height: 300}} />)
                 },
             }
         ]

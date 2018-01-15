@@ -77,9 +77,9 @@ module.exports = function(opts) {
 
             let condition = [
                 {
-                    label: '关键字',
+                    label: '标题',
                     content: ({getFieldDecorator}) => {
-                        return getFieldDecorator('title', {})(<Input className="mb-10" autoComplete="off" placeholder="关键字" />)
+                        return getFieldDecorator('title', {})(<Input className="mb-10" autoComplete="off" placeholder="标题" />)
                     },
                 },
                 {

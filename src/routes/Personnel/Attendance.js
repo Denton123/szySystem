@@ -13,6 +13,7 @@ import ReactQuill from 'react-quill'
 
 // 引入工具方法
 import { ajax } from 'UTILS/ajax'
+import {isArray, getTime} from 'UTILS/utils'
 
 const { Content } = Layout
 const Option = Select.Option
@@ -29,11 +30,7 @@ class Attendance extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            loading: true
-        }, () => {
-            this.getSelectData()
-        })
+        this.getSelectData()
     }
 
     getListData = (value) => {
@@ -93,33 +90,11 @@ class Attendance extends Component {
         )
     }
 
-    getMonthData = (value) => {
-        if (value.month() === 8) {
-            return 1394
-        }
-    }
-
-    // 自定义渲染月单元格，返回内容会被追加到单元格
-    monthCellRender = (value) => {
-        const num = this.getMonthData(value)
-        return num ? (
-            <div className="notes-month">
-                <section>{num}</section>
-                <span>Backlog number</span>
-            </div>
-        ) : null
-    }
-
     // 日期面板变化回调
     onPanelChange = (value, mode) => {
-        if (!this.state.selectedValue) {
-            message.warning('请选择查询的人员！')
-            return false
-        }
         let calendarTime = moment(value).format('YYYY-MM-DD')
         this.setState({
             calendarTime: calendarTime,
-            loading: true,
             mode: mode
         }, () => {
             this.getAttendanceData(this.state.selectedValue)
@@ -136,68 +111,78 @@ class Attendance extends Component {
             calendarTime: calendarTime
         })
         if (!(moment(moment(value).format('YYYY-MM')).isSame(moment(this.state.calendarTime).format('YYYY-MM')))) {
-            this.setState({
-                loading: true
-            }, () => {
-                this.getAttendanceData(this.state.selectedValue)
-            })
-            this.props.history.replace(this.props.location.pathname, {
-                calendarTime: calendarTime
-            })
+            this.getAttendanceData(this.state.selectedValue)
         }
+        this.props.history.replace(this.props.location.pathname, {
+            calendarTime: calendarTime,
+            mode: this.state.mode
+        })
     }
 
     handleChange = (value) => {
-        console.log(`selected ${value}`)
         this.setState({
-            loading: true,
             selectedValue: value
+        }, () => {
+            this.getAttendanceData(value)
         })
-        this.getAttendanceData(value)
     }
 
     getAttendanceData = (value) => {
-        var time = this.state.calendarTime
-        axios.get(`/api/attendance?time=${time}&realname=${value}`)
-            .then(res => {
-                console.log('access_token ---- ')
-                console.log(res)
-                let data = []
-                if ((typeof res.data) !== 'string') {
-                    if (res.data !== null) {
-                        res.data.forEach((arrItem) => {
-                            data = [...arrItem, ...data]
+        if (!this.state.selectedValue) {
+            message.warning('请选择查询的人员！')
+        } else {
+            if (this.state.mode === 'month') {
+                this.setState({
+                    loading: true
+                }, () => {
+                    var time = this.state.calendarTime
+                    axios.get(`/api/attendance?time=${time}&realname=${value}`)
+                        .then(res => {
+                            let data = []
+                            if ((typeof res.data) !== 'string') {
+                                if (res.data !== null) {
+                                    res.data.forEach((arrItem) => {
+                                        data = [...arrItem, ...data]
+                                    })
+                                }
+                                if (data.length === 0) {
+                                    message.warning('该用户暂无考勤记录')
+                                }
+                            } else {
+                                message.error(res.data)
+                            }
+                            this.setState({
+                                attendanceData: data,
+                                loading: false
+                            })
                         })
-                    }
-                    if (data.length === 0) {
-                        message.warning('该用户暂无考勤记录')
-                    }
-                } else {
-                    message.error(res.data)
-                }
-                this.setState({
-                    attendanceData: data,
-                    loading: false
+                        .catch(err => {
+                            this.setState({
+                                loading: false
+                            })
+                            message.error(err.errmsg)
+                        })
                 })
-            })
-            .catch(err => {
-                console.log(err)
-                this.setState({
-                    loading: false
-                })
-                message.error(err.errmsg)
-            })
+            }
+        }
+    }
+
+    disabledDate = (moment) => {
+        return getTime() < getTime(moment)
     }
 
     getSelectData = () => {
-        ajax('get', '/user/all')
-        .then(res => {
-            console.log(res)
-            this.setState({
-                selectData: res.data,
-                loading: false
+        this.setState({
+            loading: true
+        }, () => {
+            ajax('get', '/user/all')
+            .then(res => {
+                this.setState({
+                    selectData: res.data,
+                    loading: false
+                })
+                message.success('请选择查询的人员姓名')
             })
-            message.success('请选择查询的人员姓名')
         })
     }
     render() {
@@ -221,11 +206,11 @@ class Attendance extends Component {
                     </Select>
                     <Calendar
                         dateCellRender={this.dateCellRender}
-                        monthCellRender={this.monthCellRender}
                         onPanelChange={this.onPanelChange}
                         onSelect={this.onSelect}
                         defaultValue={moment(this.state.calendarTime)}
                         mode={this.state.mode}
+                        disabledDate={this.disabledDate}
                     />
                 </Spin>
             </div>
