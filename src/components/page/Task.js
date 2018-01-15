@@ -157,8 +157,8 @@ module.exports = function(opts) {
         }
 
         edit = (e) => {
-            if (e.target.dataset['status'] === '2') {
-                message.warning('任务已经完成！')
+            if (e.target.dataset['status'] !== '0') {
+                message.warning('任务已经开始、完成或者超时！')
                 return
             }
             this.setState({
@@ -334,6 +334,7 @@ module.exports = function(opts) {
                         <Radio.Button value="0">等待中</Radio.Button>
                         <Radio.Button value="1">进行中</Radio.Button>
                         <Radio.Button value="2">已完成</Radio.Button>
+                        <Radio.Button value="3">超时</Radio.Button>
                     </Radio.Group>
                 ),
             ]
@@ -373,11 +374,25 @@ module.exports = function(opts) {
                     title: '实际开始时间',
                     dataIndex: 'start_date',
                     key: 'start_date',
+                    render: (text, record) => {
+                        if (text === '暂无' && record.status === '3') {
+                            return (<span>{超时}</span>)
+                        } else {
+                            return (<span>{text}</span>)
+                        }
+                    }
                 },
                 {
                     title: '实际结束时间',
                     dataIndex: 'end_date',
                     key: 'end_date',
+                    render: (text, record) => {
+                        if (text === '暂无' && record.status === '3') {
+                            return (<span>{超时}</span>)
+                        } else {
+                            return (<span>{text}</span>)
+                        }
+                    }
                 },
             ]
             let columns = [
@@ -399,7 +414,8 @@ module.exports = function(opts) {
                         let status = {
                             '0': '等待中',
                             '1': '进行中',
-                            '2': '已完成'
+                            '2': '已完成',
+                            '3': '超时'
                         }
                         return <span>{status[text]}</span>
                     }
@@ -461,7 +477,17 @@ module.exports = function(opts) {
                         } else {
                             percent = getPercent(record['Users'])
                         }
-                        return <Progress percent={parseInt(percent)} type="circle" size="small" status="active" />
+                        let status
+                        if (record.status === '0' || record.status === '1') {
+                            status = 'active'
+                        }
+                        if (record.status === '2') {
+                            status = 'success'
+                        }
+                        if (record.status === '3') {
+                            status = 'exception'
+                        }
+                        return <Progress percent={parseInt(percent)} type="circle" size="small" status={status} />
                     }
                 },
                 {

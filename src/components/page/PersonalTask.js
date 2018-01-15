@@ -178,6 +178,7 @@ module.exports = function(opts) {
                         <Radio.Button value="0">等待中</Radio.Button>
                         <Radio.Button value="1">进行中</Radio.Button>
                         <Radio.Button value="2">已完成</Radio.Button>
+                        <Radio.Button value="3">超时</Radio.Button>
                     </Radio.Group>
                 )
             ]
@@ -218,7 +219,8 @@ module.exports = function(opts) {
                         let status = {
                             '0': '等待中',
                             '1': '进行中',
-                            '2': '已完成'
+                            '2': '已完成',
+                            '3': '超时'
                         }
                         return <span>{status[text]}</span>
                     }
@@ -259,17 +261,22 @@ module.exports = function(opts) {
                         let status = record['Users'][0]['status']
                         const Start = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="1" onClick={this.handleTaskStatus}>开始任务</Button>
                         const Waiting = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="2" onClick={this.handleTaskStatus}>完成任务</Button>
-                        return (
-                            <span>
-                                {
-                                    status === '0'
-                                    ? (<Start />)
-                                    : status === '1'
-                                    ? (<Waiting />)
-                                    : '已完成'
-                                }
-                            </span>
-                        )
+                        let Action
+                        switch (status) {
+                            case '0':
+                                Action = () => (<Start />)
+                                break
+                            case '1':
+                                Action = () => (<Waiting />)
+                                break
+                            case '2':
+                                Action = () => (<span>已完成</span>)
+                                break
+                            case '3':
+                                Action = () => (<span>超时</span>)
+                                break
+                        }
+                        return (<Action />)
                     }
                 }
             ]

@@ -121,7 +121,7 @@ module.exports = function(opts) {
                     title: '标题',
                     dataIndex: 'title',
                     key: 'title',
-                    width: 350,
+                    width: 100,
                 },
                 {
                     title: '发表时间',
