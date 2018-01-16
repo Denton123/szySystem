@@ -66,6 +66,7 @@ class WorkerAffairs extends Component {
         e.persist()
         if (this.props.rowSelection.length === 0) {
             message.warning('至少选择一条数据!')
+            return
         }
         this.getTaskByUserIds(this.props.rowSelection)
         .then(res => {

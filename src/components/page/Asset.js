@@ -183,6 +183,14 @@ module.exports = function(opts) {
                 {
                     label: '单价',
                     content: ({getFieldDecorator}) => {
+                        const decimal = (e) => {
+                            let val = e.target.value
+                            if (Number(val)) {
+                                e.target.value = parseFloat(val).toFixed(2)
+                            } else {
+                                e.target.value = null
+                            }
+                        }
                         return getFieldDecorator('price', {
                             rules: [
                                 {
@@ -192,7 +200,7 @@ module.exports = function(opts) {
                                     required: true, message: '请输入单价'
                                 }
                             ]
-                        })(<InputNumber autoComplete="off" placeholder="单价" min={0} />)
+                        })(<InputNumber autoComplete="off" placeholder="单价" min={0.00} onBlur={decimal} />)
                     },
                 },
                 {
