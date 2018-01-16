@@ -428,16 +428,11 @@ function withBasicDataModel(PageComponent, Datas) {
                         cb(res)
                     } else {
                         if (parseInt(res.data.id) === parseInt(id)) {
-                            let { dataSource } = this.state.dataSetting
-                            dataSource.splice(
-                                dataSource.findIndex(item => item.id === res.data.id),
-                                1
-                            )
-                            this.handleSetState('dataSetting', {
-                                ...this.state.dataSetting,
-                                dataSource: dataSource
-                            })
-                            message.success('删除成功')
+                            let statePage = this.props.location.state.page
+                            if (this.state.dataSetting.dataSource.length === 1 && statePage > 1) {
+                                statePage -= 1
+                            }
+                            this.getData({...this.props.location.state, page: statePage})
                         } else {
                             message.error('删除失败')
                         }
@@ -482,7 +477,11 @@ function withBasicDataModel(PageComponent, Datas) {
                     ajax('post', `/api/${this.state.model}/batch-delete`, {ids: this.state.rowSelection})
                         .then(res => {
                             if (res.data.result === true) {
-                                this.getData(this.props.location.state)
+                                let statePage = this.props.location.state.page
+                                if (this.state.dataSetting.dataSource.length === 1 && statePage > 1) {
+                                    statePage -= 1
+                                }
+                                this.getData({...this.props.location.state, page: statePage})
                                 message.success('删除成功')
                                 this.setState({
                                     rowSelection: []
