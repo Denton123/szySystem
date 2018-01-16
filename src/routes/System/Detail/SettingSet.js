@@ -272,6 +272,7 @@ class Setting extends Component {
     }
 
     render() {
+        console.log(this.props.user)
         const {
             child,
             route,

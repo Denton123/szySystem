@@ -1,13 +1,6 @@
 import React, {Component} from 'react'
 import {
-    Input,
-    Button,
-    Divider,
-    Table,
-    List,
-    Form,
-    Modal,
-    message
+    Modal
 } from 'antd'
 import {
     Link,
@@ -16,19 +9,7 @@ import {
     Redirect
 } from 'react-router-dom'
 
-import {resetObject} from 'UTILS/utils'
-import {ajax} from 'UTILS/ajax'
-import {checkFormField} from 'UTILS/regExp'
-
-import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 import ReactQuill from 'react-quill'
-
-import CustomModal from 'COMPONENTS/modal/CustomModal'
-import CustomForm from 'COMPONENTS/form/CustomForm'
-
-import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
-
-const FormItem = Form.Item
 
 class AnswerEdit extends Component {
     state = {
@@ -42,7 +23,7 @@ class AnswerEdit extends Component {
             match,
             route
         } = this.props
-        const { show, onCancel, title, showDelete, editAnswer, answerEdit, handleok, Edit } = this.props
+        const { show, onCancel, title, editAnswer, handleok, editChange } = this.props
         return (
             <Modal
                 title={`${title}`}
@@ -54,7 +35,7 @@ class AnswerEdit extends Component {
                     <ReactQuill
                         placeholder="内容" style={{height: 200}}
                         value={editAnswer}
-                        onChange={Edit} />
+                        onChange={editChange} />
                 </div>
             </Modal>
         )

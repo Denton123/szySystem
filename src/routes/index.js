@@ -162,7 +162,7 @@ const routes = [
             },
             {
                 name: '工作概况',
-                icon: 'solution',
+                icon: 'schedule',
                 path: '/work',
                 routes: [
                     {
