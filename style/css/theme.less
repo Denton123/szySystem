@@ -26,17 +26,6 @@
 .border(@bg){
 	border-color: @bg !important;
 }
-// 默认
-.default(@editColor, @deleteColor) {
-	.answerOperate a{
-		&:first-child:hover{
-			color: @editColor;
-		}
-		&:last-child:hover{
-			color: @deleteColor;
-		}
-	}
-}
 // 主题
 .theme(@bg, @unite, @opa) {
 	.ant-fullcalendar{
@@ -134,8 +123,10 @@
 	.Card a,.ant-table-tbody a, .hasAccept,.defaultTime{
 		color: @bg;
 	}
-	.answerOperate a:hover{
-		color: @bg;
+	.answerOperate a{
+		&:first-child:hover{
+			color: @bg !important;
+		}
 	}
 }
 //字体大小
@@ -145,9 +136,6 @@
 	}
 }
 
-.default{
-	.default(@edit, @delete)
-}
 .blue{
     .theme(@blue_color, @white, @a_blue)
 }

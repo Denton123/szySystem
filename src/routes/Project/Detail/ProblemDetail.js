@@ -60,7 +60,7 @@ class ProblemDetail extends Component {
         editContent: '', // 编辑内容
         editID: '', // 编辑ID
         quillShow: true, // 答案编辑器显示
-        changId: ''
+        test: ''
     }
     componentDidMount() {
         this.getProblemData()
@@ -217,25 +217,23 @@ class ProblemDetail extends Component {
     }
     // 采纳答案
     acceptAnswer = (e) => {
-        const id = e.target.dataset['id']
-        // this.setState({
-        //     changId: id
-        // })
-        localStorage.setItem('changeId', id)
-    }
-    // 确认采纳答案
-    onConfirm = (e) => {
+        const changeId = e.target.dataset['id']
         const id = this.state.DetailData.id
-        const changeId = localStorage.getItem('changeId')
-        const used = {
-            ansId: changeId,
-            proId: id
-        }
-        ajax('post', `/answer/answerupdate`, used).then(res => {
-            this.getData()
+        confirm({
+            title: '确认删除该答案吗',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: () => {
+                const used = {
+                    ansId: changeId,
+                    proId: id
+                }
+                ajax('post', `/answer/answerupdate`, used).then(res => {
+                    this.getData()
+                })
+            }
         })
-    }
-    onCancel = (e) => {
     }
     // 问题编辑
     handleFormSubmit = (values) => {
@@ -259,7 +257,10 @@ class ProblemDetail extends Component {
             }
         }
     }
-    Edit = (e) => {
+    editChange = (e) => {
+        // this.setState({
+        //     test: e
+        // })
         localStorage.setItem('editText', e)
     }
     // 提交答案编辑
@@ -359,18 +360,12 @@ class ProblemDetail extends Component {
                     handleok={this.handleok}
                     onCancel={this.onCancel}
                     editAnswer={editContent}
-                    Edit={this.Edit} />
+                    editChange={this.editChange} />
             </span>
             )
-        const Accept = ({id, used}) => (
+        const Accept = ({id}) => (
             showCheckbox ? (
-                <Popconfirm title="确定采纳此答案吗？"
-                    okText="确认"
-                    cancelText="取消"
-                    onConfirm={this.onConfirm}
-                    onCancel={this.onCancel}>
-                    <Checkbox onClick={(e) => this.acceptAnswer(e)} data-id={id}>采纳</Checkbox>
-                </Popconfirm>
+                <Checkbox onClick={this.acceptAnswer} data-id={id}>采纳</Checkbox>
                 ) : null
         )
         const Answer = ({answer}) => (
@@ -432,14 +427,12 @@ class ProblemDetail extends Component {
                                     ) : (<Accept id={item.id} used={item.used} />)}
                                 actions={[<Bottom
                                     time={item.date}
-                                    text={item.User.realname}
                                     userId={item.user_id}
                                     id={item.id}
                                     used={item.used}
-                                    avatar={answerList && item.User.avatar ? `/uploadImgs/${item.User.avatar}` : null}
                                         />]}>
                                 <span>{item.User.realname}</span>
-                                <Avatar src={item.User.avatar} icon="user" className="answerAvatar" />
+                                <Avatar src={answerList && item.User.avatar ? `/uploadImgs/${item.User.avatar}` : null} icon="user" className="answerAvatar" />
                                 <List.Item.Meta
                                     description={<Answer answer={item.answer} />}
                                 />
