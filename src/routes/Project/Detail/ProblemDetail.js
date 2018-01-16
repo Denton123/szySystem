@@ -317,7 +317,9 @@ class ProblemDetail extends Component {
             {
                 label: '标题',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('title', {})(<Input autoComplete="off" placeholder="请输入标题" />)
+                    return getFieldDecorator('title', {
+                        rules: [{required: true, message: '请输入标题'}]
+                    })(<Input autoComplete="off" placeholder="请输入标题" />)
                 },
             },
             {
@@ -326,7 +328,9 @@ class ProblemDetail extends Component {
                     height: 350
                 },
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('problem', {})(<ReactQuill placeholder="内容" style={{height: 250}} />)
+                    return getFieldDecorator('problem', {
+                        rules: [{required: true, message: '请输入内容'}]
+                    })(<ReactQuill placeholder="内容" style={{height: 250}} />)
                 },
             }
         ]

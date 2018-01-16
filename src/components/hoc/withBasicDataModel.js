@@ -147,7 +147,7 @@ function withBasicDataModel(PageComponent, Datas) {
             }
             let data = {}
             for (let i in params) {
-                if (i.indexOf('__') > -1) continue
+                if (i.indexOf('__') > -1) continue // 过滤tabs分页的关键词
                 data[i] = params[i]
             }
             this.handleSetState('dataSetting', {
@@ -444,7 +444,10 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                     if (this.state.rowSelection.length > 0 && this.state.rowSelection.includes(Number(id))) {
                         let arr = this.state.rowSelection
-                        arr.splice(index, 1)
+                        arr.splice(
+                            this.state.rowSelection.findIndex(item => item === Number(id)),
+                            1
+                        )
                         this.setState({
                             rowSelection: arr
                         })
@@ -454,8 +457,14 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
+            console.log('表格checkbox选择时调用 --- ')
+            console.log(selectedRows)
+            let arr = [] // 删除后，selectedRowKeys依旧会把已经删除的id记录下来
+            selectedRows.forEach(sr => { // 改用selectedRows避免这个情况
+                arr.push(sr.id)
+            })
             this.setState({
-                rowSelection: selectedRowKeys
+                rowSelection: arr
             })
         }
 
@@ -522,7 +531,6 @@ function withBasicDataModel(PageComponent, Datas) {
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })
-            Datas.formFieldsRelation && Datas.formFieldsRelation(changedFields)
         }
 
         // 更新查询表单数据
