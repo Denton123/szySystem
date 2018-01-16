@@ -180,14 +180,14 @@ class BasicLayout extends React.Component {
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
-                    <Link to="/home/personal/info">个人信息</Link>
+                    <Link to="/home/personal/info"><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
                 </Menu.Item>
                 <Menu.Item key="1">
-                    <Link to="/home/system/setting">设置</Link>
+                    <Link to="/home/system/setting"><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key="3">
-                    <span onClick={this.logout}>退出登录</span>
+                    <span onClick={this.logout}><Icon type="logout" style={{marginRight: '8px'}} />退出登录</span>
                 </Menu.Item>
             </Menu>
         )
@@ -300,8 +300,10 @@ class BasicLayout extends React.Component {
             </div>
         )
         const Class = cs({
-            [`${user && user.skin}`]: true,
-            [`${user && user.font_size}`]: true,
+            [`${user && user.skin}`]: user && user.skin !== null,
+            [`${user && user.font_size}`]: user && user.font_size !== null,
+            default: user && user.skin === null,
+            middle: user && user.font_size === null,
             BasicLayout: true
         })
         return (

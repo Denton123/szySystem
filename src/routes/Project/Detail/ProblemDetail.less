@@ -19,7 +19,7 @@
 	.answerAvatar{
 		display: inline-block;
 		vertical-align: middle;
-		margin-left: 10px;
+		margin-left: 5px;
 	}
 	.List{
 		.ant-list-item-extra{
@@ -29,8 +29,9 @@
 		}
 	}
 	.ant-list-vertical .ant-list-item-content{
-		position: absolute;
-		right: 0;
+		position: relative;
+		left: 97%;
+		top: 43px;
 	}
 	.divider{
 		margin-top: 45px;
@@ -44,9 +45,12 @@
 	.answerOperate a{
 		color: rgba(0, 0, 0, 0.45);
 		margin-left: 10px;
-		// &:first-child:hover{
-		// 	color: blue;
-		// }
+		&:first-child:hover{
+			color: #40a9ff;
+		}
+		&:last-child:hover{
+			color: red;
+		}
 	}
 	.hasAcceppt{
 		color: #40a9ff;

@@ -56,13 +56,12 @@ class Default extends React.Component {
             //     })
             // })
             axios.get(`/worklog/default?page=1&user_id=${id}&pageSize=5`).then(res => {
-                console.log('res --------- ')
-                console.log(res)
                 this.setState({
                     workLog: res.data.data
                 })
             })
-            show(`/summary?page=1&user_id=${id}&pageSize=4&page=1`).then(res => {
+            show(`/summary?page=1&user_id=${id}&pageSize=5&page=1`).then(res => {
+                console.log(res)
                 this.setState({
                     summaryData: res.data.data
                 })
@@ -96,7 +95,7 @@ class Default extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         key={item.id}
-                                        actions={[<span className="defaultTime" href="javascript:void(0)">{moment(item.time).format('LL')}</span>]}>
+                                        actions={[<span className="defaultTime" href="javascript:void(0)">{moment(item.date).format('LL')}</span>]}>
                                         <Tooltip title={item.content} placement="topLeft">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.content} />} />
@@ -121,7 +120,7 @@ class Default extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         key={item.id}
-                                        actions={[<Link className="defaultTime" to={`/home/personal/summary/${item.id}`}>{moment(item.time).format('LL')}</Link>]}>
+                                        actions={[<Link className="defaultTime" to={`/home/personal/summary/${item.id}`}>{moment(item.date).format('LL')}</Link>]}>
                                         <Tooltip title={<LogContent content={item.content} />} placement="topLeft">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.title} />} />

@@ -24,76 +24,100 @@ import {getBase64} from 'UTILS/utils'
 
 const FormItem = Form.Item
 
-function transformValue(field, value) {
-    if (value === null || value === undefined) return null
-    let v
-    if (field.indexOf('date') > -1) {
-        // 日期组件的value必须使用moment
-        v = valueToMoment(value)
-    } else {
-        v = value
-    }
-    return v
-}
-
 class SetForm extends React.Component {
+    state = {
+        confirmDirty: false
+    }
+
     handleSubmit = (e) => {
         e.preventDefault()
-        this.props.form.validateFieldsAndScroll((err, values) => {
+        this.props.form.validateFields((err, values) => {
+            console.log('err')
+            console.log(err)
             if (!err) {
                 console.log('Received values of form: ', values)
-                this.props.handleSubmitForm(values)
+                this.props.handleSubmitForm(values, this.props.form)
             }
         })
     }
-    checkOldPassword = (rule, value, callback) => {
-        const form = this.props.form
-        if (
-            (form.getFieldValue('password') && form.getFieldValue('password').length > 0) ||
-            (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
-            ) {
-            if (value && value.length > 0) {
-                callback()
-            } else {
-                callback('请输入原密码')
-            }
-        } else {
-            callback()
-        }
+    // checkOldPassword = (rule, value, callback) => {
+        // const form = this.props.form
+        // if (
+        //     (form.getFieldValue('password') && form.getFieldValue('password').length > 0) ||
+        //     (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
+        //     ) {
+        //     if (value && value.length > 0) {
+        //         callback()
+        //     } else {
+        //         callback('请输入原密码')
+        //     }
+        // } else {
+        //     callback()
+        // }
+    // }
+    // checkPassword = (rule, value, callback) => {
+        // const form = this.props.form
+        // if (
+        //     (value && value.length > 0) ||
+        //     (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
+        //     (form.getFieldValue('password') && form.getFieldValue('password').length > 0)
+        //     ) {
+        //     if (value !== form.getFieldValue('password')) {
+        //         callback('两个密码输入不一致!')
+        //     } else {
+        //         callback()
+        //     }
+        // } else {
+        //     callback()
+        // }
+    // }
+    // checkConfirm = (rule, value, callback) => {
+        // const form = this.props.form
+        // if (
+        //     (value && value.length > 0) ||
+        //     (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
+        //     (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
+        //     ) {
+        //     if (!/^.*(?=.{9,})(?=.*\d)(?=.*[a-z]).*$/.test(value)) {
+        //         callback('密码不能小于9位，必须包含字母和数字')
+        //     } else {
+        //         form.validateFields(['oldpassword', 'confirm'], {force: true})
+        //         callback()
+        //     }
+        // } else {
+        //     callback()
+        // }
+    // }
+
+    handleConfirmBlur = (e) => {
+        const value = e.target.value
+        this.setState({ confirmDirty: this.state.confirmDirty || !!value })
     }
+
+    // 重复密码触发的
     checkPassword = (rule, value, callback) => {
         const form = this.props.form
-        if (
-            (value && value.length > 0) ||
-            (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
-            (form.getFieldValue('password') && form.getFieldValue('password').length > 0)
-            ) {
-            if (value !== form.getFieldValue('password')) {
-                callback('两个密码输入不一致!')
-            } else {
-                callback()
-            }
+        if (value && value !== form.getFieldValue('password')) {
+            callback('两个密码输入不一致!')
         } else {
             callback()
         }
     }
+
+    // 新密码触发的
     checkConfirm = (rule, value, callback) => {
         const form = this.props.form
-        if (
-            (value && value.length > 0) ||
-            (form.getFieldValue('oldpassword') && form.getFieldValue('oldpassword').length > 0) ||
-            (form.getFieldValue('confirm') && form.getFieldValue('confirm').length > 0)
-            ) {
+        if (value) {
             if (!/^.*(?=.{9,})(?=.*\d)(?=.*[a-z]).*$/.test(value)) {
                 callback('密码不能小于9位，必须包含字母和数字')
-            } else {
-                form.validateFields(['oldpassword', 'confirm'], {force: true})
-                callback()
             }
-        } else {
-            callback()
+            if (this.state.confirmDirty) {
+                form.validateFields(['confirm'], { force: true })
+            }
         }
+        callback()
     }
+
     render() {
         const { getFieldDecorator } = this.props.form
         return (
@@ -102,8 +126,6 @@ class SetForm extends React.Component {
                     {getFieldDecorator('oldpassword', {
                         rules: [{
                             required: true, message: '请输入原密码!',
-                        }, {
-                            validator: this.checkOldPassword
                         }],
                     })(
                         <Input type="password" />
@@ -128,7 +150,7 @@ class SetForm extends React.Component {
                             validator: this.checkPassword
                         }],
                     })(
-                        <Input type="password" />
+                        <Input type="password" onBlur={this.handleConfirmBlur} />
                     )}
                 </FormItem>
                 <FormItem>
@@ -139,83 +161,11 @@ class SetForm extends React.Component {
     }
 }
 
-const WrappedSetForm = Form.create({
-    onFieldsChange(props, changedFields) {
-        props.updateFormFields(changedFields)
-    },
-    mapPropsToFields(props) {
-        let obj = {}
-        for (let i in props.formFieldsValues) {
-            obj[i] = Form.createFormField({
-                ...props.formFieldsValues[i],
-                value: props.formFieldsValues[i].value
-            })
-        }
-        return obj
-    }
-})(SetForm)
+const WrappedSetForm = Form.create({})(SetForm)
 
 class Setting extends Component {
-    state = {
-        formFieldsValues: {
-            oldpassword: {
-                value: null
-            },
-            password: {
-                value: null
-            },
-            confirm: {
-                value: null
-            }
-        }
-    }
-    componentDidMount() {
-        // this.getData()
-    }
-
-    getData = () => {
-        if (!this.props.user) {
-            this.props.history.push('/login')
-        }
-        let uid = this.props.user.id
-        show(`user/${uid}`)
-            .then(res => {
-                console.log(res)
-                // 直接更新内部表单数据
-                this.updateEditFormFieldsValues(res.data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    }
-
-    onChange = (e) => {
-        console.log(e.target.value)
-        const value = e.target.value
-    }
-    // 编辑数据时更新表单数据
-    updateEditFormFieldsValues = (data) => {
-        this.setState((prevState, props) => {
-            let obj = {}
-            Object.keys(prevState.formFieldsValues).forEach(field => {
-                obj[field] = {
-                    value: transformValue(field, data[field])
-                }
-            })
-            return {
-                formFieldsValues: obj
-            }
-        })
-    }
-
-    updateFormFields = (changedFields) => {
-        this.setState({
-            formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
-        })
-    }
-
     // 提交表格到后台
-    handleSubmitForm = (values) => {
+    handleSubmitForm = (values, form) => {
         console.log('handleSubmitForm ----- ')
         console.log(values)
         let uid = this.props.user.id
@@ -226,28 +176,14 @@ class Setting extends Component {
         data['id'] = uid
         ajax('post', `/user/reset-password`, data, false)
             .then(res => {
-                // 直接更新内部表单数据
-                // this.props.updateEditFormFieldsValues(res.data)
                 console.log(res)
-                if (res.data === 'true') {
+                if (res.data === true) {
                     message.success('保存成功！')
                 } else {
+                    console.log(res.data)
                     message.error(res.data)
                 }
-                this.setState({
-                    formFieldsValues: {
-                        ...this.state.formFieldsValues,
-                        oldpassword: {
-                            value: null
-                        },
-                        password: {
-                            value: null
-                        },
-                        confirm: {
-                            value: null
-                        }
-                    }
-                })
+                form.setFieldsValue({'oldpassword': '', 'password': '', 'confirm': ''})
             })
             .catch(err => {
                 console.log(err)
@@ -265,17 +201,10 @@ class Setting extends Component {
         } = this.props
         const state = this.state
 
-        const props = {
-            formFieldsValues: this.state.formFieldsValues,
-            updateFormFields: this.updateFormFields,
-            handleSubmitForm: this.handleSubmitForm,
-            onChange: this.onChange
-        }
-
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Row>
-                    <Col span={8}><WrappedSetForm {...props} /></Col>
+                    <Col span={8}><WrappedSetForm handleSubmitForm={this.handleSubmitForm} /></Col>
                 </Row>
             </div>
         )

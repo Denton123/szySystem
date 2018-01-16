@@ -9,9 +9,8 @@ import {
     Avatar,
     Popover
 } from 'antd'
-import {valueToMoment, momentToValue, formatDate, resetObject} from 'UTILS/utils'
+import {valueToMoment, momentToValue, formatDate, resetObject, getTime} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
-
 const { Content } = Layout
 
 class WorkLog extends Component {
@@ -114,9 +113,15 @@ class WorkLog extends Component {
     }
     onSelect = (moment) => {
         this.props.history.replace(this.props.location.pathname, {
-            date: momentToValue(moment)
+            date: momentToValue(moment),
+            mode: this.state.mode
         })
     }
+
+    disabledDate = (moment) => {
+        return getTime() < getTime(moment)
+    }
+
     render() {
         const {
             child,
@@ -131,6 +136,7 @@ class WorkLog extends Component {
                 <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                     <Calendar
                         dateCellRender={this.dateCellRender}
+                        disabledDate={this.disabledDate}
                         onPanelChange={this.onPanelChange}
                         defaultValue={valueToMoment(this.state.date)}
                         mode={this.state.mode}
