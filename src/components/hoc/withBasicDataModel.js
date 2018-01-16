@@ -147,7 +147,7 @@ function withBasicDataModel(PageComponent, Datas) {
             }
             let data = {}
             for (let i in params) {
-                if (i.indexOf('__') > -1) continue
+                if (i.indexOf('__') > -1) continue // 过滤tabs分页的关键词
                 data[i] = params[i]
             }
             this.handleSetState('dataSetting', {
@@ -444,7 +444,10 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                     if (this.state.rowSelection.length > 0 && this.state.rowSelection.includes(Number(id))) {
                         let arr = this.state.rowSelection
-                        arr.splice(index, 1)
+                        arr.splice(
+                            this.state.rowSelection.findIndex(item => item === Number(id)),
+                            1
+                        )
                         this.setState({
                             rowSelection: arr
                         })
