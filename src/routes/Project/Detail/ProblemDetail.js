@@ -220,7 +220,7 @@ class ProblemDetail extends Component {
         const changeId = e.target.dataset['id']
         const id = this.state.DetailData.id
         confirm({
-            title: '确认删除该答案吗',
+            title: '确认采纳该答案吗',
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
