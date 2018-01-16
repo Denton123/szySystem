@@ -112,9 +112,9 @@ class BasicLayout extends React.Component {
         tpwidget('show')
     }
 
-    componentWillReceiveProps(nextProps) {
-        console.log(this.state, nextProps)
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     console.log(this.state, nextProps)
+    // }
 
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
@@ -156,6 +156,14 @@ class BasicLayout extends React.Component {
         } else {
             return false
         }
+    }
+
+    testIO = () => {
+        const socket = io('http://localhost:3000')
+        // socket.emit('project', {test: 'test'})
+        socket.on('notification', (notification) => {
+            console.log(notification)
+        })
     }
 
     render() {
@@ -245,7 +253,7 @@ class BasicLayout extends React.Component {
                     </div>
                     <div className="pull-right layout-header-bell mr-10">
                         <div id="tp-weather-widget" style={{display: 'inline-block'}} className="mr-10" />
-                        <Icon type={'bell'} style={{fontSize: 16}} />
+                        <Icon type={'bell'} style={{fontSize: 16}} onClick={this.testIO} />
                     </div>
                 </Header>
                 <Route exact path={match.path} render={() => {

@@ -38,9 +38,9 @@ class InputRange extends React.Component {
     render() {
         return (
             <InputGroup className="mb-10" compact style={{ width: 250, marginRight: 50 }} >
-                <InputNumber defaultValue={this.state.number1} onChange={this.handleNumberTarget('number1')} style={{ width: 100, textAlign: 'center' }} placeholder="Minimum" />
+                <InputNumber defaultValue={this.state.number1} onChange={this.handleNumberTarget('number1')} style={{ width: 100, textAlign: 'center' }} precision={2} placeholder="Minimum" />
                 <Input style={{ width: 24, borderLeft: 0, pointerEvents: 'none', backgroundColor: '#fff' }} placeholder="~" disabled />
-                <InputNumber defaultValue={this.state.number2} onChange={this.handleNumberTarget('number2')} style={{ width: 100, textAlign: 'center', borderLeft: 0 }} placeholder="Maximum" />
+                <InputNumber defaultValue={this.state.number2} onChange={this.handleNumberTarget('number2')} style={{ width: 100, textAlign: 'center', borderLeft: 0 }} precision={2} placeholder="Maximum" />
             </InputGroup>
         )
     }
