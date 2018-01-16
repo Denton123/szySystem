@@ -447,6 +447,8 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
+            console.log('表格checkbox选择时调用 --- ')
+            console.log(selectedRowKeys)
             this.setState({
                 rowSelection: selectedRowKeys
             })
