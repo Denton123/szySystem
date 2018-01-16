@@ -458,9 +458,13 @@ function withBasicDataModel(PageComponent, Datas) {
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
             console.log('表格checkbox选择时调用 --- ')
-            console.log(selectedRowKeys)
+            console.log(selectedRows)
+            let arr = [] // 删除后，selectedRowKeys依旧会把已经删除的id记录下来
+            selectedRows.forEach(sr => { // 改用selectedRows避免这个情况
+                arr.push(sr.id)
+            })
             this.setState({
-                rowSelection: selectedRowKeys
+                rowSelection: arr
             })
         }
 
