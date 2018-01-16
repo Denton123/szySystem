@@ -18,7 +18,7 @@ module.exports = {
         // Surge or Netlify already gzip all static assets for you.
         // Before setting to `true`, make sure to:
         // npm install --save-dev compression-webpack-plugin
-        productionGzip: false,
+        productionGzip: true,
         productionGzipExtensions: ['js', 'css'],
         // Run the build command with an extra argument to
         // View the bundle analyzer report after build finishes:
@@ -54,7 +54,7 @@ module.exports = {
             // 上传文件
             '/uploadFiles/**': proxyTableOptions,
             // 上传图片
-            '/uploadImgs/**': proxyTableOptions
+            '/uploadImgs/**': proxyTableOptions,
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

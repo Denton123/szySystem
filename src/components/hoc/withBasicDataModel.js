@@ -1,6 +1,8 @@
 import React from 'react'
 import {message} from 'antd'
 
+import io from 'socket.io-client'
+
 // 自定义弹窗
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 
@@ -76,7 +78,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 // 表单提交
                 isSubmitting: false,
                 // 加载中
-                loading: false
+                loading: false,
             }
         }
 
@@ -104,6 +106,16 @@ function withBasicDataModel(PageComponent, Datas) {
                 })
                 this.getData(p)
             }
+        }
+
+        /**
+         * [websocket触发]
+         * @Author   szh
+         * @DateTime 2018-01-15
+         */
+        io = () => {
+            const socket = io('http://localhost:3000')
+            socket.emit(this.state.model, {model: this.state.model, type: this.state.operationType})
         }
 
         /**
@@ -289,6 +301,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         this.getData(this.props.location.state)
                         this.handleModalCancel()
                         message.success('保存成功')
+                        this.io()
                     }
                 }
             })
@@ -429,18 +442,12 @@ function withBasicDataModel(PageComponent, Datas) {
                             message.error('删除失败')
                         }
                     }
-                    if (this.state.rowSelection) {
-                        let index = this.state.rowSelection.selectedRowKeys.indexOf(Number(id))
-                        if (index > -1) {
-                            let arr = this.state.rowSelection.selectedRowKeys
-                            arr.splice(index, 1)
-                            this.setState({
-                                rowSelection: {
-                                    ...this.state.rowSelection,
-                                    selectedRowKeys: arr
-                                }
-                            })
-                        }
+                    if (this.state.rowSelection.length > 0 && this.state.rowSelection.includes(Number(id))) {
+                        let arr = this.state.rowSelection
+                        arr.splice(index, 1)
+                        this.setState({
+                            rowSelection: arr
+                        })
                     }
                 })
         }

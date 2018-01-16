@@ -15,6 +15,7 @@ import {
 } from 'antd'
 
 import { isObject } from 'UTILS/utils.js'
+import './Login.less'
 
 const FormItem = Form.Item
 
@@ -48,19 +49,19 @@ class DefaultLoginForm extends React.Component {
     render() {
         const {getFieldDecorator} = this.props.form
         return (
-            <Form onSubmit={this.handleSubmit} style={{width: '300px'}}>
+            <Form onSubmit={this.handleSubmit} style={{width: '350px', margin: '0 auto'}}>
                 <FormItem>
                     {getFieldDecorator('name', {
                         rules: [{required: true, message: '请输入用户名'}]
                     })(
-                        <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />
+                        <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" size="large" />
                     )}
                 </FormItem>
                 <FormItem>
                     {getFieldDecorator('password', {
                         rules: [{required: true, message: '请输入密码'}]
                     })(
-                        <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="密码" onKeyDown={this.handleEnter} />
+                        <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="密码" onKeyDown={this.handleEnter} size="large" />
                     )}
                 </FormItem>
                 <FormItem>
@@ -71,8 +72,8 @@ class DefaultLoginForm extends React.Component {
                         <Checkbox>记住我</Checkbox>
                     )}
                     <a className="pull-right" href="">忘记密码</a>
-                    <Button type="primary" htmlType="submit" className="w100">
-                        Log in
+                    <Button type="primary" htmlType="submit" className="w100" size="large">
+                        登录
                     </Button>
                 </FormItem>
             </Form>
@@ -91,24 +92,14 @@ class Login extends React.Component {
     }
     render() {
         return (
-            <div style={styles.login}>
-                <h2>生之园信息内部管理系统</h2>
-                <LoginForm {...this.props} />
+            <div className="wrap">
+                <div className="login">
+                    <h1 className="title">生之园信息内部管理系统</h1>
+                    <LoginForm {...this.props} />
+                </div>
             </div>
         )
     }
-}
-
-const styles = {}
-
-styles.login = {
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    border: '1px solid #d9d9d9',
-    borderRadius: '5px',
-    padding: '20px'
 }
 
 export default Login

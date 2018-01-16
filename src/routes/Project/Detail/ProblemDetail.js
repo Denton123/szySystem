@@ -118,6 +118,10 @@ class ProblemDetail extends Component {
                 this.setState({
                     quillShow: false
                 })
+            } else if (answerList.length === 0) {
+                this.setState({
+                    quillShow: true
+                })
             }
             if (res.data.total > res.data.pageSize) {
                 this.setState({
@@ -142,7 +146,7 @@ class ProblemDetail extends Component {
         let showId = this.state.DetailData.id
         show(`/answer/${showId}?page=${page}`).then(res => {
             res.data.data.forEach((t) => {
-                t.date = moment(t.date).startOf('hour').fromNow()
+                t.date = moment(t.date).startOf('minute').fromNow()
             })
             if (res.data.currentPage === res.data.totalPage) {
                 this.setState({

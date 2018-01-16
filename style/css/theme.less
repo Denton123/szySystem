@@ -11,6 +11,9 @@
 
 
 @white: #fff;
+
+@edit:#1890ff;
+@delete:red;
 //字体大小
 @font_small: 12px;
 @font_middle: 14px;
@@ -22,6 +25,17 @@
 }
 .border(@bg){
 	border-color: @bg !important;
+}
+// 默认
+.default(@editColor, @deleteColor) {
+	.answerOperate a{
+		&:first-child:hover{
+			color: @editColor;
+		}
+		&:last-child:hover{
+			color: @deleteColor;
+		}
+	}
 }
 // 主题
 .theme(@bg, @unite, @opa) {
@@ -120,6 +134,9 @@
 	.Card a,.ant-table-tbody a, .hasAccept,.defaultTime{
 		color: @bg;
 	}
+	.answerOperate a:hover{
+		color: @bg;
+	}
 }
 //字体大小
 .fontSize(@fontSize) {
@@ -128,7 +145,9 @@
 	}
 }
 
-
+.default{
+	.default(@edit, @delete)
+}
 .blue{
     .theme(@blue_color, @white, @a_blue)
 }

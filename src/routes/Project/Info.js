@@ -46,15 +46,15 @@ class ProjectInfo extends Component {
         fileList: [],
         imageUrl: null
     }
-    add = () => {
-        if (this.state.userData.length === 0) {
-            ajax('get', '/user/all')
-                .then(res => {
-                    this.setState({
-                        userData: res.data
-                    })
+    componentDidMount() {
+        ajax('get', '/user/all')
+            .then(res => {
+                this.setState({
+                    userData: res.data
                 })
-        }
+            })
+    }
+    add = () => {
         this.setState({
             fileList: [],
             imageUrl: null
@@ -62,14 +62,6 @@ class ProjectInfo extends Component {
         this.props.handleAdd()
     }
     edit = (e) => {
-        if (this.state.userData.length === 0) {
-            ajax('get', '/user/all')
-                .then(res => {
-                    this.setState({
-                        userData: res.data
-                    })
-                })
-        }
         let img = e.target.dataset['img']
         this.setState({
             imageUrl: img ? `/uploadImgs/${img}` : img
@@ -77,6 +69,7 @@ class ProjectInfo extends Component {
         this.props.handleEdit(e)
     }
     handleFormSubmit = (values) => {
+        values['uid'] = this.props.user.id
         this.props.handleFormSubmit(values)
         this.setState({
             imageUrl: null
@@ -285,6 +278,7 @@ class ProjectInfo extends Component {
                                             <Link to={`${match.path}/${item.id}`}>{item.name}</Link>
                                         </h2>
                                         <ul className="clearfix">
+                                            <li className="pull-left">{`发布者：${this.state.userData.find(u => u.id === item.uid) && this.state.userData.find(u => u.id === item.uid)['realname']}`}</li>
                                             <li className="pull-left">{`负责人：${item.realname}`}</li>
                                             <li className="pull-left">{`项目计划开始时间：${item.plan_start_date}`}</li>
                                             <li className="pull-left">{`项目计划结束时间：${item.plan_end_date}`}</li>

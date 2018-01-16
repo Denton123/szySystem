@@ -58,6 +58,8 @@ module.exports = function(opts) {
             // 默认显示全部任务
             status: 'all',
             // 全部用户信息
+            allUserData: [],
+            // 新增或者编辑任务时，可选的执行者
             userData: [],
             // 默认的项目值
             defaultProject: undefined,
@@ -73,7 +75,7 @@ module.exports = function(opts) {
 
         componentDidMount() {
             let page = this.props.location.state ? this.props.location.state.page : 1
-            if (opts.total) {
+            if (opts.total) { // 任务管理页面
                 if (opts.hasProject) {
                     this.props.getData({page: page, project_id: 'notnull', __key: 'project'})
                     this.getAllProject()
@@ -81,6 +83,7 @@ module.exports = function(opts) {
                     this.props.getData({page: page, project_id: 'null', __key: 'normal'})
                 }
             }
+            this.getAllUser()
         }
 
         componentWillReceiveProps(nextProps) {
@@ -108,12 +111,19 @@ module.exports = function(opts) {
         }
 
         getAllUser = () => {
-            ajax('get', '/user/all')
-                .then(res => {
-                    this.setState({
-                        userData: res.data
-                    })
+            if (this.state.allUserData.length > 0) {
+                this.setState({
+                    userData: this.state.allUserData
                 })
+            } else {
+                ajax('get', '/user/all')
+                    .then(res => {
+                        this.setState({
+                            allUserData: res.data,
+                            userData: res.data
+                        })
+                    })
+            }
         }
 
         getAllUserByTaskId = (pid) => {
@@ -187,7 +197,8 @@ module.exports = function(opts) {
 
         handleFormSubmit = (values) => {
             let params = {
-                status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value// 表示任务未完成(等待中)
+                status: this.props.operationType === 'add' ? '0' : this.props.formFieldsValues.status.value, // 表示任务未完成(等待中)
+                uid: this.props.user.id
             }
             if (!opts.total) {
                 params['project_id'] = this.props.project.id
@@ -429,6 +440,14 @@ module.exports = function(opts) {
                     title: '任务计划结束时间',
                     dataIndex: 'plan_end_date',
                     key: 'plan_end_date'
+                },
+                {
+                    title: '发布者',
+                    dataIndex: 'uid',
+                    key: 'uid',
+                    render: (text) => (
+                        <span>{state.allUserData.find(u => u.id === text).realname}</span>
+                    )
                 },
                 {
                     title: '执行者',
