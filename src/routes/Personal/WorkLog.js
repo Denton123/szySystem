@@ -135,6 +135,10 @@ class WorkLog extends Component {
                 show: true,
             })
         }
+        this.props.history.replace(this.props.location.pathname, {
+            date: momentToValue(moment),
+            mode: this.state.mode
+        })
     }
 
     onPanelChange = (moment, mode) => {

@@ -30,23 +30,10 @@ import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 // 引入工具方法
 import {show, update} from 'UTILS/ajax'
-import {getBase64} from 'UTILS/utils'
+import {getBase64, transformValue} from 'UTILS/utils'
 
 const RadioGroup = Radio.Group
 const FormItem = Form.Item
-
-function transformValue(field, value) {
-    if (value === null && field === 'skin') return 'default'
-    if (value === null && field === 'font_size') return 'middle'
-    let v
-    if (field.indexOf('date') > -1) {
-        // 日期组件的value必须使用moment
-        v = valueToMoment(value)
-    } else {
-        v = value
-    }
-    return v
-}
 
 class SetForm extends React.Component {
     handleSubmit = (e) => {
