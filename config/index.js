@@ -51,6 +51,8 @@ module.exports = {
             '/worklog/**': proxyTableOptions,
             '/summary/**': proxyTableOptions,
             '/check': proxyTableOptions,
+            '/notification': proxyTableOptions,
+            '/notification/**': proxyTableOptions,
             // 上传文件
             '/uploadFiles/**': proxyTableOptions,
             // 上传图片

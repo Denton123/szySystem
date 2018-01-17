@@ -15,7 +15,11 @@ import {
     Breadcrumb,
     Icon,
     Dropdown,
-    Avatar
+    Avatar,
+    Tabs,
+    Popover,
+    List,
+    Button
 } from 'antd'
 
 import {
@@ -25,10 +29,12 @@ import {
     Redirect
 } from 'react-router-dom'
 
+import {ajax} from 'UTILS/ajax'
 import {isArray} from 'UTILS/utils'
 
 const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
+const TabPane = Tabs.TabPane
 
 // 重整路由结构
 function resetRoute(routes, permissionRoute) {
@@ -96,6 +102,14 @@ class BasicLayout extends React.Component {
     state = {
         selectedKeys: [this.rootSubmenuKeys[0]],
         openKeys: [this.rootSubmenuKeys[0]],
+        // 通知需要的状态
+        notificationActiveTab: 'Project',
+        notificationData: {
+            'Project': [],
+            'Task': [],
+            'Problem': []
+        },
+        notificationLoading: true,
     }
     componentDidMount() {
         let currentPath = this.props.location.pathname.split('home')[1]
@@ -109,7 +123,90 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
-        tpwidget('show')
+
+        tpwidget('show') // 天气
+
+        // websocket 通知
+        const socket = io('http://localhost:3000')
+        socket.on('notification', (notification) => {
+            // console.log(notification)
+            if (isArray(notification)) {
+            } else {
+                if (notification.receive_uid.indexOf(this.props.user.id) > -1) {
+                    // console.log('能看到')
+                    this.setState(prevState => {
+                        let arr = prevState.notificationData
+                        arr.unshift(notification)
+                        return {
+                            notificationData: arr
+                        }
+                    })
+                } else {
+                    // console.log('不能看到通知')
+                }
+            }
+        })
+
+        // 获取未读通知
+        this.getNotificationData()
+    }
+
+    /**
+     * [获取所有未读通知]
+     * @Author   szh
+     * @DateTime 2018-01-17
+     */
+    getNotificationData = () => {
+        this.setState({
+            notificationLoading: true
+        })
+        ajax('get', '/notification', {
+            uid: this.props.user.id
+        })
+        .then(res => {
+            this.setState(prevState => {
+                let obj = {
+                    'Project': [],
+                    'Task': [],
+                    'Problem': []
+                }
+                res.data.forEach(d => {
+                    obj[d.model].push(d)
+                })
+                console.log(obj)
+                return {
+                    notificationData: {
+                        ...obj,
+                    },
+                    notificationLoading: false
+                }
+            })
+        })
+    }
+
+    setNotificationRead = (e) => {
+        // let id = e.target.dataset['id']
+        // ajax('put', '/notification/read', {
+        //     read: this.props.user.id,
+        //     notification_id: id
+        // })
+        // .then(res => {
+        //     if (Object.keys(res.data).length > 0) {
+        //         this.setState(prevState => {
+        //             console.log(prevState)
+        //             let arr = prevState.notificationData
+        //             arr.splice(
+        //                 arr.findIndex(a => a.id === res.data.id),
+        //                 1
+        //             )
+        //             return {
+        //                 notificationData: arr
+        //             }
+        //         })
+        //     } else {
+        //         // 设置通知出错
+        //     }
+        // })
     }
 
     // componentWillReceiveProps(nextProps) {
@@ -139,6 +236,11 @@ class BasicLayout extends React.Component {
         })
     }
 
+    /**
+     * [登出]
+     * @Author   szh
+     * @DateTime 2018-01-17
+     */
     logout = () => {
         axios.get('/user/logout')
         .then(res => {
@@ -156,15 +258,6 @@ class BasicLayout extends React.Component {
         } else {
             return false
         }
-    }
-
-    testIO = () => {
-        const socket = io('http://localhost:3000')
-        // socket.emit('project', {test: 'test'})
-        socket.on('notification', (notification) => {
-            console.log(notification)
-            console.log(JSON.parse(notification.data))
-        })
     }
 
     render() {
@@ -235,6 +328,38 @@ class BasicLayout extends React.Component {
                 </Menu>
             </div>
         )
+        const tabs = [
+            {tab: '项目', key: 'Project'},
+            {tab: '任务', key: 'Task'},
+            {tab: '问题', key: 'Problem'},
+        ]
+        const notification = (
+            <Tabs defaultActiveKey={this.state.notificationActiveTab}>
+                {tabs.map(item => (
+                    <TabPane tab={item.tab} key={item.key}>
+                        {this.state.notificationData[item.key].length > 0 ? (
+                            <div className="txt-c">
+                                <List
+                                    loading={this.state.notificationLoading}
+                                    dataSource={this.state.notificationData[item.key]}
+                                    itemLayout="horizontal"
+                                    renderItem={item => (
+                                        <List.Item actions={[<a data-id={item.id} onClick={this.setNotificationRead}>设为已读</a>]}>
+                                            <div>{item.id}</div>
+                                        </List.Item>
+                                    )}
+                                />
+                                <Button>清除全部通知</Button>
+                            </div>
+                        ) : (
+                            <div className="txt-c">
+                                已经查看所有通知
+                            </div>
+                        )}
+                    </TabPane>
+                ))}
+            </Tabs>
+        )
 
         const dynamicLayout = (
             <div>
@@ -254,7 +379,9 @@ class BasicLayout extends React.Component {
                     </div>
                     <div className="pull-right layout-header-bell mr-10">
                         <div id="tp-weather-widget" style={{display: 'inline-block'}} className="mr-10" />
-                        <Icon type={'bell'} style={{fontSize: 16}} onClick={this.testIO} />
+                        <Popover placement="bottomRight" content={notification} trigger="click">
+                            <Icon type={'bell'} style={{fontSize: 16}} />
+                        </Popover>
                     </div>
                 </Header>
                 <Route exact path={match.path} render={() => {

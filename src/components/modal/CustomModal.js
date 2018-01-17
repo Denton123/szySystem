@@ -25,12 +25,14 @@ class CustomModal extends React.Component {
         // zIndex  设置 Modal 的 z-index  Number  1000
         // onCancel    点击遮罩层或右上角叉或取消按钮的回调  function(e) 无
         // onOk    点击确定回调  function(e)
-        const props = {}
-        const user = this.props.user
+        const props = {
+            maskClosable: false // 默认设置点击遮罩层不能关闭对话框
+        }
         for (let i in this.props) {
             if (i === 'children') continue
             props[i] = this.props[i]
         }
+        const user = this.props.user
         const Class = cs({
             [`${user && user.skin}`]: true,
             [`${user && user.font_size}`]: true
