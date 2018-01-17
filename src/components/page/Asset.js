@@ -38,18 +38,6 @@ const RadioGroup = Radio.Group
 
 module.exports = function(opts) {
     class Asset extends React.Component {
-        checkNumber = (rule, value, callback) => {
-            if (!value || (value.number1 === undefined && value.number2 === undefined)) {
-                callback()
-                return
-            }
-            if (value.number1 <= value.number2) {
-                callback()
-                return
-            }
-            callback('两个都必选填，单价1小于单价2!')
-        }
-
         handleFormSubmit = (values) => {
             let data = {}
             for (let i in values) {
@@ -84,9 +72,20 @@ module.exports = function(opts) {
                 {
                     label: '单价',
                     content: ({getFieldDecorator}) => {
+                        const checkNumber = (rule, value, callback) => {
+                            if (!value || (value.number1 === undefined && value.number2 === undefined)) {
+                                callback()
+                                return
+                            }
+                            if (value.number1 <= value.number2) {
+                                callback()
+                                return
+                            }
+                            callback('两个都必选填，单价1小于单价2!')
+                        }
                         return getFieldDecorator('price', {
-                            initialValue: { number1: 0, number2: 0 },
-                            rules: [{ validator: this.checkNumber }]
+                            initialValue: { number1: 0.00, number2: 0.00 },
+                            rules: [{ validator: checkNumber }]
                         })(<InputRange autoComplete="off" placeholder="单价" />)
                     },
                 },

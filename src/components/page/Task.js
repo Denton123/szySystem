@@ -446,7 +446,7 @@ module.exports = function(opts) {
                     dataIndex: 'uid',
                     key: 'uid',
                     render: (text) => (
-                        <span>{state.allUserData.find(u => u.id === text).realname}</span>
+                        <span>{state.allUserData.find(u => u.id === text) && state.allUserData.find(u => u.id === text).realname}</span>
                     )
                 },
                 {
@@ -577,6 +577,10 @@ module.exports = function(opts) {
                                         value: null,
                                         errors: [new Error('请选择计划时间')],
                                     },
+                                    user_id: {
+                                        value: [],
+                                        errors: [new Error('请选择执行者')],
+                                    }
                                 })
                             }
                         }
