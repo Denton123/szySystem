@@ -95,7 +95,9 @@ class Login extends React.Component {
             <div className="wrap">
                 <div className="login">
                     <h1 className="title">生之园信息内部管理系统</h1>
-                    <LoginForm {...this.props} />
+                    <div className="form">
+                        <LoginForm {...this.props} />
+                    </div>
                 </div>
             </div>
         )
