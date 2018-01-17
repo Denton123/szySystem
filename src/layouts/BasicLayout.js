@@ -163,6 +163,7 @@ class BasicLayout extends React.Component {
         // socket.emit('project', {test: 'test'})
         socket.on('notification', (notification) => {
             console.log(notification)
+            console.log(JSON.parse(notification.data))
         })
     }
 
