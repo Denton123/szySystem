@@ -9,6 +9,8 @@ import {
     Redirect
 } from 'react-router-dom'
 
+import 'STYLE/css/theme.less'
+import cs from 'classnames'
 import ReactQuill from 'react-quill'
 
 class AnswerEdit extends Component {
@@ -23,13 +25,18 @@ class AnswerEdit extends Component {
             match,
             route
         } = this.props
-        const { show, onCancel, title, editAnswer, handleok, editChange } = this.props
+        const { show, onCancel, title, editAnswer, handleok, editChange, user } = this.props
+        const Class = cs({
+            [`${user && user.skin}`]: true,
+            [`${user && user.font_size}`]: true
+        })
         return (
             <Modal
                 title={`${title}`}
                 visible={show}
                 onOk={handleok}
-                onCancel={onCancel}>
+                onCancel={onCancel}
+                className={Class}>
                 <div
                     style={{height: 250}}>
                     <ReactQuill

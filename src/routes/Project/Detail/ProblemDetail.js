@@ -43,13 +43,16 @@ const confirm = Modal.confirm
 function replaceBlank(str) {
     return str.replace(/\s/g, '').replace(/<\/?.+?>/g, '')
 }
-
+// 去除html标签
+function removeHtml(str) {
+    return str.replace(/<\/?.+?>/g, '').replace(/ /g, '')
+}
 class ProblemDetail extends Component {
     state = {
         DetailData: {}, // 问题数据
         answer: '', // 答案value值
         answerList: [], // 当前页答案数据
-        loading: true,
+        loading: true, // List的加载
         loadingMore: false,
         showLoadingMore: false, // 加载更多
         showCheckbox: false, // 采纳框是否显示
@@ -60,7 +63,6 @@ class ProblemDetail extends Component {
         editContent: '', // 编辑内容
         editID: '', // 编辑ID
         quillShow: true, // 答案编辑器显示
-        test: ''
     }
     componentDidMount() {
         this.getProblemData()
@@ -114,11 +116,17 @@ class ProblemDetail extends Component {
                     hasArr.push(answerList[d].user_id)
                 }
             }
+            console.log(hasArr)
             if (hasArr.indexOf(this.props.user.id) !== -1) {
                 this.setState({
                     quillShow: false
                 })
-            } else if (answerList.length === 0) {
+            } else {
+                this.setState({
+                    quillShow: true
+                })
+            }
+            if (answerList.length === 0) {
                 this.setState({
                     quillShow: true
                 })
@@ -194,7 +202,7 @@ class ProblemDetail extends Component {
     }
     // 答案提交
     answerSubmit = () => {
-        if (this.state.answer !== '') {
+        if (removeHtml(this.state.answer) !== '') {
             const Data = this.state.DetailData
             const answerObj = {
                 answer: this.state.answer,
@@ -345,12 +353,10 @@ class ProblemDetail extends Component {
             <span>
                 <span>{time}回答</span>
                 {
-                    user && user.id === userId ? (
+                    user && user.id === userId && used === '0' ? (
                         <span className="answerOperate">
                             <a data-id={id} onClick={this.editAnswer}>编辑</a>
-                            {
-                                used === '0' ? (<a data-id={id} onClick={this.deleteAnswer}>删除</a>) : null
-                            }
+                            <a data-id={id} onClick={this.deleteAnswer}>删除</a>
                         </span>
                     ) : null
                 }
@@ -360,7 +366,8 @@ class ProblemDetail extends Component {
                     handleok={this.handleok}
                     onCancel={this.onCancel}
                     editAnswer={editContent}
-                    editChange={this.editChange} />
+                    editChange={this.editChange}
+                    user={this.props.user} />
             </span>
             )
         const Accept = ({id}) => (
