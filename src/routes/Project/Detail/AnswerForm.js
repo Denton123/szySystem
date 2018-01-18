@@ -15,6 +15,7 @@ import ReactQuill from 'react-quill'
 
 class AnswerEdit extends Component {
     state = {
+        mask: false
     }
     componentDidMount() {
     }
@@ -25,6 +26,7 @@ class AnswerEdit extends Component {
             match,
             route
         } = this.props
+        const {mask} = this.state
         const { show, onCancel, title, editAnswer, handleok, editChange, user } = this.props
         const Class = cs({
             [`${user && user.skin}`]: true,
@@ -36,7 +38,8 @@ class AnswerEdit extends Component {
                 visible={show}
                 onOk={handleok}
                 onCancel={onCancel}
-                className={Class}>
+                className={Class}
+                maskClosable={mask}>
                 <div
                     style={{height: 250}}>
                     <ReactQuill

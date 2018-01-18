@@ -125,7 +125,6 @@ class BasicLayout extends React.Component {
         }
 
         tpwidget('show') // 天气
-
         // websocket 通知
         const socket = io('http://localhost:3000')
         socket.on('notification', (notification) => {
@@ -209,9 +208,9 @@ class BasicLayout extends React.Component {
         // })
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     console.log(this.state, nextProps)
-    // }
+    componentWillReceiveProps(nextProps) {
+        console.log(this.state, nextProps)
+    }
 
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
