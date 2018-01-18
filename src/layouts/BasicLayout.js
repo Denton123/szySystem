@@ -125,7 +125,6 @@ class BasicLayout extends React.Component {
         }
 
         tpwidget('show') // 天气
-
         // websocket 通知
         const socket = io('http://localhost:3000')
         socket.on('notification', (notification) => {

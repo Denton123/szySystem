@@ -62,7 +62,7 @@ class ProblemDetail extends Component {
         title: '', // 编辑表单标题
         editContent: '', // 编辑内容
         editID: '', // 编辑ID
-        quillShow: true, // 答案编辑器显示
+        quillShow: true, // 答案编辑器显示,
     }
     componentDidMount() {
         this.getProblemData()
@@ -154,7 +154,7 @@ class ProblemDetail extends Component {
         let showId = this.state.DetailData.id
         show(`/answer/${showId}?page=${page}`).then(res => {
             res.data.data.forEach((t) => {
-                t.date = moment(t.date).startOf('minute').fromNow()
+                t.date = moment(t.date).startOf('second').fromNow()
             })
             if (res.data.currentPage === res.data.totalPage) {
                 this.setState({
@@ -370,8 +370,8 @@ class ProblemDetail extends Component {
                     user={this.props.user} />
             </span>
             )
-        const Accept = ({id}) => (
-            showCheckbox ? (
+        const Accept = ({id, userId}) => (
+            userId !== DetailData.user_id && showCheckbox ? (
                 <Checkbox onClick={this.acceptAnswer} data-id={id}>采纳</Checkbox>
                 ) : null
         )
@@ -431,7 +431,7 @@ class ProblemDetail extends Component {
                                         <Icon type="check-circle" style={{marginRight: 8, fontSize: 18}} />
                                         已采纳
                                     </span>
-                                    ) : (<Accept id={item.id} used={item.used} />)}
+                                    ) : (<Accept id={item.id} userId={item.user_id} />)}
                                 actions={[<Bottom
                                     time={item.date}
                                     userId={item.user_id}

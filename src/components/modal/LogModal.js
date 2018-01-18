@@ -11,7 +11,8 @@ import cs from 'classnames'
 const { TextArea } = Input
 class PopModal extends Component {
     state = {
-        textContent: ''
+        textContent: '',
+        mask: false
     }
 
     onChange = (e) => {
@@ -37,7 +38,7 @@ class PopModal extends Component {
                 </Menu.Item>
             </Menu>
         )
-        const { textContent } = this.state
+        const { textContent, mask } = this.state
         const { show, onCancel, onChange, title, showTip, showDelete } = this.props
         const user = this.props.user
         const Class = cs({
@@ -51,7 +52,8 @@ class PopModal extends Component {
                     visible={show}
                     onOk={this.onSubmit}
                     onCancel={onCancel}
-                    className={Class}>
+                    className={Class}
+                    maskClosable={mask}>
                     {showTip === true ? <p style={{color: 'red'}}>请输入日志！</p> : null}
                     <div className="wrap">
                         <TextArea
