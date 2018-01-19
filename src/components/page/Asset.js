@@ -183,6 +183,7 @@ module.exports = function(opts) {
                     label: '单价',
                     content: ({getFieldDecorator}) => {
                         const decimal = (e) => {
+                            console.log(5555555555)
                             let val = e.target.value
                             if (Number(val)) {
                                 e.target.value = parseFloat(val).toFixed(2)

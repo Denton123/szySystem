@@ -312,7 +312,6 @@ class BasicLayout extends React.Component {
                 }
             },
             Task: (data) => {
-                console.log(data)
                 let users = ''
                 // data.Users.forEach(u => {
                 //     users += `${u.realname}、`
