@@ -32,6 +32,8 @@ import {
 import {ajax} from 'UTILS/ajax'
 import {isArray} from 'UTILS/utils'
 
+import {ntfcTitle, ntfcDesc} from 'UTILS/notification'
+
 const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
 const TabPane = Tabs.TabPane
@@ -291,42 +293,10 @@ class BasicLayout extends React.Component {
      * @return   {ReactNode}     [单个通知结构]
      */
     notificationMsg = (ntfc) => {
-        let data = JSON.parse(ntfc.data)
-        const modelFn = {
-            Project: (data) => {
-                if (ntfc.type === 'add') {
-                    return <div>{ntfc.id}</div>
-                } else if (ntfc.type === 'edit') {
-                    return <div>{ntfc.id}</div>
-                } else if (ntfc.type === 'delete') {
-                    return <div>{ntfc.id}</div>
-                }
-            },
-            Problem: (data) => {
-                if (ntfc.type === 'add') {
-                    return <div>{ntfc.id}</div>
-                } else if (ntfc.type === 'edit') {
-                    return <div>{ntfc.id}</div>
-                } else if (ntfc.type === 'delete') {
-                    return <div>{ntfc.id}</div>
-                }
-            },
-            Task: (data) => {
-                let users = ''
-                // data.Users.forEach(u => {
-                //     users += `${u.realname}、`
-                // })
-                // users = users.substring(0, users.length - 1)
-                if (ntfc.type === 'add') {
-                    return <div>{`${ntfc.send_uid}发布了新任务,执行者有你`}</div>
-                } else if (ntfc.type === 'edit') {
-                    return <div>{`${ntfc.send_uid}更新了一个任务,执行者有你`}</div>
-                } else if (ntfc.type === 'delete') {
-                    return <div>{`${ntfc.send_uid}删除了一个任务,执行者有你`}</div>
-                }
-            }
-        }
-        return modelFn[ntfc.model](data)
+        let title = ntfcTitle(ntfc)
+        return (
+            <div>{title}</div>
+        )
     }
 
     render() {
@@ -403,7 +373,7 @@ class BasicLayout extends React.Component {
             {tab: '问题', key: 'Problem'},
         ]
         const notification = (
-            <Tabs defaultActiveKey={this.state.notificationActiveTab}>
+            <Tabs defaultActiveKey={this.state.notificationActiveTab} animated={false}>
                 {tabs.map(item => (
                     <TabPane tab={item.tab} key={item.key}>
                         {this.state.notificationData[item.key].length > 0 ? (
@@ -413,7 +383,7 @@ class BasicLayout extends React.Component {
                                     dataSource={this.state.notificationData[item.key]}
                                     itemLayout="horizontal"
                                     renderItem={item => (
-                                        <List.Item actions={[<a data-id={item.id} onClick={this.singleNotificationRead}>设为已读</a>]}>
+                                        <List.Item actions={[<a href="javascript:;">详情</a>, <a data-id={item.id} onClick={this.singleNotificationRead}>已读</a>]}>
                                             {this.notificationMsg(item)}
                                         </List.Item>
                                     )}
