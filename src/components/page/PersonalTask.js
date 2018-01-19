@@ -255,8 +255,12 @@ module.exports = function(opts) {
                     title: '操作',
                     key: 'action',
                     render: (text, record) => {
-                        if (record['child'] && record['child'].length > 0) {
-                            return '点击左侧查看子任务'
+                        if (record['child']) {
+                            if (record['child'].length > 0) {
+                                return `点击左侧查看子任务`
+                            } else {
+                                return `暂无任务分配`
+                            }
                         }
                         let status = record['Users'][0]['status']
                         const Start = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="1" onClick={this.handleTaskStatus}>开始任务</Button>
