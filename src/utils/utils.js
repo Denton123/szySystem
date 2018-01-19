@@ -153,7 +153,7 @@ const utils = {
             if (utils.isArray(value)) {
                 v = {number1: value[0], number2: value[1]}
             } else {
-                v = value
+                v = parseFloat(value)
             }
         } else {
             v = value
