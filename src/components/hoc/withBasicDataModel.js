@@ -108,16 +108,6 @@ function withBasicDataModel(PageComponent, Datas) {
             }
         }
 
-        // /**
-        //  * [websocket触发]
-        //  * @Author   szh
-        //  * @DateTime 2018-01-15
-        //  */
-        // io = () => {
-        //     const socket = io('http://localhost:3000')
-        //     socket.emit(this.state.model, {model: this.state.model, type: this.state.operationType})
-        // }
-
         /**
          * [自定义更新组件的]
          * @Author   szh

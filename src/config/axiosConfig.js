@@ -72,8 +72,12 @@ axios.interceptors.response.use(function(response) {
         }
     } else if (error.response && error.response.status === 404) {
         message.error('接口不存在')
+    } else if (error.response && error.response.status === 500) {
+        message.error('服务器错误')
+    } else if (error.response && error.response.status === 504) {
+        message.error('请求超时')
     } else {
-        message.error('服务错误')
+        message.error('请求错误')
     }
     return Promise.reject(error)
 })

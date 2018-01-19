@@ -125,24 +125,31 @@ class BasicLayout extends React.Component {
         }
 
         tpwidget('show') // 天气
-
         // websocket 通知
         const socket = io('http://localhost:3000')
         socket.on('notification', (notification) => {
-            // console.log(notification)
-            if (isArray(notification)) {
-            } else {
-                if (notification.receive_uid.indexOf(this.props.user.id) > -1) {
-                    // console.log('能看到')
-                    this.setState(prevState => {
-                        let arr = prevState.notificationData
-                        arr.unshift(notification)
-                        return {
-                            notificationData: arr
+            console.log(notification)
+            if (isArray(notification)) { // 多条通知
+                this.setState(prevState => {
+                    let obj = prevState.notificationData
+                    notification.forEach(n => {
+                        if (n.Users.find(user => user.id === this.props.user.id)) {
+                            obj[n.model].unshift(n)
                         }
                     })
-                } else {
-                    // console.log('不能看到通知')
+                    return {
+                        notificationData: obj
+                    }
+                })
+            } else { // 单条通知
+                if (notification.isPublic === '1') { // 全部人都能看到
+                    this.setState(prevState => {
+                        let obj = prevState.notificationData
+                        obj[notification.model].unshift(notification)
+                        return {
+                            notificationData: obj
+                        }
+                    })
                 }
             }
         })
@@ -173,7 +180,6 @@ class BasicLayout extends React.Component {
                 res.data.forEach(d => {
                     obj[d.model].push(d)
                 })
-                console.log(obj)
                 return {
                     notificationData: {
                         ...obj,
@@ -184,34 +190,51 @@ class BasicLayout extends React.Component {
         })
     }
 
-    setNotificationRead = (e) => {
-        // let id = e.target.dataset['id']
-        // ajax('put', '/notification/read', {
-        //     read: this.props.user.id,
-        //     notification_id: id
-        // })
-        // .then(res => {
-        //     if (Object.keys(res.data).length > 0) {
-        //         this.setState(prevState => {
-        //             console.log(prevState)
-        //             let arr = prevState.notificationData
-        //             arr.splice(
-        //                 arr.findIndex(a => a.id === res.data.id),
-        //                 1
-        //             )
-        //             return {
-        //                 notificationData: arr
-        //             }
-        //         })
-        //     } else {
-        //         // 设置通知出错
-        //     }
-        // })
+    /**
+     * [设置已读]
+     * @Author   szh
+     * @DateTime 2018-01-18
+     * @param    {Array}   nids [设置已读的通知ids]
+     */
+    setNotificationRead = (nids) => {
+        ajax('put', '/notification/read', {
+            user_id: this.props.user.id,
+            notification_ids: nids
+        })
+        .then(res => {
+            if (res.data.length > 0) {
+                this.setState(prevState => {
+                    let obj = prevState.notificationData
+                    res.data.forEach(d => {
+                        obj[d.model].splice(
+                            obj[d.model].findIndex(idx => idx.id === d.id),
+                            1
+                        )
+                    })
+                    return {
+                        notificationData: obj
+                    }
+                })
+            } else {
+                // 没有该通知
+            }
+        })
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     console.log(this.state, nextProps)
-    // }
+    // 单个已读
+    singleNotificationRead = (e) => {
+        let id = e.target.dataset['id']
+        this.setNotificationRead([parseInt(id)])
+    }
+
+    // 多个已读
+    multipleNotificationRead = (type) => {
+        let nids = []
+        this.state.notificationData[type].forEach(n => {
+            nids.push(n.id)
+        })
+        this.setNotificationRead(nids)
+    }
 
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
@@ -258,6 +281,53 @@ class BasicLayout extends React.Component {
         } else {
             return false
         }
+    }
+
+    /**
+     * [生成单条通知结构]
+     * @Author   szh
+     * @DateTime 2018-01-18
+     * @param    {Object}   ntfc [通知数据]
+     * @return   {ReactNode}     [单个通知结构]
+     */
+    notificationMsg = (ntfc) => {
+        let data = JSON.parse(ntfc.data)
+        const modelFn = {
+            Project: (data) => {
+                if (ntfc.type === 'add') {
+                    return <div>{ntfc.id}</div>
+                } else if (ntfc.type === 'edit') {
+                    return <div>{ntfc.id}</div>
+                } else if (ntfc.type === 'delete') {
+                    return <div>{ntfc.id}</div>
+                }
+            },
+            Problem: (data) => {
+                if (ntfc.type === 'add') {
+                    return <div>{ntfc.id}</div>
+                } else if (ntfc.type === 'edit') {
+                    return <div>{ntfc.id}</div>
+                } else if (ntfc.type === 'delete') {
+                    return <div>{ntfc.id}</div>
+                }
+            },
+            Task: (data) => {
+                console.log(data)
+                let users = ''
+                // data.Users.forEach(u => {
+                //     users += `${u.realname}、`
+                // })
+                // users = users.substring(0, users.length - 1)
+                if (ntfc.type === 'add') {
+                    return <div>{`${ntfc.send_uid}发布了新任务,执行者有你`}</div>
+                } else if (ntfc.type === 'edit') {
+                    return <div>{`${ntfc.send_uid}更新了一个任务,执行者有你`}</div>
+                } else if (ntfc.type === 'delete') {
+                    return <div>{`${ntfc.send_uid}删除了一个任务,执行者有你`}</div>
+                }
+            }
+        }
+        return modelFn[ntfc.model](data)
     }
 
     render() {
@@ -344,15 +414,15 @@ class BasicLayout extends React.Component {
                                     dataSource={this.state.notificationData[item.key]}
                                     itemLayout="horizontal"
                                     renderItem={item => (
-                                        <List.Item actions={[<a data-id={item.id} onClick={this.setNotificationRead}>设为已读</a>]}>
-                                            <div>{item.id}</div>
+                                        <List.Item actions={[<a data-id={item.id} onClick={this.singleNotificationRead}>设为已读</a>]}>
+                                            {this.notificationMsg(item)}
                                         </List.Item>
                                     )}
                                 />
-                                <Button>清除全部通知</Button>
+                                <Button onClick={() => this.multipleNotificationRead(item.key)}>清除全部通知</Button>
                             </div>
                         ) : (
-                            <div className="txt-c">
+                            <div className="txt-c" styles={{width: 370}}>
                                 已经查看所有通知
                             </div>
                         )}
