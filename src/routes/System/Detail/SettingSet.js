@@ -212,6 +212,7 @@ class Setting extends Component {
                 obj[field] = {
                     value: transformValue(field, data[field])
                 }
+                console.log(data[field])
             })
             return {
                 formFieldsValues: obj

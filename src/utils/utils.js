@@ -142,6 +142,8 @@ const utils = {
      * @return   {all}                       [返回所有类型的值]
      */
     transformValue: function(field, value) {
+        if (value === null && field === 'font_size') return 'middle'
+        if (value === null && field === 'skin') return 'default'
         if (value === null || value === undefined) return null
         let v
         if (field.indexOf('date') > -1) {

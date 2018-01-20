@@ -381,7 +381,7 @@ class ProblemDetail extends Component {
                 dangerouslySetInnerHTML={{__html: answer}} />
             )
         const Question = ({question}) => (
-            <span>
+            <span className="question-title">
                 <Icon type="question-circle-o" style={{color: '#1890ff', marginRight: 10}} />
                 {question}
             </span>
