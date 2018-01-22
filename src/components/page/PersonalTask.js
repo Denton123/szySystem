@@ -40,7 +40,7 @@ module.exports = function(opts) {
     class MyMission extends Component {
         state = {
             // 默认显示全部任务
-            status: 'all',
+            status: this.props.location.state && this.props.location.state.status ? this.props.location.state.status : 'all',
             // 默认的任务
             defaultProject: undefined,
             // 全部项目数据
@@ -49,17 +49,8 @@ module.exports = function(opts) {
 
         componentDidMount() {
             console.log('--------')
-            console.log(this.props.location)
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             console.log(data)
-            // let obj = Object.assign({}, this.props.queryFieldValues)
-            // Object.keys(this.props.queryFieldValues).forEach(field => {
-            //     if (data.hasOwnProperty(field)) {
-            //         obj[field] = {
-            //             value: transformValue(field, data[field])
-            //         }
-            //     }
-            // })
 
             // let page = this.props.location.state ? this.props.location.state.page : 1
             // let data = {
@@ -95,9 +86,9 @@ module.exports = function(opts) {
                 status: val
             })
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-            if (val !== 'all') {
-                data['status'] = val
-            }
+            // if (val !== 'all') {
+            data['status'] = val
+            // }
             if (opts.hasProject) {
                 data['project_id'] = 'notnull'
                 this.setState({
