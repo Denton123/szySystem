@@ -85,7 +85,6 @@ module.exports = function(opts) {
             this.setState({
                 status: val
             })
-
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             if (val !== 'all') {
                 data['status'] = val
