@@ -391,15 +391,15 @@ class BasicLayout extends React.Component {
         this.props.history.push(`${this.props.match.path}${url}`)
     }
 
-    linkClick = (e) => {
-        console.log('3333')
-        console.log(e.target.dataset['key1'])
-        // this.setState((prevState, props) => {
-        //     return {
-        //         openKeys: prevState.openKeys
-        //         selectedKeys
-        //     }
-        // })
+    BLhandleLinkClick = (openKeys, selectedKeys) => {
+        return () => {
+            this.setState((prevState, props) => {
+                return {
+                    openKeys: [openKeys],
+                    selectedKeys: [selectedKeys]
+                }
+            })
+        }
     }
 
     render() {
@@ -410,16 +410,16 @@ class BasicLayout extends React.Component {
             match,
             user,
             collapsed,
-            permissionRoute
+            permissionRoute,
         } = this.props
         const newRoute = resetRoute(routes, permissionRoute)
         const AvatarMenu = (
             <Menu>
-                <Menu.Item key="0" >
-                    <Link to="/home/personal/info" key1="/personal" key2="/personal/info" onClick={this.linkClick}><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
+                <Menu.Item key="0">
+                    <Link to="/home/personal/info" onClick={this.BLhandleLinkClick('/personal', '/personal/info')}><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
                 </Menu.Item>
                 <Menu.Item key="1">
-                    <Link to="/home/system/setting"><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
+                    <Link to="/home/system/setting" onClick={this.BLhandleLinkClick('/system', '/system/setting')}><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key="3">
@@ -543,6 +543,7 @@ class BasicLayout extends React.Component {
                                                 key={sn}
                                                 exact
                                                 path={`${match.path}${rc.path}`}
+                                                BLhandleLinkClick={this.BLhandleLinkClick}
                                                 render={props => (
                                                     <ModelContent breadcrumbs={rc.name.split(',')}>
                                                         <rc.component route={rc} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
@@ -558,6 +559,7 @@ class BasicLayout extends React.Component {
                                     key={idx}
                                     exact
                                     path={`${match.path}${route.path}`}
+                                    BLhandleLinkClick={this.BLhandleLinkClick}
                                     render={props => (
                                         <ModelContent breadcrumbs={route.name.split(',')}>
                                             <route.component route={route} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
