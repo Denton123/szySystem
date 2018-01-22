@@ -130,7 +130,7 @@ class BasicLayout extends React.Component {
 
         tpwidget('show') // 天气
         // websocket 通知
-        const socket = io('http://localhost:3000')
+        const socket = io('http://localhost:6001')
         socket.on('notification', (notification) => {
             if (isArray(notification)) { // 多条通知
                 this.setState(prevState => {
@@ -373,7 +373,7 @@ class BasicLayout extends React.Component {
         return (
             <div>
                 <div className="notication-tit mb-10" title={title}>{title}</div>
-                <div className="txt-l">{moment(ntfc.date).startOf('second').fromNow()}</div>
+                <div className="txt-l">{moment(ntfc.createdAt).startOf('second').fromNow()}</div>
             </div>
         )
     }

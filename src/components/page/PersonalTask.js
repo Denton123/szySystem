@@ -86,6 +86,7 @@ module.exports = function(opts) {
                 status: val
             })
             let data = {
+                ...this.props.location.state,
                 page: 1
             }
             if (val !== 'all') {
@@ -154,6 +155,7 @@ module.exports = function(opts) {
                 id = 'notnull'
             }
             let data = {
+                ...this.props.location.state,
                 page: 1,
                 project_id: id,
             }
