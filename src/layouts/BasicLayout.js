@@ -7,6 +7,7 @@
 import styles from './BasicLayout.less'
 import 'STYLE/css/theme.less'
 import React from 'react'
+import moment from 'moment'
 import cs from 'classnames'
 import 'UTILS/weather.js'
 import {
@@ -21,7 +22,6 @@ import {
     List,
     Button
 } from 'antd'
-
 import {
     Link,
     Route,
@@ -32,7 +32,7 @@ import {
 import {ajax} from 'UTILS/ajax'
 import {isArray} from 'UTILS/utils'
 
-import {ntfcTitle, ntfcDesc} from 'UTILS/notification'
+import {ntfcTitle, ntfcUrl} from 'UTILS/notification'
 
 const { Header, Content, Footer, Sider } = Layout
 const SubMenu = Menu.SubMenu
@@ -173,6 +173,7 @@ class BasicLayout extends React.Component {
             uid: this.props.user.id
         })
         .then(res => {
+            const publicNotification = localStorage && localStorage.getItem('publicNotification') ? localStorage.getItem('publicNotification').split(',') : []
             this.setState(prevState => {
                 let obj = {
                     'Project': [],
@@ -180,7 +181,13 @@ class BasicLayout extends React.Component {
                     'Problem': []
                 }
                 res.data.forEach(d => {
-                    obj[d.model].push(d)
+                    if (d.isPublic === '1') { // 公共通知
+                        if (!publicNotification.includes(`${d.id}`)) { // 没有本地已读才显示
+                            obj[d.model].push(d)
+                        }
+                    } else {
+                        obj[d.model].push(d)
+                    }
                 })
                 return {
                     notificationData: {
@@ -224,18 +231,70 @@ class BasicLayout extends React.Component {
     }
 
     // 单个已读
-    singleNotificationRead = (e) => {
-        let id = e.target.dataset['id']
-        this.setNotificationRead([parseInt(id)])
+    singleNotificationRead = (ntfc) => {
+        if (ntfc.isPublic === '0') {
+            this.setNotificationRead([parseInt(ntfc.id)])
+        } else {
+            this.localStorageNotificationRead([parseInt(ntfc.id)])
+        }
     }
 
     // 多个已读
     multipleNotificationRead = (type) => {
-        let nids = []
+        let nids = [] // 非公开的通知
+        let pnids = [] // 公开的通知
         this.state.notificationData[type].forEach(n => {
-            nids.push(n.id)
+            if (n.isPublic === '0') {
+                nids.push(n.id)
+            } else {
+                pnids.push(n.id)
+            }
         })
-        this.setNotificationRead(nids)
+        if (nids.length > 0) {
+            this.setNotificationRead(nids)
+        }
+        if (pnids.length > 0) {
+            this.localStorageNotificationRead(pnids)
+        }
+    }
+
+    localStorageNotificationRead = (pnids) => {
+        if (localStorage) {
+            if (!localStorage.getItem('publicNotification')) {
+                localStorage.setItem('publicNotification', '')
+            }
+            let publicNotification = localStorage.getItem('publicNotification')
+            if (publicNotification.length > 0) {
+                publicNotification = publicNotification.split(',')
+            } else {
+                publicNotification = []
+            }
+            pnids.forEach(pn => {
+                publicNotification.push(pn)
+            })
+            localStorage.setItem('publicNotification', publicNotification.join(','))
+            this.setState(prevState => {
+                let data = prevState.notificationData
+                let arr = [].concat(data['Problem'], data['Task'], data['Project'])
+                let obj = {
+                    'Project': [],
+                    'Task': [],
+                    'Problem': []
+                }
+                pnids.forEach(pn => {
+                    arr.splice(
+                        arr.findIndex(idx => parseInt(idx.id) === parseInt(pn.id)),
+                        1
+                    )
+                })
+                arr.forEach(a => {
+                    obj[a.model].push(a)
+                })
+                return {
+                    notificationData: obj
+                }
+            })
+        }
     }
 
     onOpenChange = (openKeys) => {
@@ -295,8 +354,24 @@ class BasicLayout extends React.Component {
     notificationMsg = (ntfc) => {
         let title = ntfcTitle(ntfc)
         return (
-            <div>{title}</div>
+            <div>
+                <div className="notication-tit mb-10" title={title}>{title}</div>
+                <div className="txt-l">{moment(ntfc.date).startOf('second').fromNow()}</div>
+            </div>
         )
+    }
+
+    /**
+     * [生成单条通知的地址]
+     * @Author   szh
+     * @DateTime 2018-01-23
+     * @param    {Object}   ntfc [通知数据]
+     * @return   {String}        [详细页路径]
+     */
+    notificationUrl = (ntfc) => {
+        let url = ntfcUrl(ntfc)
+        this.setNotificationRead([parseInt(ntfc.id)])
+        this.props.history.push(`${this.props.match.path}${url}`)
     }
 
     render() {
@@ -377,21 +452,22 @@ class BasicLayout extends React.Component {
                 {tabs.map(item => (
                     <TabPane tab={item.tab} key={item.key}>
                         {this.state.notificationData[item.key].length > 0 ? (
-                            <div className="txt-c">
+                            <div className="txt-c notification-container">
                                 <List
+                                    className="notification-list"
                                     loading={this.state.notificationLoading}
                                     dataSource={this.state.notificationData[item.key]}
                                     itemLayout="horizontal"
                                     renderItem={item => (
-                                        <List.Item actions={[<a href="javascript:;">详情</a>, <a data-id={item.id} onClick={this.singleNotificationRead}>已读</a>]}>
+                                        <List.Item actions={[<a href="javascript:;" onClick={() => this.notificationUrl(item)}>详情</a>, <a href="javascript:;" onClick={() => this.singleNotificationRead(item)}>已读</a>]}>
                                             {this.notificationMsg(item)}
                                         </List.Item>
                                     )}
                                 />
-                                <Button onClick={() => this.multipleNotificationRead(item.key)}>清除全部通知</Button>
+                                <Button className="mt-10" onClick={() => this.multipleNotificationRead(item.key)}>清除全部通知</Button>
                             </div>
                         ) : (
-                            <div className="txt-c" styles={{width: 370}}>
+                            <div className="txt-c notification-container">
                                 已经查看所有通知
                             </div>
                         )}
