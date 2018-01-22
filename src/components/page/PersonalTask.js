@@ -48,10 +48,23 @@ module.exports = function(opts) {
         }
 
         componentDidMount() {
-            let page = this.props.location.state ? this.props.location.state.page : 1
-            let data = {
-                page: page
-            }
+            console.log('--------')
+            console.log(this.props.location)
+            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+            console.log(data)
+            // let obj = Object.assign({}, this.props.queryFieldValues)
+            // Object.keys(this.props.queryFieldValues).forEach(field => {
+            //     if (data.hasOwnProperty(field)) {
+            //         obj[field] = {
+            //             value: transformValue(field, data[field])
+            //         }
+            //     }
+            // })
+
+            // let page = this.props.location.state ? this.props.location.state.page : 1
+            // let data = {
+            //     page: page
+            // }
             if (opts.hasProject) {
                 data['project_id'] = 'notnull'
             } else {
@@ -81,9 +94,7 @@ module.exports = function(opts) {
             this.setState({
                 status: val
             })
-            let data = {
-                page: 1,
-            }
+            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             if (val !== 'all') {
                 data['status'] = val
             }
@@ -151,10 +162,11 @@ module.exports = function(opts) {
             this.setState({
                 status: 'all'
             })
-            let page = this.props.location.state ? this.props.location.state.page : 1
-            let data = {
-                page: page,
+            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+            // let page = this.props.location.state ? this.props.location.state.page : 1
+            data = {
                 project_id: id,
+                ...data
             }
             this.props.getData(
                 data,
