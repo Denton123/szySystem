@@ -270,9 +270,9 @@ module.exports = function(opts) {
             if (!opts.total) {
                 params['project_id'] = this.props.project.id
             }
-            // if (val !== 'all') {
-            params['status'] = val
-            // }
+            if (val !== 'all') {
+                params['status'] = val
+            }
             this.props.getData(params)
         }
 

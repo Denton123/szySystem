@@ -150,9 +150,9 @@ module.exports = function(opts) {
             if (!id) {
                 id = 'notnull'
             }
-            this.setState({
-                status: 'all'
-            })
+            // this.setState({
+            //     status: 'all'
+            // })
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             // let page = this.props.location.state ? this.props.location.state.page : 1
             data = {
