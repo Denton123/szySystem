@@ -20,7 +20,8 @@ import {
     Tabs,
     Popover,
     List,
-    Button
+    Button,
+    Badge
 } from 'antd'
 import {
     Link,
@@ -112,6 +113,7 @@ class BasicLayout extends React.Component {
             'Problem': []
         },
         notificationLoading: true,
+        notificationNumber: 0
     }
     componentDidMount() {
         let currentPath = this.props.location.pathname.split('home')[1]
@@ -130,17 +132,19 @@ class BasicLayout extends React.Component {
         // websocket 通知
         const socket = io('http://localhost:3000')
         socket.on('notification', (notification) => {
-            console.log(notification)
             if (isArray(notification)) { // 多条通知
                 this.setState(prevState => {
                     let obj = prevState.notificationData
+                    let num = prevState.notificationNumber
                     notification.forEach(n => {
                         if (n.Users.find(user => user.id === this.props.user.id)) {
                             obj[n.model].unshift(n)
+                            num++
                         }
                     })
                     return {
-                        notificationData: obj
+                        notificationData: obj,
+                        notificationNumber: num
                     }
                 })
             } else { // 单条通知
@@ -148,8 +152,10 @@ class BasicLayout extends React.Component {
                     this.setState(prevState => {
                         let obj = prevState.notificationData
                         obj[notification.model].unshift(notification)
+                        let num = prevState.notificationNumber
                         return {
-                            notificationData: obj
+                            notificationData: obj,
+                            notificationNumber: num++
                         }
                     })
                 }
@@ -180,20 +186,24 @@ class BasicLayout extends React.Component {
                     'Task': [],
                     'Problem': []
                 }
+                let num = 0
                 res.data.forEach(d => {
                     if (d.isPublic === '1') { // 公共通知
                         if (!publicNotification.includes(`${d.id}`)) { // 没有本地已读才显示
                             obj[d.model].push(d)
+                            num++
                         }
                     } else {
                         obj[d.model].push(d)
+                        num++
                     }
                 })
                 return {
                     notificationData: {
                         ...obj,
                     },
-                    notificationLoading: false
+                    notificationLoading: false,
+                    notificationNumber: num,
                 }
             })
         })
@@ -220,8 +230,13 @@ class BasicLayout extends React.Component {
                             1
                         )
                     })
+                    let number = 0
+                    for (let i in obj) {
+                        number += obj[i].length
+                    }
                     return {
-                        notificationData: obj
+                        notificationData: obj,
+                        notificationNumber: number,
                     }
                 })
             } else {
@@ -287,11 +302,13 @@ class BasicLayout extends React.Component {
                         1
                     )
                 })
+
                 arr.forEach(a => {
                     obj[a.model].push(a)
                 })
                 return {
-                    notificationData: obj
+                    notificationData: obj,
+                    notificationNumber: arr.length
                 }
             })
         }
@@ -506,7 +523,9 @@ class BasicLayout extends React.Component {
                     <div className="pull-right layout-header-bell mr-10">
                         <div id="tp-weather-widget" style={{display: 'inline-block'}} className="mr-10" />
                         <Popover placement="bottomRight" content={notification} trigger="click">
-                            <Icon type={'bell'} style={{fontSize: 16}} />
+                            <Badge count={this.state.notificationNumber}>
+                                <Icon type={'bell'} style={{fontSize: 16}} />
+                            </Badge>
                         </Popover>
                     </div>
                 </Header>
