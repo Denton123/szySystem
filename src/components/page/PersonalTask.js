@@ -89,9 +89,6 @@ module.exports = function(opts) {
                 ...this.props.location.state,
                 page: 1
             }
-            if (val !== 'all') {
-                data['status'] = val
-            }
             if (opts.hasProject) { // 有项目的页面
                 if (this.state.defaultProject) {
                     data['project_id'] = this.state.defaultProject
@@ -100,6 +97,10 @@ module.exports = function(opts) {
                 }
             } else {
                 data['project_id'] = 'null'
+            }
+            data['status'] = val
+            if (data['status'] === 'all') {
+                delete data['status']
             }
             this.props.getData(
                 data,

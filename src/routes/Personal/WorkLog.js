@@ -26,6 +26,7 @@ class WorkLog extends Component {
     componentDidMount() {
         this.getLogData()
         console.log(this.props.location)
+        this.props.BLhandleLinkClick('/personal', '/personal/work-log')
         // this.props.history.replace(this.props.location.pathname, {
         //     date: key
         // })

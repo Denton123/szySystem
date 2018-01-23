@@ -30,6 +30,8 @@ import {
     Redirect
 } from 'react-router-dom'
 
+import io from 'socket.io-client'
+
 import {ajax} from 'UTILS/ajax'
 import {isArray} from 'UTILS/utils'
 
@@ -78,7 +80,7 @@ function resetRoute(routes, permissionRoute) {
             if (permissionRoute.find(k => k.path === r.path)) {
                 arr.push(obj)
             }
-            if (r.path === '/404' || r.path === '/no-permission') { // 404默认加入
+            if (r.path === '/404' || r.path === '/no-permission') { // 404和无权限页面默认加入
                 arr.push(obj)
             }
         }
@@ -106,14 +108,15 @@ class BasicLayout extends React.Component {
         selectedKeys: [this.rootSubmenuKeys[0]],
         openKeys: [this.rootSubmenuKeys[0]],
         // 通知需要的状态
-        notificationActiveTab: 'Project',
-        notificationData: {
+        notificationActiveTab: 'Project', // 通知气泡卡片切换
+        allNotificationData: [], // 全部未读的通知
+        notificationData: { // 通知分类
             'Project': [],
             'Task': [],
             'Problem': []
         },
-        notificationLoading: true,
-        notificationNumber: 0
+        notificationLoading: true, // 通知加载状态
+        notificationNumber: 0 // 通知数量
     }
     componentDidMount() {
         let currentPath = this.props.location.pathname.split('home')[1]
@@ -127,44 +130,58 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
+        if (this.props.user) { // 防止未登录用户访问系统时，天气自动加载
+            tpwidget('show') // 天气
+        }
 
-        tpwidget('show') // 天气
-        // websocket 通知
-        const socket = io('http://localhost:6001')
-        socket.on('notification', (notification) => {
-            if (isArray(notification)) { // 多条通知
-                this.setState(prevState => {
-                    let obj = prevState.notificationData
-                    let num = prevState.notificationNumber
-                    notification.forEach(n => {
-                        if (n.Users.find(user => user.id === this.props.user.id)) {
-                            obj[n.model].unshift(n)
-                            num++
-                        }
-                    })
-                    return {
-                        notificationData: obj,
-                        notificationNumber: num
-                    }
-                })
-            } else { // 单条通知
-                if (notification.isPublic === '1') { // 全部人都能看到
+        // 获取未读通知
+        this.getNotificationData()
+        // 启动socket.io
+        this.setIo()
+    }
+
+    /**
+     * [启动socket io]
+     * @Author   szh
+     * @DateTime 2018-01-24
+     */
+    setIo = () => {
+        ajax('get', '/hostname')
+        .then(res => {
+            // websocket 通知
+            const socket = io(`${res.data.protocol}://${res.data.hostname}:${res.data.port}`)
+            socket.on('notification', (notification) => {
+                if (isArray(notification)) { // 多条通知
                     this.setState(prevState => {
                         let obj = prevState.notificationData
-                        obj[notification.model].unshift(notification)
                         let num = prevState.notificationNumber
-                        num++
+                        notification.forEach(n => {
+                            if (n.Users.find(user => user.id === this.props.user.id)) {
+                                obj[n.model].unshift(n)
+                                num++
+                            }
+                        })
                         return {
                             notificationData: obj,
                             notificationNumber: num
                         }
                     })
+                } else { // 单条通知
+                    if (notification.isPublic === '1') { // 全部人都能看到
+                        this.setState(prevState => {
+                            let obj = prevState.notificationData
+                            obj[notification.model].unshift(notification)
+                            let num = prevState.notificationNumber
+                            num++
+                            return {
+                                notificationData: obj,
+                                notificationNumber: num
+                            }
+                        })
+                    }
                 }
-            }
+            })
         })
-
-        // 获取未读通知
-        this.getNotificationData()
     }
 
     /**
@@ -177,7 +194,7 @@ class BasicLayout extends React.Component {
             notificationLoading: true
         })
         ajax('get', '/notification', {
-            uid: this.props.user.id
+            uid: this.props.user && this.props.user.id ? this.props.user.id : 0
         })
         .then(res => {
             const publicNotification = localStorage && localStorage.getItem('publicNotification') ? localStorage.getItem('publicNotification').split(',') : []
@@ -188,18 +205,22 @@ class BasicLayout extends React.Component {
                     'Problem': []
                 }
                 let num = 0
+                let allData = []
                 res.data.forEach(d => {
                     if (d.isPublic === '1') { // 公共通知
                         if (!publicNotification.includes(`${d.id}`)) { // 没有本地已读才显示
-                            obj[d.model].push(d)
+                            obj[d.model].unshift(d)
                             num++
+                            allData.unshift(d)
                         }
                     } else {
-                        obj[d.model].push(d)
+                        obj[d.model].unshift(d)
                         num++
+                        allData.unshift(d)
                     }
                 })
                 return {
+                    allNotificationData: allData,
                     notificationData: {
                         ...obj,
                     },
@@ -246,7 +267,7 @@ class BasicLayout extends React.Component {
         })
     }
 
-    // 单个已读
+    // 单个通知已读
     singleNotificationRead = (ntfc) => {
         if (ntfc.isPublic === '0') {
             this.setNotificationRead([parseInt(ntfc.id)])
@@ -255,7 +276,7 @@ class BasicLayout extends React.Component {
         }
     }
 
-    // 多个已读
+    // 多个通知已读
     multipleNotificationRead = (type) => {
         let nids = [] // 非公开的通知
         let pnids = [] // 公开的通知
@@ -274,6 +295,7 @@ class BasicLayout extends React.Component {
         }
     }
 
+    // 使用本地存储记录公共已读通知
     localStorageNotificationRead = (pnids) => {
         if (localStorage) {
             if (!localStorage.getItem('publicNotification')) {
@@ -303,9 +325,8 @@ class BasicLayout extends React.Component {
                         1
                     )
                 })
-
                 arr.forEach(a => {
-                    obj[a.model].push(a)
+                    obj[a.model].unshift(a)
                 })
                 return {
                     notificationData: obj,
@@ -374,7 +395,7 @@ class BasicLayout extends React.Component {
         return (
             <div>
                 <div className="notication-tit mb-10" title={title}>{title}</div>
-                <div className="txt-l">{moment(ntfc.createdAt).startOf('second').fromNow()}</div>
+                <div className="txt-l">{moment(ntfc.date).startOf().fromNow()}</div>
             </div>
         )
     }
@@ -393,14 +414,14 @@ class BasicLayout extends React.Component {
     }
 
     BLhandleLinkClick = (openKeys, selectedKeys) => {
-        return () => {
-            this.setState((prevState, props) => {
-                return {
-                    openKeys: [openKeys],
-                    selectedKeys: [selectedKeys]
-                }
-            })
-        }
+        // console.log(`openKeys2: ${openKeys}`)
+        // console.log(`selectedKeys2: ${selectedKeys}`)
+        this.setState((prevState, props) => {
+            return {
+                openKeys: [openKeys],
+                selectedKeys: [selectedKeys]
+            }
+        })
     }
 
     render() {
@@ -417,10 +438,10 @@ class BasicLayout extends React.Component {
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
-                    <Link to="/home/personal/info" onClick={this.BLhandleLinkClick('/personal', '/personal/info')}><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
+                    <Link to="/home/personal/info" onClick={() => this.BLhandleLinkClick('/personal', '/personal/info')}><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
                 </Menu.Item>
                 <Menu.Item key="1">
-                    <Link to="/home/system/setting" onClick={this.BLhandleLinkClick('/system', '/system/setting')}><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
+                    <Link to="/home/system/setting" onClick={() => this.BLhandleLinkClick('/system', '/system/setting')}><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key="3">
@@ -544,10 +565,14 @@ class BasicLayout extends React.Component {
                                                 key={sn}
                                                 exact
                                                 path={`${match.path}${rc.path}`}
-                                                BLhandleLinkClick={this.BLhandleLinkClick}
                                                 render={props => (
                                                     <ModelContent breadcrumbs={rc.name.split(',')}>
-                                                        <rc.component route={rc} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
+                                                        <rc.component
+                                                            BLhandleLinkClick={this.BLhandleLinkClick}
+                                                            route={rc} {...props}
+                                                            user={this.props.user}
+                                                            globalUpdateUser={this.props.globalUpdateUser}
+                                                        />
                                                     </ModelContent>
                                                 )} />
                                         ))
@@ -560,10 +585,16 @@ class BasicLayout extends React.Component {
                                     key={idx}
                                     exact
                                     path={`${match.path}${route.path}`}
-                                    BLhandleLinkClick={this.BLhandleLinkClick}
                                     render={props => (
                                         <ModelContent breadcrumbs={route.name.split(',')}>
-                                            <route.component route={route} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
+                                            {/* notificationData是给default页通知数据 */}
+                                            <route.component
+                                                notificationData={this.state.allNotificationData}
+                                                BLhandleLinkClick={this.BLhandleLinkClick}
+                                                route={route} {...props}
+                                                user={this.props.user}
+                                                globalUpdateUser={this.props.globalUpdateUser}
+                                            />
                                         </ModelContent>
                                     )} />
                             )
