@@ -41,7 +41,7 @@ module.exports = function(opts) {
         state = {
             // 默认显示全部任务
             status: 'all',
-            // 默认的任务
+            // 默认的项目
             defaultProject: undefined,
             // 全部项目数据
             projectData: []
@@ -87,11 +87,12 @@ module.exports = function(opts) {
             if (val !== 'all') {
                 data['status'] = val
             }
-            if (opts.hasProject) {
-                data['project_id'] = 'notnull'
-                this.setState({
-                    defaultProject: undefined
-                })
+            if (opts.hasProject) { // 有项目的页面
+                if (this.state.defaultProject) {
+                    data['project_id'] = this.state.defaultProject
+                } else {
+                    data['project_id'] = 'notnull'
+                }
             } else {
                 data['project_id'] = 'null'
             }
@@ -148,13 +149,11 @@ module.exports = function(opts) {
             if (!id) {
                 id = 'notnull'
             }
-            this.setState({
-                status: 'all'
-            })
             let page = this.props.location.state ? this.props.location.state.page : 1
             let data = {
                 page: page,
                 project_id: id,
+                status: this.state.status
             }
             this.props.getData(
                 data,
