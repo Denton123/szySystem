@@ -56,7 +56,7 @@ module.exports = function(opts) {
     class Task extends React.Component {
         state = {
             // 默认显示全部任务
-            status: 'all',
+            status: this.props.location.state && this.props.location.state.status ? this.props.location.state.status : 'all',
             // 全部用户信息
             allUserData: [],
             // 新增或者编辑任务时，可选的执行者
@@ -74,13 +74,15 @@ module.exports = function(opts) {
         }
 
         componentDidMount() {
-            let page = this.props.location.state ? this.props.location.state.page : 1
+            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+            // console.log(p)
+            // let page = this.props.location.state ? this.props.location.state.page : 1
             if (opts.total) { // 任务管理页面
                 if (opts.hasProject) {
-                    this.props.getData({page: page, project_id: 'notnull', __key: 'project'})
+                    this.props.getData({...data, project_id: 'notnull', __key: 'project'})
                     this.getAllProject()
                 } else {
-                    this.props.getData({page: page, project_id: 'null', __key: 'normal'})
+                    this.props.getData({...data, project_id: 'null', __key: 'normal'})
                 }
             }
             this.getAllUser()
@@ -253,9 +255,10 @@ module.exports = function(opts) {
             this.setState({
                 status: val
             })
-            let params = {
-                page: 1,
-            }
+            let params = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+            // let params = {
+            //     page: 1,
+            // }
             if (opts.hasProject) {
                 params['project_id'] = 'notnull'
                 this.setState({
@@ -267,9 +270,9 @@ module.exports = function(opts) {
             if (!opts.total) {
                 params['project_id'] = this.props.project.id
             }
-            if (val !== 'all') {
-                params['status'] = val
-            }
+            // if (val !== 'all') {
+            params['status'] = val
+            // }
             this.props.getData(params)
         }
 

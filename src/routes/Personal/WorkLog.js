@@ -106,6 +106,9 @@ class WorkLog extends Component {
     }
 
     onSelect = (moment) => {
+        if (this.state.mode !== 'month') {
+            return false
+        }
         const currentDate = momentToValue(moment)
         console.log(moment)
         const currentLog = this.state.note.find(n => n.date === currentDate) // 获取当前用户当天的日志
