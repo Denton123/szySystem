@@ -69,6 +69,12 @@ class Default extends React.Component {
         }
     }
 
+    linkClick = (openKeys, selectedKeys) => {
+        // return () => {
+        //     this.props.BLhandleLinkClick(openKeys, selectedKeys)
+        // }
+    }
+
     render() {
         const route = this.props.route
         const history = this.props.history
@@ -87,7 +93,7 @@ class Default extends React.Component {
                             hoverable
                             title="工作日志"
                             bordered
-                            extra={<Link to="/home/personal/work-log">更多</Link>}>
+                            extra={<Link to="/home/personal/work-log" onClick={this.linkClick('/personal', '/personal/work-log')}>更多</Link>}>
                             <List
                                 className="animated fadeInRight"
                                 itemLayout="horizontal"
