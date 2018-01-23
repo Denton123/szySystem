@@ -40,13 +40,8 @@ module.exports = function(opts) {
     class MyMission extends Component {
         state = {
             // 默认显示全部任务
-<<<<<<< HEAD
-            status: 'all',
-            // 默认的项目
-=======
             status: this.props.location.state && this.props.location.state.status ? this.props.location.state.status : 'all',
             // 默认的任务
->>>>>>> 6a698ed53a220039748e7e71d979653298edab22
             defaultProject: undefined,
             // 全部项目数据
             projectData: []
@@ -90,10 +85,7 @@ module.exports = function(opts) {
             this.setState({
                 status: val
             })
-<<<<<<< HEAD
-            let data = {
-                page: 1,
-            }
+            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             if (val !== 'all') {
                 data['status'] = val
             }
@@ -103,17 +95,6 @@ module.exports = function(opts) {
                 } else {
                     data['project_id'] = 'notnull'
                 }
-=======
-            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-            // if (val !== 'all') {
-            data['status'] = val
-            // }
-            if (opts.hasProject) {
-                data['project_id'] = 'notnull'
-                this.setState({
-                    defaultProject: undefined
-                })
->>>>>>> 6a698ed53a220039748e7e71d979653298edab22
             } else {
                 data['project_id'] = 'null'
             }
