@@ -31,6 +31,7 @@ class Default extends React.Component {
         }
     }
     componentDidMount() {
+        this.props.BLhandleLinkClick('/default', '/default')
         this.getData()
         this.timer = setInterval(() => this.getTime(), 1000)
     }
@@ -70,9 +71,11 @@ class Default extends React.Component {
     }
 
     linkClick = (openKeys, selectedKeys) => {
-        // return () => {
-        //     this.props.BLhandleLinkClick(openKeys, selectedKeys)
-        // }
+        return () => {
+            console.log(`openKeys: ${openKeys}`)
+            console.log(`selectedKeys: ${selectedKeys}`)
+            this.props.BLhandleLinkClick(openKeys, selectedKeys)
+        }
     }
 
     render() {
@@ -93,7 +96,7 @@ class Default extends React.Component {
                             hoverable
                             title="工作日志"
                             bordered
-                            extra={<Link to="/home/personal/work-log" onClick={this.linkClick('/personal', '/personal/work-log')}>更多</Link>}>
+                            extra={<Link to="/home/personal/work-log">更多</Link>}>
                             <List
                                 className="animated fadeInRight"
                                 itemLayout="horizontal"
@@ -126,7 +129,7 @@ class Default extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         key={item.id}
-                                        actions={[<Link className="defaultTime" to={`/home/personal/summary/${item.id}`}>{moment(item.date).format('LL')}</Link>]}>
+                                        actions={[<Link className="defaultTime" to={`/home/personal/summary/${item.id}`} onClick={this.linkClick('/personal', `/personal/summary`)}>{moment(item.date).format('LL')}</Link>]}>
                                         <Tooltip title={<LogContent content={item.content} />} placement="topLeft">
                                             <List.Item.Meta
                                                 description={<LogContent content={item.title} />} />

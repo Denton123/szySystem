@@ -153,10 +153,9 @@ class BasicLayout extends React.Component {
                         let obj = prevState.notificationData
                         obj[notification.model].unshift(notification)
                         let num = prevState.notificationNumber
-                        num++
                         return {
                             notificationData: obj,
-                            notificationNumber: num
+                            notificationNumber: num++
                         }
                     })
                 }
@@ -393,14 +392,14 @@ class BasicLayout extends React.Component {
     }
 
     BLhandleLinkClick = (openKeys, selectedKeys) => {
-        return () => {
-            this.setState((prevState, props) => {
-                return {
-                    openKeys: [openKeys],
-                    selectedKeys: [selectedKeys]
-                }
-            })
-        }
+        console.log(`openKeys2: ${openKeys}`)
+        console.log(`selectedKeys2: ${selectedKeys}`)
+        this.setState((prevState, props) => {
+            return {
+                openKeys: [openKeys],
+                selectedKeys: [selectedKeys]
+            }
+        })
     }
 
     render() {
@@ -417,10 +416,10 @@ class BasicLayout extends React.Component {
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
-                    <Link to="/home/personal/info" onClick={this.BLhandleLinkClick('/personal', '/personal/info')}><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
+                    <Link to="/home/personal/info" onClick={() => this.BLhandleLinkClick('/personal', '/personal/info')}><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
                 </Menu.Item>
                 <Menu.Item key="1">
-                    <Link to="/home/system/setting" onClick={this.BLhandleLinkClick('/system', '/system/setting')}><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
+                    <Link to="/home/system/setting" onClick={() => this.BLhandleLinkClick('/system', '/system/setting')}><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key="3">
@@ -544,10 +543,14 @@ class BasicLayout extends React.Component {
                                                 key={sn}
                                                 exact
                                                 path={`${match.path}${rc.path}`}
-                                                BLhandleLinkClick={this.BLhandleLinkClick}
                                                 render={props => (
                                                     <ModelContent breadcrumbs={rc.name.split(',')}>
-                                                        <rc.component route={rc} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
+                                                        <rc.component
+                                                            BLhandleLinkClick={this.BLhandleLinkClick}
+                                                            route={rc} {...props}
+                                                            user={this.props.user}
+                                                            globalUpdateUser={this.props.globalUpdateUser}
+                                                        />
                                                     </ModelContent>
                                                 )} />
                                         ))
@@ -560,10 +563,14 @@ class BasicLayout extends React.Component {
                                     key={idx}
                                     exact
                                     path={`${match.path}${route.path}`}
-                                    BLhandleLinkClick={this.BLhandleLinkClick}
                                     render={props => (
                                         <ModelContent breadcrumbs={route.name.split(',')}>
-                                            <route.component route={route} {...props} user={this.props.user} globalUpdateUser={this.props.globalUpdateUser} />
+                                            <route.component
+                                                BLhandleLinkClick={this.BLhandleLinkClick}
+                                                route={route} {...props}
+                                                user={this.props.user}
+                                                globalUpdateUser={this.props.globalUpdateUser}
+                                            />
                                         </ModelContent>
                                     )} />
                             )
