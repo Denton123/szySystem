@@ -373,7 +373,7 @@ class BasicLayout extends React.Component {
         return (
             <div>
                 <div className="notication-tit mb-10" title={title}>{title}</div>
-                <div className="txt-l">{moment(ntfc.date).startOf('second').fromNow()}</div>
+                <div className="txt-l">{moment(ntfc.createdAt).startOf('second').fromNow()}</div>
             </div>
         )
     }
