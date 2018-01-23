@@ -21,7 +21,6 @@ const ntfc = {
      */
     ntfcTitle: function(notification) {
         let data = JSON.parse(notification.data)
-        console.log(data)
         let sender = notification.sender
         if (!sender) {
             sender = {
@@ -38,7 +37,6 @@ const ntfc = {
             if (notification.model === 'Project') {
                 msg += `${model[notification.model]}${data.name}`
             } else if (notification.model === 'Problem') {
-                console.log(data)
                 if (data.title) { // 问题
                     msg += `${model[notification.model]}${data.title}`
                 } else { // 答案
