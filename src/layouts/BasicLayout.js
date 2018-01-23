@@ -153,9 +153,10 @@ class BasicLayout extends React.Component {
                         let obj = prevState.notificationData
                         obj[notification.model].unshift(notification)
                         let num = prevState.notificationNumber
+                        num++
                         return {
                             notificationData: obj,
-                            notificationNumber: num++
+                            notificationNumber: num
                         }
                     })
                 }
