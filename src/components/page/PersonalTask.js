@@ -85,7 +85,9 @@ module.exports = function(opts) {
             this.setState({
                 status: val
             })
-            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+            let data = {
+                page: 1
+            }
             if (val !== 'all') {
                 data['status'] = val
             }
@@ -151,11 +153,12 @@ module.exports = function(opts) {
             if (!id) {
                 id = 'notnull'
             }
-            let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-            data = {
-                ...data,
+            let data = {
+                page: 1,
                 project_id: id,
-                status: this.state.status,
+            }
+            if (this.state.status !== 'all') { // 如果任务状态为全部的时候，不传值到后台
+                data['status'] = this.state.status
             }
             this.props.getData(
                 data,

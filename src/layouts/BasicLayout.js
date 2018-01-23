@@ -135,13 +135,16 @@ class BasicLayout extends React.Component {
             if (isArray(notification)) { // 多条通知
                 this.setState(prevState => {
                     let obj = prevState.notificationData
+                    let num = prevState.notificationNumber
                     notification.forEach(n => {
                         if (n.Users.find(user => user.id === this.props.user.id)) {
                             obj[n.model].unshift(n)
+                            num++
                         }
                     })
                     return {
-                        notificationData: obj
+                        notificationData: obj,
+                        notificationNumber: num
                     }
                 })
             } else { // 单条通知
@@ -149,8 +152,10 @@ class BasicLayout extends React.Component {
                     this.setState(prevState => {
                         let obj = prevState.notificationData
                         obj[notification.model].unshift(notification)
+                        let num = prevState.notificationNumber
                         return {
-                            notificationData: obj
+                            notificationData: obj,
+                            notificationNumber: num++
                         }
                     })
                 }
