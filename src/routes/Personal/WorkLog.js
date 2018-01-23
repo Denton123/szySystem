@@ -58,6 +58,7 @@ class WorkLog extends Component {
                 content: content,
                 date: this.state.worklogDate
             }
+            console.log(this.state.worklogId)
             if (this.state.worklogId) { // 编辑
                 update(`/worklog/${this.state.worklogId}`, data)
                 .then(res => {
