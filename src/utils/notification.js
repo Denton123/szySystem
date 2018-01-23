@@ -21,7 +21,13 @@ const ntfc = {
      */
     ntfcTitle: function(notification) {
         let data = JSON.parse(notification.data)
+        console.log(data)
         let sender = notification.sender
+        if (!sender) {
+            sender = {
+                realname: ''
+            }
+        }
         let msg = ''
         if (
             notification.type === 'add' ||
@@ -60,69 +66,19 @@ const ntfc = {
      */
     ntfcUrl: function(notification) {
         let data = JSON.parse(notification.data)
-        let sender = notification.sender
-        // const modelFn = {
-        //     Project: (data) => {
-        //         if (ntfc.type === 'add') {
-        //             return <div>{ntfc.id}</div>
-        //         } else if (ntfc.type === 'edit') {
-        //             return <div>{ntfc.id}</div>
-        //         } else if (ntfc.type === 'delete') {
-        //             return <div>{ntfc.id}</div>
-        //         }
-        //     },
-        //     Problem: (data) => {
-        //         if (ntfc.type === 'add') {
-        //             return <div>{ntfc.id}</div>
-        //         } else if (ntfc.type === 'edit') {
-        //             return <div>{ntfc.id}</div>
-        //         } else if (ntfc.type === 'delete') {
-        //             return <div>{ntfc.id}</div>
-        //         }
-        //     },
-        //     Task: (data) => {
-        //         let users = ''
-        //         // data.Users.forEach(u => {
-        //         //     users += `${u.realname}、`
-        //         // })
-        //         // users = users.substring(0, users.length - 1)
-        //         if (ntfc.type === 'add') {
-        //             return <div>{`${ntfc.send_uid}发布了新任务,执行者有你`}</div>
-        //         } else if (ntfc.type === 'edit') {
-        //             return <div>{`${ntfc.send_uid}更新了一个任务,执行者有你`}</div>
-        //         } else if (ntfc.type === 'delete') {
-        //             return <div>{`${ntfc.send_uid}删除了一个任务,执行者有你`}</div>
-        //         }
-        //     }
-        // }
-        // return modelFn[ntfc.model](data)
-        let msg = ''
-        if (
-            notification.type === 'add' ||
-            notification.type === 'edit' ||
-            notification.type === 'delete'
-        ) {
-            msg = `${sender.realname}${types[notification.type]}`
-            if (notification.model === 'Project') {
-                msg += `${model[notification.model]}${data.name}`
-            } else if (notification.model === 'Problem') {
-                console.log(data)
-                if (data.title) { // 问题
-                    msg += `${model[notification.model]}${data.title}`
-                } else { // 答案
-                    msg += `回答了您的${data.title}`
-                }
-            } else if (notification.model === 'Task') {
-                msg += `${model[notification.model]}${data.content}`
-            }
-        } else if (notification.type === 'used') {
-            msg = `${sender.realname}${types[notification.type]}您的答案`
-        } else if (notification.type === 'status') {
-            msg = `${sender.realname}`
-        } else if (notification.type === 'over') {
-            msg = `${types[notification.type]}${data.content}已超时`
+        let url = ''
+        switch (notification.model) {
+            case 'Project':
+                url = `/project/info/${data.id}`
+                break
+            case 'Problem':
+                url = data.Problem ? `/project/problem/${data.Problem.id}` : `/project/problem/${data.id}`
+                break
+            case 'Task':
+                url = `/personal/my-mission`
+                break
         }
-        return '#'
+        return url
     }
 }
 
