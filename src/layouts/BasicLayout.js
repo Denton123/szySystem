@@ -391,6 +391,17 @@ class BasicLayout extends React.Component {
         this.props.history.push(`${this.props.match.path}${url}`)
     }
 
+    linkClick = (e) => {
+        console.log('3333')
+        console.log(e.target.dataset['key1'])
+        // this.setState((prevState, props) => {
+        //     return {
+        //         openKeys: prevState.openKeys
+        //         selectedKeys
+        //     }
+        // })
+    }
+
     render() {
         const {
             routes,
@@ -404,8 +415,8 @@ class BasicLayout extends React.Component {
         const newRoute = resetRoute(routes, permissionRoute)
         const AvatarMenu = (
             <Menu>
-                <Menu.Item key="0">
-                    <Link to="/home/personal/info"><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
+                <Menu.Item key="0" >
+                    <Link to="/home/personal/info" key1="/personal" key2="/personal/info" onClick={this.linkClick}><Icon type="idcard" style={{marginRight: '8px'}} />个人信息</Link>
                 </Menu.Item>
                 <Menu.Item key="1">
                     <Link to="/home/system/setting"><Icon type="setting" style={{marginRight: '8px'}} />设置</Link>
