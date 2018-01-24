@@ -138,6 +138,11 @@ class BasicLayout extends React.Component {
         this.setIo()
     }
 
+    /**
+     * [启动socket io]
+     * @Author   szh
+     * @DateTime 2018-01-24
+     */
     setIo = () => {
         ajax('get', '/hostname')
         .then(res => {
@@ -187,7 +192,7 @@ class BasicLayout extends React.Component {
             notificationLoading: true
         })
         ajax('get', '/notification', {
-            uid: this.props.user.id
+            uid: this.props.user && this.props.user.id ? this.props.user.id : 0
         })
         .then(res => {
             const publicNotification = localStorage && localStorage.getItem('publicNotification') ? localStorage.getItem('publicNotification').split(',') : []

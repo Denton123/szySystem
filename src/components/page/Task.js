@@ -259,12 +259,16 @@ module.exports = function(opts) {
             this.setState({
                 status: val
             })
-            let params = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+            let params = {
+                ...this.props.location.state,
+                page: 1
+            }
             if (opts.hasProject) {
-                params['project_id'] = 'notnull'
-                this.setState({
-                    defaultProject: undefined
-                })
+                if (this.state.defaultProject) {
+                    params['project_id'] = this.state.defaultProject
+                } else {
+                    params['project_id'] = 'notnull'
+                }
             } else {
                 params['project_id'] = 'null'
             }
@@ -327,11 +331,12 @@ module.exports = function(opts) {
             if (!id) {
                 id = 'notnull'
             }
-            this.setState({
-                status: 'all'
-            })
-            let page = this.props.location.state ? this.props.location.state.page : 1
-            this.props.getData({page: page, project_id: id, __key: 'project'})
+            let data = {
+                ...this.props.location.state,
+                page: 1,
+                project_id: id,
+            }
+            this.props.getData(data)
         }
 
         render() {
