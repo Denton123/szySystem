@@ -22,7 +22,7 @@ import {
 import ReactQuill from 'react-quill'
 import moment from 'moment'
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject, formatDate, siderKeysUrl} from 'UTILS/utils'
 import {ajax, show, store, index, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -65,6 +65,8 @@ class ProblemDetail extends Component {
         quillShow: true, // 答案编辑器显示,
     }
     componentDidMount() {
+        let keysObj = siderKeysUrl(this.props.location.pathname)
+        this.props.BLhandleLinkClick(keysObj.openKeys, keysObj.selectedKeys)
         this.getProblemData()
     }
     // 返回上一页

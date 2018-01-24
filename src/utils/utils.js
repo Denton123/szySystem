@@ -166,7 +166,7 @@ const utils = {
         let openKeys = ''
         let selectedKeys = ''
         for (var i = 0; i < arr.length; i++) {
-            if (i === 0 || i === 1) {
+            if (i === 0 || i === 1 || i >= 4) {
                 continue
             }
             if (i === 2) {

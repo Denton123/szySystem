@@ -144,7 +144,7 @@ class Default extends React.Component {
                             hoverable
                             title="个人总结"
                             bordered
-                            extra={<Link to="/home/personal/summary">更多</Link>}>
+                            extra={<Link to="/home/personal/summary" onClick={this.linkClick('/personal', `/personal/summary`)}>更多</Link>}>
                             <List
                                 className="animated fadeInRight"
                                 itemLayout="horizontal"

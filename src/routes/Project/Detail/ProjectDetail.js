@@ -14,7 +14,7 @@ import {
 import './ProjectDetail.less'
 
 // 引入工具方法
-import {getBase64, resetObject} from 'UTILS/utils'
+import {getBase64, resetObject, siderKeysUrl} from 'UTILS/utils'
 import {ajax, show} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -39,6 +39,10 @@ class ProjectDetail extends Component {
         projectData: {},
     }
     componentDidMount() {
+        let keysObj = siderKeysUrl(this.props.location.pathname)
+        console.log('------------------')
+        console.log(keysObj)
+        this.props.BLhandleLinkClick(keysObj.openKeys, keysObj.selectedKeys)
         this.getData()
     }
     getData = () => {

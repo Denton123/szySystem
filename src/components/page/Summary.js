@@ -13,7 +13,7 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject, transformValue, siderKeysUrl} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject, transformValue} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -37,9 +37,6 @@ function escape(str) {
 module.exports = function(opts) {
     class Summary extends Component {
         componentDidMount() {
-            let keysObj = siderKeysUrl(this.props.location.pathname)
-            this.props.BLhandleLinkClick(keysObj.openKeys, keysObj.selectedKeys)
-
             // let page = this.props.location.state ? this.props.location.state.page : 1
             let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             console.log(p)
