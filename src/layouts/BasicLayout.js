@@ -30,6 +30,8 @@ import {
     Redirect
 } from 'react-router-dom'
 
+import io from 'socket.io-client'
+
 import {ajax} from 'UTILS/ajax'
 import {isArray} from 'UTILS/utils'
 
@@ -129,42 +131,50 @@ class BasicLayout extends React.Component {
         }
 
         tpwidget('show') // 天气
-        // websocket 通知
-        const socket = io('http://localhost:6001')
-        socket.on('notification', (notification) => {
-            if (isArray(notification)) { // 多条通知
-                this.setState(prevState => {
-                    let obj = prevState.notificationData
-                    let num = prevState.notificationNumber
-                    notification.forEach(n => {
-                        if (n.Users.find(user => user.id === this.props.user.id)) {
-                            obj[n.model].unshift(n)
-                            num++
-                        }
-                    })
-                    return {
-                        notificationData: obj,
-                        notificationNumber: num
-                    }
-                })
-            } else { // 单条通知
-                if (notification.isPublic === '1') { // 全部人都能看到
+
+        // 获取未读通知
+        this.getNotificationData()
+
+        this.setIo()
+    }
+
+    setIo = () => {
+        ajax('get', '/hostname')
+        .then(res => {
+            // websocket 通知
+            const socket = io(`${res.data.protocol}://${res.data.hostname}:${res.data.port}`)
+            socket.on('notification', (notification) => {
+                if (isArray(notification)) { // 多条通知
                     this.setState(prevState => {
                         let obj = prevState.notificationData
-                        obj[notification.model].unshift(notification)
                         let num = prevState.notificationNumber
-                        num++
+                        notification.forEach(n => {
+                            if (n.Users.find(user => user.id === this.props.user.id)) {
+                                obj[n.model].unshift(n)
+                                num++
+                            }
+                        })
                         return {
                             notificationData: obj,
                             notificationNumber: num
                         }
                     })
+                } else { // 单条通知
+                    if (notification.isPublic === '1') { // 全部人都能看到
+                        this.setState(prevState => {
+                            let obj = prevState.notificationData
+                            obj[notification.model].unshift(notification)
+                            let num = prevState.notificationNumber
+                            num++
+                            return {
+                                notificationData: obj,
+                                notificationNumber: num
+                            }
+                        })
+                    }
                 }
-            }
+            })
         })
-
-        // 获取未读通知
-        this.getNotificationData()
     }
 
     /**

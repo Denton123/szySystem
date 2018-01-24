@@ -57,8 +57,8 @@ module.exports = {
             '/uploadFiles/**': proxyTableOptions,
             // 上传图片
             '/uploadImgs/**': proxyTableOptions,
-            // websocket
-            '/socket.io/**': proxyTableOptions,
+            // 获取socket io的地址
+            '/hostname': proxyTableOptions,
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

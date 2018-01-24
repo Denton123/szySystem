@@ -20,7 +20,7 @@ import {
 } from 'react-router-dom'
 
 // 引入工具方法
-import {isObject, isArray, valueToMoment, momentToValue, resetObject, getTime} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, momentToValue, resetObject, getTime, formatDate} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -173,6 +173,10 @@ module.exports = function(opts) {
                 message.warning('任务已经开始、完成或者超时！')
                 return
             }
+            if (getTime(formatDate()) > getTime(this.props.project.plan_end_date)) {
+                message.warning('项目已经过期')
+                return
+            }
             this.setState({
                 taskDate: {},
                 taskDataDisabled: true
@@ -256,9 +260,6 @@ module.exports = function(opts) {
                 status: val
             })
             let params = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-            // let params = {
-            //     page: 1,
-            // }
             if (opts.hasProject) {
                 params['project_id'] = 'notnull'
                 this.setState({
@@ -270,8 +271,9 @@ module.exports = function(opts) {
             if (!opts.total) {
                 params['project_id'] = this.props.project.id
             }
-            if (val !== 'all') {
-                params['status'] = val
+            params['status'] = val
+            if (params['status'] === 'all') { // 选择全部任务的时候，把参数中的status删除
+                delete params['status']
             }
             this.props.getData(params)
         }
@@ -354,7 +356,12 @@ module.exports = function(opts) {
             ]
             if (!opts.hasProject) {
                 operationBtn.unshift(() => <Button type="danger" onClick={this.props.handleBatchDelete}>删除</Button>)
-                operationBtn.unshift(() => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>)
+                if (opts.total) {
+                    operationBtn.unshift(() => <Button type="primary" className="mr-10" onClick={this.add}>新增</Button>)
+                } else {
+                    let temp = getTime(formatDate()) > getTime(this.props.project.plan_end_date)
+                    operationBtn.unshift(() => <Button type="primary" className="mr-10" disabled={temp} onClick={this.add}>新增</Button>)
+                }
             } else {
                 operationBtn.unshift(() => (
                     <Select
