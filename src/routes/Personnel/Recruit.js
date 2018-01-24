@@ -13,12 +13,6 @@ import {
     Select,
     Upload
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'

@@ -15,12 +15,6 @@ import {
     message,
     Avatar
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 import '../Setting.less'
 

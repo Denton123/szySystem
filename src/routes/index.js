@@ -222,11 +222,11 @@ const routes = [
         name: 'login',
         component: getViews('Login')
     },
-    {
-        path: '/register',
-        name: 'register',
-        component: getViews('Register')
-    },
+    // {
+    //     path: '/register',
+    //     name: 'register',
+    //     component: getViews('Register')
+    // },
     {
         path: '/*',
         name: '404',

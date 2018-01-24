@@ -7,12 +7,6 @@ import {
     List,
     message
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 import {resetObject} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
@@ -336,8 +330,7 @@ const PR = withBasicDataModel(PermissionRole, {
         permission_ids: {
             value: null
         },
-    }
-    // ,
+    },
     // customGetData: true,
     // locationSearch: false,
 })

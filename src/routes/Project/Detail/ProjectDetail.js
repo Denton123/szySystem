@@ -4,13 +4,6 @@ import {
     Button,
     message
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
-
 import './ProjectDetail.less'
 
 // 引入工具方法

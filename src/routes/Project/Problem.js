@@ -2,9 +2,6 @@ import React, {Component} from 'react'
 import { Layout, Breadcrumb, Icon, Button, Input, Table, Divider } from 'antd'
 import {
     Link,
-    Route,
-    Switch,
-    Redirect
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 // 引入工具方法

@@ -1,12 +1,6 @@
 // 合同管理
 import React, {Component} from 'react'
 import { Icon, Input, Button, Table, Avatar, Select, Upload, Divider, message } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'

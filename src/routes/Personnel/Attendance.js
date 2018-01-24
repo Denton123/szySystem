@@ -1,15 +1,7 @@
 import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
 import moment from 'moment'
-import 'moment/locale/zh-cn'
 import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, Spin, Select, message } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
-import ReactQuill from 'react-quill'
 
 // 引入工具方法
 import { ajax } from 'UTILS/ajax'
@@ -17,7 +9,6 @@ import {isArray, getTime} from 'UTILS/utils'
 
 const { Content } = Layout
 const Option = Select.Option
-moment.locale('zh-cn')
 
 class Attendance extends Component {
     state = {

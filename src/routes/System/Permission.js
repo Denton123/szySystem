@@ -2,12 +2,6 @@ import React, {Component} from 'react'
 import {
     Tabs
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 import User from './Detail/PermissionUser'
 import Role from './Detail/PermissionRole'
 import {ajax} from 'UTILS/ajax'

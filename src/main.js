@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
-import {Router, Route, browserHistory, BrowserRouter, hashHistory} from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 
 // 初始化axios配置
 import 'config/axiosConfig.js'
@@ -11,7 +11,7 @@ import { LocaleProvider } from 'antd'
 
 // 根组件
 import App from './App'
-import 'animate.css/animate.css'
+import 'animate.css/animate.min.css'
 // import {Provider} from 'react-redux' //用到redux时使用
 import 'STYLE/css/main.less'
 

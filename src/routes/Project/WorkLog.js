@@ -1,17 +1,9 @@
 /**
  * 工作日志
  */
-import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
 import { Layout, Breadcrumb, Icon, Button, Calendar, Avatar, Popover } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 import moment from 'moment'
-import ReactQuill from 'react-quill'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 import 'moment/locale/zh-cn'
 

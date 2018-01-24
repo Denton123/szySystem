@@ -1,19 +1,11 @@
 import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
 import moment from 'moment'
-import 'moment/locale/zh-cn'
 import { Layout, Breadcrumb, Icon, Button, Calendar, Badge, Spin, message } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 import {isArray, getTime} from 'UTILS/utils'
 
 const { Content } = Layout
-moment.locale('zh-cn')
 
 class Attendance extends Component {
     state = {

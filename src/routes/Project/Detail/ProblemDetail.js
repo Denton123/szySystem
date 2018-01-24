@@ -13,12 +13,6 @@ import {
     Popconfirm,
     Icon
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import moment from 'moment'
 // 引入工具方法

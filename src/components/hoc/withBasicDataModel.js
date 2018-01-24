@@ -1,8 +1,6 @@
 import React from 'react'
 import {message} from 'antd'
 
-import io from 'socket.io-client'
-
 // 自定义弹窗
 import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 

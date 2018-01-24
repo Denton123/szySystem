@@ -14,9 +14,6 @@ import {
 } from 'antd'
 import {
     Link,
-    Route,
-    Switch,
-    Redirect
 } from 'react-router-dom'
 
 // 引入工具方法

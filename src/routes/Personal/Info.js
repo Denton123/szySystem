@@ -15,13 +15,6 @@ import {
     message,
     Avatar
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
-
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
 // 引入头像上传组件

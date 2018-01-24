@@ -24,6 +24,11 @@ module.exports = {
             ? config.build.assetsPublicPath
             : config.dev.assetsPublicPath
     },
+    externals: {
+      react: 'React',
+      'react-dom': 'ReactDOM',
+      axios: 'axios',
+    },
     resolve: {
         extensions: ['.js', '.jsx', '.json'],
         modules: [

@@ -13,9 +13,6 @@ import {
 } from 'antd'
 import {
     Link,
-    Route,
-    Switch,
-    Redirect
 } from 'react-router-dom'
 
 import './Info.less'

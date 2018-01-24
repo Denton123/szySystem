@@ -2,12 +2,6 @@ import React, {Component} from 'react'
 import {
     Tabs
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 import Set from './Detail/SettingSet'
 import Pwd from './Detail/SettingPwd'
 

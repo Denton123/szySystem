@@ -6,12 +6,6 @@ import {
     Select,
     message
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 import {ajax} from 'UTILS/ajax'
 
@@ -236,8 +230,7 @@ const PU = withBasicDataModel(PermissionUser, {
         role_ids: {
             value: []
         },
-    }
-    // ,
+    },
     // customGetData: true,
     // locationSearch: false
 })

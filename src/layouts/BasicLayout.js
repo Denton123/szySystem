@@ -4,7 +4,7 @@
  * @author 吴燕萍
  * @date 2017/11/22
  */
-import styles from './BasicLayout.less'
+import './BasicLayout.less'
 import 'STYLE/css/theme.less'
 import React from 'react'
 import moment from 'moment'
@@ -400,22 +400,24 @@ class BasicLayout extends React.Component {
         )
     }
 
-    /**
-     * [生成单条通知的地址]
-     * @Author   szh
-     * @DateTime 2018-01-23
-     * @param    {Object}   ntfc [通知数据]
-     * @return   {String}        [详细页路径]
-     */
-    notificationUrl = (ntfc) => {
-        let url = ntfcUrl(ntfc)
-        this.setNotificationRead([parseInt(ntfc.id)])
-        if (this.props.location.pathname === `${this.props.match.path}${url}`) {
-            message.info('已经在任务详情页')
-        } else {
-            this.props.history.push(`${this.props.match.path}${url}`)
-        }
-    }
+    // /**
+    //  * [生成单条通知的地址]
+    //  * @Author   szh
+    //  * @DateTime 2018-01-23
+    //  * @param    {Object}   ntfc [通知数据]
+    //  * @return   {String}        [详细页路径]
+    //  */
+    // notificationUrl = (ntfc) => {
+    //     let url = ntfcUrl(ntfc)
+    //     this.setNotificationRead([parseInt(ntfc.id)])
+    //     console.log(this.props.location.pathname)
+    //     console.log(`${this.props.match.path}${url}`)
+    //     if (this.props.location.pathname === `${this.props.match.path}${url}`) {
+    //         message.info('已经在任务详情页')
+    //     } else {
+    //         this.props.history.push(`${this.props.match.path}${url}`)
+    //     }
+    // }
 
     // 给其他页面提供设置这里的state的openKeys和selectedKeys的值
     BLhandleLinkClick = (openKeys, selectedKeys) => {
@@ -512,7 +514,8 @@ class BasicLayout extends React.Component {
                                     dataSource={this.state.notificationData[item.key]}
                                     itemLayout="horizontal"
                                     renderItem={item => (
-                                        <List.Item actions={[<a href="javascript:;" onClick={() => this.notificationUrl(item)}>详情</a>, <a href="javascript:;" onClick={() => this.singleNotificationRead(item)}>已读</a>]}>
+                                        <List.Item actions={[<a href="javascript:;" onClick={() => this.singleNotificationRead(item)}>已读</a>]}>
+                                            {/* <a href="javascript:;" onClick={() => this.notificationUrl(item)}>详情</a> */}
                                             {this.notificationMsg(item)}
                                         </List.Item>
                                     )}

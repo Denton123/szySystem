@@ -2,12 +2,6 @@ import React, {Component} from 'react'
 import {
     Modal
 } from 'antd'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 import 'STYLE/css/theme.less'
 import cs from 'classnames'
