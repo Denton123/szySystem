@@ -18,6 +18,8 @@ import {
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
+import {ntfcTitle, ntfcUrl} from 'UTILS/notification'
+
 const { Content, Header } = Layout
 
 class Default extends React.Component {
@@ -27,16 +29,38 @@ class Default extends React.Component {
             time: '',
             value: '',
             workLog: [],
-            summaryData: []
+            summaryData: [],
+            currentNotificationPageSize: 6,
+            currentNotificationPage: 1,
+            currentNotificationData: [],
         }
     }
     componentDidMount() {
         this.props.BLhandleLinkClick('/default', '/default')
         this.getData()
         this.timer = setInterval(() => this.getTime(), 1000)
+        this.setCurrentNotificationData(1)
     }
     componentWillUnmount() {
         clearInterval(this.timer)
+    }
+    /**
+     * [setCurrentNotificationData 设置首页通知数据]
+     * @Author   szh
+     * @DateTime 2018-01-23
+     * @param    {Number}   page [页数]
+     */
+    setCurrentNotificationData = (page) => {
+        let pagesize = this.state.currentNotificationPageSize
+        let arr = []
+        this.props.notificationData.forEach((d, i) => {
+            if (i < (page * pagesize) && i >= ((page - 1) * pagesize)) {
+                arr.push(d)
+            }
+        })
+        this.setState({
+            currentNotificationData: arr
+        })
     }
     getTime = () => {
         var dt = new Date()
@@ -62,7 +86,6 @@ class Default extends React.Component {
                 })
             })
             show(`/summary?page=1&user_id=${id}&pageSize=5&page=1`).then(res => {
-                console.log(res)
                 this.setState({
                     summaryData: res.data.data
                 })
@@ -72,19 +95,21 @@ class Default extends React.Component {
 
     linkClick = (openKeys, selectedKeys) => {
         return () => {
-            console.log(`openKeys: ${openKeys}`)
-            console.log(`selectedKeys: ${selectedKeys}`)
             this.props.BLhandleLinkClick(openKeys, selectedKeys)
         }
     }
 
     render() {
-        const route = this.props.route
-        const history = this.props.history
-        const location = this.props.location
-        const match = this.props.match
         const user = this.props.user
-        const {workLog, summaryData, time} = this.state
+        const {
+            workLog,
+            summaryData,
+            time,
+            currentNotificationPageSize,
+            currentNotificationPage,
+            currentNotificationData,
+            allNotificationData
+        } = this.state
         const LogContent = ({content}) => (
             <p dangerouslySetInnerHTML={{__html: content}} />
             )
@@ -146,9 +171,26 @@ class Default extends React.Component {
         const NoticeMsg = (
             <div className="NoticeMsg">
                 <Card title="最新通知">
-                    <p>Card content</p>
-                    <p>Card content</p>
-                    <p>Card content</p>
+                    <List
+                        pagination={{
+                            pageSize: currentNotificationPageSize,
+                            current: currentNotificationPage,
+                            total: this.props.notificationData.length,
+                            onChange: (page) => {
+                                this.setState({
+                                    currentNotificationPage: page
+                                })
+                                this.setCurrentNotificationData(page)
+                            },
+                        }}
+                        dataSource={currentNotificationData}
+                        itemLayout="horizontal"
+                        renderItem={item => (
+                            <List.Item actions={[item.date]}>
+                                {ntfcTitle(item)}
+                            </List.Item>
+                        )}
+                    />
                 </Card>
             </div>
             )

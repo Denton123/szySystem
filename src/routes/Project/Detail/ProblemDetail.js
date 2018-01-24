@@ -116,7 +116,6 @@ class ProblemDetail extends Component {
                     hasArr.push(answerList[d].user_id)
                 }
             }
-            console.log(hasArr)
             if (hasArr.indexOf(this.props.user.id) !== -1) {
                 this.setState({
                     quillShow: false
