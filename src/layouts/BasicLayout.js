@@ -129,8 +129,9 @@ class BasicLayout extends React.Component {
                 selectedKeys: [currentPath]
             })
         }
-
-        tpwidget('show') // 天气
+        if (this.props.user) { // 防止未登录用户访问系统时，天气自动加载
+            tpwidget('show') // 天气
+        }
 
         // 获取未读通知
         this.getNotificationData()
