@@ -34,9 +34,28 @@ function escape(str) {
     return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
 }
 
+function siderKeysUrl(str) {
+    let arr = str.split('/')
+    let openKeys = ''
+    let selectedKeys = ''
+    for (var i = 0; i < arr.length; i++) {
+        if (i === 0 || i === 1) {
+            continue
+        }
+        if (i === 2) {
+            openKeys = `/${arr[i]}`
+        }
+        selectedKeys += `/${arr[i]}`
+    }
+    return {openKeys: openKeys, selectedKeys: selectedKeys}
+}
+
 module.exports = function(opts) {
     class Summary extends Component {
         componentDidMount() {
+            let keysObj = siderKeysUrl(this.props.location.pathname)
+            this.props.BLhandleLinkClick(keysObj.openKeys, keysObj.selectedKeys)
+
             // let page = this.props.location.state ? this.props.location.state.page : 1
             let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             console.log(p)
