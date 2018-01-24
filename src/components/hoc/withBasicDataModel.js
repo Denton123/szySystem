@@ -417,11 +417,21 @@ function withBasicDataModel(PageComponent, Datas) {
                         cb(res)
                     } else {
                         if (parseInt(res.data.id) === parseInt(id)) {
+                            // let { dataSource } = this.state.dataSetting
+                            // dataSource.splice(
+                            //     dataSource.findIndex(item => item.id === res.data.id),
+                            //     1
+                            // )
+                            // this.handleSetState('dataSetting', {
+                            //     ...this.state.dataSetting,
+                            //     dataSource: dataSource
+                            // })
                             let statePage = this.props.location.state.page
                             if (this.state.dataSetting.dataSource.length === 1 && statePage > 1) {
                                 statePage -= 1
                             }
                             this.getData({...this.props.location.state, page: statePage})
+                            message.success('删除成功')
                         } else {
                             message.error('删除失败')
                         }

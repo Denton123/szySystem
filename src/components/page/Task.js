@@ -78,10 +78,10 @@ module.exports = function(opts) {
             // console.log(p)
             // let page = this.props.location.state ? this.props.location.state.page : 1
             if (opts.total) { // 任务管理页面
-                if (opts.hasProject) {
+                if (opts.hasProject) { // 项目任务
                     this.props.getData({...data, project_id: 'notnull', __key: 'project'})
                     this.getAllProject()
-                } else {
+                } else { // 普通任务
                     this.props.getData({...data, project_id: 'null', __key: 'normal'})
                 }
             }
@@ -89,14 +89,15 @@ module.exports = function(opts) {
         }
 
         componentWillReceiveProps(nextProps) {
-            if (!opts.total) {
+            if (!opts.total) { // 项目详情页获取的任务
                 if (nextProps.project.id !== this.props.project.id) {
-                    let page = this.props.location.state ? this.props.location.state.page : 1
-                    this.setState({
-                        status: 'all'
-                    })
+                    let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+                    // let page = this.props.location.state ? this.props.location.state.page : 1
+                    // this.setState({
+                    //     status: 'all'
+                    // })
                     this.props.getData({
-                        page: page,
+                        ...data,
                         project_id: nextProps.project.id
                     })
                 }
@@ -301,24 +302,36 @@ module.exports = function(opts) {
             this.props.handleDelete(e, (res) => {
                 if (parseInt(res.data.id) === parseInt(e.target.dataset['id'])) {
                     let { dataSource } = this.props.dataSetting
-                    if (res.data.pid) {
-                        let parentIdx = dataSource.findIndex(k => k.id === res.data.pid)
-                        let parent = dataSource.find(k => k.id === res.data.pid)
-                        parent['child'].splice(
-                            parent['child'].findIndex(item => item.id === res.data.id),
-                            1
-                        )
-                        dataSource[parentIdx] = parent
-                    } else {
-                        dataSource.splice(
-                            dataSource.findIndex(item => item.id === res.data.id),
-                            1
-                        )
+                    // if (res.data.pid) { // 返回的数据是子任务
+                    //     let parentIdx = dataSource.findIndex(k => k.id === res.data.pid)
+                    //     let parent = dataSource.find(k => k.id === res.data.pid)
+                    //     parent['child'].splice(
+                    //         parent['child'].findIndex(item => item.id === res.data.id),
+                    //         1
+                    //     )
+                    //     dataSource[parentIdx] = parent
+                    // } else { // 返回的数据是父任务
+                    //     dataSource.splice(
+                    //         dataSource.findIndex(item => item.id === res.data.id),
+                    //         1
+                    //     )
+                    // }
+                    // if (dataSource.length === 0 && this.props.location.state.page > 1) { // 当前最后一条数据被删除后，默认请求第一页数据
+                    //     this.props.getData({
+                    //         ...this.props.location.state,
+                    //         page: 1
+                    //     })
+                    // } else {
+                    //     this.props.handleSetState('dataSetting', {
+                    //         ...this.props.dataSetting,
+                    //         dataSource: dataSource
+                    //     })
+                    // }
+                    let statePage = this.props.location.state.page
+                    if (dataSource.length === 1 && statePage > 1) {
+                        statePage -= 1
                     }
-                    this.props.handleSetState('dataSetting', {
-                        ...this.props.dataSetting,
-                        dataSource: dataSource
-                    })
+                    this.props.getData({...this.props.location.state, page: statePage})
                     message.success('删除成功')
                 } else {
                     message.error('删除失败')
