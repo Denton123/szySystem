@@ -13,7 +13,7 @@ import {
 } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject, transformValue} from 'UTILS/utils'
+import {isObject, isArray, valueToMoment, resetObject, transformValue, siderKeysUrl} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
@@ -32,22 +32,6 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
  */
 function escape(str) {
     return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
-}
-
-function siderKeysUrl(str) {
-    let arr = str.split('/')
-    let openKeys = ''
-    let selectedKeys = ''
-    for (var i = 0; i < arr.length; i++) {
-        if (i === 0 || i === 1) {
-            continue
-        }
-        if (i === 2) {
-            openKeys = `/${arr[i]}`
-        }
-        selectedKeys += `/${arr[i]}`
-    }
-    return {openKeys: openKeys, selectedKeys: selectedKeys}
 }
 
 module.exports = function(opts) {
