@@ -207,11 +207,11 @@ class BasicLayout extends React.Component {
                 res.data.forEach(d => {
                     if (d.isPublic === '1') { // 公共通知
                         if (!publicNotification.includes(`${d.id}`)) { // 没有本地已读才显示
-                            obj[d.model].push(d)
+                            obj[d.model].unshift(d)
                             num++
                         }
                     } else {
-                        obj[d.model].push(d)
+                        obj[d.model].unshift(d)
                         num++
                     }
                 })
@@ -319,9 +319,8 @@ class BasicLayout extends React.Component {
                         1
                     )
                 })
-
                 arr.forEach(a => {
-                    obj[a.model].push(a)
+                    obj[a.model].unshift(a)
                 })
                 return {
                     notificationData: obj,
@@ -390,7 +389,7 @@ class BasicLayout extends React.Component {
         return (
             <div>
                 <div className="notication-tit mb-10" title={title}>{title}</div>
-                <div className="txt-l">{moment(ntfc.createdAt).startOf('second').fromNow()}</div>
+                <div className="txt-l">{moment(ntfc.date).startOf().fromNow()}</div>
             </div>
         )
     }
