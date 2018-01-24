@@ -39,7 +39,7 @@ module.exports = function(opts) {
         componentDidMount() {
             // let page = this.props.location.state ? this.props.location.state.page : 1
             let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-            console.log(p)
+
             let obj = Object.assign({}, this.props.queryFieldValues)
             Object.keys(this.props.queryFieldValues).forEach(field => {
                 if (p.hasOwnProperty(field)) {
@@ -48,8 +48,7 @@ module.exports = function(opts) {
                     }
                 }
             })
-            console.log('queryFieldValues ---- ')
-            console.log(obj)
+
             this.props.handleSetState('queryFieldValues', obj)
 
             if (opts.personal) {
