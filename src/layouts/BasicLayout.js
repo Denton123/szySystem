@@ -21,7 +21,8 @@ import {
     Popover,
     List,
     Button,
-    Badge
+    Badge,
+    message
 } from 'antd'
 import {
     Link,
@@ -261,8 +262,6 @@ class BasicLayout extends React.Component {
                         notificationNumber: number,
                     }
                 })
-            } else {
-                // 没有该通知
             }
         })
     }
@@ -336,6 +335,7 @@ class BasicLayout extends React.Component {
         }
     }
 
+    // 侧边栏打开时的回调
     onOpenChange = (openKeys) => {
         const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
         if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -410,7 +410,11 @@ class BasicLayout extends React.Component {
     notificationUrl = (ntfc) => {
         let url = ntfcUrl(ntfc)
         this.setNotificationRead([parseInt(ntfc.id)])
-        this.props.history.push(`${this.props.match.path}${url}`)
+        if (this.props.location.pathname === `${this.props.match.path}${url}`) {
+            message.info('已经在任务详情页')
+        } else {
+            this.props.history.push(`${this.props.match.path}${url}`)
+        }
     }
 
     // 给其他页面提供设置这里的state的openKeys和selectedKeys的值
