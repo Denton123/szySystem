@@ -173,9 +173,11 @@ module.exports = function(opts) {
                 message.warning('任务已经开始、完成或者超时！')
                 return
             }
-            if (getTime(formatDate()) > getTime(this.props.project.plan_end_date)) {
-                message.warning('项目已经过期')
-                return
+            if (this.props.project) { // 在项目中的任务，如果项目的计划时间结束。任务也将不能编辑
+                if (getTime(formatDate()) > getTime(this.props.project.plan_end_date)) {
+                    message.warning('项目已经过期')
+                    return
+                }
             }
             this.setState({
                 taskDate: {},
