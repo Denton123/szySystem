@@ -413,9 +413,8 @@ class BasicLayout extends React.Component {
         this.props.history.push(`${this.props.match.path}${url}`)
     }
 
+    // 给其他页面提供设置这里的state的openKeys和selectedKeys的值
     BLhandleLinkClick = (openKeys, selectedKeys) => {
-        // console.log(`openKeys2: ${openKeys}`)
-        // console.log(`selectedKeys2: ${selectedKeys}`)
         this.setState((prevState, props) => {
             return {
                 openKeys: [openKeys],

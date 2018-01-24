@@ -159,6 +159,22 @@ const utils = {
             v = value
         }
         return v
+    },
+    // 根据当前获取侧边栏的
+    siderKeysUrl: function(str) {
+        let arr = str.split('/')
+        let openKeys = ''
+        let selectedKeys = ''
+        for (var i = 0; i < arr.length; i++) {
+            if (i === 0 || i === 1) {
+                continue
+            }
+            if (i === 2) {
+                openKeys = `/${arr[i]}`
+            }
+            selectedKeys += `/${arr[i]}`
+        }
+        return {openKeys: openKeys, selectedKeys: selectedKeys}
     }
 }
 
