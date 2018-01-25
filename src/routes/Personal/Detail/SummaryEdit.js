@@ -21,6 +21,11 @@ import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
+// 去除html标签
+function removeHtml(str) {
+    return str.replace(/<\/?.+?>/g, '').replace(/ /g, '')
+}
+
 const {TextArea} = Input
 
 class SummaryDetail extends Component {
@@ -66,12 +71,16 @@ class SummaryDetail extends Component {
         for (let i in values) {
             params[i] = values[i]
         }
-        this.props.handleFormSubmit(params, (res) => {
-            message.success('保存成功')
-            setTimeout(() => {
-                this.props.history.push('/home/personal/summary')
-            }, 200)
-        })
+        if (removeHtml(params.content) !== '') {
+            this.props.handleFormSubmit(params, (res) => {
+                message.success('保存成功')
+                setTimeout(() => {
+                    this.props.history.push('/home/personal/summary')
+                }, 200)
+            })
+        } else {
+            message.info('请输入内容再提交')
+        }
     }
     render() {
         const {
