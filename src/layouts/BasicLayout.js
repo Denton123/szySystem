@@ -545,7 +545,7 @@ class BasicLayout extends React.Component {
                     </div>
                     <div className="pull-right layout-header-bell mr-10">
                         <div id="tp-weather-widget" style={{display: 'inline-block'}} className="mr-10" />
-                        <Popover placement="bottomRight" content={notification} trigger="click">
+                        <Popover placement="bottomRight" content={notification} trigger="hover">
                             <Badge count={this.state.notificationNumber}>
                                 <Icon type={'bell'} style={{fontSize: 16}} />
                             </Badge>

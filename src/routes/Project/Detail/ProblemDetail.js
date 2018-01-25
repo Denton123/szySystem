@@ -198,6 +198,7 @@ class ProblemDetail extends Component {
     // 答案提交
     answerSubmit = () => {
         if (removeHtml(this.state.answer) !== '') {
+            console.log('obj')
             const Data = this.state.DetailData
             const answerObj = {
                 answer: this.state.answer,
@@ -268,18 +269,22 @@ class ProblemDetail extends Component {
     }
     // 提交答案编辑
     handleok = (e) => {
-        this.setState({
-            show: false
-        })
         const answer = localStorage.getItem('editText')
-        const changeId = this.state.editID
-        const editText = {
-            answer: answer
+        if (removeHtml(answer) !== '') {
+            const changeId = this.state.editID
+            const editText = {
+                answer: answer
+            }
+            update(`/answer/${changeId}`, editText).then(res => {
+                res.status === 200 ? message.success('保存成功') : message.success('保存失败')
+                this.getProblemData()
+            })
+            this.setState({
+                show: false
+            })
+        } else {
+            message.info('答案不为空')
         }
-        update(`/answer/${changeId}`, editText).then(res => {
-            res.status === 200 ? message.success('保存成功') : message.success('保存失败')
-            this.getProblemData()
-        })
     }
     // 取消答案编辑
     onCancel = (e) => {
