@@ -211,6 +211,10 @@ function withBasicDataModel(PageComponent, Datas) {
             let id = e.target.dataset['id']
             show(`/${this.state.model}/${id}`)
                 .then(res => {
+                    if (Object.keys(res.data).length === 0) {
+                        message.error('数据不存在或者数据已删除，请刷新页面')
+                        return
+                    }
                     if (cb) {
                         cb(res)
                     } else {
@@ -405,6 +409,20 @@ function withBasicDataModel(PageComponent, Datas) {
         ajaxDestroy = (id, cb) => {
             destroy(`${this.state.model}/${id}`)
                 .then(res => {
+                    if (this.state.rowSelection.length > 0 && this.state.rowSelection.includes(Number(id))) {
+                        let arr = this.state.rowSelection
+                        arr.splice(
+                            this.state.rowSelection.findIndex(item => item === Number(id)),
+                            1
+                        )
+                        this.setState({
+                            rowSelection: arr
+                        })
+                    }
+                    if (Object.keys(res.data).length === 0) {
+                        message.error('数据不存在或者数据已删除，请刷新页面')
+                        return
+                    }
                     if (cb) {
                         cb(res)
                     } else {
@@ -427,16 +445,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         } else {
                             message.error('删除失败')
                         }
-                    }
-                    if (this.state.rowSelection.length > 0 && this.state.rowSelection.includes(Number(id))) {
-                        let arr = this.state.rowSelection
-                        arr.splice(
-                            this.state.rowSelection.findIndex(item => item === Number(id)),
-                            1
-                        )
-                        this.setState({
-                            rowSelection: arr
-                        })
                     }
                 })
         }
