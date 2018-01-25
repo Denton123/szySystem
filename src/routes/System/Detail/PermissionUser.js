@@ -34,7 +34,12 @@ class PermissionUser extends Component {
     }
 
     componentDidMount() {
+        let data = {
+            page: 1,
+            ...this.props.location.state,
+        }
         this.getRoleData()
+        this.props.getData(data)
     }
 
     setRole = (e) => {
@@ -70,8 +75,7 @@ class PermissionUser extends Component {
             this.props.handleModalCancel()
             message.success('保存成功')
         })
-        .catch(err => {
-            console.log(err)
+        .catch(() => {
             message.success('保存失败')
             this.props.handleSetState('isSubmitting', false)
         })
@@ -231,7 +235,7 @@ const PU = withBasicDataModel(PermissionUser, {
             value: []
         },
     },
-    // customGetData: true,
+    customGetData: true,
     // locationSearch: false
 })
 

@@ -370,9 +370,6 @@ class BasicLayout extends React.Component {
             this.props.globalUpdateUser(null)
             this.props.history.push('/login')
         })
-        .catch(err => {
-            console.log(err)
-        })
     }
 
     isDisplay = (route) => {
@@ -410,8 +407,6 @@ class BasicLayout extends React.Component {
     // notificationUrl = (ntfc) => {
     //     let url = ntfcUrl(ntfc)
     //     this.setNotificationRead([parseInt(ntfc.id)])
-    //     console.log(this.props.location.pathname)
-    //     console.log(`${this.props.match.path}${url}`)
     //     if (this.props.location.pathname === `${this.props.match.path}${url}`) {
     //         message.info('已经在任务详情页')
     //     } else {

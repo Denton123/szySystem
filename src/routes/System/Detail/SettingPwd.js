@@ -26,10 +26,7 @@ class SetForm extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault()
         this.props.form.validateFields((err, values) => {
-            console.log('err')
-            console.log(err)
             if (!err) {
-                console.log('Received values of form: ', values)
                 this.props.handleSubmitForm(values, this.props.form)
             }
         })
@@ -160,8 +157,6 @@ const WrappedSetForm = Form.create({})(SetForm)
 class Setting extends Component {
     // 提交表格到后台
     handleSubmitForm = (values, form) => {
-        console.log('handleSubmitForm ----- ')
-        console.log(values)
         let uid = this.props.user.id
         let data = {}
         for (let i in values) {
@@ -170,17 +165,14 @@ class Setting extends Component {
         data['id'] = uid
         ajax('post', `/user/reset-password`, data, false)
             .then(res => {
-                console.log(res)
                 if (res.data === true) {
                     message.success('保存成功！')
                 } else {
-                    console.log(res.data)
                     message.error(res.data)
                 }
                 form.setFieldsValue({'oldpassword': '', 'password': '', 'confirm': ''})
             })
-            .catch(err => {
-                console.log(err)
+            .catch(() => {
                 message.error('保存失败！')
             })
     }

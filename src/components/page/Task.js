@@ -72,7 +72,6 @@ module.exports = function(opts) {
 
         componentDidMount() {
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-            // console.log(p)
             // let page = this.props.location.state ? this.props.location.state.page : 1
             if (opts.total) { // 任务管理页面
                 if (opts.hasProject) { // 项目任务

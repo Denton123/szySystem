@@ -85,7 +85,11 @@ class PermissionRole extends Component {
         //     _current: this.props.current,
         //     page: this.props.location.state ? this.props.location.state.page : 1,
         // }
-        // this.props.getData(params)
+        let params = {
+            page: 1,
+            ...this.props.location.state,
+        }
+        this.props.getData(params)
         ajax('get', '/permission/all')
             .then(res => {
                 let list = setList(res.data)
@@ -331,7 +335,7 @@ const PR = withBasicDataModel(PermissionRole, {
             value: null
         },
     },
-    // customGetData: true,
+    customGetData: true,
     // locationSearch: false,
 })
 

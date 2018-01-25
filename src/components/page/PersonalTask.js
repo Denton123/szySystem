@@ -42,9 +42,7 @@ module.exports = function(opts) {
         }
 
         componentDidMount() {
-            console.log('--------')
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-            console.log(data)
 
             // let page = this.props.location.state ? this.props.location.state.page : 1
             // let data = {

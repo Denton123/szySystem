@@ -53,9 +53,6 @@ class SummaryDetail extends Component {
                     this.props.history.push('/home/404')
                 }
             })
-            .catch(err => {
-                console.log(err)
-            })
     }
     goBack = (e) => {
         this.props.history.goBack()

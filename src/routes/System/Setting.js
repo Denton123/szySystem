@@ -17,9 +17,6 @@ class Setting extends Component {
             __key: key
         })
     }
-    componentDidMount() {
-        console.log(this.props.location)
-    }
     render() {
         const {
             history,

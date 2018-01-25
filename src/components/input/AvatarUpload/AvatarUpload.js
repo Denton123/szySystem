@@ -10,7 +10,6 @@ function getBase64(img, callback) {
 
 // 上传文件之前的钩子,参数为上传的文件
 function beforeUpload(file) {
-    console.log(file)
     const isJPG = file.type === 'image/jpeg'
     if (!isJPG) {
         message.error('You can only upload JPG file!')

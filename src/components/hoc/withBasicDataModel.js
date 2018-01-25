@@ -114,9 +114,6 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {*}        stateValue  [修改状态的值]
          */
         handleSetState = (stateFields, stateValue) => {
-            console.log('stateFields', stateFields)
-            console.log('stateValue', stateValue)
-            console.log('----------------------------------------------------')
             this.setState({
                 [stateFields]: stateValue
             })
@@ -214,6 +211,10 @@ function withBasicDataModel(PageComponent, Datas) {
             let id = e.target.dataset['id']
             show(`/${this.state.model}/${id}`)
                 .then(res => {
+                    if (Object.keys(res.data).length === 0) {
+                        message.error('数据不存在或者数据已删除，请刷新页面')
+                        return
+                    }
                     if (cb) {
                         cb(res)
                     } else {
@@ -292,8 +293,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 }
             })
-            .catch(err => {
-                console.log(err)
+            .catch(() => {
                 message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
@@ -322,7 +322,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         // 编辑后的默认处理
                         this.setState((prevState, props) => {
                             let newDataSource = []
-                            console.log(prevState)
                             prevState.dataSetting.dataSource.forEach(data => {
                                 if (data.id === prevState.formFieldsValues.id.value) {
                                     newDataSource.push(resetObject(res.data))
@@ -342,8 +341,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 }
             })
-            .catch(err => {
-                console.log(err)
+            .catch(() => {
                 message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
@@ -411,6 +409,20 @@ function withBasicDataModel(PageComponent, Datas) {
         ajaxDestroy = (id, cb) => {
             destroy(`${this.state.model}/${id}`)
                 .then(res => {
+                    if (this.state.rowSelection.length > 0 && this.state.rowSelection.includes(Number(id))) {
+                        let arr = this.state.rowSelection
+                        arr.splice(
+                            this.state.rowSelection.findIndex(item => item === Number(id)),
+                            1
+                        )
+                        this.setState({
+                            rowSelection: arr
+                        })
+                    }
+                    if (Object.keys(res.data).length === 0) {
+                        message.error('数据不存在或者数据已删除，请刷新页面')
+                        return
+                    }
                     if (cb) {
                         cb(res)
                     } else {
@@ -434,23 +446,11 @@ function withBasicDataModel(PageComponent, Datas) {
                             message.error('删除失败')
                         }
                     }
-                    if (this.state.rowSelection.length > 0 && this.state.rowSelection.includes(Number(id))) {
-                        let arr = this.state.rowSelection
-                        arr.splice(
-                            this.state.rowSelection.findIndex(item => item === Number(id)),
-                            1
-                        )
-                        this.setState({
-                            rowSelection: arr
-                        })
-                    }
                 })
         }
 
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
-            console.log('表格checkbox选择时调用 --- ')
-            console.log(selectedRows)
             let arr = [] // 删除后，selectedRowKeys依旧会把已经删除的id记录下来
             selectedRows.forEach(sr => { // 改用selectedRows避免这个情况
                 arr.push(sr.id)
@@ -523,7 +523,6 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 更新表单数据
         updateFormFields = (changedFields) => {
-            // console.log(this.state.formFieldsValues)
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })
@@ -558,7 +557,6 @@ function withBasicDataModel(PageComponent, Datas) {
             this.setState({
                 queryFieldValues: queryFieldValues
             }, () => {
-                // console.log({...newLocationState, page: 1})
                 this.getData({...newLocationState, page: 1}, false)
             })
         }

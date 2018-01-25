@@ -34,7 +34,6 @@ class SetForm extends React.Component {
         e.preventDefault()
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values)
                 this.props.handleSubmitForm(values)
             }
         })
@@ -173,8 +172,6 @@ class Setting extends Component {
         FontValue: ''
     }
     componentDidMount() {
-        console.log('componentDidMount ---- ')
-        console.log(this.props)
         this.getData()
     }
 
@@ -188,25 +185,19 @@ class Setting extends Component {
                 // 直接更新内部表单数据
                 this.updateEditFormFieldsValues(res.data)
             })
-            .catch(err => {
-                console.log(err)
-            })
     }
 
     onChange = (e) => {
-        console.log(e.target.value)
         const value = e.target.value
     }
     // 编辑数据时更新表单数据
     updateEditFormFieldsValues = (data) => {
-        console.log(data)
         this.setState((prevState, props) => {
             let obj = {}
             Object.keys(prevState.formFieldsValues).forEach(field => {
                 obj[field] = {
                     value: transformValue(field, data[field])
                 }
-                console.log(data[field])
             })
             return {
                 formFieldsValues: obj
@@ -222,14 +213,11 @@ class Setting extends Component {
 
     // 提交表格到后台
     handleSubmitForm = (values) => {
-        console.log('handleSubmitForm ----- ')
-        console.log(values)
         let uid = this.props.user.id
         update(`user/${uid}`, values, false)
             .then(res => {
                 // 直接更新内部表单数据
                 // this.props.updateEditFormFieldsValues(res.data)
-                console.log(res)
                 message.success('保存成功！')
                 this.props.globalUpdateUser(res.data)
                 this.setState({
@@ -247,14 +235,12 @@ class Setting extends Component {
                     }
                 })
             })
-            .catch(err => {
-                console.log(err)
+            .catch(() => {
                 message.error('保存失败！')
             })
     }
 
     render() {
-        console.log(this.props.user)
         const {
             child,
             route,
