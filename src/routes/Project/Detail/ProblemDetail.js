@@ -300,9 +300,6 @@ class ProblemDetail extends Component {
                     this.getData()
                 })
             },
-            onCancel: () => {
-                console.log('Cancel')
-            }
         })
     }
     render() {

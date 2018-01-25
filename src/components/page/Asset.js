@@ -41,8 +41,6 @@ module.exports = function(opts) {
             this.props.handleFormSubmit(data)
         }
         handleQuery = (values) => {
-            console.log('handleQuery ------ ')
-            console.log(values)
             this.props.handleQuery()
         }
 
@@ -177,7 +175,6 @@ module.exports = function(opts) {
                     label: '单价',
                     content: ({getFieldDecorator}) => {
                         const decimal = (e) => {
-                            console.log(5555555555)
                             let val = e.target.value
                             if (Number(val)) {
                                 e.target.value = parseFloat(val).toFixed(2)
@@ -252,7 +249,6 @@ module.exports = function(opts) {
                 formFields.unshift({
                     label: 'rfid',
                     content: ({getFieldDecorator}) => {
-                        console.log(this.props.formFieldsValues)
                         let id = 0
                         if (this.props.formFieldsValues.id.value) {
                             id = this.props.formFieldsValues.id.value

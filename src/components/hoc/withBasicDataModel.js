@@ -114,9 +114,6 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {*}        stateValue  [修改状态的值]
          */
         handleSetState = (stateFields, stateValue) => {
-            console.log('stateFields', stateFields)
-            console.log('stateValue', stateValue)
-            console.log('----------------------------------------------------')
             this.setState({
                 [stateFields]: stateValue
             })
@@ -292,8 +289,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 }
             })
-            .catch(err => {
-                console.log(err)
+            .catch(() => {
                 message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
@@ -322,7 +318,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         // 编辑后的默认处理
                         this.setState((prevState, props) => {
                             let newDataSource = []
-                            console.log(prevState)
                             prevState.dataSetting.dataSource.forEach(data => {
                                 if (data.id === prevState.formFieldsValues.id.value) {
                                     newDataSource.push(resetObject(res.data))
@@ -342,8 +337,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     }
                 }
             })
-            .catch(err => {
-                console.log(err)
+            .catch(() => {
                 message.error('保存失败')
                 this.handleSetState('isSubmitting', false)
             })
@@ -449,8 +443,6 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 表格checkbox选择时调用
         handleTableRowChange = (selectedRowKeys, selectedRows) => {
-            console.log('表格checkbox选择时调用 --- ')
-            console.log(selectedRows)
             let arr = [] // 删除后，selectedRowKeys依旧会把已经删除的id记录下来
             selectedRows.forEach(sr => { // 改用selectedRows避免这个情况
                 arr.push(sr.id)
@@ -523,7 +515,6 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 更新表单数据
         updateFormFields = (changedFields) => {
-            // console.log(this.state.formFieldsValues)
             this.setState({
                 formFieldsValues: {...this.state.formFieldsValues, ...changedFields}
             })
@@ -558,7 +549,6 @@ function withBasicDataModel(PageComponent, Datas) {
             this.setState({
                 queryFieldValues: queryFieldValues
             }, () => {
-                // console.log({...newLocationState, page: 1})
                 this.getData({...newLocationState, page: 1}, false)
             })
         }

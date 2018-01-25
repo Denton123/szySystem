@@ -23,7 +23,6 @@ class CustomForm extends React.Component {
             if (!err) {
                 this.props.handleSubmit(values)
             }
-            console.log('Received values of form: ', values)
         })
     }
     render() {

@@ -85,6 +85,10 @@ class PermissionRole extends Component {
         //     _current: this.props.current,
         //     page: this.props.location.state ? this.props.location.state.page : 1,
         // }
+        // let params = {
+        //     page: 1,
+        //     ...this.props.location.state,
+        // }
         // this.props.getData(params)
         ajax('get', '/permission/all')
             .then(res => {

@@ -14,6 +14,7 @@ import {
     message
 } from 'antd'
 
+import { ajax } from 'UTILS/ajax'
 import { isObject } from 'UTILS/utils.js'
 import './Login.less'
 
@@ -29,19 +30,14 @@ class DefaultLoginForm extends React.Component {
         e.preventDefault()
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values)
-                axios.post('/user/login', values)
+                ajax('post', '/user/login', values)
                     .then(res => {
-                        console.log(res)
                         if (isObject(res.data)) {
                             this.props.globalUpdateUser(res.data)
                             this.props.history.push('/home')
                         } else {
                             message.error(res.data)
                         }
-                    })
-                    .catch(err => {
-                        console.log(err)
                     })
             }
         })

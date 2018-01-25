@@ -39,9 +39,6 @@ class SummaryDetail extends Component {
                     })
                 }
             })
-            .catch(err => {
-                console.log(err)
-            })
     }
     goBack = (e) => {
         this.props.history.goBack()
@@ -59,7 +56,6 @@ class SummaryDetail extends Component {
             match
         } = this.props
         const data = this.state.data
-        console.log(this.props)
         let extra = [
             () => <Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>,
         ]

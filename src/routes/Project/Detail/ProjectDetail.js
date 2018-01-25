@@ -33,8 +33,6 @@ class ProjectDetail extends Component {
     }
     componentDidMount() {
         let keysObj = siderKeysUrl(this.props.location.pathname)
-        console.log('------------------')
-        console.log(keysObj)
         this.props.BLhandleLinkClick(keysObj.openKeys, keysObj.selectedKeys)
         this.getData()
     }

@@ -22,9 +22,6 @@ import 'STYLE/css/main.less'
 // UTILS      src目录下的utils
 // VIEWS      src目录下的views
 // CONFIG     src目录下的config
-// SERVICES   src目录下的services
-// console.log($)
-// console.log(axios)
 
 // 判断是否登录
 new Promise(resolve => {
@@ -37,8 +34,7 @@ new Promise(resolve => {
             )
             resolve(app)
         })
-        .catch(err => {
-            console.log(err)
+        .catch(() => {
             const app = () => (
                 <LocaleProvider locale={zhCN}>
                     <App />

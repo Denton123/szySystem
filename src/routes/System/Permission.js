@@ -12,15 +12,11 @@ class Permission extends Component {
     state = {
         key: this.props.location.state && this.props.location.state.__key ? this.props.location.state.__key : 'user'
     }
-    componentDidMount() {
-        console.log(this.props.location)
-    }
     onTabChange = (key) => {
         this.props.history.replace(this.props.location.pathname, {
             page: 1,
             __key: key
         })
-        console.log(this.props.location)
         this.handleSetState('key', key)
     }
 
@@ -48,10 +44,10 @@ class Permission extends Component {
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Tabs defaultActiveKey={this.state.key} onTabClick={this.onTabChange} animated={false}>
                     <TabPane tab="用户" key="user">
-                        <User {...this.props} getRoleData={this.getRoleData} roleData={this.state.roleData} key={this.state.key} />
+                        <User {...this.props} key={this.state.key} />
                     </TabPane>
                     <TabPane tab="角色" key="role">
-                        <Role {...this.props} getRoleData={this.getRoleData} key={this.state.key} />
+                        <Role {...this.props} key={this.state.key} />
                     </TabPane>
                 </Tabs>
             </div>

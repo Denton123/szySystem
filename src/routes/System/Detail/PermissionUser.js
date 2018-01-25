@@ -70,8 +70,7 @@ class PermissionUser extends Component {
             this.props.handleModalCancel()
             message.success('保存成功')
         })
-        .catch(err => {
-            console.log(err)
+        .catch(() => {
             message.success('保存失败')
             this.props.handleSetState('isSubmitting', false)
         })

@@ -65,7 +65,6 @@ function ajax(type, url, data = {}, hasFile = false) {
             .catch(err => {
                 // 统一错误处理
                 // TODO
-                console.log(err)
                 reject(err)
             })
     })

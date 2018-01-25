@@ -25,7 +25,6 @@ class WorkLog extends Component {
 
     componentDidMount() {
         this.getLogData()
-        console.log(this.props.location)
         this.props.BLhandleLinkClick('/personal', '/personal/work-log')
         // this.props.history.replace(this.props.location.pathname, {
         //     date: key
@@ -59,7 +58,6 @@ class WorkLog extends Component {
                 content: content,
                 date: this.state.worklogDate
             }
-            console.log(this.state.worklogId)
             if (this.state.worklogId) { // 编辑
                 update(`/worklog/${this.state.worklogId}`, data)
                 .then(res => {
@@ -112,7 +110,6 @@ class WorkLog extends Component {
             return false
         }
         const currentDate = momentToValue(moment)
-        console.log(moment)
         const currentLog = this.state.note.find(n => n.date === currentDate) // 获取当前用户当天的日志
         if (currentLog) { // 存在时编辑
             show(`/worklog/${currentLog.id}`)
@@ -176,9 +173,6 @@ class WorkLog extends Component {
                     }
                 })
             },
-            onCancel: () => {
-                console.log('Cancel')
-            }
         })
     }
     dateCellRender = (moment) => {

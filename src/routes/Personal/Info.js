@@ -53,9 +53,6 @@ class Info extends Component {
                     imageUrl: res.data.avatar ? `/uploadImgs/${res.data.avatar}` : null
                 })
             })
-            .catch(err => {
-                console.log(err)
-            })
     }
 
     handleFormSubmit = (values) => {
