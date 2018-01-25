@@ -34,7 +34,12 @@ class PermissionUser extends Component {
     }
 
     componentDidMount() {
+        let data = {
+            page: 1,
+            ...this.props.location.state,
+        }
         this.getRoleData()
+        this.props.getData(data)
     }
 
     setRole = (e) => {
@@ -230,7 +235,7 @@ const PU = withBasicDataModel(PermissionUser, {
             value: []
         },
     },
-    // customGetData: true,
+    customGetData: true,
     // locationSearch: false
 })
 
