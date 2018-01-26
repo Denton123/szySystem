@@ -192,7 +192,6 @@ class ProjectInfo extends Component {
                 label: '项目介绍',
                 content: ({getFieldDecorator}) => {
                     return getFieldDecorator('introduce', {
-                        rules: [{required: true, message: '请输入项目介绍'}]
                     })(<TextArea rows={6} autoComplete="off" placeholder="项目介绍" />)
                 },
             },
@@ -266,7 +265,7 @@ class ProjectInfo extends Component {
                                 <Icon type="edit" className="projectInfo-listItem-actions" data-id={item.id} data-img={item.img} onClick={this.edit} />,
                                 <Icon type="delete" className="projectInfo-listItem-actions" data-id={item.id} onClick={this.handleDelete} />
                             ]}
-                            extra={<img width={272} height={155} alt="logo" src={`/uploadImgs/${item.img}`} />}
+                            extra={<img width={272} height={155} alt="logo" src={item.img !== null ? `/uploadImgs/${item.img}` : '/default_project_cover.png'} />}
                         >
                             <List.Item.Meta
                                 title={

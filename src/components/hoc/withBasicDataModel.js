@@ -146,7 +146,13 @@ function withBasicDataModel(PageComponent, Datas) {
                         current: res.data.currentPage,
                         pageSize: res.data.pageSize,
                         total: res.data.total,
-                        onChange: this.handlePageChange
+                        onChange: (page) => { // 当有自定义的ajax请求时，将自定义的ajax方法加入到翻页方法中
+                            if (isFunction(customAjax)) {
+                                return this.handlePageChange(page, customAjax)
+                            } else {
+                                return this.handlePageChange(page)
+                            }
+                        }
                     }
                     // 数据特殊处理
                     let dataSource = Datas.handleData ? Datas.handleData(res.data.data) : res.data.data
@@ -174,14 +180,15 @@ function withBasicDataModel(PageComponent, Datas) {
          * [表格翻页]
          * @Author   szh
          * @DateTime 2017-12-19
-         * @param    {Number}   page [页数]
+         * @param    {Number}     page         [页数]
+         * @param    {Function}   customAjax   [自定义ajax获取]
          */
-        handlePageChange = (page) => {
+        handlePageChange = (page, customAjax) => {
             let params = {
                 ...this.props.location.state, // 每个页面自己保存的状态
                 page: page,
             }
-            this.getData(params)
+            this.getData(params, customAjax) // 如果存在自定义ajax获取，则将自定义ajax获取添加到
         }
 
         /**

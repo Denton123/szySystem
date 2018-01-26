@@ -63,6 +63,11 @@ module.exports = function(opts) {
             }
         }
 
+        /**
+         * [获取全部项目]
+         * @Author   szh
+         * @DateTime 2018-01-26
+         */
         getAllProject = () => {
             ajax('get', '/project/all')
                 .then(res => {
@@ -72,6 +77,12 @@ module.exports = function(opts) {
                 })
         }
 
+        /**
+         * [改变状态]
+         * @Author   szh
+         * @DateTime 2018-01-26
+         * @param    {Object}   e [event事件]
+         */
         handleStatusChange = (e) => {
             let val = e.target.value
             this.setState({
@@ -100,6 +111,12 @@ module.exports = function(opts) {
             )
         }
 
+        /**
+         * [修改任务状态]
+         * @Author   szh
+         * @DateTime 2018-01-26
+         * @param    {Object}   e [event事件]
+         */
         handleTaskStatus = (e) => {
             let tid = e.target.dataset['tid']
             let status = e.target.dataset['status']
@@ -140,6 +157,12 @@ module.exports = function(opts) {
             })
         }
 
+        /**
+         * [下拉选择项目改变时的回调]
+         * @Author   szh
+         * @DateTime 2018-01-26
+         * @param    {Number}   id [项目id]
+         */
         projectChange = (id) => {
             this.setState({
                 defaultProject: id
@@ -251,6 +274,14 @@ module.exports = function(opts) {
                     )
                 },
                 {
+                    title: '备注',
+                    dataIndex: 'memo',
+                    key: 'memo',
+                    render: (text, record) => (
+                        <span>{record['Users'][0]['end_date']}</span>
+                    )
+                },
+                {
                     title: '操作',
                     key: 'action',
                     render: (text, record) => {
@@ -263,14 +294,15 @@ module.exports = function(opts) {
                         }
                         let status = record['Users'][0]['status']
                         const Start = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="1" onClick={this.handleTaskStatus}>开始任务</Button>
-                        const Waiting = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="2" onClick={this.handleTaskStatus}>完成任务</Button>
+                        const Waiting = () => <Button type="primary" className="mr-10" loading={this.props.isSubmitting} data-tid={record.id} data-status="2" onClick={this.handleTaskStatus}>完成个人任务</Button>
+                        const Compelete = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id}>完成任务</Button>
                         let Action
                         switch (status) {
                             case '0':
                                 Action = () => (<Start />)
                                 break
                             case '1':
-                                Action = () => (<Waiting />)
+                                Action = () => (<div><Waiting /><Compelete /></div>)
                                 break
                             case '2':
                                 Action = () => (<span>已完成</span>)
