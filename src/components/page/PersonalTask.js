@@ -24,6 +24,7 @@ import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 import CustomModal from 'COMPONENTS/modal/CustomModal'
+import CustomForm from 'COMPONENTS/form/CustomForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
@@ -38,7 +39,9 @@ module.exports = function(opts) {
             // 默认的项目
             defaultProject: undefined,
             // 全部项目数据
-            projectData: []
+            projectData: [],
+            // 默认的任务id
+            currentTaskId: null
         }
 
         componentDidMount() {
@@ -122,7 +125,7 @@ module.exports = function(opts) {
             let status = e.target.dataset['status']
             CustomPrompt({
                 type: 'confirm',
-                content: <div>{`是否${status === '1' ? '开始任务' : '完成任务'}`}</div>,
+                content: <div>{`是否${status === '1' ? '开始任务' : '完成个人任务'}`}</div>,
                 okType: 'info',
                 onOk: () => {
                     this.props.handleSetState('isSubmitting', true)
@@ -148,8 +151,7 @@ module.exports = function(opts) {
                                 this.props.getMyTaskStatus()
                             }
                         })
-                        .catch(err => {
-                            console.log(err)
+                        .catch(() => {
                             this.props.handleSetState('isSubmitting', false)
                             message.error('保存失败')
                         })
@@ -182,6 +184,97 @@ module.exports = function(opts) {
                 data,
                 (params) => ajax('get', `/task/${this.props.user.id}/all`, params)
             )
+        }
+
+        setTaskCompelete = (e) => {
+            let tid = e.target.dataset['tid']
+            CustomPrompt({
+                type: 'confirm',
+                content: <div>{`是否完成任务,完成任务后其他的任务执行者同时完成任务`}</div>,
+                okType: 'info',
+                onOk: () => {
+                    this.props.handleSetState('isSubmitting', true)
+                    ajax('put', `/task/${tid}/user/${this.props.user.id}/compelete`, {status: '2'})
+                        .then(res => {
+                            console.log(res)
+                            // if (res.data.errors) {
+                            //     message.error(res.data.errors.message)
+                            // } else {
+                            //     let dataSource = []
+                            //     this.props.dataSetting.dataSource.forEach(ds => {
+                            //         if (ds.id === res.data.id) {
+                            //             dataSource.push(res.data)
+                            //         } else {
+                            //             dataSource.push(ds)
+                            //         }
+                            //     })
+                            //     this.props.handleSetState('dataSetting', {
+                            //         ...this.props.dataSetting,
+                            //         dataSource: dataSource
+                            //     })
+                            //     this.props.handleSetState('isSubmitting', false)
+                            //     message.success('保存成功')
+                            //     this.props.getMyTaskStatus()
+                            // }
+                        })
+                        .catch(() => {
+                            this.props.handleSetState('isSubmitting', false)
+                            message.error('保存失败')
+                        })
+                }
+            })
+        }
+
+        openModal = (e) => {
+            let tid = e.target.dataset['tid']
+            this.props.handleSetState('modalSetting', {
+                ...this.props.modalSetting,
+                visible: true,
+                title: `填写备注`
+            })
+            this.setState({
+                currentTaskId: tid
+            })
+        }
+
+        handleFormSubmit = (params) => {
+            console.log(this.state.currentTaskId)
+            console.log(params)
+            CustomPrompt({
+                type: 'confirm',
+                content: <div>{`确认后，备注不能修改，是否要提交`}</div>,
+                okType: 'warning',
+                onOk: () => {
+                    this.props.handleSetState('isSubmitting', true)
+                    ajax('put', `/task/${this.state.currentTaskId}/user/${this.props.user.id}/memo`, params)
+                        .then(res => {
+                            console.log(res)
+                            // if (res.data.errors) {
+                            //     message.error(res.data.errors.message)
+                            // } else {
+                            //     let dataSource = []
+                            //     this.props.dataSetting.dataSource.forEach(ds => {
+                            //         if (ds.id === res.data.id) {
+                            //             dataSource.push(res.data)
+                            //         } else {
+                            //             dataSource.push(ds)
+                            //         }
+                            //     })
+                            //     this.props.handleSetState('dataSetting', {
+                            //         ...this.props.dataSetting,
+                            //         dataSource: dataSource
+                            //     })
+                            //     this.props.handleSetState('isSubmitting', false)
+                            //     message.success('保存成功')
+                            //     this.props.getMyTaskStatus()
+                            // }
+                        })
+                        .catch(() => {
+                            this.props.handleSetState('isSubmitting', false)
+                            message.error('保存失败')
+                        })
+                }
+            })
         }
 
         render() {
@@ -278,7 +371,9 @@ module.exports = function(opts) {
                     dataIndex: 'memo',
                     key: 'memo',
                     render: (text, record) => (
-                        <span>{record['Users'][0]['end_date']}</span>
+                        <Popover content={record['Users'][0]['memo']}>
+                            <span className="ellipsis">{record['Users'][0]['memo']}</span>
+                        </Popover>
                     )
                 },
                 {
@@ -295,7 +390,8 @@ module.exports = function(opts) {
                         let status = record['Users'][0]['status']
                         const Start = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} data-status="1" onClick={this.handleTaskStatus}>开始任务</Button>
                         const Waiting = () => <Button type="primary" className="mr-10" loading={this.props.isSubmitting} data-tid={record.id} data-status="2" onClick={this.handleTaskStatus}>完成个人任务</Button>
-                        const Compelete = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id}>完成任务</Button>
+                        const Compelete = () => <Button type="primary" loading={this.props.isSubmitting} data-tid={record.id} onClick={this.setTaskCompelete}>完成任务</Button>
+                        const Memo = () => <Button type="primary" data-tid={record.id} onClick={this.openModal}>填写备注</Button>
                         let Action
                         switch (status) {
                             case '0':
@@ -305,7 +401,7 @@ module.exports = function(opts) {
                                 Action = () => (<div><Waiting /><Compelete /></div>)
                                 break
                             case '2':
-                                Action = () => (<span>已完成</span>)
+                                Action = () => (<div><span className="mr-10">已完成</span><Memo /></div>)
                                 break
                             case '3':
                                 Action = () => (<span>超时</span>)
@@ -342,10 +438,38 @@ module.exports = function(opts) {
                 }
             }
 
+            const formFields = [
+                {
+                    label: '备注',
+                    content: ({getFieldDecorator}) => {
+                        const validator = (rule, value, callback) => {
+                            if (value && value.length >= 5) {
+                                callback()
+                            } else {
+                                callback('备注不能少于5字')
+                            }
+                        }
+                        return getFieldDecorator('memo', {
+                            rules: [{required: true, validator: validator}]
+                        })(<TextArea rows={10} placeholder="请填写备注" />)
+                    },
+                },
+            ]
+
             return (
                 <div>
                     <BasicOperation className="mb-10 clearfix" operationBtns={operationBtn} />
                     <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={expandedRowRender} />
+                    <CustomModal user={this.props.user} {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
+                        <CustomForm
+                            formStyle={{width: '100%'}}
+                            formFields={formFields}
+                            handleSubmit={this.handleFormSubmit}
+                            updateFormFields={this.props.updateFormFields}
+                            formFieldsValues={this.props.formFieldsValues}
+                            isSubmitting={this.props.isSubmitting}
+                        />
+                    </CustomModal>
                 </div>
             )
         }
@@ -355,6 +479,11 @@ module.exports = function(opts) {
         model: 'task',
         title: '任务管理',
         customGetData: true,
+        formFieldsValues: {
+            memo: {
+                value: null
+            }
+        }
     })
 
     return MM
