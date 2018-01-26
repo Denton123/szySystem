@@ -64,6 +64,7 @@ class WorkerAffairs extends Component {
         }
         this.getTaskByUserIds(this.props.rowSelection)
         .then(res => {
+            console.log(res)
             if (res.data.length > 0) {
                 let users = ''
                 res.data.forEach(d => {
@@ -215,7 +216,10 @@ class WorkerAffairs extends Component {
             }
         ]
         const rowSelection = {
-            onChange: this.props.handleTableRowChange
+            onChange: this.props.handleTableRowChange,
+            getCheckboxProps: record => ({
+                disabled: record.quit_date === null
+            })
         }
 
         // 表单
