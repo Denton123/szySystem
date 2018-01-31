@@ -196,26 +196,25 @@ module.exports = function(opts) {
                     this.props.handleSetState('isSubmitting', true)
                     ajax('put', `/task/${tid}/user/${this.props.user.id}/compelete`, {status: '2'})
                         .then(res => {
-                            console.log(res)
-                            // if (res.data.errors) {
-                            //     message.error(res.data.errors.message)
-                            // } else {
-                            //     let dataSource = []
-                            //     this.props.dataSetting.dataSource.forEach(ds => {
-                            //         if (ds.id === res.data.id) {
-                            //             dataSource.push(res.data)
-                            //         } else {
-                            //             dataSource.push(ds)
-                            //         }
-                            //     })
-                            //     this.props.handleSetState('dataSetting', {
-                            //         ...this.props.dataSetting,
-                            //         dataSource: dataSource
-                            //     })
-                            //     this.props.handleSetState('isSubmitting', false)
-                            //     message.success('保存成功')
-                            //     this.props.getMyTaskStatus()
-                            // }
+                            if (res.data.errors) {
+                                message.error(res.data.errors.message)
+                            } else {
+                                let dataSource = []
+                                this.props.dataSetting.dataSource.forEach(ds => {
+                                    if (ds.id === res.data.id) {
+                                        dataSource.push(res.data)
+                                    } else {
+                                        dataSource.push(ds)
+                                    }
+                                })
+                                this.props.handleSetState('dataSetting', {
+                                    ...this.props.dataSetting,
+                                    dataSource: dataSource
+                                })
+                                this.props.handleSetState('isSubmitting', false)
+                                message.success('保存成功')
+                                this.props.getMyTaskStatus()
+                            }
                         })
                         .catch(() => {
                             this.props.handleSetState('isSubmitting', false)
@@ -238,8 +237,6 @@ module.exports = function(opts) {
         }
 
         handleFormSubmit = (params) => {
-            console.log(this.state.currentTaskId)
-            console.log(params)
             CustomPrompt({
                 type: 'confirm',
                 content: <div>{`确认后，备注不能修改，是否要提交`}</div>,
@@ -248,26 +245,34 @@ module.exports = function(opts) {
                     this.props.handleSetState('isSubmitting', true)
                     ajax('put', `/task/${this.state.currentTaskId}/user/${this.props.user.id}/memo`, params)
                         .then(res => {
-                            console.log(res)
-                            // if (res.data.errors) {
-                            //     message.error(res.data.errors.message)
-                            // } else {
-                            //     let dataSource = []
-                            //     this.props.dataSetting.dataSource.forEach(ds => {
-                            //         if (ds.id === res.data.id) {
-                            //             dataSource.push(res.data)
-                            //         } else {
-                            //             dataSource.push(ds)
-                            //         }
-                            //     })
-                            //     this.props.handleSetState('dataSetting', {
-                            //         ...this.props.dataSetting,
-                            //         dataSource: dataSource
-                            //     })
-                            //     this.props.handleSetState('isSubmitting', false)
-                            //     message.success('保存成功')
-                            //     this.props.getMyTaskStatus()
-                            // }
+                            if (res.data.errors) {
+                                message.error(res.data.errors.message)
+                            } else {
+                                let dataSource = []
+                                this.props.dataSetting.dataSource.forEach(ds => {
+                                    if (ds.id === res.data.id) {
+                                        dataSource.push(res.data)
+                                    } else {
+                                        dataSource.push(ds)
+                                    }
+                                })
+                                this.props.handleSetState('dataSetting', {
+                                    ...this.props.dataSetting,
+                                    dataSource: dataSource
+                                })
+                                this.props.handleSetState('isSubmitting', false)
+                                this.props.handleSetState('modalSetting', {
+                                    ...this.props.modalSetting,
+                                    visible: false,
+                                })
+                                this.props.handleSetState('formFieldsValues', {
+                                    ...this.props.formFieldsValues,
+                                    memo: {
+                                        value: null
+                                    },
+                                })
+                                message.success('保存成功')
+                            }
                         })
                         .catch(() => {
                             this.props.handleSetState('isSubmitting', false)
@@ -401,7 +406,12 @@ module.exports = function(opts) {
                                 Action = () => (<div><Waiting /><Compelete /></div>)
                                 break
                             case '2':
-                                Action = () => (<div><span className="mr-10">已完成</span><Memo /></div>)
+                                Action = () => (
+                                    <div>
+                                        <span className="mr-10">已完成</span>
+                                        {record['Users'][0]['memo'] ? null : (<Memo />)}
+                                    </div>
+                                )
                                 break
                             case '3':
                                 Action = () => (<span>超时</span>)
@@ -483,7 +493,7 @@ module.exports = function(opts) {
             memo: {
                 value: null
             }
-        }
+        },
     })
 
     return MM
