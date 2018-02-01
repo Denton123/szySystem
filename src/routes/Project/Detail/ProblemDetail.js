@@ -438,7 +438,6 @@ class ProblemDetail extends Component {
                                     used={item.used}
                                     date={item.date}
                                         />]}>
-                                    }
                                 <span>{item.User.realname}</span>
                                 <Avatar src={answerList && item.User.avatar ? `/uploadImgs/${item.User.avatar}` : null} icon="user" className="answerAvatar" />
                                 <List.Item.Meta
