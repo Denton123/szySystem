@@ -47,7 +47,7 @@ class ProblemDetail extends Component {
         answer: '', // 答案value值
         answerList: [], // 当前页答案数据
         loading: true, // List的加载
-        loadingMore: false,
+        loadingMore: false, // 加载更多标志
         showLoadingMore: false, // 加载更多
         showCheckbox: false, // 采纳框是否显示
         flag: 1, // 当前页数
@@ -56,8 +56,7 @@ class ProblemDetail extends Component {
         title: '', // 编辑表单标题
         editContent: '', // 编辑内容
         editID: '', // 编辑ID
-        quillShow: true, // 答案编辑器显示,
-        Time: '' // 时间更新
+        quillShow: true, // 答案编辑器显示
     }
     componentDidMount() {
         let keysObj = siderKeysUrl(this.props.location.pathname)
@@ -149,16 +148,11 @@ class ProblemDetail extends Component {
     getAnswerData = (page, callback) => {
         let showId = this.state.DetailData.id
         show(`/answer/${showId}?page=${page}`).then(res => {
-            console.log(res)
             res.data.data.forEach((t) => {
                 if (t.createdAt === t.updatedAt) {
-                    this.setState({
-                        Time: moment(t.createdAt).startOf('second').fromNow() + '回答'
-                    })
+                    t.date = moment(t.createdAt).startOf('second').fromNow() + '回答'
                 } else {
-                    this.setState({
-                        Time: moment(t.updatedAt).startOf('second').fromNow() + '更新'
-                    })
+                    t.date = moment(t.updatedAt).startOf('second').fromNow() + '更新'
                 }
             })
             if (res.data.currentPage === res.data.totalPage) {
@@ -317,7 +311,7 @@ class ProblemDetail extends Component {
         })
     }
     render() {
-        const {DetailData, answer, answerList, showLoadingMore, loading, Time,
+        const {DetailData, answer, answerList, showLoadingMore, loading,
             loadingMore, showCheckbox, show, title, editAnswer, editContent, onCancel, quillShow} = this.state
         const {
             child,
@@ -355,9 +349,9 @@ class ProblemDetail extends Component {
             </div>
             ) : null
 
-        const Bottom = ({userId, id, used}) => (
+        const Bottom = ({userId, id, used, date}) => (
             <span>
-                <span>{Time}</span>
+                <span>{date}</span>
                 {
                     user && user.id === userId && used === '0' ? (
                         <span className="answerOperate">
@@ -442,7 +436,9 @@ class ProblemDetail extends Component {
                                     userId={item.user_id}
                                     id={item.id}
                                     used={item.used}
+                                    date={item.date}
                                         />]}>
+                                    }
                                 <span>{item.User.realname}</span>
                                 <Avatar src={answerList && item.User.avatar ? `/uploadImgs/${item.User.avatar}` : null} icon="user" className="answerAvatar" />
                                 <List.Item.Meta
