@@ -202,27 +202,25 @@ class WorkLog extends Component {
             match
         } = this.props
         return (
-            <Content style={{ margin: '0 16px' }}>
-                <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-                    <Calendar
-                        onSelect={this.onSelect}
-                        disabledDate={this.disabledDate}
-                        dateCellRender={this.dateCellRender}
-                        defaultValue={valueToMoment(this.state.date)}
-                        onPanelChange={this.onPanelChange}
-                        mode={this.state.mode} />
-                    <PopModal
-                        show={show}
-                        handleok={this.handleok}
-                        onCancel={this.onCancel}
-                        title={title}
-                        showTip={showTip}
-                        handDelete={this.handDelete}
-                        showDelete={showDelete}
-                        logcont={logcont}
-                        user={this.props.user} />
-                </div>
-            </Content>
+            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                <Calendar
+                    onSelect={this.onSelect}
+                    disabledDate={this.disabledDate}
+                    dateCellRender={this.dateCellRender}
+                    defaultValue={valueToMoment(this.state.date)}
+                    onPanelChange={this.onPanelChange}
+                    mode={this.state.mode} />
+                <PopModal
+                    show={show}
+                    handleok={this.handleok}
+                    onCancel={this.onCancel}
+                    title={title}
+                    showTip={showTip}
+                    handDelete={this.handDelete}
+                    showDelete={showDelete}
+                    logcont={logcont}
+                    user={this.props.user} />
+            </div>
         )
     }
 }
