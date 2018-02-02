@@ -28,6 +28,8 @@ import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
+// 自定义弹窗
+import CustomPrompt from 'COMPONENTS/modal/CustomPrompt'
 
 const {TextArea} = Input
 const {Option} = Select
@@ -71,6 +73,8 @@ module.exports = function(opts) {
         }
 
         componentDidMount() {
+            console.log('任务管理 ----- ')
+            console.log(this.props)
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             // let page = this.props.location.state ? this.props.location.state.page : 1
             if (opts.total) { // 任务管理页面
@@ -166,8 +170,14 @@ module.exports = function(opts) {
         }
 
         edit = (e) => {
-            if (e.target.dataset['status'] !== '0') {
-                message.warning('任务已经开始、完成或者超时！')
+            console.log('edit---')
+            // if (e.target.dataset['status'] !== '0') {
+            //     message.warning('任务已经开始、完成或者超时！')
+            //     return
+            // }
+            // ==>
+            if (e.target.dataset['status'] === '2') {
+                message.warning('任务已经完成！')
                 return
             }
             if (this.props.project) { // 在项目中的任务，如果项目的计划时间结束。任务也将不能编辑
@@ -198,6 +208,39 @@ module.exports = function(opts) {
                 data['plan_date'] = [data['plan_start_date'], data['plan_end_date']]
                 this.props.updateEditFormFieldsValues(data)
             })
+        }
+
+        // goback = (e) => {
+        //     e.persist()
+        //     if (e.target.dataset['status'] === '2') {
+        //         let id = e.target.dataset['id']
+        //         CustomPrompt({
+        //             type: 'confirm',
+        //             content: <div>该任务是否要后退</div>,
+        //             okType: 'danger',
+        //             onOk: () => {
+        //                 this.props.handleEdit(e, (res) => {
+        //                     let data = resetObject(res.data)
+        //                     data['plan_date'] = [data['plan_start_date'], data['plan_end_date']]
+        //                     this.props.updateEditFormFieldsValues(data)
+        //                     let params = {}
+        //                     Object.keys(this.props.formFieldsValues).forEach(key => {
+        //                         params[key] = this.props.formFieldsValues[key].value
+        //                     })
+        //                     this.handleFormSubmit({...params, status: '1'})
+        //                 })
+        //             }
+        //         })
+        //     }
+        // }
+
+        goBack = (e) => {
+            let id = e.target.dataset['id']
+            console.log(id)
+            ajax('get', `/task/${id}/update-status`)
+                .then(res => {
+                    console.log(res)
+                })
         }
 
         handleFormSubmit = (values) => {
@@ -545,9 +588,20 @@ module.exports = function(opts) {
                         } else {
                             return (
                                 <span>
-                                    <a href="javascript:;" data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.edit}>编辑</a>
-                                    <Divider type="vertical" />
-                                    <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
+                                    {
+                                        text.uid === this.props.user.id &&
+                                        (text.status === '2' ? (
+                                            <span>
+                                                <a href="javascript:;" data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.goBack}>回退</a>
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                <a href="javascript:;" data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.edit}>编辑</a>
+                                                <Divider type="vertical" />
+                                                <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
+                                            </span>
+                                        ))
+                                    }
                                 </span>
                             )
                         }
