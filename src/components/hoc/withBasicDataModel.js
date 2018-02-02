@@ -214,8 +214,11 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {Function} cb [自定义回调函数，存在时，则执行回调函数，不执行默认处理]
          */
         handleEdit = (e, cb) => {
+            // console.log('handleEdit --- ')
+            // console.log(e)
             this.handleSetState('operationType', 'edit')
             let id = e.target.dataset['id']
+            // console.log(`id: ${id}`)
             show(`/${this.state.model}/${id}`)
                 .then(res => {
                     if (Object.keys(res.data).length === 0) {
@@ -249,6 +252,8 @@ function withBasicDataModel(PageComponent, Datas) {
                         value: transformValue(field, data[field])
                     }
                 })
+                // console.log('updateEditFormFieldsValues --- ')
+                // console.log(obj)
                 return {
                     formFieldsValues: obj
                 }
@@ -263,6 +268,8 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {Function} cb     [回调]
          */
         handleFormSubmit = (values, cb) => {
+            // console.log('handleFormSubmit ---- ')
+            // console.log(values)
             this.handleSetState('isSubmitting', true)
             if (this.state.operationType === 'add') {
                 this.ajaxStore(values, cb)
@@ -315,6 +322,8 @@ function withBasicDataModel(PageComponent, Datas) {
          * @param    {Function} cb     [回调，传入后则不会做默认处理]
          */
         ajaxUpdate = (id, params, cb) => {
+            // console.log('ajaxUpdate ---- ')
+            // console.log(params)
             update(`${this.state.model}/${id}`, params, hasFile)
             .then(res => {
                 this.handleSetState('isSubmitting', false)
@@ -336,6 +345,8 @@ function withBasicDataModel(PageComponent, Datas) {
                                     newDataSource.push(data)
                                 }
                             })
+                            // console.log('newDataSource --- ')
+                            // console.log(newDataSource)
                             return {
                                 dataSetting: {
                                     ...prevState.dataSetting,
@@ -591,6 +602,7 @@ function withBasicDataModel(PageComponent, Datas) {
                     rowSelection={this.rowSelection}
                     handleReset={this.handleReset}
                     user={this.props.user}
+                    goback={this.goback}
                     {...this.state}
                     {...this.props}
                 />
