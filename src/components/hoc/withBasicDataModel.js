@@ -339,14 +339,15 @@ function withBasicDataModel(PageComponent, Datas) {
                         this.setState((prevState, props) => {
                             let newDataSource = []
                             prevState.dataSetting.dataSource.forEach(data => {
+                                console.log(res.data)
                                 if (data.id === prevState.formFieldsValues.id.value) {
                                     newDataSource.push(resetObject(res.data))
                                 } else {
                                     newDataSource.push(data)
                                 }
                             })
-                            // console.log('newDataSource --- ')
-                            // console.log(newDataSource)
+                            console.log('newDataSource --- ')
+                            console.log(newDataSource)
                             return {
                                 dataSetting: {
                                     ...prevState.dataSetting,

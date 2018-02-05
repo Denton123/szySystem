@@ -239,7 +239,39 @@ module.exports = function(opts) {
             console.log(id)
             ajax('get', `/task/${id}/update-status`)
                 .then(res => {
-                    console.log(res)
+                    console.log(res.data)
+                    if (res.data.id === Number(id)) {
+                        let dataSource = []
+                        this.props.dataSetting.dataSource.forEach(d => {
+                            // if (d.id === res.data.pid) {
+                                // let child = []
+                                // d['child'].forEach(c => {
+                                //     if (c.id === res.data.id) {
+                                //         child.push(res.data)
+                                //     } else {
+                                //         child.push(c)
+                                //     }
+                                // })
+                                // d['child'] = child
+                            // }
+                            if (d.id === Number(id)) {
+                                dataSource.push(resetObject(res.data))
+                            } else {
+                                dataSource.push(d)
+                            }
+                        })
+                        this.props.handleSetState('dataSetting', {
+                            ...this.props.dataSetting,
+                            dataSource: dataSource
+                        })
+                        this.props.handleModalCancel()
+                        message.success('后退成功')
+                    } else {
+                        message.error('后退失败')
+                    }
+                })
+                .catch(() => {
+                    message.error('后退失败')
                 })
         }
 
