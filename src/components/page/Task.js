@@ -210,52 +210,15 @@ module.exports = function(opts) {
             })
         }
 
-        // goback = (e) => {
-        //     e.persist()
-        //     if (e.target.dataset['status'] === '2') {
-        //         let id = e.target.dataset['id']
-        //         CustomPrompt({
-        //             type: 'confirm',
-        //             content: <div>该任务是否要后退</div>,
-        //             okType: 'danger',
-        //             onOk: () => {
-        //                 this.props.handleEdit(e, (res) => {
-        //                     let data = resetObject(res.data)
-        //                     data['plan_date'] = [data['plan_start_date'], data['plan_end_date']]
-        //                     this.props.updateEditFormFieldsValues(data)
-        //                     let params = {}
-        //                     Object.keys(this.props.formFieldsValues).forEach(key => {
-        //                         params[key] = this.props.formFieldsValues[key].value
-        //                     })
-        //                     this.handleFormSubmit({...params, status: '1'})
-        //                 })
-        //             }
-        //         })
-        //     }
-        // }
-
         goBack = (e) => {
             let id = e.target.dataset['id']
-            console.log(id)
             ajax('get', `/task/${id}/update-status`)
                 .then(res => {
-                    console.log(res.data)
-                    if (res.data.id === Number(id)) {
+                    if (res.data) {
                         let dataSource = []
                         this.props.dataSetting.dataSource.forEach(d => {
-                            // if (d.id === res.data.pid) {
-                                // let child = []
-                                // d['child'].forEach(c => {
-                                //     if (c.id === res.data.id) {
-                                //         child.push(res.data)
-                                //     } else {
-                                //         child.push(c)
-                                //     }
-                                // })
-                                // d['child'] = child
-                            // }
-                            if (d.id === Number(id)) {
-                                dataSource.push(resetObject(res.data))
+                            if (d.id === res.data.data[0].id) {
+                                dataSource.push(res.data.data[0])
                             } else {
                                 dataSource.push(d)
                             }
@@ -264,10 +227,7 @@ module.exports = function(opts) {
                             ...this.props.dataSetting,
                             dataSource: dataSource
                         })
-                        this.props.handleModalCancel()
                         message.success('后退成功')
-                    } else {
-                        message.error('后退失败')
                     }
                 })
                 .catch(() => {
@@ -623,9 +583,17 @@ module.exports = function(opts) {
                                     {
                                         text.uid === this.props.user.id &&
                                         (text.status === '2' ? (
-                                            <span>
-                                                <a href="javascript:;" data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.goBack}>回退</a>
-                                            </span>
+                                            text.child ? (
+                                                <span>
+                                                    <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
+                                                </span>
+                                            ) : (
+                                                <span>
+                                                    <a data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.goBack}>回退</a>
+                                                    <Divider type="vertical" />
+                                                    <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
+                                                </span>
+                                            )
                                         ) : (
                                             <span>
                                                 <a href="javascript:;" data-id={text.id} data-pid={text.pid} data-status={text.status} onClick={this.edit}>编辑</a>
