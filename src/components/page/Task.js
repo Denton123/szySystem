@@ -436,7 +436,7 @@ module.exports = function(opts) {
                     title: '头像',
                     dataIndex: 'avatar',
                     key: 'avatar',
-                    render: (text) => <Avatar src={text ? `/uploadImgs/${text}` : ''} type="user" />
+                    render: (text) => <Avatar src={text ? `/uploadImgs/${text}` : ''} icon="user" />
                 },
                 {
                     title: '姓名',
