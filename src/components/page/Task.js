@@ -288,6 +288,7 @@ module.exports = function(opts) {
             }
         }
 
+        // 任务状态改变
         handleStatusChange = (e) => {
             let val = e.target.value
             this.setState({
@@ -581,8 +582,8 @@ module.exports = function(opts) {
                             return (
                                 <span>
                                     {
-                                        text.uid === this.props.user.id &&
-                                        (text.status === '2' ? (
+                                        text.uid === this.props.user.id
+                                        ? (text.status === '2' ? (
                                             text.child ? (
                                                 <span>
                                                     <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
@@ -601,6 +602,7 @@ module.exports = function(opts) {
                                                 <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
                                             </span>
                                         ))
+                                        : <span>任务发布者才有权修改任务</span>
                                     }
                                 </span>
                             )
@@ -609,6 +611,7 @@ module.exports = function(opts) {
                 }
             ]
 
+            // 任务管理的项目任务
             if (opts.total && opts.hasProject) {
                 columns.unshift({
                     title: '所属项目',
