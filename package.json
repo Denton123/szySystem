@@ -47,6 +47,7 @@
     "babel-runtime": "^6.26.0",
     "classnames": "^2.2.5",
     "clean-webpack-plugin": "^0.1.17",
+    "compression-webpack-plugin": "^1.1.10",
     "connect-history-api-fallback": "^1.5.0",
     "copy-webpack-plugin": "^4.0.1",
     "cross-env": "^5.0.1",
