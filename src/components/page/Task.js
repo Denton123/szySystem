@@ -638,7 +638,12 @@ module.exports = function(opts) {
                 }
             }
             const rowSelection = {
-                onChange: this.props.handleTableRowChange
+                onChange: this.props.handleTableRowChange,
+                getCheckboxProps: record => {
+                    return {
+                        disabled: record.uid !== this.props.user.id
+                    }
+                }
             }
 
             const formFields = [

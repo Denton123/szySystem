@@ -182,7 +182,7 @@ class PermissionRole extends Component {
             {
                 label: '角色名称',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('display_name', {})(<Input autoComplete="off" placeholder="角色名称" />)
+                    return getFieldDecorator('display_name', {})(<Input className="mb-10" autoComplete="off" placeholder="角色名称" />)
                 },
             },
         ]

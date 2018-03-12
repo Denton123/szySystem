@@ -77,7 +77,7 @@ class ProjectDetail extends Component {
                 >
                     <Meta
                         avatar={
-                            <img width={272} height={155} alt="logo" src={projectData.img !== null ? `/uploadImgs/${projectData.img}` : '/default_project_cover.png'} />
+                            <img style={{'maxWidth': '200px', 'maxHeight': '200px'}} alt="logo" src={projectData.img !== null ? `/uploadImgs/${projectData.img}` : '/default_project_cover.png'} />
                         }
                         title={
                             <div className="projectInfo-listItem-metaTitle">

@@ -265,7 +265,7 @@ class ProjectInfo extends Component {
                                 <Icon type="edit" className="projectInfo-listItem-actions" data-id={item.id} data-img={item.img} onClick={this.edit} />,
                                 <Icon type="delete" className="projectInfo-listItem-actions" data-id={item.id} onClick={this.handleDelete} />
                             ]}
-                            extra={<img width={272} height={155} alt="logo" src={item.img !== null ? `/uploadImgs/${item.img}` : '/default_project_cover.png'} />}
+                            extra={<img style={{'maxWidth': '150px', 'maxHeight': '150px'}} alt="logo" src={item.img !== null ? `/uploadImgs/${item.img}` : '/default_project_cover.png'} />}
                         >
                             <List.Item.Meta
                                 title={

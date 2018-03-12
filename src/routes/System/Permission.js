@@ -34,10 +34,10 @@ class Permission extends Component {
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <Tabs defaultActiveKey={this.state.__key} onTabClick={this.onTabChange} animated={false}>
                     <TabPane tab="用户" key="user">
-                        <User {...this.props} />
+                        <User {...this.props} key={this.state.__key} />
                     </TabPane>
                     <TabPane tab="角色" key="role">
-                        <Role {...this.props} />
+                        <Role {...this.props} key={this.state.__key} />
                     </TabPane>
                 </Tabs>
             </div>
