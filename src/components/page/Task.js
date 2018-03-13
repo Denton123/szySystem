@@ -73,8 +73,6 @@ module.exports = function(opts) {
         }
 
         componentDidMount() {
-            console.log('任务管理 ----- ')
-            console.log(this.props)
             let data = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
             // let page = this.props.location.state ? this.props.location.state.page : 1
             if (opts.total) { // 任务管理页面
@@ -170,7 +168,6 @@ module.exports = function(opts) {
         }
 
         edit = (e) => {
-            console.log('edit---')
             // if (e.target.dataset['status'] !== '0') {
             //     message.warning('任务已经开始、完成或者超时！')
             //     return
