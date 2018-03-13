@@ -33,7 +33,7 @@ class OperateLog extends Component {
             {
                 label: '用户',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('realname', {})(<Input autoComplete="off" placeholder="用户" />)
+                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="用户" />)
                 },
             },
             {
@@ -41,6 +41,7 @@ class OperateLog extends Component {
                 content: ({getFieldDecorator}) => {
                     return getFieldDecorator('type', {})(
                         <Select
+                            className="mb-10"
                             style={{width: 150}}
                             placeholder="请选择类型"
                             allowClear
@@ -59,7 +60,7 @@ class OperateLog extends Component {
             {
                 label: '时间',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('log_date', {})(<CustomRangePicker format={'YYYY-MM-DD'} />)
+                    return getFieldDecorator('log_date', {})(<CustomRangePicker className="mb-10" format={'YYYY-MM-DD'} />)
                 },
             },
         ]

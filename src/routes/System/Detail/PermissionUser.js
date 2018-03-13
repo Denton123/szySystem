@@ -93,18 +93,18 @@ class PermissionUser extends Component {
             {
                 label: '姓名',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('realname', {})(<Input autoComplete="off" placeholder="姓名" />)
+                    return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
                 },
             },
             {
                 label: '职位',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('job', {})(<Input autoComplete="off" placeholder="职位" />)
+                    return getFieldDecorator('job', {})(<Input className="mb-10" autoComplete="off" placeholder="职位" />)
                 },
             },
         ]
         const customFormOperation = [
-            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button className="mr-10" type="primary" htmlType="submit">查询</Button>,
             () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
         ]
 
