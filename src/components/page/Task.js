@@ -579,7 +579,7 @@ module.exports = function(opts) {
                             return (
                                 <span>
                                     {
-                                        text.uid === this.props.user.id
+                                        this.props.user && text.uid === this.props.user.id
                                         ? (text.status === '2' ? (
                                             text.child ? (
                                                 <span>

@@ -43,7 +43,7 @@ const SubMenu = Menu.SubMenu
 const TabPane = Tabs.TabPane
 
 // 重整路由结构
-function resetRoute(routes, permissionRoute) {
+function resetRoute(routes) {
     let arr = []
     routes.forEach(r => {
         let obj = {}
@@ -57,9 +57,7 @@ function resetRoute(routes, permissionRoute) {
                             name: `${r.name},${rc.name},${rcc.name}`,
                             path: `${r.path}${rc.path}${rcc.path}`
                         }
-                        if (permissionRoute.find(k => k.path === rcc.path)) {
-                            children.push(obj)
-                        }
+                        children.push(obj)
                     })
                     arr.push(children)
                 }
@@ -68,9 +66,7 @@ function resetRoute(routes, permissionRoute) {
                     name: `${r.name},${rc.name}`,
                     path: `${r.path}${rc.path}`
                 }
-                if (permissionRoute.find(k => k.path === rc.path)) {
-                    arr.push(obj)
-                }
+                arr.push(obj)
             })
         } else {
             obj = {
@@ -78,9 +74,7 @@ function resetRoute(routes, permissionRoute) {
                 name: r.name,
                 path: r.path
             }
-            if (permissionRoute.find(k => k.path === r.path)) {
-                arr.push(obj)
-            }
+            arr.push(obj)
             if (r.path === '/404' || r.path === '/no-permission') { // 404和无权限页面默认加入
                 arr.push(obj)
             }
@@ -372,14 +366,6 @@ class BasicLayout extends React.Component {
         })
     }
 
-    isDisplay = (route) => {
-        if (this.props.permissionRoute.find(k => k.path === route.path)) {
-            return true
-        } else {
-            return false
-        }
-    }
-
     /**
      * [生成单条通知结构]
      * @Author   szh
@@ -432,9 +418,8 @@ class BasicLayout extends React.Component {
             match,
             user,
             collapsed,
-            permissionRoute,
         } = this.props
-        const newRoute = resetRoute(routes, permissionRoute)
+        const newRoutes = resetRoute(routes)
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
@@ -465,13 +450,12 @@ class BasicLayout extends React.Component {
                         if (route.routes) {
                             return (
                                 <SubMenu
-                                    className={this.isDisplay(route) ? '' : 'hide'}
                                     key={route.path}
                                     title={<span><Icon type={route.icon} style={{fontSize: 16}} /><span style={{fontSize: 14}}>{route.name}</span></span>}
                                 >
                                     {
                                         route.routes.map((child, sn) => (
-                                            <Menu.Item key={`${route.path}${child.path}`} className={this.isDisplay(child) ? '' : 'hide'}>
+                                            <Menu.Item key={`${route.path}${child.path}`}>
                                                 <Link to={`${match.path}${route.path}${child.path}`}>{child.name}</Link>
                                             </Menu.Item>
                                         ))
@@ -480,7 +464,7 @@ class BasicLayout extends React.Component {
                             )
                         } else {
                             return (
-                                <Menu.Item key={route.path} className={this.isDisplay(route) ? '' : 'hide'}>
+                                <Menu.Item key={route.path}>
                                     <Link to={`${match.path}${route.path}`}>
                                         <Icon type={route.icon} style={{fontSize: 16}} />
                                         <span style={{fontSize: 14}}>{route.name}</span>
@@ -556,7 +540,7 @@ class BasicLayout extends React.Component {
                     return <Redirect to={`${match.path}/default`} />
                 }} />
                 {
-                    newRoute.map((route, idx) => {
+                    newRoutes.map((route, idx) => {
                         if (isArray(route)) {
                             return (
                                 <Switch key={idx}>
