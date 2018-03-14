@@ -50,6 +50,8 @@ module.exports = {
             '/permission/**': proxyTableOptions,
             '/worklog/**': proxyTableOptions,
             '/summary/**': proxyTableOptions,
+            '/techtype/**': proxyTableOptions,
+            '/technology/**': proxyTableOptions,
             '/check': proxyTableOptions,
             '/notification': proxyTableOptions,
             '/notification/**': proxyTableOptions,

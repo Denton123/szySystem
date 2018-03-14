@@ -1,41 +1,47 @@
+// 人员管理
 import React, {Component} from 'react'
 import {
-    Input,
     Button,
     Table,
-    Divider
+    Input,
+    message,
+    Divider,
 } from 'antd'
-import {
-    Link,
-} from 'react-router-dom'
-import ReactQuill from 'react-quill'
+
 // 引入工具方法
-import {isObject, isArray, valueToMoment, resetObject, transformValue} from 'UTILS/utils'
+// import {isObject, isArray, valueToMoment} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
+import {checkFormField} from 'UTILS/regExp'
 
 import BasicOperation from 'COMPONENTS/basic/BasicOperation'
 
 import CustomModal from 'COMPONENTS/modal/CustomModal'
 import CustomForm from 'COMPONENTS/form/CustomForm'
-import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
-/**
- * [escape 过滤script标签]
- * @DateTime 2017-12-11
- * @param    {string}   str [html标签字符串]
- * @return   {string}       [过滤后的html标签字符串]
- */
-function escape(str) {
-    return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
-}
-
-class Technology extends Component {
-    state = {
-        types: [] // 全部类型
+class Techtype extends Component {
+    /**
+     * [根据技术分类id获取技术文章的数量]
+     * @Author   szh
+     * @DateTime 2018-01-11
+     * @param    {Number}    tid[用户id数组]
+     * @return   {Function}      [promise对象]
+     */
+    getTechnologyCountByTechtypeId = (tid) => {
+        return ajax('get', `/technology/${tid}/count`)
     }
-    componentDidMount() {
+    handleDelete = (e) => {
+        e.persist()
+        let tid = e.target.dataset['id']
+        this.getTechnologyCountByTechtypeId(tid)
+        .then(res => {
+            if (res.data.count === 0) {
+                this.props.handleDelete(e)
+            } else {
+                message.warning('已经有技术文章使用该分类了')
+            }
+        })
     }
     render() {
         const {
@@ -43,59 +49,82 @@ class Technology extends Component {
             route,
             history,
             location,
-            match,
-            user
+            match
         } = this.props
-
-        let condition = [
-            {
-                label: '分类',
-                content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('name', {})(<Input className="mb-10" autoComplete="off" placeholder="分类" />)
-                },
+        const entryDate = {
+            format: 'YYYY-MM-DD',
+            showTime: false,
+            style: {
+                width: 220
             }
+        }
+        const quitDate = {
+            format: 'YYYY-MM-DD',
+            showTime: false,
+            style: {
+                width: 220
+            }
+        }
+        const condition = [
+            {
+                label: '技术分类',
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('name', {})(<Input className="mb-10" autoComplete="off" placeholder="姓名" />)
+                },
+            },
         ]
         const operationBtn = [
-            () => (
-                <Link to={`${match.url}/add`}>
-                    <Button type="primary">
-                        新增
-                    </Button>
-                </Link>
-            ),
+            () => <Button type="primary" className="mr-10" onClick={this.props.handleAdd}>新增</Button>,
+            // () => <Button type="danger" onClick={this.handleBatchDelete}>删除</Button>
         ]
-
         const customFormOperation = [
             () => <Button type="primary" htmlType="submit">查询</Button>,
             () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
         ]
+
+        // 表格
         const columns = [
             {
-                title: '论坛分类',
+                title: '技术分类',
                 dataIndex: 'name',
                 key: 'name',
             },
             {
                 title: '操作',
                 key: 'action',
-                render: (text, record) => {
-                    return (
-                        <span>
-                            <Link to={`${match.path}/edit/${text.id}`}>编辑</Link>
-                            <Divider type="vertical" />
-                            <a href="javascript:;" data-id={text.id} onClick={this.props.handleDelete}>删除</a>
-                        </span>
-                    )
-                }
+                width: 200,
+                render: (text, record) => (
+                    <span>
+                        <a href="javascript:;" data-id={text.id} onClick={this.props.handleEdit}>编辑</a>
+                        <Divider type="vertical" />
+                        <a href="javascript:;" data-id={text.id} onClick={this.handleDelete}>删除</a>
+                    </span>
+                )
             }
         ]
 
-        const tableExpandedRowRender = (record) => {
-            let content = escape(record.content)
-            return (
-                <div dangerouslySetInnerHTML={{__html: content}} />
-            )
-        }
+        // 表单
+        const formFields = [
+            {
+                label: '技术分类',
+                content: ({getFieldDecorator, getFieldValue}) => {
+                    let id = 0
+                    if (this.props.formFieldsValues.id.value) {
+                        id = this.props.formFieldsValues.id.value
+                    }
+                    const validator = (rule, value, callback) => {
+                        checkFormField(rule.field, value, 'Techtype', '技术分类', id)
+                        .then(res => {
+                            callback(res)
+                        })
+                    }
+                    return getFieldDecorator('name', {
+                        validateTrigger: ['onBlur'],
+                        rules: [{required: true, validator: validator}]
+                    })(<Input autoComplete="off" placeholder="技术分类" />)
+                },
+            },
+        ]
 
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
@@ -109,27 +138,38 @@ class Technology extends Component {
                     formFieldsValues={this.props.queryFieldValues}
                 />
                 <BasicOperation className="mt-10 mb-10" operationBtns={operationBtn} />
-                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} expandedRowRender={tableExpandedRowRender} />
+                <Table {...this.props.dataSetting} rowKey={record => record.id} columns={columns} />
+                <CustomModal user={this.props.user} {...this.props.modalSetting} footer={null} onCancel={this.props.handleModalCancel}>
+                    <CustomForm
+                        formStyle={{width: '100%'}}
+                        formFields={formFields}
+                        handleSubmit={this.props.handleFormSubmit}
+                        updateFormFields={this.props.updateFormFields}
+                        formFieldsValues={this.props.formFieldsValues}
+                        isSubmitting={this.props.isSubmitting}
+                    />
+                </CustomModal>
             </div>
         )
     }
 }
 
-const Th = withBasicDataModel(Technology, {
-    model: 'technology',
+const TT = withBasicDataModel(Techtype, {
+    model: 'techtype',
+    title: '技术分类',
     queryFieldValues: {
         name: {
             value: null
-        }
+        },
     },
-    handleData: (dataSource) => {
-        let arr = []
-        dataSource.forEach(data => {
-            arr.push(resetObject(data))
-        })
-        return arr
+    formFieldsValues: {
+        id: {
+            value: null
+        },
+        name: {
+            value: null
+        },
     },
-    customGetData: true
 })
 
-export default Th
+export default TT

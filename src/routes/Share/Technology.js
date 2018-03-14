@@ -3,12 +3,13 @@ import {
     Input,
     Button,
     Table,
-    Divider
+    Divider,
+    Select
 } from 'antd'
 import {
     Link,
 } from 'react-router-dom'
-import ReactQuill from 'react-quill'
+
 // 引入工具方法
 import {isObject, isArray, valueToMoment, resetObject, transformValue} from 'UTILS/utils'
 import {ajax} from 'UTILS/ajax'
@@ -20,6 +21,8 @@ import CustomForm from 'COMPONENTS/form/CustomForm'
 import CustomRangePicker from 'COMPONENTS/date/CustomRangePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
+
+const Option = Select.Option
 
 /**
  * [escape 过滤script标签]
@@ -33,10 +36,10 @@ function escape(str) {
 
 class Technology extends Component {
     state = {
-        types: [] // 全部类型
+        types: [] // 全部技术类型
     }
     componentDidMount() {
-        // let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
+        let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
 
         // let obj = Object.assign({}, this.props.queryFieldValues)
         // Object.keys(this.props.queryFieldValues).forEach(field => {
@@ -50,10 +53,10 @@ class Technology extends Component {
         // this.props.handleSetState('queryFieldValues', obj)
 
         // if (opts.personal) {
-        //     this.props.getData({
-        //         ...p,
-        //         user_id: this.props.user.id
-        //     })
+        this.props.getData({
+            ...p,
+        })
+        this.getAllTechtype()
         // } else {
         //     this.props.getData({
         //         ...p,
@@ -62,6 +65,16 @@ class Technology extends Component {
         //     })
         // }
     }
+
+    getAllTechtype() {
+        ajax('get', '/techtype/all')
+        .then(res => {
+            this.setState({
+                types: res.data
+            })
+        })
+    }
+
     render() {
         const {
             child,
@@ -71,7 +84,9 @@ class Technology extends Component {
             match,
             user
         } = this.props
-
+        const {
+            types
+        } = this.state
         let condition = [
             {
                 label: '标题',
@@ -80,9 +95,19 @@ class Technology extends Component {
                 },
             },
             {
-                label: '发表日期',
+                label: '类型',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
+                    return getFieldDecorator('type_id', {})(
+                        <Select
+                            style={{width: 120}}
+                            placeholder="请选择类型"
+                            allowClear
+                        >
+                            {types.map(type => (
+                                <Option value={type.id} key={type.id}>{type.name}</Option>
+                            ))}
+                        </Select>
+                    )
                 },
             },
             {
@@ -90,7 +115,17 @@ class Technology extends Component {
                 content: ({getFieldDecorator}) => {
                     return getFieldDecorator('realname', {})(<Input className="mb-10" autoComplete="off" placeholder="作者" />)
                 },
-            }
+            },
+            {
+                label: '发表日期',
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('date', {})(<CustomRangePicker className="mb-10" showTime={false} format={'YYYY-MM-DD'} />)
+                },
+            },
+        ]
+        const customFormOperation = [
+            () => <Button type="primary" htmlType="submit">查询</Button>,
+            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
         ]
         const operationBtn = [
             () => (
@@ -102,10 +137,6 @@ class Technology extends Component {
             ),
         ]
 
-        const customFormOperation = [
-            () => <Button type="primary" htmlType="submit">查询</Button>,
-            () => <Button type="primary" htmlType="reset" onClick={this.props.handleReset}>重置</Button>
-        ]
         const columns = [
             {
                 title: '作者',

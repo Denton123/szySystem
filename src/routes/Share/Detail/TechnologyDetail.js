@@ -19,7 +19,7 @@ import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
-class SummaryDetail extends Component {
+class TechnologyDetail extends Component {
     state = {
         data: {},
     }
@@ -28,7 +28,7 @@ class SummaryDetail extends Component {
     }
     getData = () => {
         const hide = message.loading('数据读取中', 0)
-        show(`summary/${this.props.match.params.id}`)
+        show(`technology/${this.props.match.params.id}`)
             .then(res => {
                 setTimeout(hide, 0)
                 if (Object.keys(res.data).length === 0) {
@@ -89,4 +89,4 @@ class SummaryDetail extends Component {
     }
 }
 
-export default SummaryDetail
+export default TechnologyDetail

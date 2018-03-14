@@ -28,7 +28,7 @@ function removeHtml(str) {
 
 const {TextArea} = Input
 
-class SummaryDetail extends Component {
+class SummaryEdit extends Component {
     componentDidMount() {
         if (this.props.match.params.id) {
         // 编辑
@@ -133,7 +133,7 @@ class SummaryDetail extends Component {
     }
 }
 
-const Sd = withBasicDataModel(SummaryDetail, {
+const Sd = withBasicDataModel(SummaryEdit, {
     model: 'summary',
     formFieldsValues: {
         id: {

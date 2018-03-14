@@ -4,7 +4,10 @@ import {
     Button,
     Table,
     Divider,
-    message
+    message,
+    Select,
+    Upload,
+    Icon
 } from 'antd'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
@@ -21,6 +24,9 @@ import CustomDatePicker from 'COMPONENTS/date/CustomDatePicker'
 
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
+const Option = Select.Option
+const Dragger = Upload.Dragger
+
 // 去除html标签
 function removeHtml(str) {
     return str.replace(/<\/?.+?>/g, '').replace(/ /g, '')
@@ -28,8 +34,13 @@ function removeHtml(str) {
 
 const {TextArea} = Input
 
-class SummaryDetail extends Component {
+class TechnologyEdit extends Component {
+    state = {
+        types: [], // 全部技术类型
+        fileList: [], // 附件
+    }
     componentDidMount() {
+        this.getAllTechtype()
         if (this.props.match.params.id) {
         // 编辑
             this.getData()
@@ -39,45 +50,55 @@ class SummaryDetail extends Component {
         }
     }
     getData = () => {
-        if (!this.props.user) {
-            this.props.history.push('/login')
-        }
-        const hide = message.loading('数据读取中', 0)
-        show(`summary/${this.props.match.params.id}`)
-            .then(res => {
-                setTimeout(hide, 0)
-                if (parseInt(res.data.id) === parseInt(this.props.match.params.id)) {
-                    // 直接更新内部表单数据
-                    this.props.updateEditFormFieldsValues(res.data)
-                } else {
-                    this.props.history.push('/home/404')
-                }
-            })
+        // if (!this.props.user) {
+        //     this.props.history.push('/login')
+        // }
+        // const hide = message.loading('数据读取中', 0)
+        // show(`summary/${this.props.match.params.id}`)
+        //     .then(res => {
+        //         setTimeout(hide, 0)
+        //         if (parseInt(res.data.id) === parseInt(this.props.match.params.id)) {
+        //             // 直接更新内部表单数据
+        //             this.props.updateEditFormFieldsValues(res.data)
+        //         } else {
+        //             this.props.history.push('/home/404')
+        //         }
+        //     })
     }
     goBack = (e) => {
         this.props.history.goBack()
     }
 
-    handleFormSubmit = (values) => {
-        let params = {
-            user_id: this.props.user.id,
-        }
-        if (!this.props.match.params.id) {
-            params['date'] = formatDate(true)
-        }
-        for (let i in values) {
-            params[i] = values[i]
-        }
-        if (removeHtml(params.content) !== '') {
-            this.props.handleFormSubmit(params, (res) => {
-                message.success('保存成功')
-                setTimeout(() => {
-                    this.props.history.push('/home/personal/summary')
-                }, 200)
+    getAllTechtype() {
+        ajax('get', '/techtype/all')
+        .then(res => {
+            this.setState({
+                types: res.data
             })
-        } else {
-            message.info('请输入内容再提交')
-        }
+        })
+    }
+
+    handleFormSubmit = (values) => {
+        console.log(values)
+        // let params = {
+        //     user_id: this.props.user.id,
+        // }
+        // if (!this.props.match.params.id) {
+        //     params['date'] = formatDate(true)
+        // }
+        // for (let i in values) {
+        //     params[i] = values[i]
+        // }
+        // if (removeHtml(params.content) !== '') {
+        //     this.props.handleFormSubmit(params, (res) => {
+        //         message.success('保存成功')
+        //         setTimeout(() => {
+        //             this.props.history.push('/home/personal/summary')
+        //         }, 200)
+        //     })
+        // } else {
+        //     message.info('请输入内容再提交')
+        // }
     }
     render() {
         const {
@@ -87,7 +108,9 @@ class SummaryDetail extends Component {
             location,
             match
         } = this.props
-
+        const {
+            types
+        } = this.state
         const operationBtn = [
             () => (
                 <Button className="pull-right" type="primary" onClick={this.goBack}>
@@ -95,6 +118,30 @@ class SummaryDetail extends Component {
                 </Button>
             )
         ]
+
+        const filesProps = {
+            action: '/technology',
+            onRemove: (file) => {
+                this.setState({
+                    fileList: []
+                })
+            },
+            beforeUpload: (file) => {
+                if (file.size > 2 * 1024 * 1024) {
+                    message.error('上传文件不能超过2m')
+                    return false
+                }
+                this.setState(prevState => {
+                    let arr = prevState.file
+                    arr.push(file)
+                    return {
+                        fileList: arr
+                    }
+                })
+                return false
+            },
+            fileList: this.state.fileList,
+        }
 
         const condition = [
             {
@@ -106,6 +153,24 @@ class SummaryDetail extends Component {
                 },
             },
             {
+                label: '类型',
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('type_id', {
+                        rules: [{required: true, message: '请选择类型'}]
+                    })(
+                        <Select
+                            style={{width: 120}}
+                            placeholder="请选择类型"
+                            allowClear
+                        >
+                            {types.map(type => (
+                                <Option value={type.id} key={type.id}>{type.name}</Option>
+                            ))}
+                        </Select>
+                    )
+                },
+            },
+            {
                 label: '内容',
                 formItemStyle: {
                     height: 350
@@ -114,6 +179,17 @@ class SummaryDetail extends Component {
                     return getFieldDecorator('content', {
                         rules: [{required: true, message: '请输入内容'}]
                     })(<ReactQuill placeholder="内容" style={{height: 300}} />)
+                },
+            },
+            {
+                label: '附件',
+                content: ({getFieldDecorator}) => {
+                    return getFieldDecorator('content', {
+                    })(
+                        <Dragger {...filesProps}>
+                            <Icon type="plus" />
+                        </Dragger>
+                    )
                 },
             }
         ]
@@ -133,8 +209,8 @@ class SummaryDetail extends Component {
     }
 }
 
-const Sd = withBasicDataModel(SummaryDetail, {
-    model: 'summary',
+const TE = withBasicDataModel(TechnologyEdit, {
+    model: 'technology',
     formFieldsValues: {
         id: {
             value: null
@@ -144,9 +220,9 @@ const Sd = withBasicDataModel(SummaryDetail, {
         },
         content: {
             value: null
-        }
+        },
     },
     customGetData: true
 })
 
-export default Sd
+export default TE
