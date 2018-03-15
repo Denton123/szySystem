@@ -30,6 +30,9 @@ class Default extends React.Component {
             currentNotificationPageSize: 6,
             currentNotificationPage: 1,
             currentNotificationData: [],
+            allUser: [], // 全部用户
+            // 最高权限才能查看 ----------
+            highestData: [],
         }
     }
     componentDidMount() {
@@ -72,6 +75,17 @@ class Default extends React.Component {
     getData = () => {
         if (this.props.user) {
             const id = this.props.user.id
+            if (this.props.user.highest) { // 只有最高权限才能查看
+                index(`notification`, { page: 1 })
+                    .then(res => {
+                        let notification = res.data
+                        notification.data.forEach(n => {
+                            n['data'] = JSON.parse(n['data'])
+                        })
+                        console.log(notification)
+                    })
+                this.getAllUser()
+            }
             // show(`/worklog/${id}`).then(res => {
             //     this.setState({
             //         workLog: res.data
@@ -88,6 +102,14 @@ class Default extends React.Component {
                 })
             })
         }
+    }
+    getAllUser = () => {
+        ajax('get', '/user/all')
+            .then(res => {
+                this.setState({
+                    allUser: res.data
+                })
+            })
     }
 
     linkClick = (openKeys, selectedKeys) => {
@@ -204,7 +226,29 @@ class Default extends React.Component {
                     </div>
                 </Header>
                 <div className="Main">
-                    <div className="CardWrap">
+                    <Card title="最近项目和任务">
+                        <List
+                            pagination={{
+                                pageSize: currentNotificationPageSize,
+                                current: currentNotificationPage,
+                                total: this.props.notificationData.length,
+                                onChange: (page) => {
+                                    this.setState({
+                                        currentNotificationPage: page
+                                    })
+                                    this.setCurrentNotificationData(page)
+                                },
+                            }}
+                            dataSource={currentNotificationData}
+                            itemLayout="horizontal"
+                            renderItem={item => (
+                                <List.Item actions={[item.date]}>
+                                    {ntfcTitle(item)}
+                                </List.Item>
+                            )}
+                        />
+                    </Card>
+                    <div className="CardWrap mt-10">
                         {CardMsg}
                     </div>
                     <div>
