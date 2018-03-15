@@ -50,7 +50,11 @@ const utils = {
             if (temp.length === 0) return null
             return temp
         } else {
-            return moment(value, format)
+            if (value.split(' ').length > 1) {
+                return moment(value, 'YYYY-MM-DD HH:mm:ss')
+            } else {
+                return moment(value, format)
+            }
         }
     },
     /**

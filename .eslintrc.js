@@ -57,6 +57,7 @@ module.exports = {
         'no-tabs': 0,
         'standard/no-callback-literal': 0,
         "comma-dangle": 'off',
-        "no-console": 'off'
+        "no-console": 'off',
+        "one-var": 0
     }
 }

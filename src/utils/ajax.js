@@ -45,8 +45,12 @@ function ajax(type, url, data = {}, hasFile = false) {
                     if (isObject(data[i])) {
                         // antd上传组件改变后返回{ file: { /* ... */ }, fileList: [ /* ... */ ], event: { /* ... */ },}
                         if (data[i].fileList) {
-                            data[i].fileList.forEach(fl => {
-                                fd.append(i, fl)
+                            data[i].fileList.forEach((fl, idx) => {
+                                if (idx === 0) {
+                                    fd.append(i, fl)
+                                } else {
+                                    fd.append(`${i}${idx}`, fl)
+                                }
                             })
                         }
                     } else {

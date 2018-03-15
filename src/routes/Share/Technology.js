@@ -39,31 +39,11 @@ class Technology extends Component {
         types: [] // 全部技术类型
     }
     componentDidMount() {
+        this.getAllTechtype()
         let p = this.props.location.state && this.props.location.state.page ? this.props.location.state : {page: 1}
-
-        // let obj = Object.assign({}, this.props.queryFieldValues)
-        // Object.keys(this.props.queryFieldValues).forEach(field => {
-        //     if (p.hasOwnProperty(field)) {
-        //         obj[field] = {
-        //             value: transformValue(field, p[field])
-        //         }
-        //     }
-        // })
-
-        // this.props.handleSetState('queryFieldValues', obj)
-
-        // if (opts.personal) {
         this.props.getData({
             ...p,
         })
-        this.getAllTechtype()
-        // } else {
-        //     this.props.getData({
-        //         ...p,
-        //     }, (data) => {
-        //         return ajax('get', '/summary/all', data)
-        //     })
-        // }
     }
 
     getAllTechtype() {
@@ -145,9 +125,15 @@ class Technology extends Component {
             },
             {
                 title: '类型',
-                dataIndex: 'type',
-                key: 'type',
-                render: (text) => (<span>types.find(t => t.id === text).name</span>)
+                dataIndex: 'type_id',
+                key: 'type_id',
+                render: (text, record) => {
+                    if (types.length > 0) {
+                        return <span>{types.find(t => t.id === text).name}</span>
+                    } else {
+                        return <span />
+                    }
+                }
             },
             {
                 title: '标题',

@@ -38,8 +38,9 @@ class TechnologyEdit extends Component {
     state = {
         types: [], // 全部技术类型
         fileList: [], // 附件
+        allFiles: [], // 记录当前技术文章的全部附件
     }
-    componentDidMount() {
+    componentWillMount() {
         this.getAllTechtype()
         if (this.props.match.params.id) {
         // 编辑
@@ -50,20 +51,39 @@ class TechnologyEdit extends Component {
         }
     }
     getData = () => {
-        // if (!this.props.user) {
-        //     this.props.history.push('/login')
-        // }
-        // const hide = message.loading('数据读取中', 0)
-        // show(`summary/${this.props.match.params.id}`)
-        //     .then(res => {
-        //         setTimeout(hide, 0)
-        //         if (parseInt(res.data.id) === parseInt(this.props.match.params.id)) {
-        //             // 直接更新内部表单数据
-        //             this.props.updateEditFormFieldsValues(res.data)
-        //         } else {
-        //             this.props.history.push('/home/404')
-        //         }
-        //     })
+        if (!this.props.user) {
+            this.props.history.push('/login')
+        }
+        const hide = message.loading('数据读取中', 0)
+        show(`technology/${this.props.match.params.id}`)
+            .then(res => {
+                setTimeout(hide, 0)
+                let files = JSON.parse(res.data.files),
+                    fileList = [],
+                    allFiles = []
+                Object.keys(files).forEach((file, idx) => {
+                    fileList.push({
+                        uid: -(idx + 1),
+                        name: files[file],
+                        status: 'done',
+                        url: `/uploadFiles/${file}`,
+                    })
+                    allFiles.push({
+                        name: files[file],
+                        url: file
+                    })
+                })
+                this.setState({
+                    fileList: fileList,
+                    allFiles: allFiles
+                })
+                if (parseInt(res.data.id) === parseInt(this.props.match.params.id)) {
+                    // 直接更新内部表单数据
+                    this.props.updateEditFormFieldsValues(res.data)
+                } else {
+                    this.props.history.push('/home/404')
+                }
+            })
     }
     goBack = (e) => {
         this.props.history.goBack()
@@ -79,26 +99,52 @@ class TechnologyEdit extends Component {
     }
 
     handleFormSubmit = (values) => {
-        console.log(values)
-        // let params = {
-        //     user_id: this.props.user.id,
-        // }
-        // if (!this.props.match.params.id) {
-        //     params['date'] = formatDate(true)
-        // }
-        // for (let i in values) {
-        //     params[i] = values[i]
-        // }
-        // if (removeHtml(params.content) !== '') {
-        //     this.props.handleFormSubmit(params, (res) => {
-        //         message.success('保存成功')
-        //         setTimeout(() => {
-        //             this.props.history.push('/home/personal/summary')
-        //         }, 200)
-        //     })
-        // } else {
-        //     message.info('请输入内容再提交')
-        // }
+        let params = {
+            user_id: this.props.user.id,
+        }
+        if (!this.props.match.params.id) {
+            params['date'] = formatDate(true)
+        }
+        for (let i in values) {
+            params[i] = values[i]
+        }
+        // 处理附件
+        let hasFiles = [], // 记录服务器保留的文件
+            removeFiles = [], // 记录删除的文件
+            fileList = [] // 保存新增的附件
+        // 全部文件列表
+        this.state.fileList.forEach(fl => {
+            if (fl.url) {
+                // 服务器已经有的文件
+                hasFiles.push({
+                    name: fl.name,
+                    url: fl.url.split('/')[fl.url.split('/').length - 1]
+                })
+            } else {
+                // 新增文件
+                fileList.push(fl)
+            }
+        })
+        // 记录删除的文件列表
+        this.state.allFiles.forEach(f => {
+            if (hasFiles.find(fl => fl.url === f.url)) {
+            } else {
+                removeFiles.push(f)
+            }
+        })
+        params['hasFiles'] = JSON.stringify(hasFiles)
+        params['removeFiles'] = JSON.stringify(removeFiles)
+        params['files'] = {fileList: fileList}
+        if (removeHtml(params.content) !== '') {
+            this.props.handleFormSubmit(params, (res) => {
+                message.success('保存成功')
+                setTimeout(() => {
+                    this.props.history.push('/home/share/technology')
+                }, 200)
+            })
+        } else {
+            message.info('请输入内容再提交')
+        }
     }
     render() {
         const {
@@ -122,8 +168,15 @@ class TechnologyEdit extends Component {
         const filesProps = {
             action: '/technology',
             onRemove: (file) => {
-                this.setState({
-                    fileList: []
+                this.setState(prevState => {
+                    let arr = prevState.fileList
+                    arr.splice(
+                        arr.findIndex(item => item.uid === file.uid),
+                        1
+                    )
+                    return {
+                        fileList: arr
+                    }
                 })
             },
             beforeUpload: (file) => {
@@ -132,7 +185,7 @@ class TechnologyEdit extends Component {
                     return false
                 }
                 this.setState(prevState => {
-                    let arr = prevState.file
+                    let arr = prevState.fileList
                     arr.push(file)
                     return {
                         fileList: arr
@@ -140,6 +193,7 @@ class TechnologyEdit extends Component {
                 })
                 return false
             },
+            multiple: true,
             fileList: this.state.fileList,
         }
 
@@ -177,23 +231,23 @@ class TechnologyEdit extends Component {
                 },
                 content: ({getFieldDecorator}) => {
                     return getFieldDecorator('content', {
-                        rules: [{required: true, message: '请输入内容'}]
                     })(<ReactQuill placeholder="内容" style={{height: 300}} />)
                 },
             },
             {
                 label: '附件',
                 content: ({getFieldDecorator}) => {
-                    return getFieldDecorator('content', {
+                    return getFieldDecorator('files', {
                     })(
-                        <Dragger {...filesProps}>
-                            <Icon type="plus" />
-                        </Dragger>
+                        <Upload {...filesProps}>
+                            <Button type="ghost">
+                                <Icon type="upload" /> 点击上传
+                            </Button>
+                        </Upload>
                     )
                 },
             }
         ]
-
         return (
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                 <BasicOperation className="mt-10 mb-10 clearfix" operationBtns={operationBtn} />
@@ -221,7 +275,14 @@ const TE = withBasicDataModel(TechnologyEdit, {
         content: {
             value: null
         },
+        type_id: {
+            value: undefined
+        },
+        files: {
+            value: null
+        },
     },
+    formSubmitHasFile: true,
     customGetData: true
 })
 

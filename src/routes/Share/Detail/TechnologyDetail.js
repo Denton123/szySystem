@@ -22,6 +22,7 @@ import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 class TechnologyDetail extends Component {
     state = {
         data: {},
+        fileList: [],
     }
     componentDidMount() {
         this.getData()
@@ -34,8 +35,18 @@ class TechnologyDetail extends Component {
                 if (Object.keys(res.data).length === 0) {
                     this.props.history.push('/home/404')
                 } else {
+                    console.log(res.data)
+                    let files = JSON.parse(res.data.files),
+                        fileList = []
+                    for (let i in files) {
+                        fileList.push({
+                            name: files[i],
+                            url: i
+                        })
+                    }
                     this.setState({
-                        data: res.data
+                        data: res.data,
+                        fileList: fileList,
                     })
                 }
             })
@@ -45,7 +56,7 @@ class TechnologyDetail extends Component {
     }
 
     goEdit = (e) => {
-        this.props.history.push(`/home/personal/summary/edit/${this.props.match.params.id}`)
+        this.props.history.push(`/home/share/technology/edit/${this.props.match.params.id}`)
     }
     render() {
         const {
@@ -55,7 +66,10 @@ class TechnologyDetail extends Component {
             location,
             match
         } = this.props
-        const data = this.state.data
+        const {
+            data,
+            fileList
+        } = this.state
         let extra = [
             () => <Button className="pull-right" type="primary" onClick={this.goBack}>返回</Button>,
         ]
@@ -83,6 +97,11 @@ class TechnologyDetail extends Component {
                     }
                 >
                     <div dangerouslySetInnerHTML={{__html: data.content}} />
+                </Card>
+                <Card title="附件" style={{ marginTop: 10 }}>
+                    {fileList.map(fl => (
+                        <a href={`/uploadFiles/${fl.url}`} target="_blank" className="block" title={fl.name} key={fl.url}>{fl.name}</a>
+                    ))}
                 </Card>
             </div>
         )
