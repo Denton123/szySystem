@@ -31,7 +31,7 @@ const icons = {
 
 class Home extends React.Component {
     state = {
-        routes: []
+        permissionRoutes: []
     }
     componentWillMount() {
         // 判断用户是否登录
@@ -90,7 +90,7 @@ class Home extends React.Component {
                     }
                 })
                 this.setState({
-                    routes: routes
+                    permissionRoutes: routes
                 })
                 if (res.data.length === 0) {
                     this.props.history.push('/home/no-permission')
@@ -100,7 +100,7 @@ class Home extends React.Component {
     }
     render() {
         return (
-            <BasicLayout {...this.props} routes={this.state.routes} />
+            <BasicLayout {...this.props} permissionRoutes={this.state.permissionRoutes} />
         )
     }
 }

@@ -7,8 +7,9 @@ const types = {
     add: '新增',
     edit: '更新',
     delete: '删除',
-    used: '采纳',
-    status: '状态'
+    used: '采纳', // 问题
+    status: '状态', // 任务
+    over: '已超时', // 任务
 }
 
 const ntfc = {
@@ -79,10 +80,17 @@ const ntfc = {
         return url
     },
     ntfcDesc: function(n) {
-        if (n.model === 'Project') {
-            return `${types[n.type]}${model[n.model]}${n.data.name}`
-        } else if (n.model === 'Task') {
-            return `${types[n.type]}${model[n.model]}${n.data.content}`
+        if (n.type === 'status') {
+            let status = n.data.Users[0].status === '1' ? '开始' : '完成'
+            return ` ${status} ${model[n.model]}：${n.data.content}`
+        } else if (n.type === 'over') {
+            return `发布的${model[n.model]}：${n.data.content}${types[n.type]}`
+        } else {
+            if (n.model === 'Project') {
+                return ` ${types[n.type]} ${model[n.model]}：${n.data.name}`
+            } else if (n.model === 'Task') {
+                return ` ${types[n.type]} ${model[n.model]}：${n.data.content}`
+            }
         }
     }
 }

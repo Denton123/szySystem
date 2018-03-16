@@ -418,8 +418,9 @@ class BasicLayout extends React.Component {
             match,
             user,
             collapsed,
+            permissionRoutes
         } = this.props
-        const newRoutes = resetRoute(routes)
+        const newRoutes = resetRoute(permissionRoutes)
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">
@@ -446,7 +447,7 @@ class BasicLayout extends React.Component {
                     onOpenChange={this.onOpenChange}
                     onClick={this.onClick}
                 >
-                    {routes.map((route, idx) => {
+                    {permissionRoutes.map((route, idx) => {
                         if (route.routes) {
                             return (
                                 <SubMenu

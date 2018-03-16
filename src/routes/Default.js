@@ -109,7 +109,6 @@ class Default extends React.Component {
                     n['data'] = JSON.parse(n['data'])
                     n['desc'] = ntfcDesc(n)
                 })
-                console.log(notification)
                 let pagination = {}
                 for (let i in res.data) {
                     if (i === 'data') continue
@@ -219,7 +218,7 @@ class Default extends React.Component {
                     </Col>
                 </Row>
             </div>
-            )
+        )
 
         // 最新通知
         const NoticeMsg = (
@@ -247,7 +246,7 @@ class Default extends React.Component {
                     />
                 </Card>
             </div>
-            )
+        )
         return (
             <Content className="Content">
                 <Header className="IndexHeader">
@@ -261,7 +260,7 @@ class Default extends React.Component {
                     </div>
                 </Header>
                 <div className="Main">
-                    {user.highest ? (
+                    {user && user.highest ? (
                         <div className="mb-10">
                             <Card title="最近项目和任务">
                                 <List
@@ -270,7 +269,7 @@ class Default extends React.Component {
                                     itemLayout="horizontal"
                                     renderItem={item => (
                                         <List.Item actions={[item.date]}>
-                                            {`${allUser.find(u => u.id === item.user_id) && allUser.find(u => u.id === item.user_id).realname}${item.desc}`}
+                                            {`${allUser.find(u => u.id === parseInt(item.data.uid)) && allUser.find(u => u.id === parseInt(item.data.uid)).realname}${item.desc}`}
                                         </List.Item>
                                     )}
                                 />
