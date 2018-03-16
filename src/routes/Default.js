@@ -15,7 +15,7 @@ import {
 import {isObject, isArray, valueToMoment, resetObject, formatDate} from 'UTILS/utils'
 import {ajax, index, store, show, update, destroy} from 'UTILS/ajax'
 
-import {ntfcTitle, ntfcUrl} from 'UTILS/notification'
+import {ntfcTitle, ntfcUrl, ntfcDesc} from 'UTILS/notification'
 
 const { Content, Header } = Layout
 
@@ -33,6 +33,11 @@ class Default extends React.Component {
             allUser: [], // 全部用户
             // 最高权限才能查看 ----------
             highestData: [],
+            highestDataPagination: {
+                onChange: (page) => {
+                    this.getHighestData(page)
+                },
+            },
         }
     }
     componentDidMount() {
@@ -40,6 +45,10 @@ class Default extends React.Component {
         this.getData()
         this.timer = setInterval(() => this.getTime(), 1000)
         this.setCurrentNotificationData(1)
+        if (this.props.user.highest) { // 只有最高权限才能查看
+            this.getAllUser()
+            this.getHighestData()
+        }
     }
     componentWillUnmount() {
         clearInterval(this.timer)
@@ -75,17 +84,6 @@ class Default extends React.Component {
     getData = () => {
         if (this.props.user) {
             const id = this.props.user.id
-            if (this.props.user.highest) { // 只有最高权限才能查看
-                index(`notification`, { page: 1 })
-                    .then(res => {
-                        let notification = res.data
-                        notification.data.forEach(n => {
-                            n['data'] = JSON.parse(n['data'])
-                        })
-                        console.log(notification)
-                    })
-                this.getAllUser()
-            }
             // show(`/worklog/${id}`).then(res => {
             //     this.setState({
             //         workLog: res.data
@@ -102,6 +100,35 @@ class Default extends React.Component {
                 })
             })
         }
+    }
+    getHighestData = (page = 1) => {
+        index(`notification`, { page: page })
+            .then(res => {
+                let notification = res.data.data
+                notification.forEach(n => {
+                    n['data'] = JSON.parse(n['data'])
+                    n['desc'] = ntfcDesc(n)
+                })
+                console.log(notification)
+                let pagination = {}
+                for (let i in res.data) {
+                    if (i === 'data') continue
+                    if (i === 'currentPage') {
+                        pagination['current'] = res.data[i]
+                        continue
+                    }
+                    pagination[i] = res.data[i]
+                }
+                this.setState(prveState => {
+                    return {
+                        highestData: notification,
+                        highestDataPagination: {
+                            ...prveState.highestDataPagination,
+                            ...pagination
+                        }
+                    }
+                })
+            })
     }
     getAllUser = () => {
         ajax('get', '/user/all')
@@ -124,14 +151,21 @@ class Default extends React.Component {
             workLog,
             summaryData,
             time,
+            // 最近通知设置
             currentNotificationPageSize,
             currentNotificationPage,
             currentNotificationData,
-            allNotificationData
+            allNotificationData,
+            // 最高级权限才有的数据
+            highestData,
+            highestDataPagination,
+            // 全部用户
+            allUser,
         } = this.state
         const LogContent = ({content}) => (
             <p dangerouslySetInnerHTML={{__html: content}} />
             )
+        // 工作日志
         const CardMsg = (
             <div className="Card">
                 <Row gutter={16}>
@@ -187,6 +221,7 @@ class Default extends React.Component {
             </div>
             )
 
+        // 最新通知
         const NoticeMsg = (
             <div className="NoticeMsg">
                 <Card title="最新通知">
@@ -226,29 +261,23 @@ class Default extends React.Component {
                     </div>
                 </Header>
                 <div className="Main">
-                    <Card title="最近项目和任务">
-                        <List
-                            pagination={{
-                                pageSize: currentNotificationPageSize,
-                                current: currentNotificationPage,
-                                total: this.props.notificationData.length,
-                                onChange: (page) => {
-                                    this.setState({
-                                        currentNotificationPage: page
-                                    })
-                                    this.setCurrentNotificationData(page)
-                                },
-                            }}
-                            dataSource={currentNotificationData}
-                            itemLayout="horizontal"
-                            renderItem={item => (
-                                <List.Item actions={[item.date]}>
-                                    {ntfcTitle(item)}
-                                </List.Item>
-                            )}
-                        />
-                    </Card>
-                    <div className="CardWrap mt-10">
+                    {user.highest ? (
+                        <div className="mb-10">
+                            <Card title="最近项目和任务">
+                                <List
+                                    pagination={highestDataPagination}
+                                    dataSource={highestData}
+                                    itemLayout="horizontal"
+                                    renderItem={item => (
+                                        <List.Item actions={[item.date]}>
+                                            {`${allUser.find(u => u.id === item.user_id) && allUser.find(u => u.id === item.user_id).realname}${item.desc}`}
+                                        </List.Item>
+                                    )}
+                                />
+                            </Card>
+                        </div>
+                    ) : null}
+                    <div className="CardWrap">
                         {CardMsg}
                     </div>
                     <div>

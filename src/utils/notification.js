@@ -77,6 +77,13 @@ const ntfc = {
                 break
         }
         return url
+    },
+    ntfcDesc: function(n) {
+        if (n.model === 'Project') {
+            return `${types[n.type]}${model[n.model]}${n.data.name}`
+        } else if (n.model === 'Task') {
+            return `${types[n.type]}${model[n.model]}${n.data.content}`
+        }
     }
 }
 

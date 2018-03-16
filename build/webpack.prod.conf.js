@@ -11,11 +11,11 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const env = config.build.env;
 
 let webpackConfig = merge(baseWebpackConfig, {
-    externals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
-      axios: 'axios',
-    },
+    // externals: {
+    //   react: 'React',
+    //   'react-dom': 'ReactDOM',
+    //   axios: 'axios',
+    // },
     devtool: config.build.productionSourceMap ? '#source-map' : false,
     output: {
         path: config.build.assetsRoot,
