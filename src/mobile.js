@@ -12,6 +12,8 @@ import 'antd-mobile/dist/antd-mobile.less'
 // antd国际化
 import { LocaleProvider } from 'antd-mobile'
 
+import 'antd-mobile/dist/antd-mobile.min.css'
+
 // 根组件
 import App from './mobile/App'
 
