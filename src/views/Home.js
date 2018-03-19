@@ -16,7 +16,7 @@ function getRoutes(path) {
     }
     return require(`../routes${route}`).default
 }
-
+// 导航目录的图标
 const icons = {
     '/default': 'home',
     '/personal': 'solution',
