@@ -2,7 +2,10 @@ import React from 'react'
 
 import {ajax} from 'UTILS/ajax'
 
-// import BasicLayout from '../layouts/BasicLayout.js'
+// 手机端路由
+// import mobileRoutes from '../routes/index'
+
+import MobileBasicLayout from '../../layouts/mobileBasicLayout.js'
 
 function getRoutes(path) {
     if (path === null) {
@@ -26,7 +29,7 @@ const icons = {
     '/task': 'exception',
     '/work': 'schedule',
     '/share': 'share-alt',
-    '/system': 'tool',
+    // '/system': 'tool',
 }
 
 class Home extends React.Component {
@@ -38,9 +41,10 @@ class Home extends React.Component {
         if (this.props.user === null) {
             this.props.history.push('/login')
         } else {
-            ajax('get', '/permission/all-menu')
+            ajax('get', '/permission/all-menu?type=mobile')
             .then(res => {
                 let permissionRoute = res.data
+                console.log(permissionRoute)
                 let routes = []
                 permissionRoute.forEach(menu => {
                     if (menu.pid) {
@@ -100,7 +104,7 @@ class Home extends React.Component {
     }
     render() {
         return (
-            <div>home</div>
+            <MobileBasicLayout {...this.props} permissionRoutes={this.state.permissionRoutes} />
         )
     }
 }
