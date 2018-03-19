@@ -2,10 +2,38 @@
 <html lang = 'en'>
 <head>
 	<meta charset = 'UTF-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
 	<title>Szy System</title>
 	<script crossorigin src="https://unpkg.com/react@16.1.1/umd/react.production.min.js"></script>
 	<script crossorigin src="https://unpkg.com/react-dom@16.1.1/umd/react-dom.production.min.js"></script>
 	<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+	<!-- set `maximum-scale` for some compatibility issues -->
+	<script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
+	<script>
+		window.isPC = IsPC();
+		function IsPC() {
+            var userAgentInfo = navigator.userAgent;
+            var Agents = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod'];
+            var flag = true;
+            for(var v=0;v<Agents.length;v++) {
+                if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            return flag;
+        }
+        if (!IsPC) {
+			if ('addEventListener' in document) {
+				document.addEventListener('DOMContentLoaded', function() {
+					FastClick.attach(document.body);
+				}, false);
+			}
+			if(!window.Promise) {
+				document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
+			}
+        }
+	</script>
 </head>
 <body>
 	<div id='app'></div>
