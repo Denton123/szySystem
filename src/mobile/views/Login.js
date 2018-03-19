@@ -1,22 +1,41 @@
-/**
- * 登录页
- * @description
- * @author 苏智豪
- * @date 2017/11/23
- */
 import React from 'react'
-// import {
-//     Form,
-//     Icon,
-//     Input,
-//     Button,
-//     Checkbox,
-//     message
-// } from 'antd'
+import { Flex, List, InputItem, WhiteSpace } from 'antd-mobile'
+import { createForm } from 'rc-form'
 
 import { ajax } from 'UTILS/ajax'
 import { isObject } from 'UTILS/utils.js'
-// import './Login.less'
+
+class loginForm extends React.Component {
+    componentDidMount() {
+    }
+    render() {
+        const { getFieldProps } = this.props.form
+        return (
+            <List style={{transform: 'translateY(-50%)'}} renderHeader={() => (<h2 className="txt-c">内部管理系统</h2>)}>
+                <InputItem
+                    {...getFieldProps('name')}
+                    clear
+                    placeholder="请输入用户名"
+                >标题</InputItem>
+                <InputItem
+                    {...getFieldProps('password')}
+                    type="password"
+                    placeholder="请输入密码"
+                >密码</InputItem>
+                <List.Item>
+                    <div
+                        style={{ width: '100%', color: '#108ee9', textAlign: 'center' }}
+                        onClick={this.handleClick}
+                    >
+                        click to focus
+                    </div>
+                </List.Item>
+            </List>
+        )
+    }
+}
+
+const TheLoginForm = createForm()(loginForm)
 
 class Login extends React.Component {
     componentDidMount() {
@@ -27,9 +46,9 @@ class Login extends React.Component {
     }
     render() {
         return (
-            <div className="wrap">
-                login
-            </div>
+            <Flex className="w100 h100" justify="center" align="center">
+                <TheLoginForm />
+            </Flex>
         )
     }
 }

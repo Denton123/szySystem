@@ -5,12 +5,15 @@ import {BrowserRouter} from 'react-router-dom'
 // 初始化axios配置
 import './config/axiosConfig-mobile.js'
 
+// 引入样式
+import '../style/mobile-css/main.less'
+import 'antd-mobile/dist/antd-mobile.less'
+
 // antd国际化
 import { LocaleProvider } from 'antd-mobile'
 
 // 根组件
 import App from './mobile/App'
-// import 'STYLE/css/main.less'
 
 // 判断是否登录
 new Promise(resolve => {

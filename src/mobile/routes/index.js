@@ -14,7 +14,7 @@ function getRoutes(path) {
 
 const routes = [
     {
-        path: '/m/home',
+        path: '/home',
         exact: true,
         component: getViews('Home'),
         name: 'home',
@@ -229,7 +229,7 @@ const routes = [
         // ]
     },
     {
-        path: '/m/login',
+        path: '/login',
         name: 'login',
         component: getViews('Login')
     },
@@ -239,7 +239,7 @@ const routes = [
     //     component: getViews('Register')
     // },
     {
-        path: '/m/*',
+        path: '/*',
         name: '404',
         component: getViews('NotMatch')
     }
