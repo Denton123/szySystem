@@ -269,7 +269,9 @@ class Default extends React.Component {
                                     itemLayout="horizontal"
                                     renderItem={item => (
                                         <List.Item actions={[item.date]}>
-                                            {`${allUser.find(u => u.id === parseInt(item.data.uid)) && allUser.find(u => u.id === parseInt(item.data.uid)).realname}${item.desc}`}
+                                            {item.type === 'status'
+                                            ? `${item.data.Users[0].realname}${item.desc}`
+                                            : `${allUser.find(u => u.id === parseInt(item.data.uid)) && allUser.find(u => u.id === parseInt(item.data.uid)).realname}${item.desc}`}
                                         </List.Item>
                                     )}
                                 />
