@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { TabBar, List, Drawer, Icon } from 'antd-mobile'
 import {
     BrowserRouter as Router,
     Route,
@@ -9,8 +9,6 @@ import {
 } from 'react-router-dom'
 
 import {ajax} from 'UTILS/ajax'
-
-import { TabBar, List, Drawer } from 'antd-mobile'
 
 import CustomNavBar from '../components/CustomNavBar'
 
@@ -67,6 +65,21 @@ class Home extends React.Component {
         if (this.props.user === null) {
             this.props.history.push('/login')
         } else {
+            // 动态确定当前路由
+            let currentPath = this.props.location.pathname
+            this.props.routes.find(r => {
+                if (currentPath.indexOf(r.path) > -1) {
+                    this.setState(prevState => {
+                        return {
+                            CustomNavBarState: {
+                                ...prevState.CustomNavBarState,
+                                title: r.name,
+                            },
+                            currentTab: r.key,
+                        }
+                    })
+                }
+            })
             ajax('get', '/m/permission/all-menu')
             .then(res => {
                 let permissionRoute = res.data
@@ -149,7 +162,8 @@ class Home extends React.Component {
             hiddenTabBar,
             permissionRoutes,
         } = this.state
-        const sidebar = (
+        // drawer 导航菜单
+        const DrawerSiderBar = (
             <List>
                 {permissionRoutes.map((menu, i) => (
                     <List.Item key={menu.path}>
@@ -160,20 +174,21 @@ class Home extends React.Component {
                 ))}
             </List>
         )
+        // 可以跳转到通知页
+        const NavBarRightContent = (
+            <Icon type="search" />
+        )
         return (
             <div className="w100 h100">
-                <CustomNavBar {...CustomNavBarState} />
+                <CustomNavBar {...CustomNavBarState} rightContent={NavBarRightContent} />
                 <Drawer
                     className="my-drawer"
                     style={{ minHeight: document.documentElement.clientHeight - 45 }}
                     contentStyle={{ color: '#A6A6A6', textAlign: 'center' }}
-                    sidebar={sidebar}
+                    sidebar={DrawerSiderBar}
                     open={drawerOpen}
                     onOpenChange={this.onOpenChange}
                 >
-                    <Route exact path={match.path} render={() => {
-                        return <Redirect to={`${match.path}/default`} />
-                    }} />
                     <TabBar hidden={hiddenTabBar}>
                         {routes.map(route => (
                             <TabBar.Item
@@ -182,6 +197,10 @@ class Home extends React.Component {
                                 selected={currentTab === route.key}
                                 onPress={() => {
                                     this.setState({
+                                        CustomNavBarState: {
+                                            ...CustomNavBarState,
+                                            title: route.name,
+                                        },
                                         currentTab: route.key,
                                         drawerOpen: false,
                                     })
@@ -207,6 +226,26 @@ class Home extends React.Component {
                                         />
                                     )}
                                 />
+                                {route.routes && route.routes.length > 0
+                                ? (
+                                    <Switch>
+                                        {route.routes.map(subRoute => (
+                                            <Route
+                                                key={subRoute.path}
+                                                exact
+                                                path={`${match.path}${route.path}${subRoute.path}`}
+                                                render={props => (
+                                                    <subRoute.component
+                                                        route={subRoute} {...props}
+                                                        user={this.props.user}
+                                                        globalUpdateUser={this.props.globalUpdateUser}
+                                                    />
+                                                )}
+                                            />
+                                        ))}
+                                    </Switch>
+                                )
+                                : null}
                             </TabBar.Item>
                         ))}
                     </TabBar>
