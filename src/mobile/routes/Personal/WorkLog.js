@@ -42,8 +42,6 @@ class ListExample extends React.Component {
             >WorkLog</NavBar>
         )
 
-        let
-
         return (
             <div>
                 {navBar}
