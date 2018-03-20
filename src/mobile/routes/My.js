@@ -1,13 +1,13 @@
 import React from 'react'
 
-class Default extends React.Component {
+class My extends React.Component {
     render() {
         return (
             <div style={{ padding: 24, background: '#fff' }}>
-               Default
+               My
             </div>
         )
     }
 }
 
-export default Default
+export default My

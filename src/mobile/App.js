@@ -6,6 +6,7 @@ import {
     Redirect
 } from 'react-router-dom'
 
+// 手机端路由
 import routes from './routes/index'
 
 class App extends React.Component {
