@@ -6,6 +6,7 @@ import {
     Redirect
 } from 'react-router-dom'
 
+// 手机端路由
 import routes from './routes/index'
 
 class App extends React.Component {
@@ -35,9 +36,9 @@ class App extends React.Component {
                 <Switch>
                     <Route exact path="/" render={() => (
                         this.state.user ? (
-                            <Redirect to="/m/home" />
+                            <Redirect to="/home" />
                         ) : (
-                            <Redirect to="/m/login" />
+                            <Redirect to="/login" />
                         )
                     )} />
                     {routes.map((com, idx) => (
