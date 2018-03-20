@@ -67,7 +67,7 @@ class Home extends React.Component {
         if (this.props.user === null) {
             this.props.history.push('/login')
         } else {
-            ajax('get', '/permission/m/all-menu')
+            ajax('get', '/m/permission/all-menu')
             .then(res => {
                 let permissionRoute = res.data
                 let routes = []
