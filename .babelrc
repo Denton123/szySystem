@@ -6,8 +6,7 @@
 		[
 			"import",
 			[
-				{ "libraryName": "antd", "libraryDirectory": "es", "style": true },
-				{ libraryName: "antd-mobile", style: "css" }
+				{ "libraryName": "antd", "libraryDirectory": "es", "style": true }
 			]
 		],
 	],

@@ -7,11 +7,13 @@ class CustomNavBar extends React.Component {
             title,
             icon,
             leftClick,
+            rightContent,
         } = this.props
         return (
             <NavBar
                 icon={<Icon type={icon} />}
                 onLeftClick={leftClick}
+                rightContent={rightContent}
             >
                 {title}
             </NavBar>
