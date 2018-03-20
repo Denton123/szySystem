@@ -421,6 +421,7 @@ class BasicLayout extends React.Component {
             permissionRoutes
         } = this.props
         const newRoutes = resetRoute(permissionRoutes)
+        console.log(newRoutes)
         const AvatarMenu = (
             <Menu>
                 <Menu.Item key="0">

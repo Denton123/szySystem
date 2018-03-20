@@ -29,13 +29,20 @@ const routes = [
                 name: '公司情况',
                 path: '/company',
                 component: getRoutes(['Company']),
-                key: 'company'
+                key: 'company',
+                routes: [
+                    {
+                        name: '总结详情',
+                        path: '/:model',
+                        component: getRoutes(['CompanyDetail'])
+                    }
+                ]
             },
             {
                 name: '工作',
                 path: '/work',
                 component: getRoutes(['Work']),
-                key: 'work'
+                key: 'work',
             },
             {
                 name: '我的',
