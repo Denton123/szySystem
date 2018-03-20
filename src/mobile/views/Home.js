@@ -67,7 +67,7 @@ class Home extends React.Component {
         if (this.props.user === null) {
             this.props.history.push('/login')
         } else {
-            ajax('get', '/permission/all-menu')
+            ajax('get', '/permission/m/all-menu')
             .then(res => {
                 let permissionRoute = res.data
                 let routes = []
@@ -137,27 +137,6 @@ class Home extends React.Component {
     goBack = () => {
         this.props.history.go(-1)
     }
-    renderContent(pageText) {
-        return (
-            <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
-                <div style={{ paddingTop: 60 }}>Clicked “{pageText}” tab， show “{pageText}” information</div>
-                <a style={{ display: 'block', marginTop: 40, marginBottom: 20, color: '#108ee9' }}
-                    onClick={(e) => {
-                        e.preventDefault()
-                    }}
-                >
-                    Click to show/hide tab-bar
-                </a>
-                <a style={{ display: 'block', marginBottom: 600, color: '#108ee9' }}
-                    onClick={(e) => {
-                        e.preventDefault()
-                    }}
-                >
-                    Click to switch fullscreen
-                </a>
-            </div>
-        )
-    }
     render() {
         const {
             match,
@@ -204,6 +183,7 @@ class Home extends React.Component {
                                 onPress={() => {
                                     this.setState({
                                         currentTab: route.key,
+                                        drawerOpen: false,
                                     })
                                     this.props.history.push(`${match.path}${route.path}`)
                                 }}
