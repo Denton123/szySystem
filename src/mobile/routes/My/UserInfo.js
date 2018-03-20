@@ -18,7 +18,7 @@ class BasicInput extends React.Component {
             } else {
                 alert('Validation failed')
             }
-        });
+        })
     }
     onReset = () => {
         this.props.form.resetFields()
@@ -68,11 +68,11 @@ class BasicInput extends React.Component {
                     </Item>
                 </List>
             </form>
-            )
+        )
     }
 }
 
-const BasicInputWrapper = createForm()(BasicInput);
+const BasicInputWrapper = createForm()(BasicInput)
 
 class UserInfo extends React.Component {
     render() {

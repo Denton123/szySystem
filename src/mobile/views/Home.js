@@ -222,6 +222,7 @@ class Home extends React.Component {
                                         <route.component
                                             route={route} {...props}
                                             user={this.props.user}
+                                            permissionRoutes={permissionRoutes}
                                             globalUpdateUser={this.props.globalUpdateUser}
                                         />
                                     )}
@@ -238,6 +239,7 @@ class Home extends React.Component {
                                                     <subRoute.component
                                                         route={subRoute} {...props}
                                                         user={this.props.user}
+                                                        permissionRoutes={permissionRoutes}
                                                         globalUpdateUser={this.props.globalUpdateUser}
                                                     />
                                                 )}
