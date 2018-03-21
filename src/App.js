@@ -25,8 +25,13 @@ class App extends React.Component {
      * @param    {Object}   user [当前最新的用户信息]
      */
     globalUpdateUser = (user) => {
-        this.setState({
-            user: user
+        this.setState(prevState => {
+            return {
+                user: {
+                    ...prevState.user,
+                    ...user
+                }
+            }
         })
     }
     render() {

@@ -28,7 +28,7 @@ const regExp = {
         return new Promise(resolve => {
             if (phone && phone.length > 0) {
                 if (!((phone.length === 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(phone)) || (phone.length === 12 && /^(([0+]\d{2,3}-)?(0\d{2,3})-)?(\d{7,8})(-(\d{3,}))?$/.test(phone)))) {
-                    resolve('格式错误！')
+                    resolve(`${fieldTxt}格式错误`)
                 } else {
                     resolve()
                 }

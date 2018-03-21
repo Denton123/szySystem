@@ -21,7 +21,7 @@ class Login extends React.Component {
     componentDidMount() {
         // 判断用户是否登录
         if (this.props.user !== null) {
-            this.props.history.push('/home')
+            this.props.history.push('/home/default')
         }
     }
     handleSubmit = () => {
