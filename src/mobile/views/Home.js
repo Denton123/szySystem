@@ -252,6 +252,9 @@ class Home extends React.Component {
                         ))}
                     </TabBar>
                 </Drawer>
+                <Route exact path={match.path} render={() => {
+                    return <Redirect to={`${match.path}/default`} />
+                }} />
             </div>
         )
     }

@@ -29,7 +29,7 @@ class Default extends React.Component {
     }
     componentDidMount() {
         this.getData()
-        if (this.props.user.highest) { // 只有最高权限才能查看
+        if (this.props.user && this.props.user.highest) { // 只有最高权限才能查看
             this.getAllUser()
             this.getHighestData()
         }
