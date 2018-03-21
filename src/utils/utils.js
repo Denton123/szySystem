@@ -15,6 +15,9 @@ const utils = {
     isFunction: function(FunctionToCheck) {
         return Object.prototype.toString.call(FunctionToCheck) === '[object Function]'
     },
+    isObjectNull: function(ObjectToCheck) {
+        return Object.keys(ObjectToCheck).length > 0
+    },
     /**
      * [apiUrl api接口路径处理]
      * @Author   szh
