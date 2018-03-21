@@ -47,7 +47,7 @@ class Company extends React.Component {
             // 页面获取的数据
             data: [],
             // tab的下标
-            tabIndex: 1
+            tabIndex: 0
         }
     }
 
@@ -64,7 +64,11 @@ class Company extends React.Component {
         )
     }
 
-    componentDidMount() {
+    componentWillMount() {
+        let tabIndex = this.props.location.state && this.props.location.state.tabIndex ? this.props.location.state.tabIndex : 0
+        this.setState({
+            tabIndex: tabIndex
+        })
     }
 
     getData = () => {
@@ -79,8 +83,10 @@ class Company extends React.Component {
     }
 
     handleTabClick = (tab, index) => {
-        console.log(tab)
         this.setState({
+            tabIndex: index
+        })
+        this.props.history.replace(`${this.props.location.pathname}`, {
             tabIndex: index
         })
     }

@@ -1,22 +1,15 @@
 import React from 'react'
 import {
-    Grid,
     Icon,
     Card,
     Tabs,
-    WhiteSpace,
-    Badge,
     Pagination
 } from 'antd-mobile'
-import {
-    Link,
-    Route,
-    Switch,
-    Redirect
-} from 'react-router-dom'
 
 import { isArray } from 'UTILS/utils'
 import { ajax, index, show } from 'UTILS/ajax'
+
+import withBasicDataModel from '../../../components/withBasicDataModel'
 
 const locale = {
     prevText: 'Prev',
@@ -27,30 +20,17 @@ class WorkerAffairs extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            data: [],
-            total: 0,
-            model: 'user'
         }
     }
+
     componentWillMount() {
-        this.getData()
+        this.props.getData()
     }
-    getData = () => {
-        if (this.props.user) {
-            const id = this.props.user.id
-            let p = { page: 1 }
-            index(this.state.model, p).then(res => {
-                console.log(res)
-                this.setState({
-                    data: res.data.data,
-                    total: res.data.totalPage
-                })
-            })
-        }
-    }
+
     handleChangePage = (e) => {
         console.log(e)
     }
+
     render() {
         const {
             route,
@@ -58,12 +38,13 @@ class WorkerAffairs extends React.Component {
             location,
             match,
             permissionRoutes,
-            tab
+            dateSetting
         } = this.props
+
         return (
             <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
                 {
-                    (this.state.data && this.state.data.length > 0) ? this.state.data.map((obj, i) => (
+                    (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
                         <Card key={i.toString()}>
                             <Card.Header
                                 title={obj.realname}
@@ -72,10 +53,12 @@ class WorkerAffairs extends React.Component {
                         </Card>
                     )) : <p className="pt10">暂无数据</p>
                 }
-                <Pagination total={this.state.total} current={1} locale={locale} onChange={this.handleChangePage} />
+                <Pagination total={dateSetting.total} current={1} locale={locale} onChange={this.handleChangePage} />
             </div>
         )
     }
 }
 
-export default WorkerAffairs
+export default withBasicDataModel(WorkerAffairs, {
+    model: 'user'
+})
