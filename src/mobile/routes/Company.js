@@ -18,6 +18,7 @@ class Company extends React.Component {
     onGridItem = (el, index) => {
         console.log(el)
         console.log(index)
+        this.props.handleSetState('CustomNavBarState', {...this.props.CustomNavBarState, title: el.name})
         // this.props.history.push(`${this.props.match.url}${el.path}`)
     }
     render() {
@@ -26,7 +27,8 @@ class Company extends React.Component {
             history,
             location,
             match,
-            permissionRoutes
+            permissionRoutes,
+            handleSetState
         } = this.props
         console.log(this.props)
         // let data = []

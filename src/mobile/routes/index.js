@@ -34,7 +34,7 @@ const routes = [
                     {
                         name: '总结详情',
                         path: '/:model',
-                        component: getRoutes(['CompanyDetail'])
+                        component: getRoutes(['Company', 'CompanyDetail'])
                     }
                 ]
             },

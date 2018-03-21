@@ -93,7 +93,8 @@ class Home extends React.Component {
                                 tempRoutes.push({
                                     // component: getRoutes(item.component),
                                     name: item.name,
-                                    path: item.path
+                                    path: item.path,
+                                    component: item.component
                                 })
                             }
                         })
@@ -108,6 +109,7 @@ class Home extends React.Component {
                             name: menu.name,
                             path: menu.path,
                             icon: icons[menu.path],
+                            component: menu.component
                         })
                     }
                 })
@@ -120,6 +122,7 @@ class Home extends React.Component {
                                 // component: getRoutes(submenu.component),
                                 name: submenu.name,
                                 path: submenu.path,
+                                component: submenu.component
                             }
                             if (submenu['routes']) {
                                 obj['routes'] = submenu['routes']
@@ -174,6 +177,12 @@ class Home extends React.Component {
         }
     }
 
+    // 自定义更新组件的
+    handleSetState = (stateFields, stateValue) => {
+        this.setState({
+            [stateFields]: stateValue
+        })
+    }
     render() {
         const {
             match,
@@ -186,6 +195,8 @@ class Home extends React.Component {
             hiddenTabBar,
             permissionRoutes,
         } = this.state
+        console.log('Home.js')
+        console.log(permissionRoutes)
         // drawer 导航菜单
         const DrawerSiderBar = (
             <List>
@@ -248,11 +259,12 @@ class Home extends React.Component {
                                             route={route} {...props}
                                             user={this.props.user}
                                             permissionRoutes={permissionRoutes}
+                                            handleSetState={this.handleSetState}
+                                            CustomNavBarState={this.state.CustomNavBarState}
                                             globalUpdateUser={this.props.globalUpdateUser}
                                             setCustomNavBarState={this.setCustomNavBarState}
                                         />
-                                    )}
-                                />
+                                    )} />
                                 {route.routes && route.routes.length > 0
                                 ? (
                                     <Switch>
