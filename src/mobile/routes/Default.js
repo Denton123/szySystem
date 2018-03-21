@@ -27,7 +27,8 @@ class Default extends React.Component {
             highestData: [],
         }
     }
-    componentDidMount() {
+    componentWillMount() {
+        this.props.setCustomNavBarState(this.props.route.name, 'menu')
         this.getData()
         if (this.props.user && this.props.user.highest) { // 只有最高权限才能查看
             this.getAllUser()

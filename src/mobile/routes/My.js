@@ -10,6 +10,9 @@ import {
 import { Card, List, WhiteSpace, Button } from 'antd-mobile'
 
 class My extends React.Component {
+    componentWillMount() {
+        this.props.setCustomNavBarState(this.props.route.name, 'menu')
+    }
     logout = () => {
         axios.get('/user/logout')
         .then(res => {

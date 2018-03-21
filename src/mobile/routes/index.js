@@ -43,6 +43,13 @@ const routes = [
                 path: '/work',
                 component: getRoutes(['Work']),
                 key: 'work',
+                routes: [
+                    {
+                        name: '动态模块',
+                        path: '/:model',
+                        component: getRoutes(['Work', 'Model']),
+                    },
+                ]
             },
             {
                 name: '我的',

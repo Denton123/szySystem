@@ -150,6 +150,30 @@ class Home extends React.Component {
     goBack = () => {
         this.props.history.go(-1)
     }
+
+    // 导航栏设置
+    setCustomNavBarState = (title, type = 'menu') => {
+        if (type === 'menu') {
+            this.setState({
+                CustomNavBarState: {
+                    title: title,
+                    icon: 'ellipsis',
+                    leftClick: this.onOpenChange,
+                },
+            })
+        } else if (type === 'back') {
+            this.setState({
+                CustomNavBarState: {
+                    title: title,
+                    icon: 'left',
+                    leftClick: this.goBack
+                },
+            })
+        } else {
+            console.error('setCustomNavBarState的第一参数为名称，第二参数为类型（menu 和 back两种）')
+        }
+    }
+
     render() {
         const {
             match,
@@ -198,8 +222,9 @@ class Home extends React.Component {
                                 onPress={() => {
                                     this.setState({
                                         CustomNavBarState: {
-                                            ...CustomNavBarState,
                                             title: route.name,
+                                            icon: 'ellipsis',
+                                            leftClick: this.onOpenChange,
                                         },
                                         currentTab: route.key,
                                         drawerOpen: false,
@@ -224,6 +249,7 @@ class Home extends React.Component {
                                             user={this.props.user}
                                             permissionRoutes={permissionRoutes}
                                             globalUpdateUser={this.props.globalUpdateUser}
+                                            setCustomNavBarState={this.setCustomNavBarState}
                                         />
                                     )}
                                 />
@@ -241,6 +267,7 @@ class Home extends React.Component {
                                                         user={this.props.user}
                                                         permissionRoutes={permissionRoutes}
                                                         globalUpdateUser={this.props.globalUpdateUser}
+                                                        setCustomNavBarState={this.setCustomNavBarState}
                                                     />
                                                 )}
                                             />
