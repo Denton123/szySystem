@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-    Link,
-} from 'react-router-dom'
-import { List, DatePicker, Calendar, WhiteSpace } from 'antd-mobile'
+import { List, DatePicker, WhiteSpace, Toast } from 'antd-mobile'
 import moment from 'moment'
 
 import {ajax} from '../../../utils/ajax'
@@ -10,144 +7,104 @@ import {isArray, getTime} from '../../../utils/utils'
 
 class Attendance extends React.Component {
     state = {
-        date: new Date(Date.now()),
-        // attendanceData: [],
-        // loading: false,
-        // calendarTime: this.props.location.state ? this.props.location.state.calendarTime : moment().format('YYYY-MM-DD'),
-        // mode: this.props.location.state ? this.props.location.state.mode : 'month'
+        date: null,
+        attendanceData: [], // 当月全部的考勤状况
+        todayData: [], // 当天考勤状况
+        currentYM: '', // 当前年月
     }
     componentWillMount() {
-        this.getAttendanceData()
-    }
-    getListData = (value) => {
-        let oneDayArr = []
-        this.state.attendanceData.forEach(item => {
-            if (moment(moment(value).format('YYYY-MM-DD')).isSame(moment(item.userCheckTime).format('YYYY-MM-DD'))) {
-                let tip = {type: '', content: '', checkType: ''}
-                switch (item.checkType) {
-                    case 'OnDuty':
-                        tip.checkType = '上班'
-                        break
-                    case 'OffDuty':
-                        tip.checkType = '下班'
-                        break
-                }
-                switch (item.timeResult) {
-                    case 'Normal':
-                        tip.type = 'success'
-                        tip.content = '正常'
-                        break
-                    case 'Early':
-                        tip.type = 'warning'
-                        tip.content = '早退'
-                        break
-                    case 'Late':
-                        tip.type = 'warning'
-                        tip.content = '迟到'
-                        break
-                    case 'SeriousLate':
-                        tip.type = 'warning'
-                        tip.content = '严重迟到'
-                        break
-                    case 'NotSigned':
-                        tip.type = 'warning'
-                        tip.content = '未打卡'
-                        break
-                }
-                oneDayArr.push({ type: tip.type, content: `${tip.checkType} ${moment(item.userCheckTime).format('h:mm')} ${tip.content}` })
-            }
-        })
-        return oneDayArr
-    }
-    // 自定义渲染日期单元格，返回内容会被追加到单元格
-    dateCellRender = (value) => {
+        this.getAttendanceData(new Date(Date.now()))
     }
 
-    // 日期面板变化回调
-    onPanelChange = (value, mode) => {
-        let calendarTime = moment(value).format('YYYY-MM-DD')
-        this.setState({
-            calendarTime: calendarTime,
-            mode: mode
-        }, () => {
-            this.getAttendanceData()
-        })
-        this.props.history.replace(this.props.location.pathname, {
-            calendarTime: calendarTime,
-            mode: mode
-        })
-    }
-
-    onSelect = (value) => {
-        let calendarTime = moment(value).format('YYYY-MM-DD')
-        this.setState({
-            calendarTime: calendarTime
-        })
-        if (!(moment(moment(value).format('YYYY-MM')).isSame(moment(this.state.calendarTime).format('YYYY-MM')))) {
-            this.getAttendanceData()
-        }
-        this.props.history.replace(this.props.location.pathname, {
-            calendarTime: calendarTime,
-            mode: this.state.mode
-        })
-    }
-
-    getAttendanceData = () => {
+    getAttendanceData = (date) => {
+        Toast.loading('加载中', 0)
         let params = {
-            time: this.state.date,
+            time: date,
             realname: this.props.user.realname
         }
-        ajax('get', '/api/attendance', params)
+        ajax('get', '/m/api/attendance', params)
             .then(res => {
-                console.log(res)
+                let data = [], todayData = []
+                if (isArray(res.data)) {
+                    res.data.forEach((arrItem) => {
+                        data = [...arrItem, ...data]
+                    })
+                } else {
+                    Toast.info(res.data, 1)
+                }
+                data.forEach(d => {
+                    // 时间相同的话则添加到今天的数组里
+                    if (moment(d.workDate).format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD')) {
+                        todayData.push(d)
+                    }
+                })
+                this.setState({
+                    date,
+                    attendanceData: data,
+                    todayData,
+                    currentYM: moment(date).format('YYYY-MM'),
+                })
+                Toast.hide()
             })
-        // axios.get(`/api/attendance?time=${time}&realname=${this.props.user.realname}`)
-        //     .then(res => {
-        //         let data = []
-        //         if (isArray(res.data)) {
-        //             res.data.forEach((arrItem) => {
-        //                 data = [...arrItem, ...data]
-        //             })
-        //             if (data.length === 0) {
-        //                 message.warning('该用户暂无考勤记录')
-        //             }
-        //         } else {
-        //             message.error(res.data)
-        //         }
-        //         this.setState({
-        //             attendanceData: data,
-        //             loading: false
-        //         })
-        //     })
-        //     .catch(err => {
-        //         this.setState({
-        //             loading: false
-        //         })
-        //         message.error(err.errmsg)
-        //     })
     }
 
-    disabledDate = (moment) => {
-        return getTime() < getTime(moment)
+    onDateChange = (date) => {
+        if (moment(date).format('YYYY-MM') === this.state.currentYM) {
+            let todayData = []
+            this.state.attendanceData.forEach(d => {
+                // 时间相同的话则添加到今天的数组里
+                if (moment(d.workDate).format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD')) {
+                    todayData.push(d)
+                }
+            })
+            this.setState({
+                date,
+                todayData: todayData,
+            })
+        } else {
+            this.getAttendanceData(date)
+        }
     }
+
     render() {
         const {
-            route,
-            history,
-            location,
-            match
-        } = this.props
+            date,
+            todayData,
+        } = this.state
+        const duty = {
+            OnDuty: '上班',
+            OffDuty: '下班',
+        }
+        const result = {
+            Normal: '正常',
+            Early: '早退',
+            Late: '迟到',
+            SeriousLate: '严重迟到',
+            NotSigned: '未打卡',
+        }
         return (
             <List>
                 <DatePicker
                     mode="date"
-                    value={this.state.date}
+                    value={date}
                     maxDate={new Date(Date.now())}
-                    onChange={date => this.setState({ date })}
+                    onChange={this.onDateChange}
                 >
                     <List.Item arrow="horizontal">日期</List.Item>
                 </DatePicker>
                 <WhiteSpace />
+                <List.Item>{`${date ? moment(date).format('YYYY-MM-DD') : ''}考勤`}</List.Item>
+                {todayData.length > 0 ? (
+                    <div>
+                        {todayData.map(td => (
+                            <List.Item key={td.id} extra={duty[td.checkType]}>
+                                {`打卡时间:${moment(td.userCheckTime).format('HH:mm')} ${result[td.timeResult]}`}
+                            </List.Item>
+                        ))}
+                    </div>
+                ) : (
+                    <List.Item>当天无打卡记录</List.Item>
+                )}
             </List>
         )
     }

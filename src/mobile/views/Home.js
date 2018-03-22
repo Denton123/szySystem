@@ -195,8 +195,6 @@ class Home extends React.Component {
             hiddenTabBar,
             permissionRoutes,
         } = this.state
-        console.log('Home.js')
-        console.log(permissionRoutes)
         // drawer 导航菜单
         const DrawerSiderBar = (
             <List>

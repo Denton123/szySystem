@@ -4,7 +4,7 @@
 //  update     /:model/{model_id}        put     更新对应id的数据
 //  destroy    /:model/{model_id}        delete  删除对应id的数据
 
-import { apiUrl, isObject, valueToMoment } from 'UTILS/utils'
+import { apiUrl, mobileApiUrl, isObject, valueToMoment } from 'UTILS/utils'
 
 /**
  * [ajax 后台请求]
@@ -93,7 +93,24 @@ const commonApi = {
     },
     check: function(data) {
         return ajax('post', '/check', data)
-    }
+    },
+    // -------------------------------------------
+    // 移动端
+    mIndex: function(url, data) {
+        return ajax('get', mobileApiUrl(url), data)
+    },
+    mStore: function(url, data, hasFile) {
+        return ajax('post', mobileApiUrl(url), data, hasFile)
+    },
+    mShow: function(url) {
+        return ajax('get', mobileApiUrl(url))
+    },
+    mUpdate: function(url, data, hasFile) {
+        return ajax('put', mobileApiUrl(url), data, hasFile)
+    },
+    mDestroy: function(url) {
+        return ajax('delete', mobileApiUrl(url))
+    },
 }
 
 module.exports = commonApi

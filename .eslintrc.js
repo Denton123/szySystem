@@ -60,6 +60,7 @@ module.exports = {
         "no-console": 'off',
         "one-var": 0,
         "no-unneeded-ternary": 0,
-        "no-unused-expressions": 0
+        "no-unused-expressions": 0,
+        "no-return-assign": 0
     }
 }
