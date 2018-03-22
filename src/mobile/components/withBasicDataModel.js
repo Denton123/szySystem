@@ -27,13 +27,13 @@ function withBasicDataModel(PageComponent, Datas) {
             }
         }
 
-        componentWillMount() {
+        componentDidMount() {
             // this.getData()
             console.log('withBasicDataModel.js')
             console.log(this.props.location)
             if (this.props.location.state && this.props.location.state.page) {
                 let current = this.props.location.state.page
-                this.setState(prevState => {
+                setTimeout(this.setState(prevState => {
                     let pagination = prevState.dateSetting.pagination
                     pagination['current'] = current
                     return {
@@ -42,17 +42,36 @@ function withBasicDataModel(PageComponent, Datas) {
                             pagination: pagination
                         }
                     }
-                })
+                }), 0)
             }
         }
 
         // 获取数据(请求的参数)
         getData = (params) => {
-            // Toast.loading('正在加载...', 0)
+            let p = {} // 用来装locationState 和传过来的参数params
+            let locationState = {}
+            if (this.props.location.state) {
+                locationState = this.props.location.state
+                p = locationState
+            }
+            // 判断有参数
+            if (params) {
+                p = {...p, ...params}
+            }
+            this.props.history.replace(`${this.props.location.pathname}`, p)
+            Toast.loading('正在加载...', 0)
             if (this.props.user) {
                 const id = this.props.user.id
-                params = { page: 1, ...params }
-                index(this.state.model, params)
+                params = { page: 1, ...p }
+                // 参数需要过滤掉的字段
+                let filterArr = ['tabIndex']
+                let filterParams = {}
+                Object.keys(params).forEach(key => {
+                    if (filterArr.indexOf(key) < 0) {
+                        filterParams[key] = params[key]
+                    }
+                })
+                index(this.state.model, filterParams)
                 .then(res => {
                     Toast.hide()
                     let pagination = {
@@ -89,12 +108,6 @@ function withBasicDataModel(PageComponent, Datas) {
             let params = {
                 page: e
             }
-            // if (this.props.location.state) {
-            //     params = {
-            //         ...params,
-            //         ...this.props.location.state
-            //     }
-            // }
             this.handleSetState('dateSetting', {
                 ...this.state.dateSetting,
                 pagination: {
@@ -102,8 +115,35 @@ function withBasicDataModel(PageComponent, Datas) {
                     current: e
                 }
             })
-            // this.props.history.replace(`${this.props.location.pathname}`, params)
-            this.getData({page: params.page})
+            console.log('handlePageChange --- ')
+            console.log(params)
+            this.getData(params)
+        }
+
+        // 搜索栏提交处理(search表单)
+        handleSearchSubmit = (searchFields) => {
+            console.log(searchFields)
+            let isAllUndefined = true
+            let params = {}
+            Object.keys(searchFields).forEach(key => {
+                if (searchFields[key] === undefined) {
+                    isAllUndefined = isAllUndefined && true
+                } else {
+                    isAllUndefined = isAllUndefined && false
+                    params[key] = searchFields[key]
+                }
+            })
+            if (isAllUndefined) {
+                Toast.info('请输入搜索内容', 1)
+                return
+            }
+            this.getData(params)
+        }
+
+        // 搜索栏重置
+        handleSearchReset = () => {
+            console.log(55)
+            this.getData()
         }
 
         render() {
@@ -113,13 +153,10 @@ function withBasicDataModel(PageComponent, Datas) {
                         getData={this.getData}
                         handleSetState={this.handleSetState}
                         handlePageChange={this.handlePageChange}
+                        handleSearchSubmit={this.handleSearchSubmit}
+                        handleSearchReset={this.handleSearchReset}
                         {...this.state}
                         {...this.props}
-                    />
-                    <ActivityIndicator
-                        toast
-                        text="Loading..."
-                        animating={this.state.animating}
                     />
                 </div>
             )

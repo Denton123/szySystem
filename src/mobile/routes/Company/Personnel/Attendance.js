@@ -6,39 +6,36 @@ import {
 } from 'antd-mobile'
 
 class Demo extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
+    constructor(props) {
+        super(props)
+        this.state = {
+        }
     }
-  }
 
-  componentDidMount() {
-  }
+    onSubmit = () => {
+        this.props.form.validateFields({ force: true }, (error) => {
+            if (!error) {
+                console.log(this.props.form.getFieldsValue())
+            } else {
+                console.log(error)
+                alert('Validation failed')
+            }
+        })
+    }
 
-  onSubmit = () => {
-    this.props.form.validateFields({ force: true }, (error) => {
-      if (!error) {
-        console.log(this.props.form.getFieldsValue());
-      } else {
-        console.log(error);
-        alert('Validation failed');
-      }
-    })
-  }
-
-  render() {
-    const { getFieldProps } = this.props.form
-    console.log(getFieldProps)
-    return (<div>
-      <TextareaItem
-            {...getFieldProps('control')}
-            title="受控组件"
-            type="phone"
-            placeholder="controlled"
-          />
-          <Button type="primary" size="small" inline onClick={this.onSubmit}>Submit</Button>
-    </div>)
-  }
+    render() {
+        const { getFieldProps } = this.props.form
+        console.log(getFieldProps)
+        return (<div>
+            <TextareaItem
+                {...getFieldProps('control')}
+                title="受控组件"
+                type="phone"
+                placeholder="controlled"
+            />
+            <Button type="primary" size="small" inline onClick={this.onSubmit}>Submit</Button>
+        </div>)
+    }
 }
 
 const TextareaItemExampleWrapper = createForm()(Demo)
