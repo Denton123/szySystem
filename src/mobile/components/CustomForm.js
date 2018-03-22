@@ -32,25 +32,22 @@ class CustomForm extends React.Component {
     render() {
         const {
             formFields, // 表单单个作用域 类型 Array
-            formOperation, // 表单操作 类型 reactNode
+            hasFormOperation, // 是否要表单操作 类型 Boolean 默认true
         } = this.props
+        const HasFormOperation = hasFormOperation === false ? false : true
         return (
             <form>
                 <List>
                     {formFields.map((formField, idx) => (
                         <div key={idx}>{formField(this.props.form)}</div>
                     ))}
-                    {formOperation ? (
-                        <List.Item>
-                            <formOperation />
-                        </List.Item>
-                    ) : (
+                    {HasFormOperation ? (
                         <List.Item>
                             <Button type="primary" size="small" onClick={this.onSubmit}>提交</Button>
                             <WhiteSpace />
                             <Button size="small" onClick={this.onReset}>重置</Button>
                         </List.Item>
-                    )}
+                    ) : null}
                 </List>
             </form>
         )

@@ -7,15 +7,26 @@ import {
     Link,
 } from 'react-router-dom'
 
-import { Card, List, WhiteSpace, Button } from 'antd-mobile'
+import { Card, List, WhiteSpace, Button, Modal } from 'antd-mobile'
+
+const alert = Modal.alert
 
 class My extends React.Component {
+    componentWillMount() {
+        this.props.setCustomNavBarState(this.props.route.name, 'menu')
+    }
     logout = () => {
         axios.get('/user/logout')
         .then(res => {
             this.props.globalUpdateUser(null)
             this.props.history.push('/login')
         })
+    }
+    alertLogout = () => {
+        alert('退出', '是否退出当前账号？', [
+            {text: '取消', style: 'default'},
+            {text: '确定', onPress: this.logout},
+        ])
     }
     render() {
         const {
@@ -53,7 +64,7 @@ class My extends React.Component {
                     </List.Item>
                 </List>
                 <WhiteSpace />
-                <Button onClick={this.logout}>退出登录</Button>
+                <Button onClick={this.alertLogout}>退出登录</Button>
             </div>
         )
     }

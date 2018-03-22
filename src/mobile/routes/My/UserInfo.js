@@ -14,7 +14,7 @@ class UserInfo extends React.Component {
         files: []
     }
     componentWillMount() {
-        console.log(this.props.user)
+        this.props.setCustomNavBarState(this.props.route.name, 'back')
         if (this.props.user && this.props.user.avatar) {
             this.setState({
                 files: [
@@ -27,22 +27,19 @@ class UserInfo extends React.Component {
         }
     }
     onFilesChange = (files, type, index) => {
+        if (type === 'add') {
+            if (files[0].file.type !== 'image/jpeg' && files[0].file.type !== 'image/png') {
+                Toast.info('上传的头像只能是图片', 1)
+                return
+            }
+            if (files[0].file.size > 1 * 1024 * 1024) {
+                Toast.info('上传图片不能超过2m', 1)
+                return
+            }
+        }
         this.setState({
             files,
         })
-        // if (files.length > 0 && files[0].file) {
-        //     if (files[0].file.type !== 'image/jpeg' && files[0].file.type !== 'image/png') {
-        //         Toast.info('上传的头像只能是图片', 1)
-        //         return
-        //     }
-        //     if (files[0].file.size > 2 * 1024 * 1024) {
-        //         Toast.info('上传图片不能超过2m', 1)
-        //         return
-        //     }
-        //     this.setState({
-        //         files,
-        //     })
-        // }
     }
     handleSubmit = (params) => {
         const {

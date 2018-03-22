@@ -30,6 +30,11 @@ const utils = {
         url = url.replace(regx, '')
         return `/api/${url}`
     },
+    mobileApiUrl: function(url) {
+        let regx = /^\/{1,}/g
+        url = url.replace(regx, '')
+        return `/m/api/${url}`
+    },
     /**
      * [valueToMoment antd时间组件在传值需要moment]
      * @Author   szh
