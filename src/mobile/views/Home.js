@@ -183,6 +183,7 @@ class Home extends React.Component {
             [stateFields]: stateValue
         })
     }
+
     render() {
         const {
             match,
@@ -199,8 +200,8 @@ class Home extends React.Component {
         const DrawerSiderBar = (
             <List>
                 {permissionRoutes.map((menu, i) => (
-                    <List.Item key={menu.path}>
-                        <Link to={`${match.path}${menu.path}`}>
+                    <List.Item key={menu.path} onClick={this.onOpenChange}>
+                        <Link to={`${match.path}/company${menu.path}`}>
                             {menu.name}
                         </Link>
                     </List.Item>
