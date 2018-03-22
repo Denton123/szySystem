@@ -51,9 +51,6 @@ class Company extends React.Component {
         }
     }
 
-    // thumb={obj && obj.avatar ? `/uploadImgs/${obj.avatar}` : '../../../assets/user.png'}
-    // thumb="https://cloud.githubusercontent.com/assets/1698185/18039916/f025c090-6dd9-11e6-9d86-a4d48a1bf049.png"
-    // <WorkerAffairs {...this.props} tab={tab} data={this.state.data} />
     renderContent = tab => {
         console.log('CompanyDetail.js')
         console.log(tab)
@@ -83,6 +80,7 @@ class Company extends React.Component {
     }
 
     handleTabClick = (tab, index) => {
+        console.log(index)
         this.setState({
             tabIndex: index
         })
@@ -130,16 +128,19 @@ class Company extends React.Component {
         return (
             <div>
                 <Tabs
+                    className='modelTabs'
                     tabs={tabs}
                     page={this.state.tabIndex}
                     renderTabBar={props => tabRender(props)}
-                    onTabClick={this.handleTabClick}>
+                    onTabClick={this.handleTabClick}
+                    onChange={this.handleTabClick}
+                    prerenderingSiblingsNumber={0}
+                    animated={false}>
                     {this.renderContent}
                 </Tabs>
-                <Route path={`${match.url}/:model`} component={Model} />
             </div>
         )
     }
 }
-
+                // <Route path={`${match.url}/:model`} component={Model} />
 export default Company

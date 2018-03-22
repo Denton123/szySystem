@@ -4,7 +4,8 @@ import {
     Card,
     Tabs,
     Pagination,
-    List
+    List,
+    WingBlank
 } from 'antd-mobile'
 
 import { isArray } from 'UTILS/utils'
@@ -32,20 +33,6 @@ class Contract extends React.Component {
         this.props.getData()
     }
 
-    handleChangePage = (e) => {
-        console.log(e)
-        let p = {
-            page: e
-        }
-        if (this.props.location.state) {
-            p = {
-                ...p,
-                ...this.props.location.state
-            }
-        }
-        this.props.history.replace(`${this.props.location.pathname}`, p)
-    }
-
     render() {
         const {
             route,
@@ -57,15 +44,22 @@ class Contract extends React.Component {
         } = this.props
 
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div>
                 <List className="my-list">
                     {
                         (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
                             <Item extra={obj.createdAt} key={i}>{obj.user.realname}</Item>
-                        )) : <p className="pt10">暂无数据</p>
+                        )) : <p className="mt-10">暂无数据</p>
                     }
                 </List>
-                <Pagination total={dateSetting.pagination.total} current={dateSetting.pagination.current} locale={locale} onChange={this.handleChangePage} />
+                <WingBlank>
+                    <Pagination
+                        className="mt-10"
+                        total={dateSetting.pagination.total}
+                        current={dateSetting.pagination.current}
+                        locale={locale}
+                        onChange={this.props.handlePageChange} />
+                </WingBlank>
             </div>
         )
     }
