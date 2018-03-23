@@ -40,6 +40,11 @@ function getRoutes(path) {
     return require(`.${route}`).default
 }
 
+function getView(path) {
+    let Com = require(`./${path}`).default
+    return <Com />
+}
+
 class Company extends React.Component {
     constructor(props) {
         super(props)
@@ -99,9 +104,10 @@ class Company extends React.Component {
         } = this.props
 
         let tabs = []
+        let newRoutes = {}
         // props传过来的数据有时候会没有，之后才会有，异步，所以用的时候先判断一下
         if (permissionRoutes.length > 0) {
-            let newRoutes = permissionRoutes.find(item => item.path === `/${match.params.model}`)
+            newRoutes = permissionRoutes.find(item => item.path === `/${match.params.model}`)
             if (newRoutes.routes && isArray(newRoutes.routes)) {
                 tabs = newRoutes.routes.map(rItem => {
                     let obj = {}
@@ -119,6 +125,9 @@ class Company extends React.Component {
                 })
             }
         }
+        console.log('tabs----')
+        console.log(tabs)
+        console.log(newRoutes)
         function tabRender(props) {
             return (
                 <Tabs.DefaultTabBar {...props} page={3} />
@@ -127,16 +136,20 @@ class Company extends React.Component {
 
         return (
             <div>
-                <Tabs
-                    tabs={tabs}
-                    page={this.state.tabIndex}
-                    renderTabBar={props => tabRender(props)}
-                    onTabClick={this.handleTabClick}
-                    onChange={this.handleTabClick}
-                    prerenderingSiblingsNumber={0}
-                    animated={false}>
-                    {this.renderContent}
-                </Tabs>
+                {
+                    tabs.length > 0 ? (
+                        <Tabs
+                            tabs={tabs}
+                            page={this.state.tabIndex}
+                            renderTabBar={props => tabRender(props)}
+                            onTabClick={this.handleTabClick}
+                            onChange={this.handleTabClick}
+                            prerenderingSiblingsNumber={0}
+                            animated={false}>
+                            {this.renderContent}
+                        </Tabs>
+                    ) : (Object.keys(newRoutes).length > 0 && getView(newRoutes.component))
+                }
             </div>
         )
     }

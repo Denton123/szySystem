@@ -1,61 +1,21 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {
-    Icon,
     Card,
-    Tabs,
-    Pagination,
-    WingBlank,
-    List,
-    WhiteSpace,
-    Button,
     InputItem,
-    PullToRefresh,
-    Accordion,
-    Toast
+    WhiteSpace,
+    WingBlank
 } from 'antd-mobile'
-import { createForm } from 'rc-form'
-import { isArray } from 'UTILS/utils'
-import { ajax, index, show } from 'UTILS/ajax'
 import withBasicDataModel from '../../../components/withBasicDataModel'
-import CustomForm from '../../../components/CustomForm'
-
-const locale = {
-    prevText: 'Prev',
-    nextText: 'Next'
-}
+import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
+import NoData from '../../../components/NoData'
 
 class WorkerAffairs extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            // 刷新设置
-            refreshing: false,
-            height: document.documentElement.clientHeight
+            src: 'https://cloud.githubusercontent.com/assets/1698185/18039916/f025c090-6dd9-11e6-9d86-a4d48a1bf049.png'
         }
-    }
-
-    componentWillMount() {
-        this.props.getData()
-    }
-
-    componentDidMount() {
-        const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop
-        setTimeout(() => this.setState({
-            height: hei
-        }), 0)
-    }
-
-    handleChangePage = (e) => {
-        console.log(e)
-    }
-        // 下拉刷新
-    bandleDownRefresh = () => {
-        this.setState({ refreshing: true })
-        // this.getData({page: this.state.dateSetting.pagination.current})
-        setTimeout(() => {
-            this.setState({ refreshing: false })
-        }, 1000)
     }
 
     render() {
@@ -81,44 +41,24 @@ class WorkerAffairs extends React.Component {
             }
         ]
 
-        let formOperation = () => <Button type="primary" size="small" inline style={{ marginRight: '4px' }}>搜索</Button>
         return (
             <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
-                <Accordion className="my-accordion">
-                    <Accordion.Panel header="搜索">
-                        <CustomForm formFields={condition} handleSubmit={this.props.handleSearchSubmit} handleReset={this.props.handleSearchReset} />
-                    </Accordion.Panel>
-                </Accordion>
-                <PullToRefresh
-                    ref={el => this.ptr = el}
-                    style={{
-                        height: this.state.height,
-                        overflow: 'auto'
-                    }}
-                    indicator={{}}
-                    direction={'down'}
-                    refreshing={this.state.refreshing}
-                    onRefresh={this.bandleDownRefresh}
-                >
+                <CompanyDetailPageModel {...this.props} condition={condition}>
                     {
                         (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
-                            <Card key={i.toString()}>
-                                <Card.Header
-                                    title={obj.realname}
-                                    thumb={<img style={{maxWidth: '64px', maxHeight: '64px'}} src={obj && obj.avatar ? `/uploadImgs/${obj.avatar}` : '../../../assets/user.png'} />}
-                                    extra={<span>{obj.job}</span>} />
-                            </Card>
-                        )) : <p className="pt10">暂无数据</p>
+                            <WingBlank key={i.toString()} size="lg">
+                                <WhiteSpace size="sm" />
+                                <Card>
+                                    <Card.Header
+                                        title={obj.realname}
+                                        thumb={<img style={{maxWidth: '64px', maxHeight: '64px'}} src={obj && obj.avatar ? `/uploadImgs/${obj.avatar}` : this.state.src} />}
+                                        extra={<span>{obj.job}</span>} />
+                                </Card>
+                                <WhiteSpace size="sm" />
+                            </WingBlank>
+                        )) : <NoData />
                     }
-                    <WingBlank>
-                        <Pagination
-                            className="mt-10"
-                            total={dateSetting.pagination.total}
-                            current={dateSetting.pagination.current}
-                            locale={locale}
-                            onChange={this.props.handlePageChange} />
-                    </WingBlank>
-                </PullToRefresh>
+                </CompanyDetailPageModel>
             </div>
         )
     }

@@ -164,6 +164,7 @@ class Technology extends Component {
 
         const tableExpandedRowRender = (record) => {
             let content = escape(record.content)
+            console.log(content)
             return (
                 <div dangerouslySetInnerHTML={{__html: content}} />
             )

@@ -1,18 +1,13 @@
 import React from 'react'
 import {
-    Icon,
-    Card,
-    Tabs,
-    Pagination,
     List,
-    WingBlank
+    InputItem,
+    Accordion
 } from 'antd-mobile'
-import withBasicDataModel from '../../../components/withBasicDataModel'
 
-const locale = {
-    prevText: 'Prev',
-    nextText: 'Next'
-}
+import withBasicDataModel from '../../../components/withBasicDataModel'
+import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
+import NoData from '../../../components/NoData'
 
 const Item = List.Item
 const Brief = Item.Brief
@@ -22,10 +17,6 @@ class Recruit extends React.Component {
         super(props)
         this.state = {
         }
-    }
-
-    componentWillMount() {
-        this.props.getData()
     }
 
     render() {
@@ -38,21 +29,39 @@ class Recruit extends React.Component {
             dateSetting
         } = this.props
 
+        let condition = [
+            ({getFieldProps}) => {
+                return (
+                    <InputItem
+                        {...getFieldProps('job')}
+                        title="面试职位"
+                        placeholder="面试职位">
+                        面试职位
+                    </InputItem>
+                )
+            }
+        ]
+
         return (
-            <div>
-                <List className="my-list">
+            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+                <CompanyDetailPageModel {...this.props} condition={condition}>
                     {
-                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (<Item extra={obj.job} key={i}>{obj.interviewee}</Item>)) : <p className="mt-10">暂无数据</p>
+                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? (
+                            <Accordion className="my-accordion">
+                                {
+                                    dateSetting.dataSource.map((obj, i) => (
+                                        <Accordion.Panel key={i} header={<List.Item multipleLine extra={obj.job}>{obj.interviewee}</List.Item>}>
+                                            <List className="my-list">
+                                                <List.Item multipleLine extra={obj.interviewer}>面试人</List.Item>
+                                                <List.Item multipleLine extra={obj.createdAt}>面试时间</List.Item>
+                                            </List>
+                                        </Accordion.Panel>
+                                    ))
+                                }
+                            </Accordion>
+                        ) : <NoData />
                     }
-                </List>
-                <WingBlank>
-                    <Pagination
-                        className="mt-10"
-                        total={dateSetting.pagination.total}
-                        current={dateSetting.pagination.current}
-                        locale={locale}
-                        onChange={this.props.handlePageChange} />
-                </WingBlank>
+                </CompanyDetailPageModel>
             </div>
         )
     }

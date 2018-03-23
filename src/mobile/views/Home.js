@@ -280,8 +280,7 @@ class Home extends React.Component {
                                                         globalUpdateUser={this.props.globalUpdateUser}
                                                         setCustomNavBarState={this.setCustomNavBarState}
                                                     />
-                                                )}
-                                            />
+                                                )} />
                                         ))}
                                     </Switch>
                                 )
