@@ -11,7 +11,7 @@ import {
 
 import { Card, List, WhiteSpace, WingBlank } from 'antd-mobile'
 
-import { ajax, index, show } from '../../utils/ajax.js'
+import { ajax, mIndex, mShow } from '../../utils/ajax.js'
 import {ntfcTitle, ntfcUrl, ntfcDesc} from '../../utils/notification.js'
 
 moment.locale('zh-cn')
@@ -38,12 +38,12 @@ class Default extends React.Component {
     getData = () => {
         if (this.props.user) {
             const id = this.props.user.id
-            axios.get(`/worklog/default?page=1&user_id=${id}&pageSize=5`).then(res => {
+            axios.get(`/m/worklog/default?page=1&user_id=${id}&pageSize=5`).then(res => {
                 this.setState({
                     worklog: res.data.data
                 })
             })
-            show(`/summary?page=1&user_id=${id}&pageSize=5&page=1`).then(res => {
+            mShow(`/summary?page=1&user_id=${id}&pageSize=5&page=1`).then(res => {
                 this.setState({
                     summaryData: res.data.data
                 })
@@ -52,7 +52,7 @@ class Default extends React.Component {
     }
     // 获取通知信息（最高级权限才能查看)
     getHighestData = (page = 1) => {
-        index(`notification`, { page: page })
+        mIndex(`notification`, { page: page })
             .then(res => {
                 let notification = res.data.data
                 notification.forEach(n => {
@@ -68,7 +68,7 @@ class Default extends React.Component {
     }
     // 获取全部用户信息
     getAllUser = () => {
-        ajax('get', '/user/all')
+        ajax('get', '/m/user/all')
             .then(res => {
                 this.setState({
                     allUser: res.data
