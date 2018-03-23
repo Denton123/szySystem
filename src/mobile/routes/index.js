@@ -32,9 +32,14 @@ const routes = [
                 key: 'company',
                 routes: [
                     {
-                        name: '总结详情',
+                        name: '列表页',
                         path: '/:model',
                         component: getRoutes(['Company', 'CompanyDetail'])
+                    },
+                    {
+                        name: '详情',
+                        path: '/:model/:detail',
+                        component: getRoutes(['Company', 'CompanyDetailDetail'])
                     }
                 ]
             },

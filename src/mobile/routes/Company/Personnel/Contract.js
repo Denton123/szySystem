@@ -1,22 +1,12 @@
 import React from 'react'
 import {
-    Icon,
-    Card,
-    Tabs,
-    Pagination,
     List,
-    WingBlank
+    InputItem
 } from 'antd-mobile'
 
-import { isArray } from 'UTILS/utils'
-import { ajax, index, show } from 'UTILS/ajax'
-
 import withBasicDataModel from '../../../components/withBasicDataModel'
-
-const locale = {
-    prevText: 'Prev',
-    nextText: 'Next'
-}
+import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
+import NoData from '../../../components/NoData'
 
 const Item = List.Item
 const Brief = Item.Brief
@@ -26,10 +16,6 @@ class Contract extends React.Component {
         super(props)
         this.state = {
         }
-    }
-
-    componentWillMount() {
-        this.props.getData()
     }
 
     render() {
@@ -42,23 +28,30 @@ class Contract extends React.Component {
             dateSetting
         } = this.props
 
+        let condition = [
+            ({getFieldProps}) => {
+                return (
+                    <InputItem
+                        {...getFieldProps('realname')}
+                        title="姓名"
+                        placeholder="姓名">
+                        姓名
+                    </InputItem>
+                )
+            }
+        ]
+
         return (
-            <div>
-                <List className="my-list">
-                    {
-                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
-                            <Item extra={obj.createdAt} key={i}>{obj.user.realname}</Item>
-                        )) : <p className="mt-10">暂无数据</p>
-                    }
-                </List>
-                <WingBlank>
-                    <Pagination
-                        className="mt-10"
-                        total={dateSetting.pagination.total}
-                        current={dateSetting.pagination.current}
-                        locale={locale}
-                        onChange={this.props.handlePageChange} />
-                </WingBlank>
+            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+                <CompanyDetailPageModel {...this.props} condition={condition}>
+                    <List className="my-list">
+                        {
+                            (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                                <Item multipleLine extra={obj.createdAt} key={i}>{obj.user.realname}</Item>
+                            )) : <NoData />
+                        }
+                    </List>
+                </CompanyDetailPageModel>
             </div>
         )
     }

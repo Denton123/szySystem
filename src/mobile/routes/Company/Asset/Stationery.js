@@ -1,13 +1,17 @@
 import React from 'react'
 
-class Work extends React.Component {
+import Asset from '../../../components/page/Asset'
+
+let TheStationery = Asset({
+    belong: 'stationery'
+})
+
+class Stationery extends React.Component {
     render() {
         return (
-            <div style={{ padding: 24, background: '#fff' }}>
-               Work
-            </div>
+            <TheStationery {...this.props} />
         )
     }
 }
 
-export default Work
+export default Stationery

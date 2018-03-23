@@ -1,13 +1,17 @@
 import React from 'react'
 
-class Work extends React.Component {
+import Asset from '../../../components/page/Asset'
+
+let TheBook = Asset({
+    belong: 'book'
+})
+
+class Book extends React.Component {
     render() {
         return (
-            <div style={{ padding: 24, background: '#fff' }}>
-               Work
-            </div>
+            <TheBook {...this.props} />
         )
     }
 }
 
-export default Work
+export default Book
