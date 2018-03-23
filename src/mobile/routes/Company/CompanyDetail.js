@@ -128,7 +128,6 @@ class Company extends React.Component {
         return (
             <div>
                 <Tabs
-                    className='modelTabs'
                     tabs={tabs}
                     page={this.state.tabIndex}
                     renderTabBar={props => tabRender(props)}

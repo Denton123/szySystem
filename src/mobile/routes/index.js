@@ -49,6 +49,11 @@ const routes = [
                         path: '/:model',
                         component: getRoutes(['Work', 'Model']),
                     },
+                    {
+                        name: '动态模块详情',
+                        path: '/:model/:detail',
+                        component: getRoutes(['Work', 'ModelDetail']),
+                    },
                 ]
             },
             {

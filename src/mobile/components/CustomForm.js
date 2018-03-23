@@ -28,6 +28,7 @@ class CustomForm extends React.Component {
     }
     onReset = () => {
         this.props.form.resetFields()
+        this.props.handleReset()
     }
     render() {
         const {

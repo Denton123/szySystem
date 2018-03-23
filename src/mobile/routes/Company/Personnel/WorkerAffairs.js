@@ -11,7 +11,8 @@ import {
     Button,
     InputItem,
     PullToRefresh,
-    Accordion
+    Accordion,
+    Toast
 } from 'antd-mobile'
 import { createForm } from 'rc-form'
 import { isArray } from 'UTILS/utils'
@@ -30,7 +31,7 @@ class WorkerAffairs extends React.Component {
         this.state = {
             // 刷新设置
             refreshing: false,
-            height: document.documentElement.clientHeight 
+            height: document.documentElement.clientHeight
         }
     }
 
@@ -39,9 +40,9 @@ class WorkerAffairs extends React.Component {
     }
 
     componentDidMount() {
-        const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop;
+        const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop
         setTimeout(() => this.setState({
-          height: hei
+            height: hei
         }), 0)
     }
 
@@ -56,16 +57,6 @@ class WorkerAffairs extends React.Component {
             this.setState({ refreshing: false })
         }, 1000)
     }
-    onSubmit = () => {
-        this.props.form.validateFields({ force: true }, (error) => {
-            if (!error) {
-                console.log(this.props.form.getFieldsValue())
-            } else {
-                console.log(error)
-                alert('Validation failed')
-            }
-        })
-    }
 
     render() {
         const {
@@ -79,12 +70,14 @@ class WorkerAffairs extends React.Component {
 
         let condition = [
             ({getFieldProps}) => {
-                return (<InputItem placeholder="姓名"
-                    {...getFieldProps('realname')}
-                    title="姓名"
-                    placeholder="controlled" >
-                    姓名
-                </InputItem>)
+                return (
+                    <InputItem
+                        {...getFieldProps('realname')}
+                        title="姓名"
+                        placeholder="姓名">
+                        姓名
+                    </InputItem>
+                )
             }
         ]
 
@@ -93,7 +86,7 @@ class WorkerAffairs extends React.Component {
             <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
                 <Accordion className="my-accordion">
                     <Accordion.Panel header="搜索">
-                        <CustomForm formFields={condition} formOperation={formOperation} />
+                        <CustomForm formFields={condition} handleSubmit={this.props.handleSearchSubmit} handleReset={this.props.handleSearchReset} />
                     </Accordion.Panel>
                 </Accordion>
                 <PullToRefresh

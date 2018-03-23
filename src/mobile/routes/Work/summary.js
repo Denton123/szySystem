@@ -2,11 +2,9 @@ import React from 'react'
 import {
     Link,
 } from 'react-router-dom'
-import { List, WingBlank, Button, WhiteSpace, Card, ListView, Modal, Toast } from 'antd-mobile'
+import { List, DatePicker, WhiteSpace, WingBlank, Pagination, Button, Card } from 'antd-mobile'
 
-import {index, destroy} from '../../../utils/ajax'
-
-import CustomForm from '../../components/CustomForm'
+import {mIndex, mDestroy} from '../../../utils/ajax'
 
 /**
  * [escape 过滤script标签]
@@ -21,18 +19,10 @@ function escape(str) {
 class Summary extends React.Component {
     constructor(props) {
         super(props)
-        const dataSource = new ListView.DataSource({
-            rowHasChanged: (row1, row2) => row1 !== row2,
-        })
         this.state = {
-            // 长列表
-            dataSource,
-            isLoading: true,
-            totalPage: 1,
-            pageSize: 10,
-            currentPage: 1,
-            // 对话框
-            visible: false,
+            startDate: null,
+            endDate: null,
+            dataSource: [],
         }
     }
     componentWillMount() {
@@ -40,119 +30,70 @@ class Summary extends React.Component {
     }
     // 获取数据列表
     getData = (page = 1) => {
-        index('summary', {page: page, user_id: this.props.user.id})
+        mIndex('summary', {page: page, user_id: this.props.user.id})
             .then(res => {
+                console.log(res)
                 this.setState({
-                    dataSource: this.state.dataSource.cloneWithRows(res.data.data),
-                    isLoading: false,
-                    totalPage: res.data.totalPage,
-                    pageSize: res.data.pageSize,
-                    currentPage: res.data.currentPage,
+                    dataSource: res.data.data,
                 })
             })
     }
-    // 长列表到达最低层
-    onEndReached = (event) => {
-        console.log('reach end', event)
-        if (this.state.isLoading && this.state.currentPage === this.state.totalPage) {
-            return
-        }
-        getData(this.state.currentPage++)
+
+    onDateChange = () => {
     }
-    // 打开对话框
-    onModalOpen = type => (e) => {
-        e.preventDefault() // 修复 Android 上点击穿透
-        this.setState({
-            visible: true,
-        })
-    }
-    // 关闭对话框回调
-    onModalClose = () => {
-        this.setState({
-            visible: false
-        })
-    }
+
     render() {
         const {
-            // 长列表
+            startDate,
+            endDate,
             dataSource,
-            pageSize,
-            // 对话框
-            visible,
         } = this.state
-        // 长列表分离器
-        const separator = (sectionID, rowID) => (
-            <div
-                key={`${sectionID}-${rowID}`}
-                style={{
-                    backgroundColor: '#F5F5F9',
-                    height: 8,
-                    borderTop: '1px solid #ECECED',
-                    borderBottom: '1px solid #ECECED',
-                }}
-            />
-        )
-        // 长列表行
-        const row = (rowData, sectionID, rowID) => {
-            let content = escape(rowData.content)
-            return (
-                <Card key={rowID}>
-                    <Card.Header
-                        title={rowData.title}
-                        extra={<span>{rowData.User.realname}</span>}
-                    />
-                    <Card.Body>
-                        <div dangerouslySetInnerHTML={{__html: content}} />
-                    </Card.Body>
-                    <Card.Footer extra={<div>{rowData.date}</div>} />
-                </Card>
-            )
-        }
         return (
             <div>
-                <WingBlank>
-                    <WhiteSpace size="lg" />
-                    <Button type="primary" onClick={this.onModalOpen('add')}>发表总结</Button>
-                    <WhiteSpace />
-                    <Modal
-                        popup
-                        visible={visible}
-                        onClose={this.onModalClose}
-                        animationType="slide-up"
+                <List>
+                    <DatePicker
+                        mode="date"
+                        value={startDate}
+                        maxDate={new Date(Date.now())}
+                        onChange={this.onDateChange}
                     >
-                        <List>
-                            {['股票名称', '股票代码', '买入价格'].map((i, index) => (
-                                <List.Item key={index}>{i}</List.Item>
-                            ))}
-                            <List.Item>
-                                <Button type="primary">保存</Button>
-                            </List.Item>
-                        </List>
-                    </Modal>
+                        <List.Item arrow="horizontal">开始日期</List.Item>
+                    </DatePicker>
+                    <DatePicker
+                        mode="date"
+                        value={endDate}
+                        maxDate={new Date(Date.now())}
+                        onChange={this.onDateChange}
+                    >
+                        <List.Item arrow="horizontal">结束日期</List.Item>
+                    </DatePicker>
+                    <List.Item>
+                        <Button type="primary" >查找</Button>
+                    </List.Item>
+                </List>
+                <WhiteSpace size="lg" />
+                <WingBlank>
+                    <Button type="primary" >发表</Button>
                 </WingBlank>
-                <ListView
-                    dataSource={dataSource}
-                    renderFooter={() => {
-                        console.log(dataSource.getRowCount())
-                        if (dataSource.getRowCount() === 0) {
-                            return (<div style={{ padding: 30, textAlign: 'center' }}>
-                                暂无数据
-                            </div>)
-                        } else {
-                            return (<div style={{ padding: 30, textAlign: 'center' }}>
-                                {this.state.isLoading ? '加载中...' : '加载完毕'}
-                            </div>)
-                        }
-                    }}
-                    renderRow={row}
-                    renderSeparator={separator}
-                    pageSize={pageSize}
-                    useBodyScroll
-                    onScroll={() => { console.log('scroll') }}
-                    scrollRenderAheadDistance={500}
-                    onEndReached={this.onEndReached}
-                    onEndReachedThreshold={10}
-                />
+                <WhiteSpace size="lg" />
+                {dataSource.length > 0 ? (
+                    <Card key={rowID}>
+                        <Card.Header
+                            title={rowData.title}
+                            extra={<span>{rowData.User.realname}</span>}
+                        />
+                        <Card.Body>
+                            <div dangerouslySetInnerHTML={{__html: content}} />
+                        </Card.Body>
+                        <Card.Footer extra={<Pagination total={5} current={1} />} />
+                    </Card>
+                ) : (
+                    <Card>
+                        <Card.Body>
+                            暂时还没有周总结
+                        </Card.Body>
+                    </Card>
+                )}
             </div>
         )
     }

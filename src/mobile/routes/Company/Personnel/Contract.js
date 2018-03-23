@@ -29,7 +29,6 @@ class Contract extends React.Component {
     }
 
     componentWillMount() {
-        console.log('Contract.js')
         this.props.getData()
     }
 
