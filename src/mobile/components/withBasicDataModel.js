@@ -8,7 +8,6 @@ import { isArray } from 'UTILS/utils'
 import { ajax, index, show } from 'UTILS/ajax'
 
 function withBasicDataModel(PageComponent, Datas) {
-    let condition = Datas.condition ? Datas.condition : []
     return class extends React.Component {
         constructor(props) {
             super(props)
