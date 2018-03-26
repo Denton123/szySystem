@@ -176,6 +176,14 @@ const utils = {
         }
         return v
     },
+    // 格式化后台返回的日期
+    reFormatDate: function(date, format = 'YYYY-MM-DD HH:mm:ss') {
+        if (date !== null) {
+            return moment(date).format(format)
+        } else {
+            return null
+        }
+    },
     // 根据当前获取侧边栏的
     siderKeysUrl: function(str) {
         let arr = str.split('/')
