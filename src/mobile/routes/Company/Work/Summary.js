@@ -5,11 +5,12 @@ import {
     InputItem,
     WhiteSpace,
     WingBlank,
-    List
+    Icon
 } from 'antd-mobile'
 import {
     Link,
 } from 'react-router-dom'
+import './Summary.less'
 import withBasicDataModel from '../../../components/withBasicDataModel'
 import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
 import NoData from '../../../components/NoData'
@@ -48,22 +49,20 @@ class Summary extends React.Component {
         return (
             <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
                 <CompanyDetailPageModel {...this.props} condition={condition}>
-                    <List className="my-list">
-                        {
-                            (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
-                                <Link to={`${match.url}/${obj.id}`} key={i}>
-                                    <List.Item key={i.toString()} multipleLine arrow="horizontal">
-                                        <Card>
-                                            <Card.Body>
-                                                <div style={{textAlign: 'left'}}>标题: {obj.title}</div>
-                                            </Card.Body>
-                                            <Card.Footer style={{textAlign: 'left'}} content={`作者：${obj.User.realname}`} extra={`${obj.createdAt}`} />
-                                        </Card>
-                                    </List.Item>
-                                </Link>
-                            )) : <NoData />
-                        }
-                    </List>
+                    {
+                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                            <WingBlank key={i.toString()} size="lg">
+                                <WhiteSpace size="sm" />
+                                <Card>
+                                    <Card.Header
+                                        title={obj.title}
+                                        extra={<Link to={`${match.url}/${obj.id}`} key={i}><Icon type="right" /></Link>} />
+                                    <Card.Footer style={{textAlign: 'left'}} content={`作者：${obj.User.realname}`} extra={`${obj.createdAt}`} />
+                                </Card>
+                                <WhiteSpace size="sm" />
+                            </WingBlank>
+                        )) : <NoData />
+                    }
                 </CompanyDetailPageModel>
             </div>
         )

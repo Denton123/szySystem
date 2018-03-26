@@ -31,7 +31,7 @@ function withBasicDataModel(PageComponent, Datas) {
             // this.getData()
             console.log('withBasicDataModel.js')
             console.log(this.props.location)
-            if (this.props.location.state && this.props.location.state.page) {
+            if (this.props.location && this.props.location.state && this.props.location.state.page) {
                 let current = this.props.location.state.page
                 this.setState(prevState => {
                     let pagination = prevState.dateSetting.pagination
@@ -46,8 +46,8 @@ function withBasicDataModel(PageComponent, Datas) {
             }
         }
 
-        // 获取数据(请求的参数 Object，过滤的参数Array, 成功获取数据后的回调Function)
-        getData = (params, resetFilterArr, cb) => {
+        // 获取数据(请求的参数 Object，过滤的参数Array, 成功获取数据后的回调Function, 自定义获取数据方法)
+        getData = (params, resetFilterArr, cb, getDataCb) => {
             let p = {} // 用来装locationState 和传过来的参数params,过滤后的resetFilterArr
             let locationState = {}
             if (this.props.location.state) {
@@ -91,32 +91,36 @@ function withBasicDataModel(PageComponent, Datas) {
                 console.log(params)
                 console.log('filterParams:')
                 console.log(filterParams)
-                index(this.state.model, filterParams)
-                .then(res => {
-                    Toast.hide()
-                    let pagination = {
-                        current: res.data.currentPage,
-                        pageSize: res.data.pageSize,
-                        total: res.data.totalPage
-                    }
-                    this.setState(prevState => {
-                        return {
-                            dateSetting: {
-                                ...prevState.dateSetting,
-                                dataSource: res.data.data,
-                                pagination: pagination
+                if (getDataCb) {
+                    getDataCb()
+                } else {
+                    index(this.state.model, filterParams)
+                    .then(res => {
+                        Toast.hide()
+                        let pagination = {
+                            current: res.data.currentPage,
+                            pageSize: res.data.pageSize,
+                            total: res.data.totalPage
+                        }
+                        this.setState(prevState => {
+                            return {
+                                dateSetting: {
+                                    ...prevState.dateSetting,
+                                    dataSource: res.data.data,
+                                    pagination: pagination
+                                }
                             }
+                        })
+                        if (cb) {
+                            cb()
                         }
                     })
-                    if (cb) {
-                        cb()
-                    }
-                })
-                .catch(e => {
-                    console.log(222)
-                    Toast.hide()
-                    Toast.fail('请求失败', 1)
-                })
+                    .catch(e => {
+                        console.log(222)
+                        Toast.hide()
+                        Toast.fail('请求失败', 1)
+                    })
+                }
             }
         }
 
@@ -187,6 +191,10 @@ function withBasicDataModel(PageComponent, Datas) {
             })
         }
 
+        toastHide = () => {
+            Toast.hide()
+        }
+
         render() {
             return (
                 <div>
@@ -197,6 +205,7 @@ function withBasicDataModel(PageComponent, Datas) {
                         handleSearchSubmit={this.handleSearchSubmit}
                         handleSearchReset={this.handleSearchReset}
                         bandleDownRefresh={this.bandleDownRefresh}
+                        toastHide={this.toastHide}
                         {...this.state}
                         {...this.props}
                     />

@@ -279,6 +279,7 @@ class Home extends React.Component {
                                                         permissionRoutes={permissionRoutes}
                                                         globalUpdateUser={this.props.globalUpdateUser}
                                                         setCustomNavBarState={this.setCustomNavBarState}
+                                                        CustomNavBarState={CustomNavBarState}
                                                     />
                                                 )} />
                                         ))}

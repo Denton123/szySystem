@@ -1,7 +1,11 @@
 import React from 'react'
 import {
+    Card,
+    InputItem,
+    WhiteSpace,
+    WingBlank,
     List,
-    InputItem
+    Icon
 } from 'antd-mobile'
 import {
     Link,
@@ -31,6 +35,8 @@ class problem extends React.Component {
             dateSetting
         } = this.props
 
+        console.log('Problem.js ---')
+        console.log(this.props)
         let condition = [
             ({getFieldProps}) => {
                 return (
@@ -60,7 +66,20 @@ class problem extends React.Component {
                     <List className="my-list">
                         {
                             (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
-                                <Link to={`${match.url}/${obj.id}`} key={i}><Item multipleLine arrow="horizontal" extra={obj.User.realname}>{obj.title}</Item></Link>
+                                <WingBlank key={i.toString()} size="lg">
+                                    <WhiteSpace size="sm" />
+                                    <Card>
+                                        <Card.Header
+                                            title={obj.User.realname}
+                                            extra={<Link to={`${match.url}/problem/${obj.id}`} key={i}><Icon type="right" /></Link>} />
+                                        <Card.Body>
+                                            <div style={{textAlign: 'left'}}>
+                                                <p className="ellipsis">问题: {obj.title}</p>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                    <WhiteSpace size="sm" />
+                                </WingBlank>
                             )) : <NoData />
                         }
                     </List>

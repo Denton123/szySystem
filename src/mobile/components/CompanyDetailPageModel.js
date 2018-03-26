@@ -24,7 +24,12 @@ class CompanyDetailPageModel extends React.Component {
     }
 
     componentWillMount() {
-        this.props.getData()
+        console.log(this.props.params)
+        if (this.props.params) {
+            this.props.getData(this.props.params.obj, this.props.params.arr)
+        } else {
+            this.props.getData()
+        }
     }
 
     componentDidMount() {

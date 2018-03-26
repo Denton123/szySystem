@@ -36,9 +36,14 @@ const routes = [
                         path: '/:model',
                         component: getRoutes(['Company', 'CompanyDetail'])
                     },
+                    // {
+                    //     name: '详情',
+                    //     path: '/:model/:detail',
+                    //     component: getRoutes(['Company', 'CompanyDetailDetail'])
+                    // },
                     {
                         name: '详情',
-                        path: '/:model/:detail',
+                        path: '/:model/:detail/:id',
                         component: getRoutes(['Company', 'CompanyDetailDetail'])
                     }
                 ]

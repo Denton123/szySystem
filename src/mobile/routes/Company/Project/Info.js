@@ -5,7 +5,8 @@ import {
     InputItem,
     WhiteSpace,
     WingBlank,
-    List
+    List,
+    Icon
 } from 'antd-mobile'
 import {
     Link,
@@ -48,26 +49,27 @@ class Info extends React.Component {
         return (
             <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
                 <CompanyDetailPageModel {...this.props} condition={condition}>
-                    <List className="my-list">
-                        {
-                            (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
-                                <Link to={`${match.url}/${obj.id}`} key={i}>
-                                    <List.Item key={i.toString()} multipleLine arrow="horizontal">
-                                        <Card>
-                                            <Card.Header
-                                                title={obj.name}
-                                                thumb={<img style={{maxWidth: '64px', maxHeight: '64px'}} src={obj && obj.img ? `/uploadImgs/${obj.img}` : this.state.src} />}
-                                                extra={<span>{obj.User.realname}</span>} />
-                                            <Card.Body>
-                                                <div style={{textAlign: 'left'}}>项目介绍: {obj.introduce}</div>
-                                            </Card.Body>
-                                            <Card.Footer style={{textAlign: 'left'}} content={`计划开始：${obj.plan_start_date}`} extra={`计划结束：${obj.plan_end_date}`} />
-                                        </Card>
-                                    </List.Item>
-                                </Link>
-                            )) : <NoData />
-                        }
-                    </List>
+                    {
+                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                            <WingBlank key={i.toString()} size="lg">
+                                <WhiteSpace size="sm" />
+                                <Card>
+                                    <Card.Header
+                                        title={obj.name}
+                                        thumb={<img style={{maxWidth: '64px', maxHeight: '64px'}} src={obj && obj.img ? `/uploadImgs/${obj.img}` : this.state.src} />}
+                                        extra={<Link to={`${match.url}/info/${obj.id}`} key={i}><Icon type="right" /></Link>} />
+                                    <Card.Body>
+                                        <div style={{textAlign: 'left'}}>
+                                            <p className="ellipsis">负责人: {obj.User.realname}</p>
+                                            <p className="ellipsis">介绍: {obj.introduce}</p>
+                                        </div>
+                                    </Card.Body>
+                                    <Card.Footer style={{textAlign: 'left'}} content={`计划开始：${obj.plan_start_date}`} extra={`计划结束：${obj.plan_end_date}`} />
+                                </Card>
+                                <WhiteSpace size="sm" />
+                            </WingBlank>
+                        )) : <NoData />
+                    }
                 </CompanyDetailPageModel>
             </div>
         )
