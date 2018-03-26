@@ -45,7 +45,7 @@ class Worklog extends React.Component {
             .then(res => {
                 this.setState({
                     date,
-                    currentWorkLog: resetObject(res.data[0])
+                    currentWorkLog: resetObject(res.data.data[0])
                 })
                 Toast.hide()
             })

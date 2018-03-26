@@ -214,7 +214,7 @@ class Home extends React.Component {
         )
         return (
             <div className="w100 h100">
-                <CustomNavBar {...CustomNavBarState} rightContent={NavBarRightContent} />
+                <CustomNavBar {...CustomNavBarState} />
                 <Drawer
                     className="my-drawer"
                     style={{ minHeight: document.documentElement.clientHeight - 45 }}
