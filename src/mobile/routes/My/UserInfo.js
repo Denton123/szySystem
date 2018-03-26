@@ -5,7 +5,7 @@ import {
 import { List, InputItem, ImagePicker, Picker, DatePicker, Toast } from 'antd-mobile'
 
 import { checkPhone } from '../../../utils/regExp'
-import { update } from '../../../utils/ajax'
+import { mUpdate } from '../../../utils/ajax'
 
 import CustomForm from '../../components/CustomForm'
 
@@ -54,7 +54,7 @@ class UserInfo extends React.Component {
         for (let i in params) {
             data[i] = params[i]
         }
-        update(`user/${this.props.user.id}`, data, hasFile)
+        mUpdate(`user/${this.props.user.id}`, data, hasFile)
             .then(res => {
                 if (res.data.errors) {
                     res.data.errors.forEach(err => {

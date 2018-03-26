@@ -25,7 +25,6 @@ class Model extends React.Component {
     render() {
         const {
             match,
-            user,
         } = this.props
         const Content = getRoutes([match.params.model])
         return (
