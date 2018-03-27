@@ -46,10 +46,14 @@ class Work extends React.Component {
         if (permissionRoutes.length > 0) {
             newRoutes = permissionRoutes.find(item => item.path === `/${match.params.model}`).routes.find(item => item.path === `/${match.params.detail}`)
         }
-
+        console.log(newRoutes)
         let Detail = null
-        if (Object.keys(newRoutes).length > 0) {
+        if (newRoutes && Object.keys(newRoutes).length > 0) {
             Detail = getRoutes(newRoutes.routes[0].component)
+        }
+        // 特殊处理
+        if (this.props.match.params.model === 'work' && this.props.match.params.detail === 'summary') {
+            Detail = getRoutes('Work,Detail,SummaryDetail')
         }
 
         return (

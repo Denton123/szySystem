@@ -1,36 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { List, Picker, WhiteSpace, Accordion } from 'antd-mobile'
+import { List, Picker, WhiteSpace, WingBlank, Accordion, Card } from 'antd-mobile'
 import withBasicDataModel from '../../../../components/withBasicDataModel'
 import CompanyDetailPageModel from '../../../../components/CompanyDetailPageModel'
 import NoData from '../../../../components/NoData'
 
-const taskStatus = [
-    {
-        label: '全部',
-        value: 'all'
-    },
-    {
-        label: '等待中',
-        value: '0'
-    },
-    {
-        label: '进行中',
-        value: '1'
-    },
-    {
-        label: '已完成',
-        value: '2'
-    },
-    {
-        label: '超时',
-        value: '3'
-    },
-]
-
 const locale = {
     prevText: 'Prev',
     nextText: 'Next'
+}
+
+function escape(str) {
+    return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
 }
 
 class ProjectDetail extends React.Component {
@@ -51,25 +32,7 @@ class ProjectDetail extends React.Component {
             return {
                 params: {
                     ...this.state.params,
-                    obj: {project_id: id}
-                }
-            }
-        })
-    }
-
-    handleOk = (e) => {
-        let p = {}
-        let resetFilterArr = []
-        if (e[0] === 'all') {
-            resetFilterArr = ['status']
-        } else {
-            p['status'] = e[0]
-        }
-        this.setState(() => {
-            return {
-                params: {
-                    obj: p,
-                    arr: resetFilterArr
+                    obj: {problem_id: id}
                 }
             }
         })
@@ -87,29 +50,23 @@ class ProjectDetail extends React.Component {
         console.log('ProjectDetail.js---')
         console.log(dateSetting)
 
-        let condition = [
-            ({getFieldProps}) => {
-                return (
-                    <Picker extra="请选择(可选)"
-                        data={taskStatus}
-                        title="状态"
-                        {...getFieldProps('status', {
-                            initialValue: ['all']
-                        })}
-                        cols={1}
-                        onOk={this.handleOk}
-                        onDismiss={e => console.log('dismiss', e)}
-                    >
-                        <List.Item arrow="horizontal">状态</List.Item>
-                    </Picker>
-                )
-            }
-        ]
-
         return (
             <div>
-                <CompanyDetailPageModel {...this.props} condition={condition} params={this.state.params}>
-                    <NoData />
+                <CompanyDetailPageModel {...this.props} params={this.state.params}>
+                    {
+                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                            <WingBlank key={i.toString()} size="lg">
+                                <WhiteSpace size="sm" />
+                                <Card>
+                                    <Card.Body>
+                                        <div style={{textAlign: 'left'}} dangerouslySetInnerHTML={{__html: escape(obj.answer)}} />
+                                    </Card.Body>
+                                    <Card.Footer style={{textAlign: 'left'}} content={`${obj.User.realname}`} extra={`${obj.date}`} />
+                                </Card>
+                                <WhiteSpace size="sm" />
+                            </WingBlank>
+                        )) : <NoData />
+                    }
                 </CompanyDetailPageModel>
             </div>
         )

@@ -5,7 +5,8 @@ import {
     InputItem,
     WhiteSpace,
     WingBlank,
-    Icon
+    Icon,
+    Accordion
 } from 'antd-mobile'
 import {
     Link,
@@ -14,6 +15,10 @@ import './Summary.less'
 import withBasicDataModel from '../../../components/withBasicDataModel'
 import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
 import NoData from '../../../components/NoData'
+
+function escape(str) {
+    return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
+}
 
 class Summary extends React.Component {
     constructor(props) {
@@ -54,9 +59,13 @@ class Summary extends React.Component {
                             <WingBlank key={i.toString()} size="lg">
                                 <WhiteSpace size="sm" />
                                 <Card>
-                                    <Card.Header
-                                        title={obj.title}
-                                        extra={<Link to={`${match.url}/${obj.id}`} key={i}><Icon type="right" /></Link>} />
+                                    <Card.Body>
+                                        <Accordion>
+                                            <Accordion.Panel header={obj.title} style={{textAlign: 'left'}}>
+                                                <div style={{textAlign: 'left', paddingBottom: '5px'}} dangerouslySetInnerHTML={{__html: escape(obj.content)}} />
+                                            </Accordion.Panel>
+                                        </Accordion>
+                                    </Card.Body>
                                     <Card.Footer style={{textAlign: 'left'}} content={`作者：${obj.User.realname}`} extra={`${obj.createdAt}`} />
                                 </Card>
                                 <WhiteSpace size="sm" />

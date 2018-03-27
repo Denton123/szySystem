@@ -24,10 +24,9 @@ class CompanyDetailPageModel extends React.Component {
     }
 
     componentWillMount() {
-        console.log(this.props.params)
-        if (this.props.params) {
+        if (this.props.params) { // 任务入口
             this.props.getData(this.props.params.obj, this.props.params.arr)
-        } else {
+        } else { // 其他
             this.props.getData()
         }
     }
@@ -39,6 +38,30 @@ class CompanyDetailPageModel extends React.Component {
         }), 0)
     }
 
+    handleSearchSubmit = (e) => {
+        if (this.props.params) { // 任务入口
+            this.props.handleSearchSubmit(e, this.props.params.arr)
+        } else {
+            this.props.handleSearchSubmit(e)
+        }
+    }
+
+    handleSearchReset = (e) => {
+        console.log('CompanyDetailPageModel.js handleSearchReset ----')
+        console.log(this.props.resetNotFilter)
+        if (this.props.resetNotFilter) { // 任务管理的特效处理入口
+            if (this.props.type) {
+                console.log(this.props.type)
+                let value = this.props.type === 'normal' ? 'null' : 'notnull'
+                this.props.history.replace(this.props.location.pathname, {...this.props.location.state, project_id: value})
+                console.log(this.props)
+            }
+            this.props.handleSearchReset(e, this.props.resetNotFilter)
+        } else { // 其他
+            this.props.handleSearchReset(e)
+        }
+    }
+
     render() {
         const {
             route,
@@ -48,13 +71,12 @@ class CompanyDetailPageModel extends React.Component {
             dateSetting,
             condition
         } = this.props
-
         return (
             <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
                 {condition && condition.length > 0 &&
                     <Accordion className="my-accordion">
                         <Accordion.Panel header="搜索">
-                            <CustomForm formFields={condition} handleSubmit={this.props.handleSearchSubmit} handleReset={this.props.handleSearchReset} />
+                            <CustomForm formFields={condition} handleSubmit={this.handleSearchSubmit} handleReset={this.handleSearchReset} />
                         </Accordion.Panel>
                     </Accordion>
                 }

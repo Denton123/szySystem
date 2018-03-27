@@ -39,12 +39,10 @@ class WorkLog extends React.Component {
                             <WingBlank key={i.toString()} size="lg">
                                 <WhiteSpace size="sm" />
                                 <Card>
-                                    <Card.Header
-                                        title={obj.User.realname}
-                                        thumb={<img style={{maxWidth: '64px', maxHeight: '64px'}} src={obj.User && obj.User.avatar ? `/uploadImgs/${obj.User.avatar}` : this.state.src} />} />
                                     <Card.Body>
                                         <div style={{textAlign: 'left'}}>{obj.content}</div>
                                     </Card.Body>
+                                    <Card.Footer style={{textAlign: 'left'}} content={`${obj.User.realname}`} extra={`${obj.createdAt}`} />
                                 </Card>
                                 <WhiteSpace size="sm" />
                             </WingBlank>

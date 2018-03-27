@@ -4,7 +4,7 @@ import {
 } from 'antd-mobile'
 
 import { isArray, isObject } from 'UTILS/utils'
-import { ajax, index, show } from 'UTILS/ajax'
+import { mIndex } from 'UTILS/ajax'
 
 function withBasicDataModel(PageComponent, Datas) {
     let subModel = Datas.subModel !== undefined ? Datas.subModel : {}
@@ -59,7 +59,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 p = {...p, ...params}
             }
             let resetfilterParams = {}
-            // 需要过滤的字段，过滤完后存储到state的
+            // 重置需要过滤的字段，过滤完后存储到state的，把查找过的字段清除
             if (resetFilterArr) {
                 Object.keys(p).forEach(key => {
                     if (resetFilterArr.indexOf(key) < 0) {
@@ -94,7 +94,7 @@ function withBasicDataModel(PageComponent, Datas) {
                 if (getDataCb) {
                     getDataCb()
                 } else {
-                    index(this.state.model, filterParams)
+                    mIndex(this.state.model, filterParams)
                     .then(res => {
                         Toast.hide()
                         let pagination = {
@@ -149,8 +149,11 @@ function withBasicDataModel(PageComponent, Datas) {
         }
 
         // 搜索栏提交处理(search表单)
-        handleSearchSubmit = (searchFields) => {
+        handleSearchSubmit = (searchFields, resetFilterArr = []) => {
+            console.log('withBasicDataModel handleSearchSubmit --- ')
             console.log(searchFields)
+            console.log(resetFilterArr)
+            // 判断是否所以字段都是 undefined
             let isAllUndefined = true
             let params = {}
             Object.keys(searchFields).forEach(key => {
@@ -166,14 +169,18 @@ function withBasicDataModel(PageComponent, Datas) {
                 return
             }
             params['page'] = 1
-            this.getData(params)
+            this.getData(params, resetFilterArr)
         }
 
-        // 搜索栏重置
-        handleSearchReset = (e) => {
+        // 搜索栏重置(提交的表单数据，重置不需要过滤的字段)
+        handleSearchReset = (e, resetNotFilter = []) => {
             console.log('handleSearchReset')
-            console.log(e)
+            console.log(resetNotFilter)
             let resetArr = isObject(e) ? Object.keys(e) : []
+            resetNotFilter.forEach(item => {
+                resetArr.splice(resetArr.indexOf(item), 1)
+            })
+            console.log(resetArr)
             this.getData({page: 1}, resetArr)
         }
 
@@ -189,10 +196,6 @@ function withBasicDataModel(PageComponent, Datas) {
                     refreshing: false
                 })
             })
-        }
-
-        toastHide = () => {
-            Toast.hide()
         }
 
         render() {

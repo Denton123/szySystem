@@ -40,9 +40,9 @@ function getRoutes(path) {
     return require(`.${route}`).default
 }
 
-function getView(path) {
+function getView(path, props) {
     let Com = require(`./${path}`).default
-    return <Com />
+    return <Com {...props} />
 }
 
 class Company extends React.Component {
@@ -148,7 +148,7 @@ class Company extends React.Component {
                             animated={false}>
                             {this.renderContent}
                         </Tabs>
-                    ) : (Object.keys(newRoutes).length > 0 && getView(newRoutes.component))
+                    ) : (Object.keys(newRoutes).length > 0 && getView(newRoutes.component, this.props))
                 }
             </div>
         )
