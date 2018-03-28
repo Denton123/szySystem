@@ -192,7 +192,7 @@ class Worklog extends React.Component {
                     <Card>
                         <Card.Header
                             title={this.props.user.realname}
-                            thumb={this.props.user.avatar ? `/uploadImgs/${this.props.user.avatar}` : ''}
+                            thumb={<img width="22" height="22" src={this.props.user.avatar ? `/uploadImgs/${this.props.user.avatar}` : ''} />}
                             extra={<span>{currentWorkLog.date}</span>}
                         />
                         <Card.Body>

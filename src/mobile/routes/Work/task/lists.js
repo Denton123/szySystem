@@ -108,6 +108,29 @@ class TaskLists extends React.Component {
         this.props.history.push(`/home/work/task/detail?_type=tDetail&task_id=${task.id}`)
     }
 
+    search = () => {
+        const {
+            statusValue,
+            projectValue
+        } = this.state
+        let data = {
+            page: 1
+        }
+        if (statusValue[0] !== 'all') {
+            data['status'] = statusValue[0]
+        }
+        if (this.state._type === 'normal') {
+            data['project_id'] = 'null'
+        } else if (this.state._type === 'project') {
+            if (projectValue) {
+                data['project_id'] = this.state.projectValue[0]
+            } else {
+                data['project_id'] = 'notnull'
+            }
+        }
+        this.getData(data)
+    }
+
     render() {
         const {
             _type,
@@ -142,64 +165,75 @@ class TaskLists extends React.Component {
                             <List.Item arrow="horizontal">项目</List.Item>
                         </Picker>
                     ) : null}
+                    <List.Item>
+                        <Button type="primary" size="small" onClick={this.search} >查找</Button>
+                    </List.Item>
                 </List>
                 <WhiteSpace />
-                <div>
-                    {taskData.map(task => (
-                        <div key={task.id}>
-                            <List>
-                                {task.child && task.child.length > 0 ? (
-                                    <Accordion key={task.id}>
-                                        <Accordion.Panel header={
-                                            <div className="txt-l">{_type === 'project' ? `${task.Project.name}-${task.content}` : `${task.content}`}</div>
-                                        }>
-                                            {task.child.map(subTask => (
-                                                <List.Item
-                                                    key={subTask.id}
-                                                    extra={
-                                                        <div>
-                                                            <div>{taskStatus.find(t => t.value === subTask.status).label}</div>
-                                                            <Button type="primary" size="small" inline onClick={() => this.onDetailClick(subTask)}>详情</Button>
-                                                        </div>
-                                                    }
-                                                    multipleLine
-                                                >
-                                                    {task.content}
+                {taskData.length > 0 ? (
+                    <div>
+                        {taskData.map(task => (
+                            <div key={task.id}>
+                                <List>
+                                    {task.child && task.child.length > 0 ? (
+                                        <Accordion key={task.id}>
+                                            <Accordion.Panel header={
+                                                <div className="txt-l">{_type === 'project' ? `${task.Project.name}-${task.content}` : `${task.content}`}</div>
+                                            }>
+                                                {task.child.map(subTask => (
+                                                    <List.Item
+                                                        key={subTask.id}
+                                                        extra={
+                                                            <div>
+                                                                <div>{taskStatus.find(t => t.value === subTask.status).label}</div>
+                                                                <Button type="primary" size="small" inline onClick={() => this.onDetailClick(subTask)}>详情</Button>
+                                                            </div>
+                                                        }
+                                                        multipleLine
+                                                    >
+                                                        {task.content}
+                                                        <List.Item.Brief>
+                                                            {subTask.content}
+                                                        </List.Item.Brief>
+                                                    </List.Item>
+                                                ))}
+                                            </Accordion.Panel>
+                                        </Accordion>
+                                    ) : (
+                                        <List.Item
+                                            extra={
+                                                <div>
+                                                    <div>{taskStatus.find(t => t.value === task.status).label}</div>
+                                                    <Button type="primary" size="small" inline onClick={() => this.onDetailClick(task)}>详情</Button>
+                                                </div>
+                                            }
+                                            multipleLine
+                                        >
+                                            {_type === 'project' ? (
+                                                <div>
+                                                    {task.Project.name}
                                                     <List.Item.Brief>
-                                                        {subTask.content}
+                                                        {task.content}
                                                     </List.Item.Brief>
-                                                </List.Item>
-                                            ))}
-                                        </Accordion.Panel>
-                                    </Accordion>
-                                ) : (
-                                    <List.Item
-                                        extra={
-                                            <div>
-                                                <div>{taskStatus.find(t => t.value === task.status).label}</div>
-                                                <Button type="primary" size="small" inline onClick={() => this.onDetailClick(task)}>详情</Button>
-                                            </div>
-                                        }
-                                        multipleLine
-                                    >
-                                        {_type === 'project' ? (
-                                            <div>
-                                                {task.Project.name}
-                                                <List.Item.Brief>
-                                                    {task.content}
-                                                </List.Item.Brief>
-                                            </div>
-                                        ) : (
-                                            <div>{task.content}</div>
-                                        )}
-                                    </List.Item>
-                                )}
-                            </List>
-                            <WhiteSpace />
-                        </div>
-                    ))}
-                </div>
-                <Pagination {...pagination} />
+                                                </div>
+                                            ) : (
+                                                <div>{task.content}</div>
+                                            )}
+                                        </List.Item>
+                                    )}
+                                </List>
+                                <WhiteSpace />
+                            </div>
+                        ))}
+                        <Pagination {...pagination} />
+                    </div>
+                ) : (
+                    <List>
+                        <List.Item>
+                            暂无数据
+                        </List.Item>
+                    </List>
+                )}
             </div>
         )
     }
