@@ -141,12 +141,12 @@ class Summary extends React.Component {
                         <List.Item arrow="horizontal">结束日期</List.Item>
                     </DatePicker>
                     <List.Item>
-                        <Button type="primary" onClick={this.search} >查找</Button>
+                        <Button type="primary" size="small" onClick={this.search} >查找</Button>
                     </List.Item>
                 </List>
                 <WhiteSpace size="lg" />
                 <WingBlank>
-                    <Button type="primary" onClick={() => history.push(`/home/work/summary/detail?_type=add`)} >发表</Button>
+                    <Button type="primary" size="small" onClick={() => history.push(`/home/work/summary/detail?_type=add`)} >发表</Button>
                 </WingBlank>
                 <WhiteSpace size="lg" />
                 {dataSource.length > 0 ? (

@@ -187,7 +187,8 @@ class Home extends React.Component {
     render() {
         const {
             match,
-            routes
+            routes,
+            history
         } = this.props
         const {
             CustomNavBarState,
@@ -201,9 +202,14 @@ class Home extends React.Component {
             <List>
                 {permissionRoutes.map((menu, i) => (
                     <List.Item key={menu.path} onClick={this.onOpenChange}>
-                        <Link to={`${match.path}/company${menu.path}`}>
+                        <div onClick={() => {
+                            this.setState({
+                                currentTab: 'company'
+                            })
+                            history.push(`${match.path}/company${menu.path}`)
+                        }}>
                             {menu.name}
-                        </Link>
+                        </div>
                     </List.Item>
                 ))}
             </List>
