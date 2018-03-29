@@ -66,20 +66,7 @@ class Home extends React.Component {
             this.props.history.push('/login')
         } else {
             // 动态确定当前路由
-            let currentPath = this.props.location.pathname
-            this.props.routes.find(r => {
-                if (currentPath.indexOf(r.path) > -1) {
-                    this.setState(prevState => {
-                        return {
-                            CustomNavBarState: {
-                                ...prevState.CustomNavBarState,
-                                title: r.name,
-                            },
-                            currentTab: r.key,
-                        }
-                    })
-                }
-            })
+            this.resetCurrentTab(this.props)
             ajax('get', '/m/permission/all-menu')
             .then(res => {
                 let permissionRoute = res.data
@@ -143,6 +130,27 @@ class Home extends React.Component {
             })
         }
     }
+    componentWillReceiveProps(nextProps) {
+        if (this.props.location.pathname !== nextProps.location.pathname) {
+            this.resetCurrentTab(nextProps)
+        }
+    }
+
+    // 根据当前页面地址自动设置当前对应的tab
+    // 跳转时无需再重新设置currentTab
+    resetCurrentTab = (props) => {
+        let currentModel = props.location.pathname.split('/')[2]
+        props.routes.find(r => {
+            if (r.key === currentModel) {
+                this.setState(prevState => {
+                    return {
+                        currentTab: r.key,
+                    }
+                })
+            }
+        })
+    }
+
     // 改变drawer是否打开
     onOpenChange = () => {
         this.setState({

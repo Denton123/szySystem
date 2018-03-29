@@ -30,7 +30,7 @@ class Default extends React.Component {
     componentWillMount() {
         this.props.setCustomNavBarState(this.props.route.name, 'menu')
         this.getData()
-        if (this.props.user && this.props.user.highest) { // 只有最高权限才能查看
+        if (this.props.user && this.props.user.highest === '1') { // 只有最高权限才能查看
             this.getAllUser()
             this.getHighestData()
         }
@@ -77,7 +77,11 @@ class Default extends React.Component {
     }
 
     render() {
-        const user = this.props.user
+        const {
+            handleSetState,
+            user,
+            history
+        } = this.props
         const {
             worklog,
             summaryData,
@@ -92,13 +96,12 @@ class Default extends React.Component {
         )
         return (
             <div>
-                {user && user.highest ? (
+                {user && user.highest === '1' ? (
                     <WingBlank size="lg">
                         <WhiteSpace size="lg" />
                         <Card>
                             <Card.Header
                                 title="最近项目和任务"
-                                extra={<Link to="/home/personal/work-log">更多</Link>}
                             />
                             <Card.Body>
                                 {highestData.map(hd => (
@@ -120,7 +123,7 @@ class Default extends React.Component {
                     <Card>
                         <Card.Header
                             title="工作日志"
-                            extra={<Link to="/home/personal/work-log">更多</Link>}
+                            extra={<Link to="/home/work/worklog">更多</Link>}
                         />
                         <Card.Body>
                             {worklog.length > 0 ? worklog.map(wl => (
@@ -139,7 +142,7 @@ class Default extends React.Component {
                     <Card>
                         <Card.Header
                             title="个人总结"
-                            extra={<Link to="/home/personal/summary">更多</Link>}
+                            extra={<Link to="/home/work/summary">更多</Link>}
                         />
                         <Card.Body>
                             {summaryData.length > 0 ? summaryData.map(sd => (

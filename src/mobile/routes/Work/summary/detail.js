@@ -78,10 +78,14 @@ class SummaryDetail extends React.Component {
         }
     }
     titleValidator = (rule, value, callback) => {
-        if (String.trim(value).length < 5 || String.trim(value).length > 20) {
-            callback('标题只能输入5至20')
+        if (value === null) {
+            callback('请输入标题')
         } else {
-            callback()
+            if (String.trim(value).length < 5 || String.trim(value).length > 20) {
+                callback('标题只能输入5至20')
+            } else {
+                callback()
+            }
         }
     }
     render() {
