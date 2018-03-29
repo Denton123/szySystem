@@ -4,7 +4,8 @@ import {
     Table,
     Input,
     Select,
-    message
+    message,
+    Checkbox
 } from 'antd'
 
 import {ajax} from 'UTILS/ajax'
@@ -40,6 +41,42 @@ class PermissionUser extends Component {
         }
         this.getRoleData()
         this.props.getData(data)
+    }
+
+    onHighestChange = (e) => {
+        let uid = e.target.uid
+        let data = {}
+        if (e.target.checked) {
+            data['highest'] = '1'
+        } else {
+            data['highest'] = '0'
+        }
+        ajax('post', `/user/${uid}/highest`, data)
+            .then(res => {
+                if (Object.keys(res.data).length > 0) {
+                    let newDataSource = []
+                    this.props.dataSetting.dataSource.forEach(data => {
+                        if (data.id === res.data.id) {
+                            newDataSource.push(res.data)
+                        } else {
+                            newDataSource.push(data)
+                        }
+                    })
+                    this.props.handleSetState('dataSetting', {
+                        ...this.props.dataSetting,
+                        dataSource: newDataSource
+                    })
+                    if (this.props.user.id === res.data.id) {
+                        this.props.globalUpdateUser(res.data)
+                    }
+                    message.success('保存成功')
+                } else {
+                    message.error('保存失败')
+                }
+            })
+            .catch(() => {
+                message.error('出错了')
+            })
     }
 
     setRole = (e) => {
@@ -148,6 +185,12 @@ class PermissionUser extends Component {
                         <div>{roles.join(',')}</div>
                     )
                 }
+            },
+            {
+                title: '最高级权限',
+                dataIndex: 'highest',
+                key: 'highest',
+                render: (text, record) => <Checkbox uid={record.id} checked={text === '1' ? true : false} onChange={this.onHighestChange} />
             },
             {
                 title: '操作',

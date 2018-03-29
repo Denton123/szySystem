@@ -30,7 +30,7 @@ class Default extends React.Component {
     componentWillMount() {
         this.props.setCustomNavBarState(this.props.route.name, 'menu')
         this.getData()
-        if (this.props.user && this.props.user.highest) { // 只有最高权限才能查看
+        if (this.props.user && this.props.user.highest === '1') { // 只有最高权限才能查看
             this.getAllUser()
             this.getHighestData()
         }
@@ -96,7 +96,7 @@ class Default extends React.Component {
         )
         return (
             <div>
-                {user && user.highest ? (
+                {user && user.highest === '1' ? (
                     <WingBlank size="lg">
                         <WhiteSpace size="lg" />
                         <Card>

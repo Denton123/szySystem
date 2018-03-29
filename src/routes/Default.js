@@ -45,7 +45,7 @@ class Default extends React.Component {
         this.getData()
         this.timer = setInterval(() => this.getTime(), 1000)
         this.setCurrentNotificationData(1)
-        if (this.props.user.highest) { // 只有最高权限才能查看
+        if (this.props.user.highest === '1') { // 只有最高权限才能查看
             this.getAllUser()
             this.getHighestData()
         }
@@ -260,7 +260,7 @@ class Default extends React.Component {
                     </div>
                 </Header>
                 <div className="Main">
-                    {user && user.highest ? (
+                    {user && user.highest === '1' ? (
                         <div className="mb-10">
                             <Card title="最近项目和任务">
                                 <List
