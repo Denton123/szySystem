@@ -18,6 +18,10 @@ const utils = {
     isObjectNull: function(ObjectToCheck) {
         return Object.keys(ObjectToCheck).length > 0
     },
+    // 是否是空对象
+    isNullObject: function(ObjectToCheck) {
+        return Object.keys(ObjectToCheck).length > 0
+    },
     /**
      * [apiUrl api接口路径处理]
      * @Author   szh

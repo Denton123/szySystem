@@ -41,8 +41,8 @@ module.exports = function(opts) {
             this.state = {
                 // getData方法的参数
                 params: {
-                    obj: {}, // getData第一个参数
-                    arr: ['status']  // getData方法中需要过滤的字段，第二个参数，这里默认过滤status
+                    state: {}, // getData第2个参数
+                    filter: ['status'] // getData第3个参数
                 },
                 // 类型：普通任务/项目任务
                 _type: opts._type,
@@ -55,13 +55,20 @@ module.exports = function(opts) {
                 ], // 全部项目
                 projectValue: null,
                 // 重置表单不需要过滤的字段（针对重置表单字段）
-                resetNotFilter: opts.resetNotFilter ? opts.resetNotFilter : undefined
+                resetNotFilter: opts.resetNotFilter ? opts.resetNotFilter : undefined,
+                // 存储过滤参数
+                filter: ['status']
             }
         }
 
         componentWillMount() {
-            let id = (this.props.match.params && this.props.match.params.id) ? this.props.match.params.id : false
-
+            let id = false
+            if (this.props.match.params && this.props.match.params.id) {
+                id = this.props.match.params.id
+                // console.log(111111)
+                // this.props.history.replace(`${this.props.location.pathname}`, {...this.props.location.state, project_id: id})
+                // this.props.history.replace(this.props.location.pathname, {...this.props.location.state, project_id: id})
+            }
             if (opts.hasProjectSelect) {
                 //  获取全部项目接口
                 this.getAllProject()
@@ -82,7 +89,7 @@ module.exports = function(opts) {
                 return {
                     params: {
                         ...this.state.params,
-                        obj: {project_id: projectId}
+                        state: {project_id: projectId}
                     }
                 }
             })
@@ -94,16 +101,25 @@ module.exports = function(opts) {
             if (type === 'status') {
                 if (e[0] === 'all') {
                     resetFilterArr.push('status')
+                } else {
+                    resetFilterArr = []
                 }
                 this.setState(() => {
                     return {
-                        params: {
-                            ...this.state.params,
-                            arr: resetFilterArr
-                        }
+                        filter: resetFilterArr
                     }
                 })
             }
+        }
+
+        handleSetTaskState = (stateFields, stateValue, cb) => {
+            this.setState({
+                [stateFields]: stateValue
+            }, () => {
+                if (cb) {
+                    cb()
+                }
+            })
         }
 
         //  获取全部项目接口
@@ -138,7 +154,8 @@ module.exports = function(opts) {
                 projectValue,
                 allProjectData,
                 params,
-                resetNotFilter
+                resetNotFilter,
+                filter
             } = this.state
 
             // 条件
@@ -180,7 +197,14 @@ module.exports = function(opts) {
 
             return (
                 <div>
-                    <CompanyDetailPageModel {...this.props} condition={condition} params={params} resetNotFilter={resetNotFilter} type={_type}>
+                    <CompanyDetailPageModel
+                        {...this.props}
+                        condition={condition}
+                        params={params}
+                        resetNotFilter={resetNotFilter}
+                        type={_type}
+                        filter={filter}
+                        handleSetTaskState={this.handleSetTaskState}>
                         {
                             (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((task, i) => (
                                 <div key={task.id}>

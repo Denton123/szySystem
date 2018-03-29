@@ -18,21 +18,19 @@ class ProjectDetail extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            // getData方法的参数
             params: {
-                obj: {},
-                arr: []
+                state: {}  // getData第2个参数
             }
         }
     }
 
     componentWillMount() {
         let id = this.props.match.params.id
-        // this.props.getData({project_id: id})
         this.setState(() => {
             return {
                 params: {
-                    ...this.state.params,
-                    obj: {problem_id: id}
+                    state: {problem_id: id}
                 }
             }
         })
@@ -47,8 +45,6 @@ class ProjectDetail extends React.Component {
             permissionRoutes,
             dateSetting
         } = this.props
-        console.log('ProjectDetail.js---')
-        console.log(dateSetting)
 
         return (
             <div>

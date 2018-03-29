@@ -3,7 +3,7 @@ import {
     Toast
 } from 'antd-mobile'
 
-import { isArray, isObject } from 'UTILS/utils'
+import { isArray, isNullObject } from 'UTILS/utils'
 import { mIndex } from 'UTILS/ajax'
 
 function withBasicDataModel(PageComponent, Datas) {
@@ -23,78 +23,82 @@ function withBasicDataModel(PageComponent, Datas) {
                     },
                     // 列表下拉刷新
                     refreshing: false
-                }
+                },
+                // 搜索表单
+                searchFields: {}
             }
         }
 
-        componentDidMount() {
-            // this.getData()
-            console.log('withBasicDataModel.js')
-            console.log(this.props.location)
-            if (this.props.location && this.props.location.state && this.props.location.state.page) {
-                let current = this.props.location.state.page
-                this.setState(prevState => {
-                    let pagination = prevState.dateSetting.pagination
-                    pagination['current'] = current
-                    return {
-                        dateSetting: {
-                            ...prevState.dateSetting,
-                            pagination: pagination
-                        }
-                    }
-                })
-            }
+        componentWillMount() {
+            console.log('withBasicDataModel.js ------ ')
         }
 
-        // 获取数据(请求的参数 Object，过滤的参数Array, 成功获取数据后的回调Function, 自定义获取数据方法)
-        getData = (params, resetFilterArr, cb, getDataCb) => {
-            let p = {} // 用来装locationState 和传过来的参数params,过滤后的resetFilterArr
-            let locationState = {}
+       /*
+       获取数据(
+            请求的参数                       Object
+            新增在当前的的state              Object
+            请求时需要过滤的字段,            Array
+            成功获取数据后的回调Function,    Function
+            自定义获取数据方法               Function
+        )
+        */
+        getData = (params = {}, setState = {}, filter = [], cb, getDataCb) => {
+            console.log('getData ---- ')
+            console.log(params)
+            console.log(setState)
+            console.log(filter)
+            let p = { page: 1 }         // 用来存储当前的state，新增在当前的的state, 请求的参数，需要查询表单，还有Datas.subModel，作于请求数据的data
+            let locationState = {}      // 用来存储新的state，用于更新当前location的state
+            // 存储当前页的state
             if (this.props.location.state) {
                 locationState = this.props.location.state
-                p = locationState
+                p = {...p, ...locationState}
             }
-            // 判断有参数
-            if (params) {
+            // 存储新增在当前的的state
+            if (isNullObject(setState)) {
+                p = {...p, ...setState}
+                locationState = p
+            }
+            console.log('locationState')
+            console.log(locationState)
+            // 存储请求的参数
+            if (isNullObject(params)) {
                 p = {...p, ...params}
             }
-            let resetfilterParams = {}
-            // 重置需要过滤的字段，过滤完后存储到state的，把查找过的字段清除
-            if (resetFilterArr) {
-                Object.keys(p).forEach(key => {
-                    if (resetFilterArr.indexOf(key) < 0) {
-                        resetfilterParams[key] = p[key]
-                    }
-                })
-                p = resetfilterParams
+            // 存储需要查询表单
+            if (isNullObject(this.state.searchFields)) {
+                p = {...p, ...this.state.searchFields}
             }
-            console.log('resetfilterParams p---')
+            console.log('p---')
             console.log(p)
-            this.props.history.replace(`${this.props.location.pathname}`, p)
+            this.props.history.replace(`${this.props.location.pathname}`, locationState)
             Toast.loading('正在加载...', 0)
             if (this.props.user) {
                 const id = this.props.user.id
-                params = { page: 1, ...p }
-                if (Object.keys(subModel).length > 0) {
-                    Object.assign(params, subModel)
+                if (isNullObject(subModel)) {
+                    Object.assign(p, subModel)
                 }
                 // 参数需要过滤掉的字段，过滤完后用于请求数据的
                 let filterArr = ['tabIndex']
-                let filterParams = {}
-                Object.keys(params).forEach(key => {
+                // filterArr合并filter
+                if (filter.length > 0) {
+                    filterArr = [...filterArr, ...filter]
+                }
+                console.log('filterArr:')
+                console.log(filterArr)
+                let filterP = {}
+                // 过滤掉不需要请求的参数
+                Object.keys(p).forEach(key => {
                     if (filterArr.indexOf(key) < 0) {
-                        filterParams[key] = params[key]
+                        filterP[key] = p[key]
                     }
                 })
-                console.log('getData---')
-                console.log('params:')
-                console.log(params)
-                console.log('filterParams:')
-                console.log(filterParams)
+                console.log('filterP:')
+                console.log(filterP)
                 if (getDataCb) {
                     getDataCb()
-                } else {
-                    mIndex(this.state.model, filterParams)
+                } else { // 默认走这里
+                    mIndex(this.state.model, filterP)
                     .then(res => {
                         Toast.hide()
                         let pagination = {
@@ -116,7 +120,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         }
                     })
                     .catch(e => {
-                        console.log(222)
                         Toast.hide()
                         Toast.fail('请求失败', 1)
                     })
@@ -143,16 +146,12 @@ function withBasicDataModel(PageComponent, Datas) {
                     current: e
                 }
             })
-            console.log('handlePageChange --- ')
-            console.log(params)
             this.getData(params)
         }
 
         // 搜索栏提交处理(search表单)
-        handleSearchSubmit = (searchFields, resetFilterArr = []) => {
+        handleSearchSubmit = (searchFields, filter = []) => {
             console.log('withBasicDataModel handleSearchSubmit --- ')
-            console.log(searchFields)
-            console.log(resetFilterArr)
             // 判断是否所以字段都是 undefined
             let isAllUndefined = true
             let params = {}
@@ -169,28 +168,32 @@ function withBasicDataModel(PageComponent, Datas) {
                 return
             }
             params['page'] = 1
-            this.getData(params, resetFilterArr)
+            this.setState({
+                searchFields: searchFields
+            }, () => {
+                this.getData({page: 1}, {}, filter)
+            })
         }
 
         // 搜索栏重置(提交的表单数据，重置不需要过滤的字段)
-        handleSearchReset = (e, resetNotFilter = []) => {
+        handleSearchReset = (e) => {
             console.log('handleSearchReset')
-            console.log(resetNotFilter)
-            let resetArr = isObject(e) ? Object.keys(e) : []
-            resetNotFilter.forEach(item => {
-                resetArr.splice(resetArr.indexOf(item), 1)
+            console.log(e)
+            this.setState({
+                searchFields: {}
+            }, () => {
+                this.getData({page: 1})
             })
-            console.log(resetArr)
-            this.getData({page: 1}, resetArr)
         }
 
         // 下拉刷新
-        bandleDownRefresh = () => {
+        bandleDownRefresh = (filter = []) => {
             this.handleSetState('dateSetting', {
                 ...this.state.dateSetting,
                 refreshing: true
             })
-            this.getData({}, [], () => {
+            console.log('bandleDownRefresh ---- ')
+            this.getData({page: this.state.dateSetting.pagination.current}, {}, filter, () => {
                 this.handleSetState('dateSetting', {
                     ...this.state.dateSetting,
                     refreshing: false

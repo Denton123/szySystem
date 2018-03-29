@@ -57,8 +57,6 @@ class Company extends React.Component {
     }
 
     renderContent = tab => {
-        console.log('CompanyDetail.js')
-        console.log(tab)
         return (
             <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
                 <tab.component {...this.props} tab={tab} />
@@ -85,7 +83,6 @@ class Company extends React.Component {
     }
 
     handleTabClick = (tab, index) => {
-        console.log(index)
         this.setState({
             tabIndex: index
         })
@@ -125,9 +122,6 @@ class Company extends React.Component {
                 })
             }
         }
-        console.log('tabs----')
-        console.log(tabs)
-        console.log(newRoutes)
         function tabRender(props) {
             return (
                 <Tabs.DefaultTabBar {...props} page={3} />

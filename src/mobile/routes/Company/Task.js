@@ -23,15 +23,31 @@ const tabs = [
 ]
 
 class Task extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            // tab的下标
+            tabIndex: 0
+        }
+    }
+    componentWillMount() {
+        let tabIndex = this.props.location.state && this.props.location.state.tabIndex ? this.props.location.state.tabIndex : 0
+        this.setState({
+            tabIndex: tabIndex
+        })
+    }
     handleTabClick = (tab, index) => {
-        let projectId = index === 0 ? 'null' : 'notnull'
-        this.props.history.replace(this.props.location.pathname, {...this.props.location.state, project_id: projectId})
+        let tabIndex = index === 0 ? 'null' : 'notnull'
+        this.setState({
+            tabIndex: index
+        })
+        this.props.history.replace(this.props.location.pathname, {project_id: tabIndex, tabIndex: index, page: 1})
     }
     render() {
         return (
             <div>
                 <Tabs tabs={tabs}
-                    initialPage={0}
+                    page={this.state.tabIndex}
                     prerenderingSiblingsNumber={0}
                     onChange={(tab, index) => { console.log('onChange', index, tab) }}
                     onTabClick={this.handleTabClick}

@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom'
 import {
     Pagination,
     WingBlank,
-    Button,
     PullToRefresh,
     Accordion
 } from 'antd-mobile'
 import CustomForm from './CustomForm'
+import { isArray, isNullObject } from 'UTILS/utils'
 
 const locale = {
     prevText: 'Prev',
@@ -25,7 +25,7 @@ class CompanyDetailPageModel extends React.Component {
 
     componentWillMount() {
         if (this.props.params) { // 任务入口
-            this.props.getData(this.props.params.obj, this.props.params.arr)
+            this.props.getData({}, this.props.params.state)
         } else { // 其他
             this.props.getData()
         }
@@ -39,26 +39,39 @@ class CompanyDetailPageModel extends React.Component {
     }
 
     handleSearchSubmit = (e) => {
+        let obj = {}
+        // 把搜索的值（数组）变成字符串
+        for (let key in e) {
+            if (isArray(e[key])) {
+                obj[key] = e[key][0]
+            } else {
+                obj[key] = e[key]
+            }
+        }
         if (this.props.params) { // 任务入口
-            this.props.handleSearchSubmit(e, this.props.params.arr)
+            this.props.handleSetTaskState('params', {
+                ...this.props.params,
+                filter: this.props.filter
+            }, () => {
+                this.props.handleSearchSubmit(obj, this.props.params.filter)
+            })
         } else {
-            this.props.handleSearchSubmit(e)
+            this.props.handleSearchSubmit(obj)
         }
     }
 
     handleSearchReset = (e) => {
-        console.log('CompanyDetailPageModel.js handleSearchReset ----')
-        console.log(this.props.resetNotFilter)
-        if (this.props.resetNotFilter) { // 任务管理的特效处理入口
-            if (this.props.type) {
-                console.log(this.props.type)
-                let value = this.props.type === 'normal' ? 'null' : 'notnull'
-                this.props.history.replace(this.props.location.pathname, {...this.props.location.state, project_id: value})
-                console.log(this.props)
-            }
-            this.props.handleSearchReset(e, this.props.resetNotFilter)
-        } else { // 其他
-            this.props.handleSearchReset(e)
+        if (this.props.params) { // 任务入口
+            this.props.handleSetTaskState('filter', ['status'])
+        }
+        this.props.handleSearchReset(e)
+    }
+
+    bandleDownRefresh = () => {
+        if (this.props.params) { // 任务入口
+            this.props.bandleDownRefresh(this.props.params.filter)
+        } else {
+            this.props.bandleDownRefresh()
         }
     }
 
@@ -88,7 +101,7 @@ class CompanyDetailPageModel extends React.Component {
                     }}
                     direction={'down'}
                     refreshing={this.props.refreshing}
-                    onRefresh={this.props.bandleDownRefresh}
+                    onRefresh={this.bandleDownRefresh}
                 >
                     {this.props.children}
                     <WingBlank>
