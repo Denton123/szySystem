@@ -47,7 +47,7 @@ class Info extends React.Component {
         ]
 
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div style={{height: '100%'}}>
                 <CompanyDetailPageModel {...this.props} condition={condition}>
                     {
                         (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (

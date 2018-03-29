@@ -30,7 +30,6 @@ function withBasicDataModel(PageComponent, Datas) {
         }
 
         componentWillMount() {
-            console.log('withBasicDataModel.js ------ ')
         }
 
        /*
@@ -43,10 +42,6 @@ function withBasicDataModel(PageComponent, Datas) {
         )
         */
         getData = (params = {}, setState = {}, filter = [], cb, getDataCb) => {
-            console.log('getData ---- ')
-            console.log(params)
-            console.log(setState)
-            console.log(filter)
             let p = { page: 1 }         // 用来存储当前的state，新增在当前的的state, 请求的参数，需要查询表单，还有Datas.subModel，作于请求数据的data
             let locationState = {}      // 用来存储新的state，用于更新当前location的state
             // 存储当前页的state
@@ -59,8 +54,6 @@ function withBasicDataModel(PageComponent, Datas) {
                 p = {...p, ...setState}
                 locationState = p
             }
-            console.log('locationState')
-            console.log(locationState)
             // 存储请求的参数
             if (isNullObject(params)) {
                 p = {...p, ...params}
@@ -69,8 +62,6 @@ function withBasicDataModel(PageComponent, Datas) {
             if (isNullObject(this.state.searchFields)) {
                 p = {...p, ...this.state.searchFields}
             }
-            console.log('p---')
-            console.log(p)
             this.props.history.replace(`${this.props.location.pathname}`, locationState)
             Toast.loading('正在加载...', 0)
             if (this.props.user) {
@@ -84,8 +75,6 @@ function withBasicDataModel(PageComponent, Datas) {
                 if (filter.length > 0) {
                     filterArr = [...filterArr, ...filter]
                 }
-                console.log('filterArr:')
-                console.log(filterArr)
                 let filterP = {}
                 // 过滤掉不需要请求的参数
                 Object.keys(p).forEach(key => {
@@ -93,8 +82,6 @@ function withBasicDataModel(PageComponent, Datas) {
                         filterP[key] = p[key]
                     }
                 })
-                console.log('filterP:')
-                console.log(filterP)
                 if (getDataCb) {
                     getDataCb()
                 } else { // 默认走这里
@@ -151,7 +138,6 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 搜索栏提交处理(search表单)
         handleSearchSubmit = (searchFields, filter = []) => {
-            console.log('withBasicDataModel handleSearchSubmit --- ')
             // 判断是否所以字段都是 undefined
             let isAllUndefined = true
             let params = {}
@@ -177,8 +163,6 @@ function withBasicDataModel(PageComponent, Datas) {
 
         // 搜索栏重置(提交的表单数据，重置不需要过滤的字段)
         handleSearchReset = (e) => {
-            console.log('handleSearchReset')
-            console.log(e)
             this.setState({
                 searchFields: {}
             }, () => {
@@ -192,7 +176,6 @@ function withBasicDataModel(PageComponent, Datas) {
                 ...this.state.dateSetting,
                 refreshing: true
             })
-            console.log('bandleDownRefresh ---- ')
             this.getData({page: this.state.dateSetting.pagination.current}, {}, filter, () => {
                 this.handleSetState('dateSetting', {
                     ...this.state.dateSetting,
@@ -203,7 +186,7 @@ function withBasicDataModel(PageComponent, Datas) {
 
         render() {
             return (
-                <div>
+                <div style={{height: '100%'}}>
                     <PageComponent
                         getData={this.getData}
                         handleSetState={this.handleSetState}

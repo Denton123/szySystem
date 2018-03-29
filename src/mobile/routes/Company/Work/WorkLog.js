@@ -4,7 +4,9 @@ import {
     Card,
     InputItem,
     WhiteSpace,
-    WingBlank
+    WingBlank,
+    Accordion,
+    Icon
 } from 'antd-mobile'
 import withBasicDataModel from '../../../components/withBasicDataModel'
 import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
@@ -32,7 +34,7 @@ class WorkLog extends React.Component {
         ]
 
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div>
                 <CompanyDetailPageModel {...this.props}>
                     {
                         (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
@@ -40,9 +42,13 @@ class WorkLog extends React.Component {
                                 <WhiteSpace size="sm" />
                                 <Card>
                                     <Card.Body>
-                                        <div style={{textAlign: 'left'}}>{obj.content}</div>
+                                        <Accordion>
+                                            <Accordion.Panel header={obj.User.realname} style={{textAlign: 'left'}}>
+                                                <div style={{textAlign: 'left', paddingBottom: '5px'}}>{obj.content}</div>
+                                            </Accordion.Panel>
+                                        </Accordion>
                                     </Card.Body>
-                                    <Card.Footer style={{textAlign: 'left'}} content={`${obj.User.realname}`} extra={`${obj.createdAt}`} />
+                                    <Card.Footer style={{textAlign: 'left'}} content={`${obj.createdAt}`} />
                                 </Card>
                                 <WhiteSpace size="sm" />
                             </WingBlank>

@@ -58,7 +58,7 @@ class Company extends React.Component {
 
     renderContent = tab => {
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div style={{ height: '100%' }}>
                 <tab.component {...this.props} tab={tab} />
             </div>
         )
@@ -69,17 +69,6 @@ class Company extends React.Component {
         this.setState({
             tabIndex: tabIndex
         })
-    }
-
-    getData = () => {
-        if (this.props.user) {
-            const id = this.props.user.id
-            axios.get(`/api/user?page=1`).then(res => {
-                this.setState({
-                    data: res.data.data
-                })
-            })
-        }
     }
 
     handleTabClick = (tab, index) => {
@@ -129,7 +118,7 @@ class Company extends React.Component {
         }
 
         return (
-            <div>
+            <div style={{height: '100%'}}>
                 {
                     tabs.length > 0 ? (
                         <Tabs
@@ -148,5 +137,4 @@ class Company extends React.Component {
         )
     }
 }
-                // <Route path={`${match.url}/:model`} component={Model} />
 export default Company

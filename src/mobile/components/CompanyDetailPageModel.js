@@ -19,7 +19,7 @@ class CompanyDetailPageModel extends React.Component {
         super(props)
         this.state = {
             // 刷新设置
-            height: document.documentElement.clientHeight
+            height: '100%'
         }
     }
 
@@ -85,7 +85,7 @@ class CompanyDetailPageModel extends React.Component {
             condition
         } = this.props
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div style={{ height: '100%' }}>
                 {condition && condition.length > 0 &&
                     <Accordion className="my-accordion">
                         <Accordion.Panel header="搜索">
@@ -96,7 +96,6 @@ class CompanyDetailPageModel extends React.Component {
                 <PullToRefresh
                     ref={el => this.ptr = el}
                     style={{
-                        height: this.state.height,
                         overflow: 'auto'
                     }}
                     direction={'down'}

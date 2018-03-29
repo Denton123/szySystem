@@ -2,7 +2,9 @@ import React from 'react'
 import {
     List,
     InputItem,
-    Accordion
+    Accordion,
+    WhiteSpace,
+    WingBlank
 } from 'antd-mobile'
 
 import withBasicDataModel from '../withBasicDataModel'
@@ -44,24 +46,24 @@ module.exports = function(opts) {
             ]
 
             return (
-                <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+                <div>
                     <CompanyDetailPageModel {...this.props} condition={condition}>
                         {
-                            (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? (
-                                <Accordion className="my-accordion">
-                                    {
-                                        dateSetting.dataSource.map((obj, i) => (
-                                            <Accordion.Panel key={i} header={<List.Item multipleLine extra={obj.createdAt}>{obj.name}</List.Item>}>
-                                                <List className="my-list">
-                                                    <List.Item multipleLine extra={obj.price}>单价</List.Item>
-                                                    <List.Item multipleLine extra={obj.number}>数量</List.Item>
-                                                    <List.Item multipleLine extra={obj.purchase}>购买人</List.Item>
-                                                </List>
-                                            </Accordion.Panel>
-                                        ))
-                                    }
-                                </Accordion>
-                            ) : <NoData />
+                            (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                                <div key={i.toString()}>
+                                    <WhiteSpace size="sm" />
+                                    <Accordion className="my-accordion">
+                                        <Accordion.Panel header={<List.Item multipleLine extra={obj.createdAt}>{obj.name}</List.Item>}>
+                                            <List className="my-list">
+                                                <List.Item multipleLine extra={obj.price}>单价</List.Item>
+                                                <List.Item multipleLine extra={obj.number}>数量</List.Item>
+                                                <List.Item multipleLine extra={obj.purchase}>购买人</List.Item>
+                                            </List>
+                                        </Accordion.Panel>
+                                    </Accordion>
+                                    <WhiteSpace size="sm" />
+                                </div>
+                            )) : <NoData />
                         }
                     </CompanyDetailPageModel>
                 </div>

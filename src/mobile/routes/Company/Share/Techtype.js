@@ -1,17 +1,14 @@
 import React from 'react'
 import {
-    List,
+    Card,
     InputItem,
     WingBlank,
     WhiteSpace
 } from 'antd-mobile'
-
+import './Techtype.less'
 import withBasicDataModel from '../../../components/withBasicDataModel'
 import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
 import NoData from '../../../components/NoData'
-
-const Item = List.Item
-const Brief = Item.Brief
 
 class Techtype extends React.Component {
     constructor(props) {
@@ -44,17 +41,20 @@ class Techtype extends React.Component {
         ]
 
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div>
                 <CompanyDetailPageModel {...this.props} condition={condition}>
-                    <List className="my-list">
-                        {
-                            (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
-                                <WingBlank size="lg" key={i}>
-                                    <Item multipleLine>{obj.name}</Item>
-                                </WingBlank>
-                            )) : <NoData />
-                        }
-                    </List>
+                    {
+                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                            <WingBlank key={i.toString()} size="lg">
+                                <WhiteSpace size="sm" />
+                                <Card>
+                                    <Card.Header
+                                        title={obj.name} />
+                                </Card>
+                                <WhiteSpace size="sm" />
+                            </WingBlank>
+                        )) : <NoData />
+                    }
                 </CompanyDetailPageModel>
             </div>
         )

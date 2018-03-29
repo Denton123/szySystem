@@ -45,7 +45,7 @@ class Task extends React.Component {
     }
     render() {
         return (
-            <div>
+            <div style={{height: '100%'}}>
                 <Tabs tabs={tabs}
                     page={this.state.tabIndex}
                     prerenderingSiblingsNumber={0}
@@ -53,10 +53,10 @@ class Task extends React.Component {
                     onTabClick={this.handleTabClick}
                     animated={false}
                 >
-                    <div style={{ backgroundColor: '#fff' }}>
+                    <div style={{ height: '100%' }}>
                         <NoProjectTask {...this.props} />
                     </div>
-                    <div style={{ backgroundColor: '#fff' }}>
+                    <div style={{ height: '100%' }}>
                         <HasProjectTask {...this.props} />
                     </div>
                 </Tabs>

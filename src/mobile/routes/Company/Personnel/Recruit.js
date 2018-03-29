@@ -2,7 +2,10 @@ import React from 'react'
 import {
     List,
     InputItem,
-    Accordion
+    Accordion,
+    Card,
+    WhiteSpace,
+    WingBlank
 } from 'antd-mobile'
 
 import withBasicDataModel from '../../../components/withBasicDataModel'
@@ -43,23 +46,23 @@ class Recruit extends React.Component {
         ]
 
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div>
                 <CompanyDetailPageModel {...this.props} condition={condition}>
                     {
-                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? (
-                            <Accordion className="my-accordion">
-                                {
-                                    dateSetting.dataSource.map((obj, i) => (
-                                        <Accordion.Panel key={i} header={<List.Item multipleLine extra={obj.job}>{obj.interviewee}</List.Item>}>
-                                            <List className="my-list">
-                                                <List.Item multipleLine extra={obj.interviewer}>面试人</List.Item>
-                                                <List.Item multipleLine extra={obj.createdAt}>面试时间</List.Item>
-                                            </List>
-                                        </Accordion.Panel>
-                                    ))
-                                }
-                            </Accordion>
-                        ) : <NoData />
+                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                            <div key={i.toString()}>
+                                <WhiteSpace size="sm" />
+                                <Accordion className="my-accordion">
+                                    <Accordion.Panel header={<List.Item multipleLine extra={obj.job}>{obj.interviewee}</List.Item>}>
+                                        <List className="my-list">
+                                            <List.Item multipleLine extra={obj.interviewer}>面试人</List.Item>
+                                            <List.Item multipleLine extra={obj.createdAt}>面试时间</List.Item>
+                                        </List>
+                                    </Accordion.Panel>
+                                </Accordion>
+                                <WhiteSpace size="sm" />
+                            </div>
+                        )) : <NoData />
                     }
                 </CompanyDetailPageModel>
             </div>

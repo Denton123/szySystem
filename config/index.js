@@ -62,8 +62,9 @@ module.exports = {
             // 获取socket io的地址
             '/hostname': proxyTableOptions,
             '/m/**': proxyTableOptions,
+            '/img/**': proxyTableOptions,
             // '/**': proxyTableOptions,
-        },
+        }, 
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README
         // (https://github.com/webpack/css-loader#sourcemaps)

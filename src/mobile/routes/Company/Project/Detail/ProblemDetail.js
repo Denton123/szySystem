@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { List, Picker, WhiteSpace, WingBlank, Accordion, Card } from 'antd-mobile'
+import { WhiteSpace, WingBlank, Card, Icon } from 'antd-mobile'
 import withBasicDataModel from '../../../../components/withBasicDataModel'
 import CompanyDetailPageModel from '../../../../components/CompanyDetailPageModel'
 import NoData from '../../../../components/NoData'
@@ -55,6 +55,7 @@ class ProjectDetail extends React.Component {
                                 <WhiteSpace size="sm" />
                                 <Card>
                                     <Card.Body>
+                                        { obj.used === '1' && <p style={{textAlign: 'left'}}><Icon color="#108ee9" type="check-circle" />已采纳</p> }
                                         <div style={{textAlign: 'left'}} dangerouslySetInnerHTML={{__html: escape(obj.answer)}} />
                                     </Card.Body>
                                     <Card.Footer style={{textAlign: 'left'}} content={`${obj.User.realname}`} extra={`${obj.date}`} />

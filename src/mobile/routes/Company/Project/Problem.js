@@ -4,7 +4,6 @@ import {
     InputItem,
     WhiteSpace,
     WingBlank,
-    List,
     Icon
 } from 'antd-mobile'
 import {
@@ -14,9 +13,6 @@ import {
 import withBasicDataModel from '../../../components/withBasicDataModel'
 import CompanyDetailPageModel from '../../../components/CompanyDetailPageModel'
 import NoData from '../../../components/NoData'
-
-const Item = List.Item
-const Brief = Item.Brief
 
 class problem extends React.Component {
     constructor(props) {
@@ -61,28 +57,26 @@ class problem extends React.Component {
         ]
 
         return (
-            <div style={{ backgroundColor: '#fff', paddingBottom: '15px' }}>
+            <div style={{height: '100%'}}>
                 <CompanyDetailPageModel {...this.props} condition={condition}>
-                    <List className="my-list">
-                        {
-                            (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
-                                <WingBlank key={i.toString()} size="lg">
-                                    <WhiteSpace size="sm" />
-                                    <Card>
-                                        <Card.Header
-                                            title={obj.User.realname}
-                                            extra={<Link to={`${match.url}/problem/${obj.id}`} key={i}><Icon type="right" /></Link>} />
-                                        <Card.Body>
-                                            <div style={{textAlign: 'left'}}>
-                                                <p className="ellipsis">问题: {obj.title}</p>
-                                            </div>
-                                        </Card.Body>
-                                    </Card>
-                                    <WhiteSpace size="sm" />
-                                </WingBlank>
-                            )) : <NoData />
-                        }
-                    </List>
+                    {
+                        (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (
+                            <WingBlank key={i.toString()} size="lg">
+                                <WhiteSpace size="sm" />
+                                <Card>
+                                    <Card.Header
+                                        title={obj.User.realname}
+                                        extra={<Link to={`${match.url}/problem/${obj.id}`} key={i}><Icon type="right" /></Link>} />
+                                    <Card.Body>
+                                        <div style={{textAlign: 'left'}}>
+                                            <p className="ellipsis">问题: {obj.title}</p>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                                <WhiteSpace size="sm" />
+                            </WingBlank>
+                        )) : <NoData />
+                    }
                 </CompanyDetailPageModel>
             </div>
         )
