@@ -1,7 +1,8 @@
 import React from 'react'
-import { List, Button, Picker, WhiteSpace, Accordion, Pagination } from 'antd-mobile'
+import {List, Button, Picker, WhiteSpace, Accordion, Pagination} from 'antd-mobile'
 
-import { ajax } from '../../../../utils/ajax'
+import {ajax} from '../../../../utils/ajax'
+import {parseUrlSearch, stringifyUrlSearch} from '../../../../utils/utils'
 
 const taskStatus = [
     {
@@ -31,12 +32,7 @@ class TaskLists extends React.Component {
         super(props)
         // 根据路由查询来确定是新增还是编辑
         // ?type=add
-        let searchArr = this.props.location.search.substr(1).split('&'),
-            urlSearch = {}
-        searchArr.forEach(sa => {
-            let arr = sa.split('=')
-            urlSearch[arr[0]] = arr[1]
-        })
+        let urlSearch = parseUrlSearch(this.props.location.search)
         this.state = {
             // 父组件传参数
             ...urlSearch,
@@ -52,7 +48,7 @@ class TaskLists extends React.Component {
     }
     componentWillMount() {
         let data = {
-            page: 1
+            page: this.state.page || 1
         }
         if (this.state._type === 'normal') {
             data['project_id'] = 'null'
@@ -71,10 +67,16 @@ class TaskLists extends React.Component {
                     pagination: {
                         total: res.data.totalPage,
                         current: res.data.currentPage,
-                        onChange: page => this.getData({
-                            ...data,
-                            page: page
-                        })
+                        onChange: page => {
+                            this.getData({
+                                ...data,
+                                page: page
+                            })
+                            let urlSearch = parseUrlSearch(this.props.location.search)
+                            urlSearch['page'] = page
+                            let search = stringifyUrlSearch(urlSearch)
+                            this.props.history.replace(`${this.props.location.pathname}${search}`)
+                        }
                     }
                 })
             })

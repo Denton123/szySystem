@@ -203,6 +203,44 @@ const utils = {
             selectedKeys += `/${arr[i]}`
         }
         return {openKeys: openKeys, selectedKeys: selectedKeys}
+    },
+    /**
+     * [parseUrlSearch 结构化url地址中的search]
+     * @Author   szh
+     * @DateTime 2018-03-30
+     * @param    {String}   search url地址中的search
+     * @return   {Object}          地址search的对象结构
+     */
+    parseUrlSearch: function(search) {
+        if (search.indexOf('=') > -1) {
+            let searchArr = search.substr(1).split('&'),
+                urlSearch = {}
+            searchArr.forEach(sa => {
+                let arr = sa.split('=')
+                urlSearch[arr[0]] = arr[1]
+            })
+            return urlSearch
+        } else {
+            return {}
+        }
+    },
+    /**
+     * [stringifyUrlSearch 字符串化search对象]
+     * @Author   szh
+     * @DateTime 2018-03-30
+     * @param    {Object}   urlSearch [search对象]
+     * @return   {String}             [返回由?开头的search字符串]
+     */
+    stringifyUrlSearch: function(urlSearch) {
+        let search = '?'
+        Object.keys(urlSearch).forEach((s, idx) => {
+            if (idx > 0) {
+                search += `&${s}=${urlSearch[s]}`
+            } else {
+                search += `${s}=${urlSearch[s]}`
+            }
+        })
+        return search
     }
 }
 
