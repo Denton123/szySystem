@@ -49,7 +49,6 @@ class Task extends React.Component {
                 <Tabs tabs={tabs}
                     page={this.state.tabIndex}
                     prerenderingSiblingsNumber={0}
-                    onChange={(tab, index) => { console.log('onChange', index, tab) }}
                     onTabClick={this.handleTabClick}
                     animated={false}
                 >

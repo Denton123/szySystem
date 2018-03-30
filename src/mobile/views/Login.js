@@ -4,6 +4,7 @@ import { createForm } from 'rc-form'
 
 import { ajax } from 'UTILS/ajax'
 import { isObject } from 'UTILS/utils.js'
+import './Login.less'
 
 class Login extends React.Component {
     state = {
@@ -93,36 +94,41 @@ class Login extends React.Component {
             password,
         } = this.state
         return (
-            <List renderHeader={() => (<p className="txt-c">内部管理系统</p>)}>
-                <InputItem
-                    name="name"
-                    value={name.value}
-                    error={name.hasError}
-                    onErrorClick={() => this.onErrorClick('name')}
-                    onChange={(val) => this.onChange(val, 'name')}
-                    placeholder="请输入用户名"
-                    clear
-                    autoComplete="off"
-                >标题</InputItem>
-                <InputItem
-                    name="password"
-                    value={password.value}
-                    error={password.hasError}
-                    onErrorClick={() => this.onErrorClick('password')}
-                    onChange={(val) => this.onChange(val, 'password')}
-                    type="password"
-                    placeholder="请输入密码"
-                    clear
-                >密码</InputItem>
-                <List.Item>
-                    <div
-                        style={{ width: '100%', color: '#108ee9', textAlign: 'center' }}
-                        onClick={this.handleSubmit}
-                    >
-                        登录
-                    </div>
-                </List.Item>
-            </List>
+            <div className="mLogin">
+                <div className="mLoginInner">
+                    <h2 className="txt-c mTitle">内部管理系统</h2>
+                    <List>
+                        <InputItem
+                            name="name"
+                            value={name.value}
+                            error={name.hasError}
+                            onErrorClick={() => this.onErrorClick('name')}
+                            onChange={(val) => this.onChange(val, 'name')}
+                            placeholder="请输入用户名"
+                            clear
+                            autoComplete="off"
+                        >标题</InputItem>
+                        <InputItem
+                            name="password"
+                            value={password.value}
+                            error={password.hasError}
+                            onErrorClick={() => this.onErrorClick('password')}
+                            onChange={(val) => this.onChange(val, 'password')}
+                            type="password"
+                            placeholder="请输入密码"
+                            clear
+                        >密码</InputItem>
+                        <List.Item>
+                            <div
+                                style={{ width: '100%', color: '#108ee9', textAlign: 'center' }}
+                                onClick={this.handleSubmit}
+                            >
+                                登录
+                            </div>
+                        </List.Item>
+                    </List>
+                </div>
+            </div>
         )
     }
 }

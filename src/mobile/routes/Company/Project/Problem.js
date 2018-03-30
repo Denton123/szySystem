@@ -31,8 +31,6 @@ class problem extends React.Component {
             dateSetting
         } = this.props
 
-        console.log('Problem.js ---')
-        console.log(this.props)
         let condition = [
             ({getFieldProps}) => {
                 return (

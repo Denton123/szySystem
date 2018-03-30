@@ -26,6 +26,7 @@ class ProjectDetail extends React.Component {
     }
 
     componentWillMount() {
+        console.log(this.props)
         let id = this.props.match.params.id
         this.setState(() => {
             return {

@@ -40,13 +40,10 @@ class Work extends React.Component {
         } = this.props
 
         let newRoutes = {}
-        console.log('companyDetailDetail.js ----')
-        console.log(this.props)
         // props传过来的数据有时候会没有，之后才会有，异步，所以用的时候先判断一下
         if (permissionRoutes.length > 0) {
             newRoutes = permissionRoutes.find(item => item.path === `/${match.params.model}`).routes.find(item => item.path === `/${match.params.detail}`)
         }
-        console.log(newRoutes)
         let Detail = null
         if (newRoutes && Object.keys(newRoutes).length > 0) {
             Detail = getRoutes(newRoutes.routes[0].component)

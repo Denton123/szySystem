@@ -3,7 +3,6 @@ import {
     List,
     InputItem,
     Accordion,
-    Card,
     WhiteSpace,
     WingBlank
 } from 'antd-mobile'
