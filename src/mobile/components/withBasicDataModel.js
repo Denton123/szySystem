@@ -42,8 +42,6 @@ function withBasicDataModel(PageComponent, Datas) {
         )
         */
         getData = (params = {}, setState = {}, filter = [], cb, getDataCb) => {
-            console.log('getData ----- ')
-            console.log(this.props.location.state)
             let p = { page: 1 }         // 用来存储当前的state，新增在当前的的state, 请求的参数，需要查询表单，还有Datas.subModel，作于请求数据的data
             let locationState = {}      // 用来存储新的state，用于更新当前location的state
             // 存储当前页的state
