@@ -5,6 +5,7 @@ import {
 import { List, DatePicker, WhiteSpace, WingBlank, Pagination, Button, Card, Popover, Icon, Modal, Toast } from 'antd-mobile'
 
 import {mIndex, mDestroy} from '../../../utils/ajax'
+import {parseUrlSearch, stringifyUrlSearch} from '../../../utils/utils'
 
 const alert = Modal.alert
 
@@ -21,7 +22,9 @@ function escape(str) {
 class Summary extends React.Component {
     constructor(props) {
         super(props)
+        let urlSearch = parseUrlSearch(this.props.location.search)
         this.state = {
+            ...urlSearch,
             startDate: null,
             endDate: null,
             // 总结数据
@@ -32,10 +35,13 @@ class Summary extends React.Component {
         }
     }
     componentWillMount() {
-        this.getData()
+        let data = {
+            page: this.state.page || 1
+        }
+        this.getData(data)
     }
     // 获取数据列表
-    getData = (params = {page: 1}) => {
+    getData = (params) => {
         params['user_id'] = this.props.user.id
         mIndex('summary', params)
             .then(res => {
@@ -44,7 +50,13 @@ class Summary extends React.Component {
                     pagination: {
                         total: res.data.totalPage,
                         current: res.data.currentPage,
-                        onChange: page => this.getData({page: page})
+                        onChange: page => {
+                            this.getData({page: page})
+                            let urlSearch = parseUrlSearch(this.props.location.search)
+                            urlSearch['page'] = page
+                            let search = stringifyUrlSearch(urlSearch)
+                            this.props.history.replace(`${this.props.location.pathname}${search}`)
+                        }
                     }
                 })
             })
@@ -83,7 +95,10 @@ class Summary extends React.Component {
                     mDestroy(`/${this.props.match.params.model}/${id}`).then(res => {
                         if (parseInt(res.data.id) === parseInt(id)) {
                             Toast.info('删除成功', 1)
-                            this.getData()
+                            let urlSearch = parseUrlSearch(this.props.location.search)
+                            this.getData({
+                                page: urlSearch['page'] || 1
+                            })
                         } else {
                             Toast.info('删除失败', 1)
                         }
@@ -161,19 +176,22 @@ class Summary extends React.Component {
                                     <Card.Body>
                                         <div dangerouslySetInnerHTML={{__html: ds.content}} />
                                     </Card.Body>
-                                    <Card.Footer extra={
-                                        <Popover
-                                            mask
-                                            visible={visible}
-                                            overlay={[
-                                                (<Popover.Item key="edit" value={ds.id}>编辑</Popover.Item>),
-                                                (<Popover.Item key="delete" value={ds.id}>删除</Popover.Item>),
-                                            ]}
-                                            onSelect={this.onPopoverSelect}
-                                        >
-                                            <Icon type="ellipsis" />
-                                        </Popover>
-                                    } />
+                                    <Card.Footer
+                                        content={ds.date}
+                                        extra={
+                                            <Popover
+                                                mask
+                                                visible={visible}
+                                                overlay={[
+                                                    (<Popover.Item key="edit" value={ds.id}>编辑</Popover.Item>),
+                                                    (<Popover.Item key="delete" value={ds.id}>删除</Popover.Item>),
+                                                ]}
+                                                onSelect={this.onPopoverSelect}
+                                            >
+                                                <Icon type="ellipsis" />
+                                            </Popover>
+                                        }
+                                    />
                                 </Card>
                                 <WhiteSpace size="lg" />
                             </div>
