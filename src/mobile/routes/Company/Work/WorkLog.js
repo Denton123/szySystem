@@ -44,7 +44,7 @@ class WorkLog extends React.Component {
                                     <Card.Body>
                                         <Accordion>
                                             <Accordion.Panel header={obj.User.realname} style={{textAlign: 'left'}}>
-                                                <div style={{textAlign: 'left', paddingBottom: '5px'}}>{obj.content}</div>
+                                                <div style={{textAlign: 'left', paddingBottom: '10px', paddingTop: '10px'}} >{obj.content}</div>
                                             </Accordion.Panel>
                                         </Accordion>
                                     </Card.Body>

@@ -34,7 +34,7 @@ class Company extends React.Component {
                     columnNum={3}
                     onClick={this.onGridItem}
                     renderItem={(el, index) => (
-                        <div style={{color: '#808080'}}>
+                        <div style={{color: '#000', fontSize: '17px'}}>
                             <p className={`iconfont icon-${el.icon}`} />
                             {el.name}
                         </div>

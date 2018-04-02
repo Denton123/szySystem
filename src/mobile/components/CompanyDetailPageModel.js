@@ -19,7 +19,7 @@ class CompanyDetailPageModel extends React.Component {
         super(props)
         this.state = {
             // 刷新设置
-            height: '100%'
+            height: document.documentElement.clientHeight,
         }
     }
 
@@ -96,7 +96,8 @@ class CompanyDetailPageModel extends React.Component {
                 <PullToRefresh
                     ref={el => this.ptr = el}
                     style={{
-                        overflow: 'auto'
+                        overflow: 'auto',
+                        height: this.state.height
                     }}
                     direction={'down'}
                     refreshing={this.props.refreshing}
