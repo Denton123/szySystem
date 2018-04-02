@@ -7,9 +7,9 @@ import {
     Link,
 } from 'react-router-dom'
 
-import { Card, List, WhiteSpace, Button } from 'antd-mobile'
+import { Card, List, WhiteSpace, Button, Modal } from 'antd-mobile'
 
-// const alert = Modal.alert
+const alert = Modal.alert
 
 class My extends React.Component {
     componentWillMount() {
@@ -23,14 +23,18 @@ class My extends React.Component {
         })
     }
     alertLogout = () => {
-        let logout = window.confirm('是否退出当前账号？')
-        if (logout) {
-            this.logout()
+        if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
+            alert('退出', '是否退出当前账号？', [
+                {text: '取消', style: 'default'},
+                {text: '确定', onPress: this.logout},
+            ])
+        } else {
+            // ios 兼容处理 ant-mobile 的Modal.alert存在bug
+            let logout = window.confirm('是否退出当前账号？')
+            if (logout) {
+                this.logout()
+            }
         }
-        // alert('退出', '是否退出当前账号？', [
-        //     {text: '取消', style: 'default'},
-        //     {text: '确定', onPress: this.logout},
-        // ])
     }
     render() {
         const {

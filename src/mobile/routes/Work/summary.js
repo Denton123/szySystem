@@ -2,12 +2,12 @@ import React from 'react'
 import {
     Link,
 } from 'react-router-dom'
-import { List, DatePicker, WhiteSpace, WingBlank, Pagination, Button, Card, Popover, Icon, Toast } from 'antd-mobile'
+import { List, DatePicker, WhiteSpace, WingBlank, Pagination, Button, Card, Popover, Icon, Toast, Modal } from 'antd-mobile'
 
 import {mIndex, mDestroy} from '../../../utils/ajax'
 import {parseUrlSearch, stringifyUrlSearch} from '../../../utils/utils'
 
-// const alert = Modal.alert
+const alert = Modal.alert
 
 /**
  * [escape 过滤script标签]
@@ -86,41 +86,45 @@ class Summary extends React.Component {
 
     // 删除单个总结
     destroy = (id) => {
-        let del = window.confirm('是否删除当前总结？')
-        if (del) {
-            Toast.loading('删除中', 0)
-            mDestroy(`/${this.props.match.params.model}/${id}`).then(res => {
-                if (parseInt(res.data.id) === parseInt(id)) {
-                    Toast.info('删除成功', 1)
-                    let urlSearch = parseUrlSearch(this.props.location.search)
-                    this.getData({
-                        page: urlSearch['page'] || 1
-                    })
-                } else {
-                    Toast.info('删除失败', 1)
-                }
-            })
+        if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
+            alert('删除', '是否删除当前总结？', [
+                {text: '取消', style: 'default'},
+                {
+                    text: '确定',
+                    onPress: () => {
+                        Toast.loading('删除中', 0)
+                        mDestroy(`/${this.props.match.params.model}/${id}`).then(res => {
+                            if (parseInt(res.data.id) === parseInt(id)) {
+                                Toast.info('删除成功', 1)
+                                let urlSearch = parseUrlSearch(this.props.location.search)
+                                this.getData({
+                                    page: urlSearch['page'] || 1
+                                })
+                            } else {
+                                Toast.info('删除失败', 1)
+                            }
+                        })
+                    }
+                },
+            ])
+        } else {
+            // ios 兼容处理 ant-mobile 的Modal.alert存在bug
+            let del = window.confirm('是否删除当前总结？')
+            if (del) {
+                Toast.loading('删除中', 0)
+                mDestroy(`/${this.props.match.params.model}/${id}`).then(res => {
+                    if (parseInt(res.data.id) === parseInt(id)) {
+                        Toast.info('删除成功', 1)
+                        let urlSearch = parseUrlSearch(this.props.location.search)
+                        this.getData({
+                            page: urlSearch['page'] || 1
+                        })
+                    } else {
+                        Toast.info('删除失败', 1)
+                    }
+                })
+            }
         }
-        // alert('删除', '是否删除当前总结？', [
-        //     {text: '取消', style: 'default'},
-        //     {
-        //         text: '确定',
-        //         onPress: () => {
-        //             Toast.loading('删除中', 0)
-        //             mDestroy(`/${this.props.match.params.model}/${id}`).then(res => {
-        //                 if (parseInt(res.data.id) === parseInt(id)) {
-        //                     Toast.info('删除成功', 1)
-        //                     let urlSearch = parseUrlSearch(this.props.location.search)
-        //                     this.getData({
-        //                         page: urlSearch['page'] || 1
-        //                     })
-        //                 } else {
-        //                     Toast.info('删除失败', 1)
-        //                 }
-        //             })
-        //         }
-        //     },
-        // ])
     }
 
     search = () => {
