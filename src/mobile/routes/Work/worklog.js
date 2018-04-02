@@ -10,7 +10,7 @@ import CustomForm from '../../components/CustomForm.js'
 import {mIndex, mStore, mShow, mUpdate, mDestroy} from '../../../utils/ajax'
 import {resetObject} from '../../../utils/utils'
 
-const alert = Modal.alert
+// const alert = Modal.alert
 
 function closest(el, selector) {
     const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector
@@ -81,25 +81,39 @@ class Worklog extends React.Component {
     }
 
     destroy = () => {
-        alert('删除', '是否删除当前日志？', [
-            {text: '取消', style: 'default'},
-            {
-                text: '确定',
-                onPress: () => {
-                    Toast.loading('删除中', 0)
-                    mDestroy(`/worklog/${this.state.currentWorkLog.id}`).then(res => {
-                        if (parseInt(res.data.id) === parseInt(this.state.currentWorkLog.id)) {
-                            this.setState({
-                                currentWorkLog: {}
-                            })
-                            Toast.info('删除成功', 1)
-                        } else {
-                            Toast.info('删除失败', 1)
-                        }
+        let confirm = window.confirm(`是否删除当前日志？`)
+        if (confirm) {
+            Toast.loading('删除中', 0)
+            mDestroy(`/worklog/${this.state.currentWorkLog.id}`).then(res => {
+                if (parseInt(res.data.id) === parseInt(this.state.currentWorkLog.id)) {
+                    this.setState({
+                        currentWorkLog: {}
                     })
+                    Toast.info('删除成功', 1)
+                } else {
+                    Toast.info('删除失败', 1)
                 }
-            },
-        ])
+            })
+        }
+        // alert('删除', '是否删除当前日志？', [
+        //     {text: '取消', style: 'default'},
+        //     {
+        //         text: '确定',
+        //         onPress: () => {
+        //             Toast.loading('删除中', 0)
+        //             mDestroy(`/worklog/${this.state.currentWorkLog.id}`).then(res => {
+        //                 if (parseInt(res.data.id) === parseInt(this.state.currentWorkLog.id)) {
+        //                     this.setState({
+        //                         currentWorkLog: {}
+        //                     })
+        //                     Toast.info('删除成功', 1)
+        //                 } else {
+        //                     Toast.info('删除失败', 1)
+        //                 }
+        //             })
+        //         }
+        //     },
+        // ])
     }
 
     // modal

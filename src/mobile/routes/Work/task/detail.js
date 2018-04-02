@@ -7,8 +7,7 @@ import { ajax, mShow } from '../../../../utils/ajax'
 
 import CustomForm from '../../../components/CustomForm.js'
 
-const alert = Modal.alert
-const prompt = Modal.prompt
+// const alert = Modal.alert
 
 const taskStatus = {
     '0': '等待中',
@@ -59,45 +58,69 @@ class TaskDetail extends React.Component {
     // 设置任务状态
     handleTaskStatus = (status) => {
         let tid = this.state.task_id
-        alert('任务', `是否${status === '1' ? '开始任务' : '完成个人任务'}`, [
-            {text: '取消'},
-            {
-                text: '确定',
-                onPress: () => {
-                    ajax('put', `/m/task/${tid}/user/${this.props.user.id}/status`, {status: status})
-                        .then(res => {
-                            this.setState({
-                                taskData: res.data
-                            })
-                        })
-                        .catch(() => {
-                            Toast.info('网络错误', 1)
-                        })
-                }
-            },
-        ])
+        let confirm = window.confirm(`是否${status === '1' ? '开始任务' : '完成个人任务'}？`)
+        if (confirm) {
+            ajax('put', `/m/task/${tid}/user/${this.props.user.id}/status`, {status: status})
+                .then(res => {
+                    this.setState({
+                        taskData: res.data
+                    })
+                })
+                .catch(() => {
+                    Toast.info('网络错误', 1)
+                })
+        }
+        // alert('任务', `是否${status === '1' ? '开始任务' : '完成个人任务'}`, [
+        //     {text: '取消'},
+        //     {
+        //         text: '确定',
+        //         onPress: () => {
+        //             ajax('put', `/m/task/${tid}/user/${this.props.user.id}/status`, {status: status})
+        //                 .then(res => {
+        //                     this.setState({
+        //                         taskData: res.data
+        //                     })
+        //                 })
+        //                 .catch(() => {
+        //                     Toast.info('网络错误', 1)
+        //                 })
+        //         }
+        //     },
+        // ])
     }
 
     // 直接完成任务
     setTaskCompelete = (e) => {
         let tid = this.state.task_id
-        alert('任务', `是否直接完成任务`, [
-            {text: '取消'},
-            {
-                text: '确定',
-                onPress: () => {
-                    ajax('put', `/m/task/${tid}/user/${this.props.user.id}/compelete`, {status: '2'})
-                        .then(res => {
-                            this.setState({
-                                taskData: res.data
-                            })
-                        })
-                        .catch(() => {
-                            Toast.info('保存失败', 1)
-                        })
-                }
-            },
-        ])
+        let confirm = window.confirm(`是否直接完成任务？`)
+        if (confirm) {
+            ajax('put', `/m/task/${tid}/user/${this.props.user.id}/compelete`, {status: '2'})
+                .then(res => {
+                    this.setState({
+                        taskData: res.data
+                    })
+                })
+                .catch(() => {
+                    Toast.info('保存失败', 1)
+                })
+        }
+        // alert('任务', `是否直接完成任务`, [
+        //     {text: '取消'},
+        //     {
+        //         text: '确定',
+        //         onPress: () => {
+        //             ajax('put', `/m/task/${tid}/user/${this.props.user.id}/compelete`, {status: '2'})
+        //                 .then(res => {
+        //                     this.setState({
+        //                         taskData: res.data
+        //                     })
+        //                 })
+        //                 .catch(() => {
+        //                     Toast.info('保存失败', 1)
+        //                 })
+        //         }
+        //     },
+        // ])
     }
 
     // 提交任务备注
