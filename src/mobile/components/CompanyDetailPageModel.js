@@ -4,7 +4,7 @@ import './CompanyDetailPageModel.less'
 import {
     Pagination,
     WingBlank,
-    PullToRefresh,
+    // PullToRefresh,
     Accordion
 } from 'antd-mobile'
 import CustomForm from './CustomForm'
@@ -94,16 +94,7 @@ class CompanyDetailPageModel extends React.Component {
                         </Accordion.Panel>
                     </Accordion>
                 }
-                <PullToRefresh
-                    style={{
-                        height: '100%',
-                        overflow: 'auto',
-                        paddingTop: condition && condition.length > 0 ? '44px' : '0px'
-                    }}
-                    direction={'down'}
-                    refreshing={this.props.refreshing}
-                    onRefresh={this.bandleDownRefresh}
-                >
+                <div>
                     {this.props.children}
                     <WingBlank>
                         <Pagination
@@ -113,10 +104,30 @@ class CompanyDetailPageModel extends React.Component {
                             locale={locale}
                             onChange={this.props.handlePageChange} />
                     </WingBlank>
-                </PullToRefresh>
+                </div>
             </div>
         )
     }
 }
 
+// <PullToRefresh
+//     style={{
+//         height: '100%',
+//         overflow: 'auto',
+//         paddingTop: condition && condition.length > 0 ? '44px' : '0px'
+//     }}
+//     direction={'down'}
+//     refreshing={this.props.refreshing}
+//     onRefresh={this.bandleDownRefresh}
+// >
+//     {this.props.children}
+//     <WingBlank>
+//         <Pagination
+//             className="mt-10 mb-10"
+//             total={dateSetting.pagination.total}
+//             current={dateSetting.pagination.current}
+//             locale={locale}
+//             onChange={this.props.handlePageChange} />
+//     </WingBlank>
+// </PullToRefresh>
 export default CompanyDetailPageModel
