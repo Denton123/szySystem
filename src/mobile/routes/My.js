@@ -23,10 +23,18 @@ class My extends React.Component {
         })
     }
     alertLogout = () => {
-        alert('退出', '是否退出当前账号？', [
-            {text: '取消', style: 'default'},
-            {text: '确定', onPress: this.logout},
-        ])
+        if (!/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
+            alert('退出', '是否退出当前账号？', [
+                {text: '取消', style: 'default'},
+                {text: '确定', onPress: this.logout},
+            ])
+        } else {
+            // ios 兼容处理 ant-mobile 的Modal.alert存在bug
+            let logout = window.confirm('是否退出当前账号？')
+            if (logout) {
+                this.logout()
+            }
+        }
     }
     render() {
         const {

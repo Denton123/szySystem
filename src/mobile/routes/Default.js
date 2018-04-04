@@ -149,7 +149,6 @@ class Default extends React.Component {
                                 <Card full key={sd.id}>
                                     <Card.Header
                                         title={<LogContent content={sd.title} />}
-                                        extra={<Link to={`/home/personal/summary/${sd.id}`}>查看</Link>}
                                     />
                                     <Card.Body>
                                         <LogContent content={sd.content} />
