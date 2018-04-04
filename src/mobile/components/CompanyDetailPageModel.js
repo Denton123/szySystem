@@ -20,7 +20,7 @@ class CompanyDetailPageModel extends React.Component {
         super(props)
         this.state = {
             // 刷新设置
-            height: 0
+            // height: 0
         }
     }
 
@@ -33,10 +33,10 @@ class CompanyDetailPageModel extends React.Component {
     }
 
     componentDidMount() {
-        const hei = ReactDOM.findDOMNode(this.p).offsetHeight
-        setTimeout(() => this.setState({
-            height: hei
-        }), 0)
+        // const hei = ReactDOM.findDOMNode(this.p).offsetHeight
+        // setTimeout(() => this.setState({
+        //     height: hei
+        // }), 0)
     }
 
     handleSearchSubmit = (e) => {
@@ -86,7 +86,7 @@ class CompanyDetailPageModel extends React.Component {
             condition
         } = this.props
         return (
-            <div style={{ height: '100%' }} className="CompanyDetailPageModel" ref={el => this.p = el}>
+            <div style={{ height: '100%' }} className="CompanyDetailPageModel">
                 {condition && condition.length > 0 &&
                     <Accordion className="my-accordion m-searchFields">
                         <Accordion.Panel header="搜索">
@@ -96,7 +96,7 @@ class CompanyDetailPageModel extends React.Component {
                 }
                 <PullToRefresh
                     style={{
-                        height: this.state.height,
+                        height: '100%',
                         overflow: 'auto',
                         paddingTop: condition && condition.length > 0 ? '44px' : '0px'
                     }}
