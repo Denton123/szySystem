@@ -33,11 +33,7 @@ class CompanyDetailPageModel extends React.Component {
     }
 
     componentDidMount() {
-        const sH = this.s ? ReactDOM.findDOMNode(this.s).offsetHeight : 0
         const hei = ReactDOM.findDOMNode(this.p).offsetHeight
-        console.log(ReactDOM.findDOMNode(this.p).offsetHeight)
-        console.log(sH)
-        console.log(hei)
         setTimeout(() => this.setState({
             height: hei
         }), 0)
@@ -92,7 +88,7 @@ class CompanyDetailPageModel extends React.Component {
         return (
             <div style={{ height: '100%' }} className="CompanyDetailPageModel" ref={el => this.p = el}>
                 {condition && condition.length > 0 &&
-                    <Accordion className="my-accordion m-searchFields" ref={el => this.s = el}>
+                    <Accordion className="my-accordion m-searchFields">
                         <Accordion.Panel header="搜索">
                             <CustomForm formFields={condition} handleSubmit={this.handleSearchSubmit} handleReset={this.handleSearchReset} />
                         </Accordion.Panel>

@@ -45,4 +45,3 @@ class Company extends React.Component {
 }
 
 export default Company
-// <img src={`/img/${el.icon}.png`} />

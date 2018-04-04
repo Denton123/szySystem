@@ -255,13 +255,15 @@ class Home extends React.Component {
                                     })
                                     this.props.history.push(`${match.path}${route.path}`)
                                 }}
-                                icon={<div style={{
-                                    width: '0px',
-                                    height: '0px'}}
+                                icon={<div className={`iconfont icon-${route.key}`} style={{
+                                    color: '#8a8a8a',
+                                    width: '22px',
+                                    height: '22px'}}
                                 />}
-                                selectedIcon={<div style={{
-                                    width: '0px',
-                                    height: '0px' }}
+                                selectedIcon={<div className={`iconfont icon-${route.key}`} style={{
+                                    width: '22px',
+                                    height: '22px',
+                                    color: '#108ee9'}}
                                 />}
                             >
                                 <Route
