@@ -48,7 +48,7 @@ class ProjectDetail extends React.Component {
         } = this.props
 
         return (
-            <div>
+            <div style={{ height: '100%' }}>
                 <CompanyDetailPageModel {...this.props} params={this.state.params}>
                     {
                         (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (

@@ -54,7 +54,7 @@ class Work extends React.Component {
         }
 
         return (
-            <div>
+            <div style={{ height: '100%' }}>
                 {
                     Detail !== null && <Detail {...this.props} />
                 }

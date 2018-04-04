@@ -34,7 +34,7 @@ class WorkLog extends React.Component {
         ]
 
         return (
-            <div>
+            <div style={{ height: '100%' }}>
                 <CompanyDetailPageModel {...this.props}>
                     {
                         (dateSetting.dataSource && dateSetting.dataSource.length > 0) ? dateSetting.dataSource.map((obj, i) => (

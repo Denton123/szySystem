@@ -196,7 +196,7 @@ module.exports = function(opts) {
             }
 
             return (
-                <div>
+                <div style={{ height: '100%' }}>
                     <CompanyDetailPageModel
                         {...this.props}
                         condition={condition}

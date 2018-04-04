@@ -58,8 +58,8 @@ class Company extends React.Component {
 
     renderContent = tab => {
         return (
-            <div style={{ height: '100%' }}>
-                <tab.component {...this.props} tab={tab} />
+            <div className="tt" style={{ height: '100%' }}>
+                <tab.component {...this.props} style={{ height: '100%' }} tab={tab} />
             </div>
         )
     }

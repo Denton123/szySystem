@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import './CompanyDetailPageModel.less'
 import {
     Pagination,
     WingBlank,
@@ -19,7 +20,7 @@ class CompanyDetailPageModel extends React.Component {
         super(props)
         this.state = {
             // 刷新设置
-            height: document.documentElement.clientHeight,
+            height: 0
         }
     }
 
@@ -32,7 +33,11 @@ class CompanyDetailPageModel extends React.Component {
     }
 
     componentDidMount() {
-        const hei = this.state.height - ReactDOM.findDOMNode(this.ptr).offsetTop
+        const sH = this.s ? ReactDOM.findDOMNode(this.s).offsetHeight : 0
+        const hei = ReactDOM.findDOMNode(this.p).offsetHeight
+        console.log(ReactDOM.findDOMNode(this.p).offsetHeight)
+        console.log(sH)
+        console.log(hei)
         setTimeout(() => this.setState({
             height: hei
         }), 0)
@@ -85,19 +90,19 @@ class CompanyDetailPageModel extends React.Component {
             condition
         } = this.props
         return (
-            <div style={{ height: '100%' }}>
+            <div style={{ height: '100%' }} className="CompanyDetailPageModel" ref={el => this.p = el}>
                 {condition && condition.length > 0 &&
-                    <Accordion className="my-accordion">
+                    <Accordion className="my-accordion m-searchFields" ref={el => this.s = el}>
                         <Accordion.Panel header="搜索">
                             <CustomForm formFields={condition} handleSubmit={this.handleSearchSubmit} handleReset={this.handleSearchReset} />
                         </Accordion.Panel>
                     </Accordion>
                 }
                 <PullToRefresh
-                    ref={el => this.ptr = el}
                     style={{
+                        height: this.state.height,
                         overflow: 'auto',
-                        height: this.state.height
+                        paddingTop: condition && condition.length > 0 ? '44px' : '0px'
                     }}
                     direction={'down'}
                     refreshing={this.props.refreshing}
