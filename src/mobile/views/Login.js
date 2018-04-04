@@ -107,7 +107,7 @@ class Login extends React.Component {
                             placeholder="请输入用户名"
                             clear
                             autoComplete="off"
-                        >标题</InputItem>
+                        >用户名</InputItem>
                         <InputItem
                             name="password"
                             value={password.value}
