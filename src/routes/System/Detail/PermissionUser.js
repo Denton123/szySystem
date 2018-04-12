@@ -5,7 +5,10 @@ import {
     Input,
     Select,
     message,
-    Checkbox
+    Checkbox,
+    Divider,
+    Modal,
+    Popconfirm
 } from 'antd'
 
 import {ajax} from 'UTILS/ajax'
@@ -18,6 +21,7 @@ import CustomForm from 'COMPONENTS/form/CustomForm'
 import withBasicDataModel from 'COMPONENTS/hoc/withBasicDataModel'
 
 const {Option} = Select
+const confirm = Modal.confirm
 
 class PermissionUser extends Component {
     state = {
@@ -90,6 +94,21 @@ class PermissionUser extends Component {
                 title: `${this.props.title}`
             })
             this.props.updateEditFormFieldsValues(res.data)
+        })
+    }
+    reSet = (e) => {
+        let id = e.target.dataset['id']
+        confirm({
+            title: '确定要一键重置密码吗',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => {
+                ajax('get', `/user/oneclick/${id}`).then(res => {
+                    if (res.data === 'success') {
+                        message.success('重置成功')
+                    }
+                })
+            }
         })
     }
     handleFormSubmit = (values) => {
@@ -196,11 +215,24 @@ class PermissionUser extends Component {
                 title: '操作',
                 key: 'action',
                 width: 200,
-                render: (text, record) => (
-                    <span>
-                        <a href="javascript:;" data-id={text.id} onClick={this.setRole}>设置角色</a>
-                    </span>
-                )
+                render: (text, record) => {
+                    let roles = []
+                    record.Roles.forEach(r => {
+                        roles.push(r.display_name)
+                    })
+                    return (
+                        <span>
+                            <a href="javascript:;" data-id={text.id} onClick={this.setRole}>设置角色</a>
+                            <Divider type="vertical" />
+                            {
+                                roles && roles == '最高级管理' ? (
+                                    <a href="javascript:;" data-id={text.id} onClick={this.reSet}>重置密码</a>
+                                    ) : null
+                            }
+                        </span>
+                    )
+                    
+                }
             }
         ]
 
