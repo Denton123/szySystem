@@ -67,7 +67,6 @@ class DefaultLoginForm extends React.Component {
                     })(
                         <Checkbox>记住我</Checkbox>
                     )}
-                    <a className="pull-right" href="">忘记密码</a>
                     <Button type="primary" htmlType="submit" className="w100" size="large">
                         登录
                     </Button>

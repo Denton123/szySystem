@@ -103,11 +103,15 @@ class PermissionUser extends Component {
             okText: '确定',
             cancelText: '取消',
             onOk: () => {
-                ajax('get', `/user/oneclick/${id}`).then(res => {
-                    if (res.data === 'success') {
-                        message.success('重置成功')
-                    }
-                })
+                ajax('post', `/user/${id}/init-password`)
+                    .then(res => {
+                        console.log(res)
+                        if (res.data === 'success') {
+                            message.success('重置成功')
+                        } else {
+                            message.error('重置失败')
+                        }
+                    })
             }
         })
     }
@@ -216,22 +220,25 @@ class PermissionUser extends Component {
                 key: 'action',
                 width: 200,
                 render: (text, record) => {
-                    let roles = []
-                    record.Roles.forEach(r => {
-                        roles.push(r.display_name)
-                    })
+                    let highest = false
+                    if (this.props.user && this.props.user.highest === '1') {
+                        highest = true
+                    }
                     return (
                         <span>
                             <a href="javascript:;" data-id={text.id} onClick={this.setRole}>设置角色</a>
-                            <Divider type="vertical" />
                             {
-                                roles && roles == '最高级管理' ? (
+                                highest ? (
+                                    <Divider type="vertical" />
+                                    ) : null
+                            }
+                            {
+                                highest ? (
                                     <a href="javascript:;" data-id={text.id} onClick={this.reSet}>重置密码</a>
                                     ) : null
                             }
                         </span>
                     )
-                    
                 }
             }
         ]
