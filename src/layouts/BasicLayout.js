@@ -114,6 +114,7 @@ class BasicLayout extends React.Component {
         notificationNumber: 0 // 通知数量
     }
     componentDidMount() {
+        console.log(this.props.user)
         let currentPath = this.props.location.pathname.split('home')[1]
         if (currentPath.split('/').length > 2) {
             this.setState({
